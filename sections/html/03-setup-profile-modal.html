@@ -1,0 +1,54 @@
+<!-- Modal de configuración inicial: completa perfil, institución, año escolar y periodo antes de entrar. -->
+<div class="ov" id="m-setup">
+  <div class="setup-shell">
+    <div class="setup-auth-brand" aria-hidden="true">
+      <div class="auth-brand-top">
+        <img class="auth-brand-mark" src="/assets/logo-aulabase.svg" alt="AulaBase" width="56" height="56" decoding="async" fetchpriority="high">
+        <div class="auth-brand-name">AulaBase</div>
+      </div>
+      <div class="auth-brand-sub">Gestión escolar clara para cada maestro.</div>
+    </div>
+    <div class="modal modal-setup">
+    <div class="mh auth-head setup-head">
+      <div class="auth-head-copy setup-head-copy">
+        <div class="mt">Configurar perfil</div>
+        <div class="auth-subtitle setup-head-subtitle">Completa tu información para iniciar.</div>
+      </div>
+      <button class="btn btn-ghost setup-level-exit-btn setup-close-btn" type="button" onclick="cancelSetup()" aria-label="Cerrar sesi&oacute;n">Cerrar sesi&oacute;n</button>
+    </div>
+    <div class="mb">
+      <div class="fr setup-form-stack">
+        <div class="fg setup-name-field"><label class="lbl">Nombre(s)</label><input class="inp" id="s-name" placeholder="Ej. Mar&iacute;a"></div>
+        <div class="fg"><label class="lbl">Apellido(s)</label><input class="inp" id="s-lastname" placeholder="Ej. Rodr&iacute;guez"></div>
+      </div>
+      <div class="fg"><label class="lbl">Tel&eacute;fono</label><input class="inp" id="s-phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="14" oninput="handlePhoneInput(this)" placeholder="Ej. (809) 555-1234"></div>
+      <div class="fr setup-form-stack">
+        <div class="fg"><label class="lbl">Rol</label>
+          <select class="sel" id="s-role"><option>Docente</option><option>Coordinador</option><option>Direcci&oacute;n</option></select>
+        </div>
+        <div class="fg"><label class="lbl">Instituci&oacute;n</label><div class="inst-inline-wrap"><div class="inst-inline-ghost" id="s-inst-ghost" aria-hidden="true"><span id="s-inst-ghost-prefix"></span><span id="s-inst-ghost-suffix"></span></div><input class="inp" id="s-inst" name="setup-institution" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false" placeholder="Escribe o selecciona un colegio" oninput="handleInstitutionInput(this)" onkeydown="handleInstitutionKeydown(event)" onfocus="updateInstitutionInlineHint(this)" onblur="clearInstitutionInlineHint()"></div><datalist id="s-inst-list"></datalist></div>
+      </div>
+      <div class="fr setup-form-stack">
+        <div class="fg"><label class="lbl">Año escolar</label>
+          <select class="sel" id="s-year">
+            <option value="2025-2026">2025-2026</option>
+            <option value="2026-2027">2026-2027</option>
+            <option value="2027-2028">2027-2028</option>
+            <option value="2028-2029">2028-2029</option>
+            <option value="2029-2030">2029-2030</option>
+            <option value="2030-2031">2030-2031</option>
+          </select>
+        </div>
+        <div class="fg"><label class="lbl">Per&iacute;odo</label>
+          <select class="sel" id="s-period"><option>1er Per&iacute;odo</option><option>2do Per&iacute;odo</option><option>3er Per&iacute;odo</option><option>4to Per&iacute;odo</option></select>
+        </div>
+      </div>
+      <div class="mf mf-split">
+        <button class="btn btn-danger btn-lg setup-cancel-btn" type="button" onclick="cancelSetup()">Cancelar</button>
+        <button class="btn btn-outline btn-lg setup-back-btn" type="button" onclick="returnSetupToRegister()">Cerrar sesi&oacute;n</button>
+        <button class="btn btn-primary btn-lg setup-submit-btn" onclick="saveSetup()">Comenzar -></button>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>

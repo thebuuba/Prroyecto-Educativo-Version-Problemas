@@ -1,0 +1,168 @@
+const express = require('express');
+const { withTransaction } = require('../db/pool');
+
+const router = express.Router();
+const VALID_BLOCKS = new Set(['academics', 'assessment', 'planner']);
+
+function badRequest(message) {
+  const error = new Error(message);
+  error.statusCode = 400;
+  return error;
+}
+
+async function ensureWorkspaceContext(client, input = {}) {
+  const email = String(input.email || '').trim().toLowerCase();
+  const schoolName = String(input.schoolName || '').trim();
+  const firebaseUid = String(input.firebaseUid || '').trim() || null;
+  const displayNameInput = String(input.displayName || '').trim();
+  const displayName = displayNameInput || email.split('@')[0] || 'Usuario AulaBase';
+  const phoneInput = String(input.phone || '').trim();
+  const phone = phoneInput || null;
+  const academicYear = String(input.academicYear || '').trim() || null;
+  const timezone = String(input.timezone || '').trim() || 'America/Santo_Domingo';
+  const role = String(input.role || '').trim() || 'teacher';
+
+  if (!email) throw badRequest('El correo es obligatorio.');
+  if (!schoolName) throw badRequest('La institución es obligatoria.');
+
+  const schoolResult = await client.query(
+    `INSERT INTO schools (name, academic_year, timezone)
+     VALUES ($1, $2, $3)
+     ON CONFLICT (name) DO UPDATE
+     SET academic_year = COALESCE(EXCLUDED.academic_year, schools.academic_year),
+         timezone = COALESCE(EXCLUDED.timezone, schools.timezone),
+         updated_at = NOW()
+     RETURNING id, name, academic_year, timezone`,
+    [schoolName, academicYear, timezone]
+  );
+  const school = schoolResult.rows[0];
+
+  const userLookup = firebaseUid
+    ? await client.query(
+        `SELECT id
+         FROM users
+         WHERE firebase_uid = $1 OR email = $2
+         LIMIT 1`,
+        [firebaseUid, email]
+      )
+    : await client.query(
+        `SELECT id
+         FROM users
+         WHERE email = $1
+         LIMIT 1`,
+        [email]
+      );
+
+  let user;
+  if (userLookup.rows[0]?.id) {
+    const updated = await client.query(
+      `UPDATE users
+       SET email = $1,
+           display_name = COALESCE(NULLIF($2, ''), display_name),
+           phone = COALESCE($3, phone),
+           firebase_uid = COALESCE($4, firebase_uid),
+           updated_at = NOW()
+       WHERE id = $5
+       RETURNING id, email, display_name, phone, firebase_uid, status`,
+      [email, displayNameInput, phone, firebaseUid, userLookup.rows[0].id]
+    );
+    user = updated.rows[0];
+  } else {
+    const inserted = await client.query(
+      `INSERT INTO users (email, display_name, phone, firebase_uid)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, email, display_name, phone, firebase_uid, status`,
+      [email, displayName, phone, firebaseUid]
+    );
+    user = inserted.rows[0];
+  }
+
+  await client.query(
+    `INSERT INTO school_memberships (school_id, user_id, role)
+     VALUES ($1, $2, $3)
+     ON CONFLICT (school_id, user_id) DO UPDATE
+     SET role = EXCLUDED.role,
+         status = 'active'`,
+    [school.id, user.id, role]
+  );
+
+  return { user, school };
+}
+
+router.get('/:blockKey', async (req, res, next) => {
+  try {
+    const blockKey = String(req.params?.blockKey || '').trim();
+    if (!VALID_BLOCKS.has(blockKey)) throw badRequest('Bloque de estado inválido.');
+
+    const context = await withTransaction((client) => ensureWorkspaceContext(client, req.query || {}));
+    const result = await withTransaction(async (client) => {
+      const rowResult = await client.query(
+        `SELECT payload, payload_hash, updated_at
+         FROM workspace_state_blocks
+         WHERE school_id = $1
+           AND user_id = $2
+           AND block_key = $3
+         LIMIT 1`,
+        [context.school.id, context.user.id, blockKey]
+      );
+      return rowResult.rows[0] || null;
+    });
+
+    res.json({
+      ok: true,
+      blockKey,
+      payload: result?.payload || null,
+      payloadHash: result?.payload_hash || null,
+      updatedAt: result?.updated_at || null,
+      school: context.school,
+      user: context.user,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/:blockKey', async (req, res, next) => {
+  try {
+    const blockKey = String(req.params?.blockKey || '').trim();
+    if (!VALID_BLOCKS.has(blockKey)) throw badRequest('Bloque de estado inválido.');
+
+    const payload = req.body?.payload;
+    const payloadHash = String(req.body?.payloadHash || '').trim() || null;
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+      throw badRequest('El payload del bloque es obligatorio.');
+    }
+
+    const result = await withTransaction(async (client) => {
+      const context = await ensureWorkspaceContext(client, req.body || {});
+      const rowResult = await client.query(
+        `INSERT INTO workspace_state_blocks (school_id, user_id, block_key, payload, payload_hash)
+         VALUES ($1, $2, $3, $4::jsonb, $5)
+         ON CONFLICT (school_id, user_id, block_key) DO UPDATE
+         SET payload = EXCLUDED.payload,
+             payload_hash = EXCLUDED.payload_hash,
+             updated_at = NOW()
+         RETURNING id, block_key, updated_at`,
+        [context.school.id, context.user.id, blockKey, JSON.stringify(payload), payloadHash]
+      );
+
+      return {
+        school: context.school,
+        user: context.user,
+        stateBlock: rowResult.rows[0],
+      };
+    });
+
+    res.json({
+      ok: true,
+      blockKey,
+      updatedAt: result.stateBlock.updated_at,
+      school: result.school,
+      user: result.user,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+module.exports = router;

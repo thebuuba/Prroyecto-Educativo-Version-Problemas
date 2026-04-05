@@ -1,0 +1,52 @@
+name: Deploy Firebase App
+
+on:
+  push:
+  workflow_dispatch:
+
+concurrency:
+  group: firebase-hosting-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Assemble sources
+        run: ./scripts/assemble-all.sh
+
+      - name: Prepare hosting-live
+        run: ./scripts/prepare-hosting-live.sh
+
+      - name: Deploy Hosting (production on main/master, preview on others)
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${FIREBASE_TOKEN:-}" ]; then
+            echo "Falta el secret FIREBASE_TOKEN en GitHub Actions."
+            exit 1
+          fi
+
+          BRANCH="${GITHUB_REF_NAME}"
+          if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
+            echo "Deploy a produccion para rama: $BRANCH"
+            firebase deploy --only hosting --project proyectivoeducativo --token "$FIREBASE_TOKEN"
+          else
+            SAFE_BRANCH="$(echo "$BRANCH" | tr '/._' '-' | tr -cd '[:alnum:]-' | cut -c1-40)"
+            CHANNEL_ID="branch-${SAFE_BRANCH}"
+            echo "Deploy preview para rama: $BRANCH (canal: $CHANNEL_ID)"
+            firebase hosting:channel:deploy "$CHANNEL_ID" --expires 7d --project proyectivoeducativo --token "$FIREBASE_TOKEN"
+          fi

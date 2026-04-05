@@ -1,0 +1,44 @@
+/* ─────────────────────────────────────────
+   PILLS
+   Etiquetas compactas reutilizables para estados, categorías y filtros.
+───────────────────────────────────────── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  border: 1px solid rgba(63, 126, 201, .16);
+}
+
+.p-green {
+  background: rgba(118, 179, 148, .15);
+  color: #2f7252;
+}
+
+.p-amber {
+  background: rgba(233, 185, 104, .18);
+  color: #976927;
+}
+
+.p-rose {
+  background: rgba(217, 138, 151, .14);
+  color: #a55263;
+}
+
+.p-aqua {
+  background: rgba(91, 149, 214, .14);
+  color: #376aa6;
+}
+
+.p-violet {
+  background: rgba(145, 139, 216, .14);
+  color: #615ca8;
+}
+
+.p-gray {
+  background: var(--off2);
+  color: var(--mute2);
+}

@@ -1,0 +1,58 @@
+<!-- Modal para vincular instrumentos a actividades ya existentes. -->
+<div class="ov" id="m-link-inst">
+  <div class="modal">
+    <div class="mh"><div class="mt" id="li-title">Vincular instrumento a actividad</div><button class="mx" onclick="closeM('m-link-inst')">&times;</button></div>
+    <div class="mb">
+      <div id="li-act" style="font-size:13px;color:var(--mute);margin-bottom:12px;"></div>
+      <div class="fg">
+        <label class="lbl" id="li-select-label">Seleccionar instrumento</label>
+        <select class="sel" id="li-inst"></select>
+      </div>
+      <div class="mf" style="justify-content:space-between;">
+        <button class="btn btn-outline" id="li-create-btn" onclick="openCreateInstrumentTypePicker(window._linkActId)">+ Crear instrumento</button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline" onclick="closeM('m-link-inst')">Cancelar</button>
+          <button class="btn btn-primary" id="li-confirm-btn" onclick="confirmLinkInstrument()">Vincular instrumento</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Selector rápido de tipo de instrumento para crear uno nuevo desde cero. -->
+<div class="ov" id="m-inst-type">
+  <div class="modal">
+    <div class="mh"><div class="mt">Nuevo instrumento básico</div><button class="mx" onclick="closeM('m-inst-type')">&times;</button></div>
+    <div class="mb">
+      <div style="font-size:12px;color:var(--mute);margin-bottom:10px;">Selecciona un tipo para crear el instrumento:</div>
+      <div id="inst-type-grid" class="tpl-grid"></div>
+      <div class="mf">
+        <button class="btn btn-outline" onclick="closeM('m-inst-type')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de planificación vinculada al instrumento seleccionado. -->
+<div class="ov" id="m-lesson-plan-section">
+  <div class="modal modal-xl">
+    <div class="mh"><div class="mt" id="lesson-plan-section-modal-title">Planificación</div><button class="mx" onclick="closeM('m-lesson-plan-section')">&times;</button></div>
+    <div class="mb" id="lesson-plan-section-modal-body"></div>
+  </div>
+</div>
+
+<!-- Editor completo de instrumentos con configuración, exportación y aplicación. -->
+<div class="ov" id="m-inst-editor">
+  <div class="modal modal-xl">
+    <div class="mh"><div class="mt">Editor de Instrumento</div><button class="mx" onclick="closeM('m-inst-editor')">&times;</button></div>
+    <div class="mb" id="inst-editor-body"></div>
+  </div>
+</div>
+
+<!-- Modal para aplicar un instrumento a estudiantes o actividades. -->
+<div class="ov" id="m-apply-inst">
+  <div class="modal modal-xl">
+    <div class="mh"><div class="mt">Aplicar Instrumento</div><button class="mx" onclick="closeM('m-apply-inst')">&times;</button></div>
+    <div class="mb" id="apply-inst-body"></div>
+  </div>
+</div>

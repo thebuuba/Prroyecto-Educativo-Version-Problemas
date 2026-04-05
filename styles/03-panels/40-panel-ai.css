@@ -1,0 +1,261 @@
+/* ─────────────────────────────────────────
+   AI PANEL
+   Estilos del asistente de IA: cabecera, chat, mensajes y panel lateral.
+───────────────────────────────────────── */
+.ai-shell {
+  display: grid;
+  gap: 14px;
+}
+
+.ai-hero-card,
+.ai-chat-card,
+.ai-side-card {
+  overflow: hidden;
+}
+
+.ai-hero-simple {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ai-hero-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.ai-hero-title-sm {
+  font-size: 24px;
+  font-weight: 850;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.ai-hero-sub {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--mute);
+  max-width: 56ch;
+}
+
+.ai-status-pill {
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+}
+
+.ai-status-pill.is-online {
+  color: #1b6b47;
+  background: #e9f8ef;
+  border-color: #b8e8cb;
+}
+
+.ai-status-pill.is-local {
+  color: #596f88;
+  background: #edf2f8;
+  border-color: #ccd9e8;
+}
+
+/* Distribución principal: conversación a la izquierda y utilidades a la derecha. */
+.ai-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(260px, .7fr);
+  gap: 14px;
+}
+
+.ai-chat-body,
+.ai-side-body {
+  display: grid;
+  gap: 12px;
+}
+
+/* Caja de mensajes desplazable donde vive el historial del chat. */
+.ai-messages {
+  display: grid;
+  gap: 12px;
+  min-height: 330px;
+  max-height: 520px;
+  overflow-y: auto;
+  padding: 8px;
+  border-radius: 14px;
+  border: 1px solid rgba(188, 204, 223, .75);
+  background: #fbfdff;
+}
+
+.ai-msg {
+  max-width: min(720px, 92%);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 6px;
+  border: 1px solid rgba(188, 204, 223, .85);
+}
+
+.ai-msg-assistant {
+  background: #f8fbfe;
+  justify-self: start;
+}
+
+.ai-msg-user {
+  background: #eaf3ff;
+  border-color: rgba(106, 166, 241, .32);
+  justify-self: end;
+}
+
+.ai-msg-meta {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--mute2);
+}
+
+.ai-msg-body {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.ai-empty-state {
+  border: 1px dashed rgba(188, 204, 223, .9);
+  border-radius: 14px;
+  padding: 18px;
+  display: grid;
+  gap: 8px;
+  background: #f8fbfe;
+}
+
+.ai-empty-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.ai-empty-copy {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--mute);
+}
+
+.ai-composer {
+  display: grid;
+  gap: 12px;
+}
+
+.ai-input {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.ai-composer-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.ai-side-body .btn {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+body.theme-dark .ai-empty-state,
+body.theme-dark .ai-msg-assistant {
+  background: #132033;
+  border-color: #243652;
+}
+
+body.theme-dark .ai-msg-user {
+  background: #16304d;
+  border-color: #315883;
+}
+
+body.theme-dark .ai-hero-title-sm,
+body.theme-dark .ai-msg-body,
+body.theme-dark .ai-empty-title {
+  color: var(--ink);
+}
+
+body.theme-dark .ai-hero-sub,
+body.theme-dark .ai-empty-copy {
+  color: var(--mute);
+}
+
+body.theme-dark .ai-msg-meta {
+  color: var(--mute2);
+}
+
+body.theme-dark .ai-messages {
+  border-color: #243652;
+  background: #0f1a2b;
+}
+
+body.theme-dark .ai-status-pill.is-online {
+  color: #9ee5bf;
+  background: rgba(54, 119, 84, .22);
+  border-color: rgba(120, 196, 152, .45);
+}
+
+body.theme-dark .ai-status-pill.is-local {
+  color: #c4d3e7;
+  background: rgba(98, 122, 150, .24);
+  border-color: rgba(140, 163, 189, .38);
+}
+
+@media (max-width: 1180px) {
+
+  .dashboard-stats,
+  .dashboard-courses,
+  .dashboard-quick-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  #view {
+    padding: 16px;
+  }
+
+  .topbar-brand-word {
+    font-size: 24px;
+  }
+
+  .topbar-brand-mark {
+    width: 30px;
+    height: 30px;
+  }
+
+  .dashboard-hero .cp {
+    flex-wrap: wrap;
+  }
+
+  .dashboard-home-grid,
+  .ai-layout,
+  .dashboard-stats,
+  .dashboard-courses,
+  .dashboard-quick-grid,
+  .g4 {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-home-grid-bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-focus-action {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .dashboard-course-search {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dashboard-course-search .btn {
+    width: 100%;
+  }
+}

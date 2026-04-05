@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Cabecera base del runtime: carga estilos globales, fuentes, boot fallback y arranque del modal de auth. -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AulaBase</title>
+<link rel="icon" type="image/svg+xml" href="/assets/logo-aulabase.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css?v=20260331k">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#f7f9fc",
+                        "on-error-container": "#782232",
+                        "surface-container-highest": "#d9e4ec",
+                        "inverse-surface": "#0b0f11",
+                        "secondary-fixed-dim": "#c2d4ff",
+                        "surface-variant": "#d9e4ec",
+                        "secondary-dim": "#0050ab",
+                        "surface-dim": "#cfdce5",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#f9f8ff",
+                        "outline": "#717c84",
+                        "on-primary-fixed-variant": "#575976",
+                        "tertiary-dim": "#48536b",
+                        "on-background": "#29343a",
+                        "on-secondary": "#f9f8ff",
+                        "on-primary-container": "#4d506c",
+                        "surface-container-high": "#e1e9f0",
+                        "primary-container": "#dfe0ff",
+                        "surface-bright": "#f7f9fc",
+                        "on-secondary-fixed-variant": "#0058bb",
+                        "on-primary-fixed": "#3b3d59",
+                        "tertiary-fixed-dim": "#c7d1ee",
+                        "surface-container-low": "#f0f4f8",
+                        "tertiary-fixed": "#d5dffd",
+                        "surface-container": "#e8eff4",
+                        "on-primary": "#f9f6ff",
+                        "primary": "#5a5c79",
+                        "inverse-on-surface": "#9a9da0",
+                        "secondary-fixed": "#d8e2ff",
+                        "on-surface": "#29343a",
+                        "primary-dim": "#4e506d",
+                        "on-tertiary-container": "#455068",
+                        "error-dim": "#4f0116",
+                        "error": "#9e3f4e",
+                        "secondary": "#005bc2",
+                        "primary-fixed-dim": "#d1d2f4",
+                        "on-tertiary-fixed-variant": "#4f5a72",
+                        "tertiary": "#545f78",
+                        "on-surface-variant": "#566168",
+                        "primary-fixed": "#dfe0ff",
+                        "on-tertiary-fixed": "#333d55",
+                        "background": "#f7f9fc",
+                        "error-container": "#ff8b9a",
+                        "outline-variant": "#a8b3bb",
+                        "tertiary-container": "#d5dffd",
+                        "on-secondary-fixed": "#003d85",
+                        "surface-tint": "#5a5c79",
+                        "secondary-container": "#d8e2ff",
+                        "on-error": "#fff7f7",
+                        "on-secondary-container": "#004ea8",
+                        "inverse-primary": "#d9dafd"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<script>
+  (function initBootFallback() {
+    const BOOT_TIMEOUT_MS = 3500;
+
+    function hideBootSplash(reason) {
+      const splash = document.getElementById('app-boot');
+      if (!splash || splash.dataset.bootHidden === '1') return;
+      splash.dataset.bootHidden = '1';
+      splash.classList.add('is-hidden');
+      window.setTimeout(() => splash.remove(), 280);
+      if (reason && window.console && typeof window.console.warn === 'function') {
+        window.console.warn('[AulaBase][boot] splash cerrado por fallback:', reason);
+      }
+    }
+
+    if (window.__aulaBaseBootFallbackInstalled) return;
+    window.__aulaBaseBootFallbackInstalled = true;
+
+    window.addEventListener('error', (event) => {
+      const message = event?.error?.message || event?.message || 'error no controlado';
+      hideBootSplash(message);
+    });
+
+    window.addEventListener('unhandledrejection', (event) => {
+      const message = event?.reason?.message || event?.reason || 'rechazo no controlado';
+      hideBootSplash(message);
+    });
+
+    window.setTimeout(() => hideBootSplash('timeout inicial'), BOOT_TIMEOUT_MS);
+  })();
+</script>
+<script>
+  (function initDefaultAuthFallback() {
+    const SESSION_KEY = 'eg_v3:session';
+    let hasStoredSession = false;
+
+    try {
+      hasStoredSession = !!(window.sessionStorage.getItem(SESSION_KEY) || window.localStorage.getItem(SESSION_KEY));
+    } catch (_) {}
+
+    if (hasStoredSession) return;
+
+    const openAuth = () => {
+      const body = document.body;
+      const modal = document.getElementById('m-auth');
+      if (!body || !modal || modal.classList.contains('open')) return;
+      if (typeof window.openM === 'function') {
+        window.openM('m-auth');
+        return;
+      }
+      body.classList.add('auth-screen-open');
+      modal.classList.add('open');
+    };
+
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', openAuth, { once: true });
+    } else {
+      openAuth();
+    }
+  })();
+</script>
+</head>
+<body>
+<div id="app-boot" class="app-boot" aria-live="polite" aria-busy="true">
+  <div class="app-boot-inner">
+    <img class="app-boot-logo" src="/assets/logo-aulabase.svg" alt="AulaBase" width="72" height="72" decoding="async" fetchpriority="high">
+    <div class="app-boot-brand">AulaBase</div>
+    <div class="app-boot-loader" aria-hidden="true"></div>
+  </div>
+</div>

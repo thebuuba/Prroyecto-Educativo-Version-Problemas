@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="assignments" viewBox="0 0 24 24">
+    <path
+      d="M9 4.75h6m-8.25 3h10.5A1.75 1.75 0 0 1 19 9.5v8.75A1.75 1.75 0 0 1 17.25 20h-10.5A1.75 1.75 0 0 1 5 18.25V9.5A1.75 1.75 0 0 1 6.75 7.75Zm1.75 4.25h.01m0 3h.01M11 12h4.5M11 15h4.5"
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.9"
+    />
+  </symbol>
+</svg>

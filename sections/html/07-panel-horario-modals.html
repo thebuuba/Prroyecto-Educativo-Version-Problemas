@@ -1,0 +1,61 @@
+<!-- Modal base del horario docente: plantilla inicial de jornada y segmentos. -->
+<div class="ov" id="m-schedule-base">
+  <div class="modal">
+    <div class="mh"><div class="mt">Usar plantilla base de horario</div><button class="mx" onclick="closeM('m-schedule-base')">&times;</button></div>
+    <div class="mb">
+      <div class="fr">
+        <div class="fg"><label class="lbl">Hora de inicio</label><input class="inp" id="schedule-base-start" type="time" value="07:30"></div>
+        <div class="fg"><label class="lbl">Hora de fin</label><input class="inp" id="schedule-base-end" type="time" value="11:55"></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label class="lbl">Duración inicial por segmento (minutos)</label><input class="inp" id="schedule-base-duration" type="number" min="5" step="5" value="40"></div>
+      </div>
+      <label class="teacher-schedule-modal-check" for="schedule-base-specials">
+        <input id="schedule-base-specials" type="checkbox" checked>
+        <span>Luego ajustaré manualmente recesos, almuerzo y eventos institucionales.</span>
+      </label>
+      <label class="teacher-schedule-modal-check" for="schedule-base-merge-remainder">
+        <input id="schedule-base-merge-remainder" type="checkbox" checked>
+        <span>Si sobran minutos al final de la jornada, sumarlos al último segmento en vez de crear una franja corta aparte.</span>
+      </label>
+      <div class="mf">
+        <button class="btn btn-outline" onclick="closeM('m-schedule-base')">Cancelar</button>
+        <button class="btn btn-primary" onclick="generateTeacherScheduleBase()">Crear plantilla</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Asistente paso a paso para construir el horario docente. -->
+<div class="ov" id="m-schedule-wizard">
+  <div class="modal">
+    <div class="mh"><div class="mt">Crear horario paso a paso</div><button class="mx" onclick="closeM('m-schedule-wizard')">&times;</button></div>
+    <div class="mb">
+      <div id="schedule-wizard-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Editor puntual de una franja o bloque del horario. -->
+<div class="ov" id="m-schedule-cell">
+  <div class="modal modal-xl">
+    <div class="mh"><div class="mt" id="schedule-cell-title">Editar bloque</div><button class="mx" onclick="closeM('m-schedule-cell')">&times;</button></div>
+    <div class="mb" id="schedule-cell-body"></div>
+  </div>
+</div>
+
+<!-- Copia una franja de horario hacia otros días del calendario. -->
+<div class="ov" id="m-schedule-row-copy">
+  <div class="modal">
+    <div class="mh"><div class="mt" id="schedule-row-copy-title">Copiar a otros días</div><button class="mx" onclick="closeM('m-schedule-row-copy')">&times;</button></div>
+    <div class="mb" id="schedule-row-copy-body"></div>
+  </div>
+</div>
+
+<!-- Ajusta manualmente la duración o los límites de una franja ya creada. -->
+<div class="ov" id="m-schedule-row-adjust">
+  <div class="modal">
+    <div class="mh"><div class="mt" id="schedule-row-adjust-title">Ajustar franja horaria</div><button class="mx" onclick="closeM('m-schedule-row-adjust')">&times;</button></div>
+    <div class="mb" id="schedule-row-adjust-body"></div>
+  </div>
+</div>

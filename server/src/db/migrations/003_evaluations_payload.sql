@@ -1,0 +1,2 @@
+ALTER TABLE IF EXISTS evaluations
+  ADD COLUMN IF NOT EXISTS payload JSONB NOT NULL DEFAULT '{}'::jsonb;

@@ -1,0 +1,20 @@
+{
+  "name": "edugest-legacy-js",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "prepare:hosting-live": "sh ../scripts/prepare-hosting-live.sh",
+    "deploy:hosting-live": "npm run prepare:hosting-live && firebase deploy --only hosting --project proyectivoeducativo --config ../firebase.json"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "eslint": "^9.39.4",
+    "globals": "^17.4.0",
+    "vite": "^8.0.1"
+  }
+}

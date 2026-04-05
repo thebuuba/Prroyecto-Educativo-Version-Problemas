@@ -33,20 +33,29 @@ jobs:
       - name: Deploy Hosting (production on main/master, preview on others)
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: |
           set -euo pipefail
-          if [ -z "${FIREBASE_TOKEN:-}" ]; then
-            echo "Falta el secret FIREBASE_TOKEN en GitHub Actions."
-            exit 1
+
+          AUTH_ARGS=()
+          if [ -n "${FIREBASE_TOKEN:-}" ]; then
+            AUTH_ARGS+=(--token "$FIREBASE_TOKEN")
+          elif [ -n "${FIREBASE_SERVICE_ACCOUNT:-}" ]; then
+            SA_PATH="${RUNNER_TEMP}/firebase-service-account.json"
+            printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$SA_PATH"
+            export GOOGLE_APPLICATION_CREDENTIALS="$SA_PATH"
+          else
+            echo "::warning::No se configuró FIREBASE_TOKEN ni FIREBASE_SERVICE_ACCOUNT en GitHub Actions. Se omite el deploy."
+            exit 0
           fi
 
           BRANCH="${GITHUB_REF_NAME}"
           if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
             echo "Deploy a produccion para rama: $BRANCH"
-            firebase deploy --only hosting --project proyectivoeducativo --token "$FIREBASE_TOKEN"
+            firebase deploy --only hosting --project proyectivoeducativo "${AUTH_ARGS[@]}"
           else
             SAFE_BRANCH="$(echo "$BRANCH" | tr '/._' '-' | tr -cd '[:alnum:]-' | cut -c1-40)"
             CHANNEL_ID="branch-${SAFE_BRANCH}"
             echo "Deploy preview para rama: $BRANCH (canal: $CHANNEL_ID)"
-            firebase hosting:channel:deploy "$CHANNEL_ID" --expires 7d --project proyectivoeducativo --token "$FIREBASE_TOKEN"
+            firebase hosting:channel:deploy "$CHANNEL_ID" --expires 7d --project proyectivoeducativo "${AUTH_ARGS[@]}"
           fi

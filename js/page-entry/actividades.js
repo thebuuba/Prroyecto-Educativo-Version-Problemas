@@ -11,7 +11,14 @@ window.__AULABASE_LOADED_BUNDLES = window.__AULABASE_LOADED_BUNDLES || { core: f
     { key: 'shell', src: '/js/bundles/app-shell.js?v=20260405i' }
   ];
   function loadNextBundle() {
-    if (!bundleQueue.length) return;
+    if (!bundleQueue.length) {
+      // Trigger modular entry point after bundles are ready
+      var rootScript = document.createElement('script');
+      rootScript.src = '/js/page-entry/root.js';
+      rootScript.type = 'module';
+      document.body.appendChild(rootScript);
+      return;
+    }
     var nextBundle = bundleQueue.shift();
     var script = document.createElement('script');
     script.src = nextBundle.src;

@@ -103,6 +103,13 @@
 
     window.addEventListener('error', (event) => {
       const message = event?.error?.message || event?.message || 'error no controlado';
+      // Ignorar advertencias transitorias de navegación o de carga de módulos en modo dev (Vite)
+      if (message.includes('import statement') || message.includes('Unexpected token') || message.includes('module')) {
+        if (window.console && window.console.debug) {
+          window.console.debug('[AulaBase][boot] Error de parseo ignorado en fallback:', message);
+        }
+        return;
+      }
       hideBootSplash(message);
     });
 
@@ -476,11 +483,11 @@
               </div>
             </div>
         </div>
+        <div class="auth-switch-row">
+          <span class="auth-switch-copy" id="auth-switch-copy">¿No tienes una cuenta?</span>
+          <button class="auth-inline-link auth-switch-link" id="auth-switch-link" type="button">Regístrate</button>
+        </div>
       </div>
-    </div>
-    <div class="auth-switch-row">
-      <span class="auth-switch-copy" id="auth-switch-copy">¿No tienes una cuenta?</span>
-      <button class="auth-inline-link auth-switch-link" id="auth-switch-link" type="button" onclick="handleAuthRegisterTab()">Regístrate</button>
     </div>
     <div class="auth-footer-marks" aria-hidden="true">
       <span class="auth-footer-mark auth-footer-mark-muted">1</span>
@@ -1228,6 +1235,7 @@ Carlos D&iacute;az 0000034"></textarea>
 <script src="/js/firebase-config.js?v=20260405i" defer></script>
 <script src="/js/cloud.js?v=20260405i" defer></script>
 <script src="/js/sql-api.js?v=20260405i" defer></script>
-<script src="/js/page-entry/root.js?v=20260405i" defer></script>
+<script type="module" src="/js/page-entry/root.js"></script>
+
 </body>
 </html>

@@ -108,6 +108,7 @@
       hideBootSplash(message);
     });
 
+    window.hideBootSplash = hideBootSplash;
     window.setTimeout(() => hideBootSplash('timeout inicial'), BOOT_TIMEOUT_MS);
   })();
 </script>

@@ -7,11 +7,17 @@ window.__AULABASE_LOADED_BUNDLES = window.__AULABASE_LOADED_BUNDLES || { core: f
   window.__AULABASE_SPLIT_BOOT_REQUESTED = true;
   var bundleQueue = [
     { key: 'core', src: '/js/bundles/app-core.js?v=20260405i' },
-    { key: 'planificaciones', src: '/js/bundles/panel-planificaciones.js?v=20260405i' },
     { key: 'shell', src: '/js/bundles/app-shell.js?v=20260405i' }
   ];
   function loadNextBundle() {
-    if (!bundleQueue.length) return;
+    if (!bundleQueue.length) {
+      // Trigger modular entry point after bundles are ready
+      var rootScript = document.createElement('script');
+      rootScript.src = '/js/page-entry/root.js';
+      rootScript.type = 'module';
+      document.body.appendChild(rootScript);
+      return;
+    }
     var nextBundle = bundleQueue.shift();
     var script = document.createElement('script');
     script.src = nextBundle.src;

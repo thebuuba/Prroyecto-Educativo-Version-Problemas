@@ -4,7 +4,8 @@
  * Handles Rubrics (Analytical/Holistic), Checklists, and Estimative Scales.
  */
 
-import { S, persist } from '../core/state.js';
+import { S } from '../core/state.js';
+import { persist } from '../core/hydration.js';
 import { 
   uid, go, currentPage, 
   closeM, openM, toast,

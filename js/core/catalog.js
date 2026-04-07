@@ -226,3 +226,45 @@ export const DOMINICAN_SECONDARY_SPECIFIC_COMPETENCY_FALLBACKS = {
     'Competencia de desarrollo personal y espiritual': ['Fortalece su autonomía, autoestima y crecimiento personal a través de experiencias del área.'],
   },
 };
+
+/**
+ * Catálogo de asignaturas oficiales por área (simplificado para soporte modular).
+ */
+export const OFFICIAL_CURRICULUM_SUBJECT_CATALOG = {
+  'Lengua Española': [
+    'Lengua Española',
+    'Comprensión Oral',
+    'Producción Oral',
+    'Comprensión Escrita',
+    'Producción Escrita'
+  ],
+  'Matemática': [
+    'Matemática',
+    'Razonamiento Matemático',
+    'Resolución de Problemas'
+  ],
+  'Ciencias Sociales': [
+    'Ciencias Sociales',
+    'Historia y Geografía',
+    'Educación Ciudadana'
+  ],
+  'Ciencias de la Naturaleza': [
+    'Ciencias de la Naturaleza',
+    'Biología',
+    'Física',
+    'Química'
+  ],
+  'Lenguas Extranjeras': [
+    'Inglés',
+    'Francés'
+  ],
+  'Educación Física': [
+    'Educación Física'
+  ],
+  'Educación Artística': [
+    'Educación Artística'
+  ],
+  'Formación Integral Humana y Religiosa': [
+    'Formación Integral Humana y Religiosa'
+  ]
+};

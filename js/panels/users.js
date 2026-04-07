@@ -3,7 +3,8 @@
  * Modernized version of the coordinator/co-teacher management system.
  */
 
-import { S, persist } from '../core/state.js';
+import { S } from '../core/state.js';
+import { persist } from '../core/hydration.js';
 import { 
   go, escapeHtml, toast,
   openM

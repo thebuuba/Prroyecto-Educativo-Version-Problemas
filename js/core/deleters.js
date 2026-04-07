@@ -3,12 +3,13 @@
  * Centralized logic for deleting academic entities.
  */
 
-import { S, persist } from './state.js';
+import { S } from './state.js';
+import { persist } from './hydration.js';
+import { debugSessionFlow } from './utils.js';
 import { 
   go, toast, 
   getGroups, sortCourses, getScopedSections, getRosterSections,
-  ensurePeriodBuckets,
-  debugSessionFlow
+  ensurePeriodBuckets
 } from './domain-utils.js';
 
 /**

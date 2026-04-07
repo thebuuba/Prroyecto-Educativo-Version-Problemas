@@ -1,6 +1,8 @@
 import { S } from './state.js';
 import { persist } from './hydration.js';
 import { toast } from './ui.js';
+import { applyEducationSectionTheme } from './theme-logic.js';
+import { pageTitleWithContext, topbarContext, injectPanelContextControls } from './ui.js';
 
 export const SIDEBAR_INTERACTION = { closeTimer: null, suppressAutoCloseUntil: 0 };
 export const SIDEBAR_PERF = { rafId: null };
@@ -231,4 +233,27 @@ export function openSettingsPanel() {
   } else {
     console.warn('[EduGest] Router "go" not found on window.');
   }
+}
+
+/**
+ * Refresca el encabezado superior y sus contadores visibles.
+ */
+export function refreshTop() {
+  applyEducationSectionTheme();
+  const PAGE = window.EduGestConfig?.PAGE || {}; // Fallback for legacy access
+  const currentPage = S.currentPage || 'dashboard';
+  const cfg = PAGE[currentPage];
+  if (!cfg) return;
+
+  const topTitle = document.getElementById('tbt');
+  const topSubtitle = document.getElementById('tbs');
+  const topContext = document.getElementById('tb-context');
+  const topActions = document.getElementById('tb-actions');
+  const view = document.getElementById('view');
+
+  if (topTitle) topTitle.textContent = pageTitleWithContext(currentPage, cfg.t);
+  if (topSubtitle) topSubtitle.textContent = topbarContext();
+  if (topContext) topContext.innerHTML = '';
+  if (topActions) topActions.innerHTML = '';
+  if (view) injectPanelContextControls(view);
 }

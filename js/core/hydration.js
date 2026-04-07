@@ -339,6 +339,30 @@ export function resetToSignedOutState() {
   debugSessionFlow('resetToSignedOutState', {});
 }
 
+/**
+ * Cierra la sesión activa del usuario, limpia el estado y persiste los cambios.
+ */
+export async function logoutAuth() {
+  try {
+    stopCloudStateSync();
+    if (typeof window.EduGestCloud?.logout === 'function') {
+      await window.EduGestCloud.logout();
+    }
+  } catch (error) {
+    if (typeof window.EduGestCloud?.friendlyError === 'function') {
+      console.error(window.EduGestCloud.friendlyError(error));
+    }
+  }
+
+  replaceState();
+  clearSessionWindow();
+  persist({ immediate: true });
+  
+  if (typeof window.resetSidebarUser === 'function') {
+    window.resetSidebarUser();
+  }
+}
+
 // --- Hydration & Initialization ---
 
 export async function hydrate(options = {}) {

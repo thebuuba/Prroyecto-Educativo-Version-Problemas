@@ -4,7 +4,8 @@
  * Features: Timeline view, MINERD Official Events, and Journey Wizard.
  */
 
-import { S, persist } from '../core/state.js';
+import { S } from '../core/state.js';
+import { persist } from '../core/hydration.js';
 import { 
   uid, go, currentPage, 
   attendanceMonthStart, 

@@ -152,20 +152,40 @@ export function ensurePanelBundleLoaded(pageKey, RENDERS) {
   // Check if it's a modern ES module (migrated) or a legacy script bundle
   const isModule = bundleUrl.includes('/js/panels/') || bundleUrl.includes('/js/core/');
   
+const PANEL_MODULES = import.meta.glob('/js/panels/*.js');
+
   if (isModule) {
-    pendingPanelBundleLoads[bundleKey] = import(bundleUrl)
-      .then((mod) => {
-        loadedPanelBundles[bundleKey] = true;
-        delete pendingPanelBundleLoads[bundleKey];
-        // If the module has an init function, call it
-        if (typeof mod.init === 'function') mod.init();
-        return true;
-      })
-      .catch((err) => {
-        delete pendingPanelBundleLoads[bundleKey];
-        console.error(`[EduGest][routing] Error loading module ${bundleKey}:`, err);
-        throw err;
-      });
+    const globKey = bundleUrl.split('?')[0]; // Clean version for glob matching
+    const importFn = PANEL_MODULES[globKey];
+
+    if (importFn) {
+      pendingPanelBundleLoads[bundleKey] = importFn()
+        .then((mod) => {
+          loadedPanelBundles[bundleKey] = true;
+          delete pendingPanelBundleLoads[bundleKey];
+          if (typeof mod.init === 'function') mod.init();
+          return true;
+        })
+        .catch((err) => {
+          delete pendingPanelBundleLoads[bundleKey];
+          console.error(`[EduGest][routing] Error loading module ${bundleKey}:`, err);
+          throw err;
+        });
+    } else {
+      // Fallback for modules not in /js/panels/ or if glob fails
+      pendingPanelBundleLoads[bundleKey] = import(/* @vite-ignore */ bundleUrl)
+        .then((mod) => {
+          loadedPanelBundles[bundleKey] = true;
+          delete pendingPanelBundleLoads[bundleKey];
+          if (typeof mod.init === 'function') mod.init();
+          return true;
+        })
+        .catch((err) => {
+          delete pendingPanelBundleLoads[bundleKey];
+          console.error(`[EduGest][routing] Error loading module ${bundleKey} (fallback):`, err);
+          throw err;
+        });
+    }
   } else {
     pendingPanelBundleLoads[bundleKey] = new Promise((resolve, reject) => {
       const script = document.createElement('script');

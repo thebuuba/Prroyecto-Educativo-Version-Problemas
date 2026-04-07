@@ -8,6 +8,29 @@ export const AUTH_BOOT_TIMEOUT = Symbol('AUTH_BOOT_TIMEOUT');
 /** Clave para datos de sesión efímeros. */
 export const SESSION_STORAGE_KEY = 'eg_v3:session';
 
+/** Bloques académicos. */
+export const BLOCKS = ['B1', 'B2', 'B3', 'B4'];
+
+/** Periodos académicos por defecto. */
+export const DEFAULT_PERIODS = [
+  { id: 'P1', name: 'Periodo 1', order: 1 },
+  { id: 'P2', name: 'Periodo 2', order: 2 },
+  { id: 'P3', name: 'Periodo 3', order: 3 },
+  { id: 'P4', name: 'Periodo 4', order: 4 },
+];
+
+/** Calendario académico por defecto. */
+export const DEFAULT_ACADEMIC_CALENDAR = {
+  country: 'DO',
+  activeMonths: [8, 9, 10, 11, 12, 1, 2, 3, 4, 5],
+  periods: [
+    { id: 'P1', name: 'Periodo 1', order: 1, months: [8, 9, 10] },
+    { id: 'P2', name: 'Periodo 2', order: 2, months: [11, 12, 1] },
+    { id: 'P3', name: 'Periodo 3', order: 3, months: [2, 3] },
+    { id: 'P4', name: 'Periodo 4', order: 4, months: [4, 5] },
+  ],
+};
+
 /** Clave para el estado del panel actual. */
 export const SESSION_PANEL_STATE_KEY = 'eg_v3:panel';
 
@@ -44,15 +67,7 @@ export const REGISTER_RATE_LIMIT = {
   blockMs: 15 * 60 * 1000,
 };
 export const TERMS_VERSION = '2026-03-24';
-/** Periodos académicos por defecto. */
-export const DEFAULT_PERIODS = [
-  { id: 'P1', name: 'Periodo 1', order: 1 },
-  { id: 'P2', name: 'Periodo 2', order: 2 },
-  { id: 'P3', name: 'Periodo 3', order: 3 },
-  { id: 'P4', name: 'Periodo 4', order: 4 },
-];
-
-/** Lista de sugerencias para nombres de centros educativos. */
+/** Centro educativo por defecto. */
 export const DEFAULT_SCHOOLS = [
   'Colegio Catolico Cardenal Beras',
   'Jorge Ruben Bonilla Castelle',
@@ -60,9 +75,6 @@ export const DEFAULT_SCHOOLS = [
   'Cristino Pitta',
   'La Hoja',
 ];
-
-/** Bloques o Meses de calificación. */
-export const BLOCKS = ['B1', 'B2', 'B3', 'B4'];
 
 /** Modo de visualización de actividades por defecto. */
 export const ACT_VIEW_MODE_DEFAULT = 'blocks';

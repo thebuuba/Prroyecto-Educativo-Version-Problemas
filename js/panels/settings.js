@@ -3,7 +3,8 @@
  * Modernized version of the teacher profile and app configuration.
  */
 
-import { S, persist } from '../core/state.js';
+import { S } from '../core/state.js';
+import { persist } from '../core/hydration.js';
 import { periodName, logoutAuth } from '../core/domain-utils.js';
 
 /**

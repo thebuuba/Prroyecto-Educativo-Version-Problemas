@@ -4,7 +4,8 @@
  * Handles the "Living Interface" interactions.
  */
 
-import { S, persist } from './state.js';
+import { S } from './state.js';
+import { persist } from './hydration.js';
 import { 
   initials,
   periodName,

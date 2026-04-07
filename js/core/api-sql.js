@@ -1,4 +1,10 @@
+import { S } from './state.js';
+import { readBrowserSession } from './hydration.js';
+import { mapActivityToSqlPayload } from './api-mappings.js';
+import { normTxt } from './utils.js';
+
 const DEFAULT_BASE_URL = 'http://127.0.0.1:4000';
+const SQL_ACADEMIC_CONTEXT_CACHE = { key: '', data: null };
 
 // Obtiene get base url.
 export function getBaseUrl() {
@@ -251,4 +257,237 @@ export async function syncStateBlock(blockKey, context = {}, payload = {}, paylo
       payloadHash: String(payloadHash || '').trim(),
     }),
   });
+}
+
+/**
+ * Normaliza el nombre de una escuela para comparaciones seguras.
+ */
+export function normalizeSchoolName(name) {
+  return normTxt(name);
+}
+
+/**
+ * Obtiene el contexto de estado para la API de SQL.
+ */
+export function getSqlStateContext() {
+  const localUser = readBrowserSession();
+  const authUser = Array.isArray(S.authUsers) ? S.authUsers.find((user) => user.id === S.sessionUserId) : null;
+  const email = String(S.profile?.email || localUser?.email || authUser?.email || '').trim().toLowerCase();
+  const schoolName = normalizeSchoolName(S.profile?.inst || '');
+  if (!email || !schoolName) return null;
+  return {
+    email,
+    schoolName,
+    firebaseUid: S.sessionUserId || '',
+    displayName: String(S.profile?.name || S.sessionUserName || localUser?.name || '').trim(),
+    phone: String(S.profile?.phone || '').trim(),
+    academicYear: String(S.profile?.year || S.schoolYear?.name || '').trim(),
+    timezone: String(S.profile?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Santo_Domingo').trim(),
+    role: String(S.profile?.role || 'Docente').trim(),
+  };
+}
+
+/**
+ * Comprueba si un ID tiene formato de UUID (típico de SQL).
+ */
+export function isSqlUuidLike(value) {
+  const str = String(value || '');
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+}
+
+/**
+ * Garantiza que exista un contexto académico en la base de datos SQL.
+ */
+export async function ensureSqlAcademicContext() {
+  if (!isEnabled()) return null;
+  const context = getSqlStateContext();
+  if (!context) return null;
+  
+  const cacheKey = `${context.email}::${context.schoolName}::${context.firebaseUid || ''}`;
+  if (SQL_ACADEMIC_CONTEXT_CACHE.key === cacheKey && SQL_ACADEMIC_CONTEXT_CACHE.data) {
+    return SQL_ACADEMIC_CONTEXT_CACHE.data;
+  }
+  
+  try {
+    const result = await syncProfile(context);
+    const resolved = {
+      ...context,
+      userId: result?.user?.id || '',
+      schoolId: result?.school?.id || '',
+      school: result?.school || null,
+      user: result?.user || null,
+    };
+    SQL_ACADEMIC_CONTEXT_CACHE.key = cacheKey;
+    SQL_ACADEMIC_CONTEXT_CACHE.data = resolved;
+    return resolved;
+  } catch (error) {
+    console.warn('[EduGest][sql] Failed to ensure academic context', error);
+    return null;
+  }
+}
+
+export async function ensureSqlSchoolIdForProfile() {
+  const context = await ensureSqlAcademicContext();
+  return String(context?.schoolId || '').trim();
+}
+
+/**
+ * --- SQL Attendance Synchronization ---
+ */
+
+const SQL_ATTENDANCE_SYNC_RUNTIME = {
+  timers: new Map(),
+  inFlight: new Map(),
+  pending: new Set(),
+};
+
+function normalizeSqlAttendanceMonthKey(monthKey) {
+  return String(monthKey || '').trim().slice(0, 7);
+}
+
+function normalizeSqlAttendanceStatus(status = '') {
+  const s = String(status || '').toUpperCase();
+  if (['P', 'T', 'L', 'S'].includes(s)) return 'P';
+  if (s === 'A') return 'A';
+  if (s === 'E') return 'E';
+  if (s === 'R') return 'R';
+  return 'P';
+}
+
+function normalizeAttendanceV2DayValue(value) {
+  const raw = String(value || '').replace(/\D/g, '').slice(0, 2);
+  if (!raw) return '';
+  const day = parseInt(raw, 10);
+  return day >= 1 && day <= 31 ? String(day) : '';
+}
+
+function createAttendanceV2SlotMeta(type = '', reason = '') {
+  return { type: String(type || '').trim(), reason: String(reason || '').trim().slice(0, 140) };
+}
+
+function normalizeAttendanceV2SlotMeta(meta) {
+  if (!meta || typeof meta !== 'object') return createAttendanceV2SlotMeta(String(meta || ''));
+  return createAttendanceV2SlotMeta(meta.type || '', meta.reason || '');
+}
+
+function buildSqlAttendanceMonthRows(sectionId, monthKey) {
+  const normalizedMonth = normalizeSqlAttendanceMonthKey(monthKey);
+  const sectionRecord = S.attendance?.records?.[sectionId]?.[normalizedMonth];
+  if (!sectionId || !normalizedMonth || !sectionRecord || typeof sectionRecord !== 'object') return [];
+
+  const rows = [];
+  const pushRow = (studentId, attendanceDate, status, reason = null) => {
+    const cleanStudentId = String(studentId || '').trim();
+    const cleanDate = String(attendanceDate || '').trim().slice(0, 10);
+    const cleanStatus = normalizeSqlAttendanceStatus(status || '');
+    const cleanReason = String(reason || '').trim() || null;
+    if (!cleanStudentId || !cleanDate || !cleanStatus || !/^\d{4}-\d{2}-\d{2}$/.test(cleanDate)) return;
+    rows.push({
+      studentId: cleanStudentId,
+      attendanceDate: cleanDate,
+      status: cleanStatus,
+      reason: cleanReason,
+    });
+  };
+
+  if (Array.isArray(sectionRecord.slotDays) && sectionRecord.studentCodes && typeof sectionRecord.studentCodes === 'object') {
+    const slotDays = sectionRecord.slotDays;
+    const slotMeta = sectionRecord.slotMeta || [];
+    Object.entries(sectionRecord.studentCodes || {}).forEach(([studentId, codes]) => {
+      if (!Array.isArray(codes)) return;
+      codes.forEach((code, slotIndex) => {
+        const day = normalizeAttendanceV2DayValue(slotDays[slotIndex] || '');
+        const status = normalizeSqlAttendanceStatus(code || '');
+        if (!day || !status) return;
+        const meta = normalizeAttendanceV2SlotMeta(slotMeta[slotIndex] || '');
+        pushRow(studentId, `${normalizedMonth}-${day.padStart(2, '0')}`, status, meta?.reason || '');
+      });
+    });
+    return rows;
+  }
+
+  // Legacy format
+  Object.entries(sectionRecord || {}).forEach(([studentId, days]) => {
+    if (!days || typeof days !== 'object' || Array.isArray(days)) return;
+    Object.entries(days).forEach(([attendanceDate, status]) => {
+      pushRow(studentId, attendanceDate, status, null);
+    });
+  });
+  return rows;
+}
+
+export async function syncSqlAttendanceMonth(sectionId, monthKey, options = {}) {
+  if (!isEnabled()) return null;
+  const schoolId = await ensureSqlSchoolIdForProfile();
+  const cleanSectionId = String(sectionId || '').trim();
+  const normalizedMonth = normalizeSqlAttendanceMonthKey(monthKey);
+  if (!schoolId || !cleanSectionId || !/^\d{4}-\d{2}$/.test(normalizedMonth)) return null;
+
+  if (options?.clear) {
+    return clearAttendanceMonth({ schoolId, sectionId: cleanSectionId, monthKey: normalizedMonth });
+  }
+
+  const rows = buildSqlAttendanceMonthRows(cleanSectionId, normalizedMonth);
+  return replaceAttendanceMonth({ schoolId, sectionId: cleanSectionId, monthKey: normalizedMonth, rows });
+}
+
+export function cancelSqlAttendanceMonthSync(sectionId, monthKey) {
+  const key = `${String(sectionId || '').trim()}::${normalizeSqlAttendanceMonthKey(monthKey)}`;
+  const timer = SQL_ATTENDANCE_SYNC_RUNTIME.timers.get(key);
+  if (timer) window.clearTimeout(timer);
+  SQL_ATTENDANCE_SYNC_RUNTIME.timers.delete(key);
+  SQL_ATTENDANCE_SYNC_RUNTIME.pending.delete(key);
+}
+
+export function scheduleSqlAttendanceMonthSync(sectionId, monthKey) {
+  if (!isEnabled()) return;
+  const cleanSectionId = String(sectionId || '').trim();
+  const normalizedMonth = normalizeSqlAttendanceMonthKey(monthKey);
+  if (!cleanSectionId || !/^\d{4}-\d{2}$/.test(normalizedMonth)) return;
+
+  const key = `${cleanSectionId}::${normalizedMonth}`;
+  cancelSqlAttendanceMonthSync(cleanSectionId, normalizedMonth);
+
+  const timer = window.setTimeout(() => {
+    SQL_ATTENDANCE_SYNC_RUNTIME.timers.delete(key);
+    if (SQL_ATTENDANCE_SYNC_RUNTIME.inFlight.get(key)) {
+      SQL_ATTENDANCE_SYNC_RUNTIME.pending.add(key);
+      return;
+    }
+    SQL_ATTENDANCE_SYNC_RUNTIME.inFlight.set(key, true);
+    syncSqlAttendanceMonth(cleanSectionId, normalizedMonth)
+      .catch((error) => {
+        console.warn('[EduGest][sql] No se pudo sincronizar asistencia con SQL', error);
+      })
+      .finally(() => {
+        SQL_ATTENDANCE_SYNC_RUNTIME.inFlight.delete(key);
+        if (SQL_ATTENDANCE_SYNC_RUNTIME.pending.has(key)) {
+          SQL_ATTENDANCE_SYNC_RUNTIME.pending.delete(key);
+          scheduleSqlAttendanceMonthSync(cleanSectionId, normalizedMonth);
+        }
+      });
+  }, 500);
+  SQL_ATTENDANCE_SYNC_RUNTIME.timers.set(key, timer);
+}
+
+/**
+ * Sincroniza una actividad con la base de datos SQL.
+ */
+export async function syncSqlActivityCreateOrUpdate(activity, meta = {}) {
+  if (!isEnabled()) return null;
+  const context = await ensureSqlAcademicContext();
+  if (!context?.schoolId) return null;
+  
+  const payload = mapActivityToSqlPayload(activity, {
+    ...meta,
+    schoolId: context.schoolId,
+    teacherUserId: context.userId || meta.teacherUserId || '',
+  });
+  
+  if (!payload.sectionId || !payload.name) return null;
+  
+  const shouldUpdate = isSqlUuidLike(activity?.id);
+  return shouldUpdate
+    ? updateActivity(activity.id, payload)
+    : createActivity(payload);
 }

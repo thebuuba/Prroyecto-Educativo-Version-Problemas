@@ -1,5 +1,7 @@
 import { S } from './state.js';
 import { fixMojibakeText } from './utils.js';
+import { DEFAULT_PERIODS } from './constants.js';
+import { getGroupLabel, getGroups, ensureActiveContext } from './academic-context-logic.js';
 
 /**
  * Core UI helpers for EduGest.
@@ -137,3 +139,66 @@ window.openM = openM;
 window.closeM = closeM;
 window.forceCloseM = forceCloseM;
 window.toast = toast;
+
+/**
+ * --- Academic Context UI Helpers ---
+ */
+
+export function periodName(periodId = S.activePeriodId) {
+  const p = (S.periods || DEFAULT_PERIODS).find(p => p.id === periodId);
+  const rawName = p?.name || periodId || 'P1';
+  return fixMojibakeText(String(rawName || '').trim()).replace(/^Periodo\b/i, 'Período');
+}
+
+export function shouldShowAcademicContext(pageId = S.currentPage) {
+  return ['actividades', 'matriz', 'reportes'].includes(pageId);
+}
+
+export function activeContextLabel(groupId = S.activeGroupId, periodId = S.activePeriodId) {
+  const courseLabel = getGroupLabel(groupId);
+  const periodCode = periodId || S.activePeriodId || 'P1';
+  return `${courseLabel} - Período ${periodCode}`;
+}
+
+export function pageTitleWithContext(pageId = S.currentPage, baseTitle = '') {
+  if (!shouldShowAcademicContext(pageId)) return baseTitle;
+  return `${baseTitle} - ${activeContextLabel()}`;
+}
+
+export function topbarContext() {
+  const institution = S.profile?.inst || 'Institución por configurar';
+  const year = S.schoolYear?.name || S.profile?.year || '2025-2026';
+  const period = periodName();
+  return `${institution} - ${year} - ${period}`;
+}
+
+export function renderTopbarContextControls() {
+  ensureActiveContext();
+  const groups = getGroups();
+  const groupOptions = groups
+    .map((group) => `<option value="${group.id}" ${group.id===S.activeGroupId?'selected':''}>${group.gradeName} ${group.sectionName} — ${group.materia||'General'}</option>`)
+    .join('');
+  const periodOptions = (S.periods || DEFAULT_PERIODS)
+    .map((period) => `<option value="${period.id}" ${period.id===S.activePeriodId?'selected':''}>${period.name}</option>`)
+    .join('');
+  
+  return `
+    <div class="tb-context-controls panel-context-controls">
+      <div class="tb-context-mini">
+        <select class="tb-context-select" onchange="setActiveGroup(this.value)" aria-label="Seleccionar curso">${groupOptions || '<option value="">Sin cursos</option>'}</select>
+        <select class="tb-context-select" onchange="setActivePeriod(this.value)" aria-label="Seleccionar período">${periodOptions}</select>
+      </div>
+    </div>
+  `;
+}
+
+export function injectPanelContextControls(view) {
+  if (!view) return;
+  const existing = view.querySelector('.panel-context-host');
+  if (existing) existing.remove();
+  if (!shouldShowAcademicContext(S.currentPage)) return;
+  const host = document.createElement('div');
+  host.className = 'panel-context-host';
+  host.innerHTML = renderTopbarContextControls();
+  view.prepend(host);
+}

@@ -1,5 +1,7 @@
 import { S } from './state.js';
 
+const PANEL_MODULES = import.meta.glob('/js/panels/*.js');
+
 /**
  * Página actual renderizada en el cliente.
  * @type {string}
@@ -152,8 +154,6 @@ export function ensurePanelBundleLoaded(pageKey, RENDERS) {
   // Check if it's a modern ES module (migrated) or a legacy script bundle
   const isModule = bundleUrl.includes('/js/panels/') || bundleUrl.includes('/js/core/');
   
-const PANEL_MODULES = import.meta.glob('/js/panels/*.js');
-
   if (isModule) {
     const globKey = bundleUrl.split('?')[0]; // Clean version for glob matching
     const importFn = PANEL_MODULES[globKey];

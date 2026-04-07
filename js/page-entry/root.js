@@ -20,10 +20,8 @@ import * as Interactions from '../core/interactions.js';
 import { boot } from '../core/app.js';
 import { initShell } from '../core/shell.js';
 import { initDeleters } from '../core/deleters.js';
-import * as UsersPanel from '../panels/users.js';
-import * as DB from '../core/api-db.js';
-import * as SQL from '../core/api-sql.js';
 import * as Cloud from '../core/api-cloud.js';
+import * as SetupPanel from '../panels/setup.js';
 
 console.log('[EduGest] Cargando punto de entrada raíz modular...');
 

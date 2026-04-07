@@ -1,3 +1,11 @@
+/**
+ * Módulo del Panel de Asistencia (EduGest Attendance V3).
+ * --------------------------------------------------------------------------
+ * Gestiona el registro de asistencia diaria, tardanzas y ausencias.
+ * Implementa una cuadrícula interactiva con soporte para meses lectivos,
+ * sincronización SQL y exportación de reportes.
+ */
+
 import { S } from '../core/state.js';
 import { go } from '../core/routing.js';
 import { persist } from '../core/hydration.js';
@@ -49,6 +57,11 @@ const DEFERRED_PROJECTION = new Set();
 
 // --- Initialization ---
 
+/**
+ * Asegura que la estructura de datos de asistencia exista en el estado global.
+ * Inicializa buckets de meses, configuraciones y sincroniza meses lectivos.
+ * @private
+ */
 function ensureAttendanceState() {
   if (!S.attendance || typeof S.attendance !== 'object') {
     S.attendance = { monthKey: getCurrentMonthKey(), records: {} };
@@ -59,7 +72,7 @@ function ensureAttendanceState() {
   if (!S.attendance.groupSettings || typeof S.attendance.groupSettings !== 'object') S.attendance.groupSettings = {};
   if (!('advanceOnKeyboard' in S.attendance.settings)) S.attendance.settings.advanceOnKeyboard = true;
   
-  // Sync active months from calendar
+  // Sincronizar meses activos desde el calendario académico
   S.attendance.settings.activeSchoolMonths = [...academicCalendarActiveMonths()];
 }
 
@@ -112,6 +125,10 @@ function getWorkdays(monthKey) {
 
 // --- Data Management ---
 
+/**
+ * Crea un objeto de metadatos para un slot de asistencia (excepciones).
+ * @private
+ */
 function createSlotMeta(type = '', reason = '') {
   return { 
     type: ATTENDANCE_V2_EXCEPTION_ORDER.includes(type) ? type : '', 
@@ -119,6 +136,11 @@ function createSlotMeta(type = '', reason = '') {
   };
 }
 
+/**
+ * Genera la estructura base para el registro de asistencia de un mes.
+ * @private
+ * @returns {Object} Estructura inicial del mes.
+ */
 function createMonthRecord() {
   return {
     slotDays: Array(ATTENDANCE_V2_SLOT_CAPACITY).fill(''),
@@ -240,6 +262,10 @@ function setSlotCode(sectionId, monthKey, studentId, slotIndex, code) {
 
 // --- Rendering Logic (Bento V3) ---
 
+/**
+ * Registra y renderiza el panel de asistencia en el contenedor proporcionado.
+ * @param {HTMLElement} container - Contenedor del panel.
+ */
 export function registerAttendancePanel(container) {
   ensureAttendanceState();
   if (!S.activeGroupId) {
@@ -258,6 +284,10 @@ export function registerAttendancePanel(container) {
   renderBentoLayout(container, activeGroup, monthKey);
 }
 
+/**
+ * Renderiza el estado vacío cuando no hay secciones configuradas.
+ * @private
+ */
 function renderEmpty(container) {
   container.innerHTML = `
     <div class="flex flex-col items-center justify-center h-full p-12 text-center bg-white rounded-3xl border border-slate-100 shadow-sm">
@@ -273,6 +303,10 @@ function renderEmpty(container) {
   `;
 }
 
+/**
+ * Renderiza el diseño Bento principal para el registro de asistencia.
+ * @private
+ */
 function renderBentoLayout(container, group, monthKey) {
   const students = studentsInGroup(group.id).sort((a,b) => (a.apellido||'').localeCompare(b.apellido||'', 'es'));
   const monthLabel = getMonthLongLabel(monthKey);
@@ -282,7 +316,7 @@ function renderBentoLayout(container, group, monthKey) {
   container.innerHTML = `
     <div class="grid grid-cols-12 gap-6 p-6 overflow-y-auto h-full">
       
-      <!-- Card: Header & Month Nav -->
+      <!-- Tarjeta: Cabecera y Navegación de Mes -->
       <div class="col-span-12 lg:col-span-8 bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="flex items-center gap-4">
           <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center">
@@ -311,7 +345,7 @@ function renderBentoLayout(container, group, monthKey) {
         </div>
       </div>
 
-      <!-- Card: Stats Summary -->
+      <!-- Tarjeta: Resumen de Estadísticas -->
       <div class="col-span-12 lg:col-span-4 bg-white rounded-3xl p-6 border border-slate-100 shadow-sm overflow-hidden relative">
         <div class="flex justify-between items-start mb-4">
           <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Métricas del mes</h3>
@@ -477,6 +511,10 @@ function renderAttendanceCells(sectionId, monthKey, student) {
   return html;
 }
 
+/**
+ * Retorna la clase CSS correspondiente a un código de asistencia.
+ * @private
+ */
 function getMarkClass(code) {
   if (code === 'P') return 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 shadow-sm shadow-emerald-100/50';
   if (code === 'A') return 'bg-rose-50 text-rose-600 hover:bg-rose-100 shadow-sm shadow-rose-100/50';
@@ -486,6 +524,10 @@ function getMarkClass(code) {
   return 'bg-white text-slate-300 border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/30';
 }
 
+/**
+ * Calcula y actualiza las estadísticas de asistencia en el DOM.
+ * @private
+ */
 function updateStats(sectionId, monthKey, students) {
   let p = 0, t = 0, a = 0, totalMarks = 0;
   
@@ -610,6 +652,9 @@ window.applyWeeklySchedule = () => {
 
 // --- Initialization ---
 
+/**
+ * Inicializa el módulo de asistencia y registra el renderizador.
+ */
 export function init() {
   if (!window.RENDERS) window.RENDERS = {};
   window.RENDERS.asistencia = (container) => {

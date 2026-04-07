@@ -1,3 +1,11 @@
+/**
+ * Módulo del Panel de Autenticación (EduGest Auth).
+ * --------------------------------------------------------------------------
+ * Gestiona el inicio de sesión, registro de usuarios, recuperación de 
+ * contraseñas y la inicialización de sesiones locales o en la nube (Firebase).
+ * Incluye lógica de limitación de tasa (rate limiting) y validación de seguridad.
+ */
+
 import { S } from '../core/state.js';
 import { 
   REGISTER_RATE_LIMIT, 
@@ -26,16 +34,17 @@ import {
 } from '../core/hydration.js';
 import { go } from '../core/routing.js';
 
-/**
- * Authentication Panel Module
- * Handles login, registration, and session initialization.
- */
-
 let REGISTER_PASSWORD_STRENGTH_VISIBLE = false;
 let AUTH_CORNER_TOAST_TIMER = 0;
 
 // --- UI Helpers ---
 
+/**
+ * Establece una nota informativa o de error en la interfaz de autenticación.
+ * @param {string} message - El mensaje a mostrar.
+ * @param {string} tone - Tono del mensaje ('info', 'error', 'warn').
+ * @param {Object} options - Opciones adicionales como el título.
+ */
 export function setAuthNote(message = '', tone = 'info', options = {}) {
   const note = document.getElementById('auth-note');
   const noteTitle = document.getElementById('auth-note-title');
@@ -132,6 +141,12 @@ function persistRegisterRateState(state) {
   } catch (_) {}
 }
 
+/**
+ * Evalúa si el usuario ha superado el límite de intentos de registro.
+ * Implementa una ventana de tiempo y un bloqueo temporal.
+ * @private
+ * @returns {Object} Estado del bloqueo y tiempo restante.
+ */
 function evaluateRegisterRateLimit() {
   const now = Date.now();
   const state = readRegisterRateState();
@@ -297,6 +312,12 @@ async function createLocalPasswordRecord(password) {
   return { salt, hash };
 }
 
+/**
+ * Resuelve la autenticación de un usuario local comparando el hash de la contraseña.
+ * Migra automáticamente cuentas de algoritmos antiguos si es necesario.
+ * @async
+ * @private
+ */
 async function resolveLocalAuthUser(email, password) {
   const user = S.authUsers.find((entry) => authEmailKey(entry.email) === authEmailKey(email));
   if (!user) return { user: null, migrated: false };
@@ -534,6 +555,11 @@ function finishAuthSession(user, options = {}) {
 
 // --- Main Auth Actions ---
 
+/**
+ * Ejecuta el proceso de registro de un nuevo usuario.
+ * Intenta registro en la nube primero, con caída (fallback) a base de datos local.
+ * @async
+ */
 export async function registerAuth() {
   const name = v('ar-name');
   const email = authEmailKey(v('ar-email'));
@@ -641,6 +667,11 @@ export async function registerAuth() {
   }
 }
 
+/**
+ * Ejecuta el proceso de inicio de sesión.
+ * Valida credenciales contra la nube o el almacenamiento local.
+ * @async
+ */
 export async function loginAuth() {
   const email = authEmailKey(v('al-email'));
   const pass = (document.getElementById('al-pass')?.value || '').trim();

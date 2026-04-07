@@ -1,7 +1,9 @@
 /**
- * App Shell Controller
- * Modernized version of the sidebar, profile menu and topbar logic.
- * Handles the "Living Interface" interactions.
+ * Controlador de la Carcasa de la Aplicación (App Shell).
+ * --------------------------------------------------------------------------
+ * Versión modernizada de la lógica de barra lateral, menú de perfil y topbar.
+ * Gestiona las interacciones de la "Interfaz Viva" y la sincronización del 
+ * estado de sesión con los elementos visuales persistentes.
  */
 
 import { S } from './state.js';
@@ -28,9 +30,13 @@ import {
 } from './domain-utils.js';
 
 /**
- * --- UI Synchronization ---
+ * --- Sincronización de UI ---
  */
 
+/**
+ * Actualiza la información del usuario en la barra lateral y el encabezado.
+ * Sincroniza nombres, roles, iniciales y avatar basado en el estado actual.
+ */
 export function updateSBUser() {
   const sidebarName = document.getElementById('sb-name');
   const sidebarRole = document.getElementById('sb-role');
@@ -53,11 +59,14 @@ export function updateSBUser() {
     avatarImg.src = `https://ui-avatars.com/api/?name=${cleanName}&background=1E293B&color=fff&size=40`;
   }
   
-  // Toggle visibility of logout based on session
+  // Alternar visibilidad del botón de cierre de sesión según la sesión activa
   const logoutBtn = document.getElementById('sb-logout');
   if (logoutBtn) logoutBtn.style.display = S.sessionUserId ? '' : 'none';
 }
 
+/**
+ * Cierra el menú desplegable del perfil de usuario en la parte superior.
+ */
 export function closeProfileMenu() {
   const toggle = document.getElementById('top-profile-toggle');
   const menu = document.getElementById('top-profile-menu');
@@ -68,11 +77,16 @@ export function closeProfileMenu() {
 }
 
 /**
- * --- Initialization ---
+ * --- Inicialización ---
  */
 
+/**
+ * Inicializa todos los escuchadores de eventos (listeners) de la carcasa.
+ * Configura la navegación, el comportamiento de la barra lateral, modo oscuro,
+ * fijación de paneles y clics fuera de menús.
+ */
 export function initShell() {
-  // Listeners for Navigation Items
+  // Listeners para Elementos de Navegación
   if (STATIC_DOM.navLinks) {
     STATIC_DOM.navLinks.filter(el => el.dataset.p).forEach(el => {
       el.addEventListener('click', () => {
@@ -83,7 +97,7 @@ export function initShell() {
     });
   }
 
-  // Sidebar Interaction
+  // Interacción de la Barra Lateral (Hover y Auto-cierre)
   const sidebarEl = document.getElementById('sb');
   if (sidebarEl) {
     sidebarEl.addEventListener('mouseenter', () => {
@@ -95,24 +109,24 @@ export function initShell() {
     });
   }
 
-  // Dark Mode
+  // Alternar Modo Oscuro
   document.getElementById('sb-dark-toggle')?.addEventListener('click', (e) => {
     e.stopPropagation();
     toggleDarkMode();
   });
 
-  // Pin Sidebar
+  // Fijar Barra Lateral
   document.getElementById('sb-pin-toggle')?.addEventListener('click', (e) => {
     e.stopPropagation();
     toggleSidebarPinnedPreference();
   });
 
-  // Backdrop
+  // Click en Fondo (Backdrop) para cerrar
   document.getElementById('sb-backdrop')?.addEventListener('click', () => {
     collapseSidebarIfAllowed();
   });
 
-  // Global Keydown (Esc)
+  // Atajos de Teclado Globales (Esc para cerrar todo)
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeProfileMenu();
@@ -120,24 +134,24 @@ export function initShell() {
     }
   });
 
-  // Profile Toggle
+  // Alternar Menú de Perfil
   document.getElementById('top-profile-toggle')?.addEventListener('click', (e) => {
     e.stopPropagation();
     const menu = document.getElementById('top-profile-menu');
     if (menu) menu.hidden = !menu.hidden;
   });
 
-  // Close menus on outside click
+  // Cerrar menús al hacer clic fuera del contenedor de perfil
   document.addEventListener('click', (e) => {
     const wrap = document.getElementById('top-profile');
     if (wrap && !wrap.contains(e.target)) closeProfileMenu();
   });
 
-  // Initial Sync
+  // Sincronización Inicial
   updateSBUser();
   applyUserPreferences();
   
-  // Register in window
+  // Registro en el objeto window para compatibilidad legacy
   window.updateSBUser = updateSBUser;
   window.closeProfileMenu = closeProfileMenu;
 }

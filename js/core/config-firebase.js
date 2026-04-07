@@ -1,3 +1,7 @@
+/**
+ * Configuración de Firebase para EduGest.
+ * Contiene las credenciales para la autenticación y servicios en la nube.
+ */
 export const EDUGEST_FIREBASE_CONFIG = {
   apiKey: 'AIzaSyAnI7si3y8MSdO376HqYYoHQAt3QwBAdcE',
   authDomain: 'proyectivoeducativo.firebaseapp.com',

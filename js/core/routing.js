@@ -1,28 +1,33 @@
+/**
+ * Sistema de Enrutamiento y Carga de Paneles.
+ * Este módulo gestiona el historial de navegación, el mapeo de URLs a paneles
+ * y la carga dinámica de módulos (bundles) para optimizar el rendimiento.
+ */
+
 import { S } from './state.js';
 
+/** Diccionario de módulos de paneles disponibles para importación dinámica vía Vite. */
 const PANEL_MODULES = import.meta.glob('/js/panels/*.js');
 
 /**
- * Página actual renderizada en el cliente.
+ * ID del panel actualmente renderizado.
  * @type {string}
  */
 export let currentPage = 'dashboard';
 export function setCurrentPage(val) { currentPage = val; }
 
 /**
- * Flag para indicar si la sincronización de historial ya fue realizada.
+ * Indica si el sistema de historial (pushState) ya fue inicializado.
  * @type {boolean}
  */
 export let navHistoryInitialized = false;
 export function setNavHistoryInitialized(val) { navHistoryInitialized = val; }
 
-/**
- * Identificador de la raíz de navegación de EduGest en el objeto history.
- */
+/** Identificador de la raíz en el objeto de historial del navegador. */
 export const APP_HISTORY_ROOT = 'edugest-root';
 
 /**
- * Mapa de rutas de URL para cada panel.
+ * Mapeo de identificadores de panel a rutas amigables de URL.
  * @type {Object<string, string>}
  */
 export const PANEL_ROUTES = {
@@ -42,10 +47,11 @@ export const PANEL_ROUTES = {
   settings: '/configuracion',
 };
 
+/** @type {Object} Reservado para rutas de modales específicos. */
 export const MODAL_ROUTES = {};
 
 /**
- * Mapeo de paneles a sus respectivos nombres de bundle/módulo.
+ * Agrupación de paneles por nombre de bundle (paquete de código común).
  * @type {Object<string, string>}
  */
 export const PANEL_BUNDLES = {
@@ -66,7 +72,7 @@ export const PANEL_BUNDLES = {
 };
 
 /**
- * Direcciones relativas de los archivos JS para cada bundle.
+ * Ubicaciones físicas de los archivos JS para cada bundle.
  * @type {Object<string, string>}
  */
 export const PANEL_BUNDLE_URLS = {
@@ -84,16 +90,21 @@ export const PANEL_BUNDLE_URLS = {
   auth: '/js/panels/auth.js',
 };
 
+/** Registro de bundles ya cargados en la sesión actual. */
 export const loadedPanelBundles = window.__AULABASE_LOADED_BUNDLES || (window.__AULABASE_LOADED_BUNDLES = {});
+
+/** Registro de promesas de carga en curso para evitar descargas duplicadas. */
 export const pendingPanelBundleLoads = {};
 
-export const PAGE = {
-  // Configured in root.js or similarly for now to avoid direct dependency cycle
-  // But for the sake of the monolith extraction we'll need it
-};
+/** Configuración de metadatos de página (Títulos, categorías). */
+export const PAGE = {};
 
-// Routing Helpers
-
+/**
+ * Construye una URL completa basada en el panel y el modo de vista.
+ * @param {string} requestedPage - El ID del panel.
+ * @param {string} activityViewMode - El sub-modo (ej. 'config', 'blocks').
+ * @returns {string} URL formada.
+ */
 export function buildPanelUrl(requestedPage, activityViewMode) {
   const pageKey = requestedPage === 'config' || (requestedPage === 'actividades' && activityViewMode === 'config')
     ? 'config'
@@ -101,10 +112,20 @@ export function buildPanelUrl(requestedPage, activityViewMode) {
   return PANEL_ROUTES[pageKey] || '/inicio';
 }
 
+/**
+ * Construye la URL para un modal, manteniendo el contexto de la página actual.
+ */
 export function buildModalUrl(id, currentP, activityViewM) {
   return MODAL_ROUTES[id] || buildPanelUrl(currentP || 'dashboard', activityViewM);
 }
 
+/**
+ * Sincroniza el estado del panel con el historial del navegador (history API).
+ * @param {string} requestedPage - Página solicitada.
+ * @param {string} renderedPage - Página realmente renderizada.
+ * @param {'push'|'replace'} mode - Tipo de entrada en el historial.
+ * @param {string} currentActViewMode - Modo de vista actual.
+ */
 export function syncNavHistory(requestedPage, renderedPage, mode = 'push', currentActViewMode) {
   const nextUrl = buildPanelUrl(requestedPage, currentActViewMode);
   const historyState = {
@@ -119,6 +140,9 @@ export function syncNavHistory(requestedPage, renderedPage, mode = 'push', curre
   navHistoryInitialized = true;
 }
 
+/**
+ * Garantiza que exista una marca de inicio en el historial para detectar el cierre de la app.
+ */
 export function ensureAppHistoryRoot() {
   const state = window.history.state || {};
   if (state?.eduGestRoot) return;
@@ -126,10 +150,16 @@ export function ensureAppHistoryRoot() {
   navHistoryInitialized = false;
 }
 
+/**
+ * Resuelve qué bundle de código pertenece a una página específica.
+ */
 export function resolvePanelBundleKey(pageKey) {
   return PANEL_BUNDLES[pageKey] || null;
 }
 
+/**
+ * Construye la URL de descarga de un bundle añadiendo control de versiones.
+ */
 export function buildPanelBundleUrl(bundleKey) {
   const baseUrl = PANEL_BUNDLE_URLS[bundleKey];
   if (!baseUrl) return '';
@@ -139,10 +169,10 @@ export function buildPanelBundleUrl(bundleKey) {
 
 /**
  * Carga dinámicamente el bundle o módulo necesario para un panel.
- * Soporta tanto módulos ES modernos como scripts legados.
+ * Soporta tanto módulos ES modernos como scripts legados para maximizar compatibilidad.
  * @param {string} pageKey - Clave del panel a cargar.
- * @param {Object} RENDERS - Mapa de funciones de renderizado (del shell).
- * @returns {Promise<boolean>} Promesa que resuelve al completar la carga.
+ * @param {Object} RENDERS - Mapa de funciones de renderizado del componente Shell.
+ * @returns {Promise<boolean>} Resuelve true si el bundle está listo.
  */
 export function ensurePanelBundleLoaded(pageKey, RENDERS) {
   const bundleKey = resolvePanelBundleKey(pageKey);
@@ -151,11 +181,11 @@ export function ensurePanelBundleLoaded(pageKey, RENDERS) {
   const bundleUrl = buildPanelBundleUrl(bundleKey);
   if (!bundleUrl) return Promise.resolve(Boolean(RENDERS[pageKey]));
 
-  // Check if it's a modern ES module (migrated) or a legacy script bundle
+  // Determinar si es un módulo ES nativo o un script global
   const isModule = bundleUrl.includes('/js/panels/') || bundleUrl.includes('/js/core/');
   
   if (isModule) {
-    const globKey = bundleUrl.split('?')[0]; // Clean version for glob matching
+    const globKey = bundleUrl.split('?')[0]; 
     const importFn = PANEL_MODULES[globKey];
 
     if (importFn) {
@@ -168,11 +198,11 @@ export function ensurePanelBundleLoaded(pageKey, RENDERS) {
         })
         .catch((err) => {
           delete pendingPanelBundleLoads[bundleKey];
-          console.error(`[EduGest][routing] Error loading module ${bundleKey}:`, err);
+          console.error(`[EduGest][routing] Error cargando módulo ${bundleKey}:`, err);
           throw err;
         });
     } else {
-      // Fallback for modules not in /js/panels/ or if glob fails
+      // Fallback para importación dinámica directa (ignorado por Vite)
       pendingPanelBundleLoads[bundleKey] = import(/* @vite-ignore */ bundleUrl)
         .then((mod) => {
           loadedPanelBundles[bundleKey] = true;
@@ -182,11 +212,12 @@ export function ensurePanelBundleLoaded(pageKey, RENDERS) {
         })
         .catch((err) => {
           delete pendingPanelBundleLoads[bundleKey];
-          console.error(`[EduGest][routing] Error loading module ${bundleKey} (fallback):`, err);
+          console.error(`[EduGest][routing] Error cargando módulo ${bundleKey} (fallback):`, err);
           throw err;
         });
     }
   } else {
+    // Carga de scripts legados inyectando etiquetas <script>
     pendingPanelBundleLoads[bundleKey] = new Promise((resolve, reject) => {
       const script = document.createElement('script');
       script.src = bundleUrl;
@@ -207,11 +238,18 @@ export function ensurePanelBundleLoaded(pageKey, RENDERS) {
   return pendingPanelBundleLoads[bundleKey];
 }
 
+/**
+ * Analiza la URL actual para determinar qué panel debe mostrarse.
+ * @param {string} activeP - Página activa sugerida.
+ * @param {string} activeActViewM - Modo de vista activo sugerido.
+ * @returns {Object|null} Objeto con la localización resuelta.
+ */
 export function readPanelLocation(activeP, activeActViewM) {
   let path = String(window.location.pathname || '/').trim();
   path = path.replace(/\/index\.html$/i, '');
   if (path.length > 1) path = path.replace(/\/+$/, '');
   if (!path) path = '/';
+  
   const modalEntry = Object.entries(MODAL_ROUTES).find(([, route]) => route === path);
   if (modalEntry) {
     return {
@@ -220,6 +258,7 @@ export function readPanelLocation(activeP, activeActViewM) {
       modalId: modalEntry[0],
     };
   }
+  
   const entry = Object.entries(PANEL_ROUTES).find(([, route]) => route === path);
   if (entry) {
     const [requestedPage] = entry;
@@ -228,14 +267,16 @@ export function readPanelLocation(activeP, activeActViewM) {
       activityViewMode: requestedPage === 'config' ? 'config' : (requestedPage === 'actividades' ? 'blocks' : null),
     };
   }
+  
   const rawHash = String(window.location.hash || '').replace(/^#/, '').trim();
   if (rawHash === 'config') return { requestedPage: 'config', activityViewMode: 'config' };
-  // Note: we can't check PAGE[rawHash] here without creating a circular dependency easily, so we'll handle it in the main entry
+  
   return null;
 }
 
 /**
- * Función principal de navegación programática (puedes llamarla desde HTML).
+ * Función principal de navegación programática.
+ * Actualiza el estado global, sincroniza el historial y dispara el renderizado del panel.
  * @param {string} [requestedPage='dashboard'] - ID del panel de destino.
  * @param {Object} [options={}] - Opciones de navegación (replace, skipHistory).
  */
@@ -251,19 +292,18 @@ export function go(requestedPage = 'dashboard', options = {}) {
      syncNavHistory(requestedPage, requestedPage, replace ? 'replace' : 'push', activityViewMode);
   }
 
-  // En el monolito, 'go' disparaba 'renderPanel'. 
-  // Aquí, como estamos en transición, dispararemos un evento global o llamaremos a window._renderPanel si existe.
+  // Activar el renderizado a través del Shell (si está disponible vía global)
   if (typeof window._renderPanel === 'function') {
     window._renderPanel();
   } else {
     console.debug('[EduGest][routing] _renderPanel no encontrado. Se llamará cuando el shell esté disponible.');
   }
 
-  // Notificar cambio de página
+  // Notificar cambio de página a listeners personalizados
   window.dispatchEvent(new CustomEvent('edugest:page-change', { detail: { page: requestedPage } }));
 }
 
-// Exportar al window para compatibilidad con el HTML legado (onclick="go(...)")
+// Globalización para compatibilidad con llamadas desde HTML ligado (ej. onclick="go(...)")
 window.go = go;
 window.currentPage = currentPage;
 

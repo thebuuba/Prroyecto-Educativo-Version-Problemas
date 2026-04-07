@@ -1,7 +1,9 @@
 /**
- * Reports Panel Module
- * Modernized version of the academic reporting system.
- * Handles Excel, PDF, and Word exports with premium UI.
+ * Módulo del Panel de Reportes (EduGest Reports).
+ * --------------------------------------------------------------------------
+ * Gestiona la generación de informes académicos oficiales y exportaciones.
+ * Permite descargar datos en formatos Excel, PDF y Word, además de 
+ * visualizar promedios globales y resúmenes anuales por estudiante.
  */
 
 import { S } from '../core/state.js';
@@ -25,9 +27,14 @@ import {
 } from '../core/domain-utils.js';
 
 /**
- * Export Helpers
+ * --- Helpers de Exportación ---
  */
 
+/**
+ * Genera un nombre de archivo base normalizado para las exportaciones.
+ * @private
+ * @returns {string} Nombre del archivo (ej. reporte-6to-a-p1).
+ */
 function reportExportBaseName() {
   const group = getGroupLabel(S.activeGroupId) || 'grupo';
   const period = periodName() || 'periodo';
@@ -36,6 +43,12 @@ function reportExportBaseName() {
   return `reporte-${slug || 'general'}`;
 }
 
+/**
+ * Extrae los datos de una tabla HTML y los convierte en una matriz de strings.
+ * @private
+ * @param {HTMLTableElement} tableEl - Elemento tabla.
+ * @returns {Array<Array<string>>} Matriz de datos.
+ */
 function reportExtractTableMatrix(tableEl) {
   if (!tableEl) return [];
   return Array.from(tableEl.querySelectorAll('tr')).map((row) =>
@@ -45,6 +58,12 @@ function reportExtractTableMatrix(tableEl) {
   ).filter((row) => row.length > 0);
 }
 
+/**
+ * Convierte una matriz de datos en una cadena de tabla HTML simple.
+ * @private
+ * @param {Array<Array<string>>} matrix - Datos extraídos.
+ * @returns {string} HTML de la tabla.
+ */
 function reportMatrixToHtmlTable(matrix) {
   if (!matrix.length) return '<table><tbody><tr><td>Sin datos</td></tr></tbody></table>';
   const [head, ...rows] = matrix;
@@ -53,6 +72,14 @@ function reportMatrixToHtmlTable(matrix) {
   return `<table>${thead}${tbody}</table>`;
 }
 
+/**
+ * Construye el documento HTML completo para las exportaciones (Excel/Word/PDF).
+ * @private
+ * @param {string} title - Título del reporte.
+ * @param {Array} calMatrix - Matriz de calificaciones.
+ * @param {Array} annualMatrix - Matriz de resumen anual.
+ * @returns {string} Código HTML completo del documento.
+ */
 function reportBuildExportHtml(title, calMatrix, annualMatrix) {
   const safeTitle = escapeHtml(title || 'Reporte');
   const calTable = reportMatrixToHtmlTable(calMatrix);
@@ -68,7 +95,7 @@ function reportBuildExportHtml(title, calMatrix, annualMatrix) {
     th{background:#f3f4f6;font-weight:700;}
   </style></head><body>
     <h1>${safeTitle}</h1>
-    <p class="sub">${escapeHtml(getGroupLabel(S.activeGroupId) || 'Sin grupo')} ? ${escapeHtml(periodName())}</p>
+    <p class="sub">${escapeHtml(getGroupLabel(S.activeGroupId) || 'Sin grupo')} • ${escapeHtml(periodName())}</p>
     <h2>Tabla de calificaciones</h2>
     ${calTable}
     <h2>Resumen anual por estudiante</h2>
@@ -77,9 +104,10 @@ function reportBuildExportHtml(title, calMatrix, annualMatrix) {
 }
 
 /**
- * Global Exports
+ * --- Exportaciones Globales (Hooks de Ventana) ---
  */
 
+/** Descarga el reporte actual en formato Excel (vía XML/XLS). */
 window.reportDownloadExcel = () => {
   const calTable = document.querySelector('.reportes-stack table');
   const annualTable = document.querySelector('.annual-report-table');
@@ -101,6 +129,7 @@ window.reportDownloadExcel = () => {
   setTimeout(() => URL.revokeObjectURL(url), 1200);
 };
 
+/** Genera la vista de impresión del navegador para el reporte PDF. */
 window.reportDownloadPdf = async () => {
   const calTable = document.querySelector('.reportes-stack table');
   const annualTable = document.querySelector('.annual-report-table');
@@ -124,6 +153,7 @@ window.reportDownloadPdf = async () => {
   }
 };
 
+/** Descarga el reporte actual en formato Word (DOC). */
 window.reportDownloadWord = () => {
   const calTable = document.querySelector('.reportes-stack table');
   const annualTable = document.querySelector('.annual-report-table');
@@ -143,9 +173,14 @@ window.reportDownloadWord = () => {
 };
 
 /**
- * UI Rendering
+ * --- Renderizado de UI ---
  */
 
+/**
+ * Renderiza el encabezado del panel de reportes.
+ * @private
+ * @returns {string} HTML.
+ */
 function renderReportHeader() {
   return `
     <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
@@ -161,6 +196,11 @@ function renderReportHeader() {
   `;
 }
 
+/**
+ * Renderiza las tarjetas bento de exportación (Excel, PDF, Word).
+ * @private
+ * @returns {string} HTML.
+ */
 function renderExportCards() {
   return `
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
@@ -191,6 +231,11 @@ function renderExportCards() {
   `;
 }
 
+/**
+ * Renderiza la sección de promedios globales con barras de progreso estilizadas.
+ * @private
+ * @returns {string} HTML.
+ */
 function renderBlockAverages() {
   const chartCols = BLOCKS.map(b => ({
     lbl: BNAME[b],
@@ -233,6 +278,12 @@ function renderBlockAverages() {
   `;
 }
 
+/**
+ * Renderiza las tablas de calificaciones por bloque y el resumen anual consolidado.
+ * @private
+ * @param {Array} ests - Estudiantes registrados en el grupo activo.
+ * @returns {string} HTML.
+ */
 function renderGradesAndAnnual(ests) {
   if (ests.length === 0) {
     return `
@@ -242,7 +293,7 @@ function renderGradesAndAnnual(ests) {
     `;
   }
 
-  // Grades Table
+  // Tabla de Calificaciones
   const gradesTableHtml = `
     <div class="bg-white border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-sm mb-10">
       <div class="p-6 bg-slate-50/50 border-b border-slate-100">
@@ -271,7 +322,6 @@ function renderGradesAndAnnual(ests) {
           <tbody class="divide-y divide-slate-50">
             ${ests.map(e => {
               const fin = studentFinal(e.id);
-              const { c } = getGrade(fin);
               return `
                 <tr class="hover:bg-slate-50/50 transition-colors">
                   <td class="p-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 z-10 border-r border-slate-200/50 whitespace-nowrap">${e.nombre} ${e.apellido}</td>
@@ -286,7 +336,7 @@ function renderGradesAndAnnual(ests) {
     </div>
   `;
 
-  // Annual Summary Table
+  // Tabla de Resumen Anual
   const annualTableHtml = `
     <div class="bg-white border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-sm">
       <div class="p-6 bg-slate-50/50 border-b border-slate-100">
@@ -336,7 +386,8 @@ function renderGradesAndAnnual(ests) {
 }
 
 /**
- * Entry Point
+ * Punto de entrada principal para renderizar el panel de reportes.
+ * @param {HTMLElement} container - Contenedor raíz.
  */
 export function renderReportsPanel(container) {
   const ests = studentsInGroup(S.activeGroupId);
@@ -351,5 +402,5 @@ export function renderReportsPanel(container) {
   `;
 }
 
-// Global Registration
+/** Registro global para la navegación. */
 window.RENDERS.reportes = renderReportsPanel;

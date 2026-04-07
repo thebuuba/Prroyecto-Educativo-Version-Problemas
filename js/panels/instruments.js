@@ -1,7 +1,9 @@
 /**
- * Instruments Panel Module
- * Modernized version of the evaluation instrument management system.
- * Handles Rubrics (Analytical/Holistic), Checklists, and Estimative Scales.
+ * Módulo del Panel de Instrumentos (EduGest Instruments).
+ * --------------------------------------------------------------------------
+ * Gestiona la biblioteca de instrumentos de evaluación (rúbricas, listas de 
+ * cotejo y escalas estimativas). Permite la creación, edición y filtrado 
+ * de herramientas pedagógicas para la calificación de actividades.
  */
 
 import { S } from '../core/state.js';
@@ -17,8 +19,7 @@ import {
   allActivities
 } from '../core/domain-utils.js';
 
-// --- Constants & Meta ---
-
+/** Tipos base de instrumentos soportados por el sistema. */
 export const BASIC_INSTRUMENT_TYPES = [
   'rubrica_analitica',
   'lista_cotejo_a',
@@ -26,23 +27,25 @@ export const BASIC_INSTRUMENT_TYPES = [
   'escala_estimativa'
 ];
 
+/** Metadatos descriptivos para cada tipo de instrumento (iconos, títulos y descripciones). */
 export const INSTRUMENT_META = {
   rubrica_analitica: { title: 'Rúbrica Analítica', icon: '📊', desc: 'Evaluación detallada por criterios y niveles.' },
-  lista_cotejo_a: { title: 'Lista de Cotejo Simpe', icon: '✅', desc: 'Cumple / No cumple (binaria).' },
+  lista_cotejo_a: { title: 'Lista de Cotejo Simple', icon: '✅', desc: 'Cumple / No cumple (binaria).' },
   lista_cotejo_b: { title: 'Lista Ponderada', icon: '⚖️', desc: 'Cotejo con pesos específicos por criterio.' },
   escala_estimativa: { title: 'Escala Estimativa', icon: '📈', desc: 'Valoración cualitativa (Siempre... Nunca).' }
 };
 
-// UI State
+/** Estado local de la interfaz para filtros y editores. */
 const UI = {
   filters: { type: '', gradeId: '', subject: '', periodId: '' },
   editor: { mode: 'new', draft: null, originalId: null }
 };
 
 /**
- * --- Main Rendering ---
+ * Renderiza el panel principal de instrumentos, incluyendo los shortcuts de creación
+ * y la biblioteca de instrumentos existentes.
+ * @param {HTMLElement} container - Contenedor del panel.
  */
-
 export function renderInstrumentsPanel(container) {
   if (!S.instruments) S.instruments = [];
   
@@ -51,7 +54,7 @@ export function renderInstrumentsPanel(container) {
   container.innerHTML = `
     <div class="p-6 md:p-10 max-w-[1400px] mx-auto animate-in fade-in duration-700">
       
-      <!-- Header -->
+      <!-- Cabecera -->
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
         <div>
           <h1 class="text-3xl font-black text-slate-900 tracking-tight">Instrumentos</h1>
@@ -65,12 +68,12 @@ export function renderInstrumentsPanel(container) {
         </button>
       </div>
 
-      <!-- Creation Shortcuts (Bento) -->
+      <!-- Accesos Directos de Creación (Bento) -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
         ${BASIC_INSTRUMENT_TYPES.map(type => renderTypeShortCard(type)).join('')}
       </div>
 
-      <!-- Library Section -->
+      <!-- Sección de Biblioteca -->
       <div class="bg-white border border-slate-200 rounded-[3rem] p-8 md:p-12 shadow-sm">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
            <h2 class="text-xl font-black text-slate-800">Biblioteca Personal</h2>
@@ -93,6 +96,10 @@ export function renderInstrumentsPanel(container) {
   `;
 }
 
+/**
+ * Renderiza una tarjeta pequeña para acceso directo a creación de instrumentos.
+ * @private
+ */
 function renderTypeShortCard(type) {
   const meta = INSTRUMENT_META[type];
   return `
@@ -107,6 +114,10 @@ function renderTypeShortCard(type) {
   `;
 }
 
+/**
+ * Renderiza el estado vacío de la biblioteca.
+ * @private
+ */
 function renderEmptyLibrary() {
   return `
     <div class="py-20 text-center">
@@ -119,6 +130,10 @@ function renderEmptyLibrary() {
   `;
 }
 
+/**
+ * Renderiza la tabla de instrumentos en la biblioteca.
+ * @private
+ */
 function renderInstrumentTable(instruments) {
   return `
     <div class="overflow-x-auto -mx-8 md:-mx-12">
@@ -140,6 +155,10 @@ function renderInstrumentTable(instruments) {
   `;
 }
 
+/**
+ * Renderiza una fila individual dentro de la tabla de instrumentos.
+ * @private
+ */
 function renderInstrumentRow(inst) {
   const meta = INSTRUMENT_META[inst.type] || { title: 'Otro', icon: '📄' };
   const group = getGroups().find(g => g.id === inst.courseId);
@@ -182,9 +201,9 @@ function renderInstrumentRow(inst) {
 }
 
 /**
- * --- Logic ---
+ * Filtra los instrumentos basados en los criterios seleccionados en UI.
+ * @private
  */
-
 function filterInstruments() {
   const f = UI.filters;
   return (S.instruments || []).filter(inst => {
@@ -195,6 +214,10 @@ function filterInstruments() {
   });
 }
 
+/**
+ * Calcula el puntaje máximo directo de un instrumento según su tipo.
+ * @private
+ */
 function calcPoints(inst) {
   if (inst.type === 'rubrica_analitica') {
     return inst.maxTotal || inst.maxScore || 0;
@@ -206,23 +229,27 @@ function calcPoints(inst) {
 }
 
 /**
- * --- Global Hooks ---
+ * --- Action Handlers (Expuestos globalmente) ---
  */
 
+/** Establece un filtro y re-renderiza el panel. */
 window.setInstFilter = (key, val) => {
   UI.filters[key] = val;
   renderInstrumentsPanel(document.getElementById('p-content'));
 };
 
+/** Lanza el proceso de creación de un nuevo instrumento. */
 window.createNewInstrument = (type) => {
   toast(`Iniciando creador de ${INSTRUMENT_META[type].title}...`, false);
-  // Modal editor logic would go here
+  // La lógica del editor modal se integra aquí
 };
 
+/** Abre el editor para un instrumento existente. */
 window.editInstrument = (id) => {
   toast(`Cargando editor para el instrumento ${id}...`, false);
 };
 
+/** Elimina un instrumento de la biblioteca tras confirmar la acción. */
 window.deleteInstrument = (id) => {
   if (!confirm('¿Estás seguro de que deseas eliminar este instrumento?')) return;
   S.instruments = S.instruments.filter(i => i.id !== id);
@@ -231,9 +258,10 @@ window.deleteInstrument = (id) => {
   toast('Instrumento eliminado');
 };
 
+/** Abre el seleccionador de tipo de instrumento. */
 window.openInstrumentCreator = () => {
-    openM('m-inst-type'); // Assuming this modal exists in the app shell
+    openM('m-inst-type');
 };
 
-// Global Registration
+/** Registro global del renderizador para el sistema de navegación. */
 window.RENDERS.instrumentos = (c) => renderInstrumentsPanel(c);

@@ -1,24 +1,45 @@
+/**
+ * Integración con la API SQL/RDS (Backend de Persistencia).
+ * --------------------------------------------------------------------------
+ * Este módulo gestiona la comunicación con el servidor central para la 
+ * sincronización de perfiles, asistencia, calificaciones y catálogos escolares.
+ */
+
 import { S } from './state.js';
 import { readBrowserSession } from './hydration.js';
 import { mapActivityToSqlPayload } from './api-mappings.js';
 import { normTxt } from './utils.js';
 
+/** URL base por defecto del servidor SQL */
 const DEFAULT_BASE_URL = 'http://127.0.0.1:4000';
+
+/** Caché interna para evitar solicitudes duplicadas de contexto académico */
 const SQL_ACADEMIC_CONTEXT_CACHE = { key: '', data: null };
 
-// Obtiene get base url.
+/**
+ * Obtiene la URL base de la API SQL, priorizando la configuración en LocalStorage.
+ * @returns {string}
+ */
 export function getBaseUrl() {
   const runtime = String(window.localStorage?.getItem('aulabase:sql-api-base-url') || '').trim();
   if (runtime) return runtime.replace(/\/+$/, '');
   return DEFAULT_BASE_URL;
 }
 
-// Comprueba si is activada.
+/**
+ * Verifica si la integración con SQL está habilitada (basado en la existencia de la URL).
+ * @returns {boolean}
+ */
 export function isEnabled() {
   return !!getBaseUrl();
 }
 
-// Gestiona request.
+/**
+ * Realiza una solicitud HTTP a la API SQL.
+ * @param {string} path - Ruta del endpoint.
+ * @param {Object} [options={}] - Opciones de fetch (method, body, headers).
+ * @returns {Promise<Object|null>} Respuesta de la API.
+ */
 export async function request(path, options = {}) {
   const baseUrl = getBaseUrl();
   const response = await fetch(`${baseUrl}${path}`, {
@@ -44,13 +65,20 @@ export async function request(path, options = {}) {
   return payload;
 }
 
-// Carga cargar escuela catalog.
+/**
+ * Carga el catálogo de escuelas registradas en el sistema central.
+ * @returns {Promise<Array>}
+ */
 export async function loadSchoolCatalog() {
   const payload = await request('/api/bootstrap/catalog');
   return Array.isArray(payload?.schools) ? payload.schools : [];
 }
 
-// Sincroniza sync perfil.
+/**
+ * Sincroniza los metadatos del perfil local con el servidor SQL.
+ * @param {Object} payload - Datos del perfil.
+ * @returns {Promise<Object>}
+ */
 export async function syncProfile(payload) {
   return request('/api/bootstrap/profile', {
     method: 'POST',
@@ -58,37 +86,51 @@ export async function syncProfile(payload) {
   });
 }
 
-// Carga cargar grades.
+/**
+ * Carga la lista de grados asociados al perfil.
+ */
 export async function loadGrades(params = {}) {
   return request(`/api/grades${buildQuery(params)}`);
 }
 
-// Carga cargar sections.
+/**
+ * Carga la lista de secciones (cursos) asociadas al perfil.
+ */
 export async function loadSections(params = {}) {
   return request(`/api/sections${buildQuery(params)}`);
 }
 
-// Carga cargar estudiantes.
+/**
+ * Carga la lista de estudiantes.
+ */
 export async function loadStudents(params = {}) {
   return request(`/api/students${buildQuery(params)}`);
 }
 
-// Carga cargar asistencia.
+/**
+ * Carga los registros de asistencia históricos.
+ */
 export async function loadAttendance(params = {}) {
   return request(`/api/attendance${buildQuery(params)}`);
 }
 
-// Carga cargar actividades.
+/**
+ * Carga la lista de actividades evaluativas.
+ */
 export async function loadActivities(params = {}) {
   return request(`/api/activities${buildQuery(params)}`);
 }
 
-// Carga cargar evaluations.
+/**
+ * Carga los resultados de evaluaciones para estudiantes y actividades.
+ */
 export async function loadEvaluations(params = {}) {
   return request(`/api/evaluations${buildQuery(params)}`);
 }
 
-// Gestiona replace asistencia mes.
+/**
+ * Reemplaza o crea masivamente los registros de asistencia para un mes específico.
+ */
 export async function replaceAttendanceMonth(payload = {}) {
   return request('/api/attendance', {
     method: 'POST',
@@ -96,7 +138,9 @@ export async function replaceAttendanceMonth(payload = {}) {
   });
 }
 
-// Gestiona clear asistencia mes.
+/**
+ * Elimina todos los registros de asistencia de un mes/sección.
+ */
 export async function clearAttendanceMonth(payload = {}) {
   return request('/api/attendance', {
     method: 'DELETE',
@@ -104,7 +148,9 @@ export async function clearAttendanceMonth(payload = {}) {
   });
 }
 
-// Crea crear grado.
+/**
+ * Crea un nuevo grado en el servidor SQL.
+ */
 export async function createGrade(payload = {}) {
   return request('/api/grades', {
     method: 'POST',
@@ -112,7 +158,9 @@ export async function createGrade(payload = {}) {
   });
 }
 
-// Actualiza actualizar grado.
+/**
+ * Actualiza parcialmente los datos de un grado existente.
+ */
 export async function updateGrade(gradeId, payload = {}) {
   return request(`/api/grades/${encodeURIComponent(String(gradeId || '').trim())}`, {
     method: 'PATCH',
@@ -120,7 +168,9 @@ export async function updateGrade(gradeId, payload = {}) {
   });
 }
 
-// Crea crear sección.
+/**
+ * Crea una nueva sección (curso) en el servidor SQL.
+ */
 export async function createSection(payload = {}) {
   return request('/api/sections', {
     method: 'POST',
@@ -128,7 +178,9 @@ export async function createSection(payload = {}) {
   });
 }
 
-// Actualiza actualizar sección.
+/**
+ * Actualiza parcialmente los datos de una sección existente.
+ */
 export async function updateSection(sectionId, payload = {}) {
   return request(`/api/sections/${encodeURIComponent(String(sectionId || '').trim())}`, {
     method: 'PATCH',
@@ -136,7 +188,9 @@ export async function updateSection(sectionId, payload = {}) {
   });
 }
 
-// Crea crear estudiante.
+/**
+ * Crea un nuevo estudiante en el servidor SQL.
+ */
 export async function createStudent(payload = {}) {
   return request('/api/students', {
     method: 'POST',
@@ -144,7 +198,9 @@ export async function createStudent(payload = {}) {
   });
 }
 
-// Actualiza actualizar estudiante.
+/**
+ * Actualiza parcialmente los datos de un estudiante existente.
+ */
 export async function updateStudent(studentId, payload = {}) {
   return request(`/api/students/${encodeURIComponent(String(studentId || '').trim())}`, {
     method: 'PATCH',
@@ -152,7 +208,9 @@ export async function updateStudent(studentId, payload = {}) {
   });
 }
 
-// Elimina eliminar grado.
+/**
+ * Elimina un grado de la base de datos SQL.
+ */
 export async function deleteGrade(gradeId, payload = {}) {
   return request(`/api/grades/${encodeURIComponent(String(gradeId || '').trim())}`, {
     method: 'DELETE',
@@ -160,7 +218,9 @@ export async function deleteGrade(gradeId, payload = {}) {
   });
 }
 
-// Elimina eliminar sección.
+/**
+ * Elimina una sección de la base de datos SQL.
+ */
 export async function deleteSection(sectionId, payload = {}) {
   return request(`/api/sections/${encodeURIComponent(String(sectionId || '').trim())}`, {
     method: 'DELETE',
@@ -168,7 +228,9 @@ export async function deleteSection(sectionId, payload = {}) {
   });
 }
 
-// Elimina eliminar estudiante.
+/**
+ * Elimina un estudiante de la base de datos SQL.
+ */
 export async function deleteStudent(studentId, payload = {}) {
   return request(`/api/students/${encodeURIComponent(String(studentId || '').trim())}`, {
     method: 'DELETE',
@@ -176,7 +238,9 @@ export async function deleteStudent(studentId, payload = {}) {
   });
 }
 
-// Crea crear actividad.
+/**
+ * Crea una nueva actividad evaluativa en el servidor SQL.
+ */
 export async function createActivity(payload = {}) {
   return request('/api/activities', {
     method: 'POST',
@@ -184,7 +248,9 @@ export async function createActivity(payload = {}) {
   });
 }
 
-// Actualiza actualizar actividad.
+/**
+ * Actualiza parcialmente los datos de una actividad existente.
+ */
 export async function updateActivity(activityId, payload = {}) {
   return request(`/api/activities/${encodeURIComponent(String(activityId || '').trim())}`, {
     method: 'PATCH',
@@ -192,7 +258,9 @@ export async function updateActivity(activityId, payload = {}) {
   });
 }
 
-// Elimina eliminar actividad.
+/**
+ * Elimina una actividad de la base de datos SQL.
+ */
 export async function deleteActivity(activityId, payload = {}) {
   return request(`/api/activities/${encodeURIComponent(String(activityId || '').trim())}`, {
     method: 'DELETE',
@@ -200,7 +268,9 @@ export async function deleteActivity(activityId, payload = {}) {
   });
 }
 
-// Gestiona upsert evaluations.
+/**
+ * Crea o actualiza masivamente un conjunto de evaluaciones (calificaciones).
+ */
 export async function upsertEvaluations(payload = {}) {
   return request('/api/evaluations', {
     method: 'POST',
@@ -208,7 +278,9 @@ export async function upsertEvaluations(payload = {}) {
   });
 }
 
-// Elimina eliminar evaluations.
+/**
+ * Elimina registros de evaluaciones específicos.
+ */
 export async function deleteEvaluations(payload = {}) {
   return request('/api/evaluations', {
     method: 'DELETE',
@@ -216,7 +288,9 @@ export async function deleteEvaluations(payload = {}) {
   });
 }
 
-// Carga cargar academic snapshot.
+/**
+ * Carga una captura completa de los datos académicos para sincronización fuera de línea.
+ */
 export async function loadAcademicSnapshot(params = {}) {
   const [grades, sections, students, activities, evaluations, attendance] = await Promise.all([
     loadGrades(params),
@@ -229,7 +303,10 @@ export async function loadAcademicSnapshot(params = {}) {
   return { grades, sections, students, activities, evaluations, attendance };
 }
 
-// Construye construir query.
+/**
+ * Construye una cadena de consulta (query string) a partir de un objeto de parámetros.
+ * @returns {string} Ej: "?key=value".
+ */
 export function buildQuery(params = {}) {
   const query = new URLSearchParams();
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -240,13 +317,17 @@ export function buildQuery(params = {}) {
   return serialized ? `?${serialized}` : '';
 }
 
-// Carga cargar estado block.
+/**
+ * Carga un bloque de estado arbitrario desde la API SQL.
+ */
 export async function loadStateBlock(blockKey, context = {}) {
   const cleanBlockKey = String(blockKey || '').trim();
   return request(`/api/state/${encodeURIComponent(cleanBlockKey)}${buildQuery(context)}`);
 }
 
-// Sincroniza sync estado block.
+/**
+ * Sincroniza/Guarda un bloque de estado (NoSQL-style) en la base de datos SQL.
+ */
 export async function syncStateBlock(blockKey, context = {}, payload = {}, payloadHash = '') {
   const cleanBlockKey = String(blockKey || '').trim();
   return request(`/api/state/${encodeURIComponent(cleanBlockKey)}`, {
@@ -267,7 +348,9 @@ export function normalizeSchoolName(name) {
 }
 
 /**
- * Obtiene el contexto de estado para la API de SQL.
+ * Obtiene el contexto consolidado del usuario para operaciones de sincronización SQL.
+ * Incluye email, institución, rol y año académico.
+ * @returns {Object|null}
  */
 export function getSqlStateContext() {
   const localUser = readBrowserSession();
@@ -288,7 +371,8 @@ export function getSqlStateContext() {
 }
 
 /**
- * Comprueba si un ID tiene formato de UUID (típico de SQL).
+ * Comprueba si un ID tiene formato de UUID estándar.
+ * @returns {boolean}
  */
 export function isSqlUuidLike(value) {
   const str = String(value || '');
@@ -297,6 +381,8 @@ export function isSqlUuidLike(value) {
 
 /**
  * Garantiza que exista un contexto académico en la base de datos SQL.
+ * Crea el perfil del usuario y la escuela si no existen y retorna sus IDs internos.
+ * @returns {Promise<Object|null>}
  */
 export async function ensureSqlAcademicContext() {
   if (!isEnabled()) return null;
@@ -326,25 +412,31 @@ export async function ensureSqlAcademicContext() {
   }
 }
 
+/**
+ * Atajo para obtener el schoolId de la base de datos SQL para el perfil activo.
+ */
 export async function ensureSqlSchoolIdForProfile() {
   const context = await ensureSqlAcademicContext();
   return String(context?.schoolId || '').trim();
 }
 
 /**
- * --- SQL Attendance Synchronization ---
+ * --- Sincronización de Asistencia SQL ---
  */
 
+/** Orquestador de tareas en vuelo y temporizadores para sincronización de asistencia */
 const SQL_ATTENDANCE_SYNC_RUNTIME = {
   timers: new Map(),
   inFlight: new Map(),
   pending: new Set(),
 };
 
+/** Normaliza la llave de mes para compatibilidad con la base de datos (YYYY-MM) */
 function normalizeSqlAttendanceMonthKey(monthKey) {
   return String(monthKey || '').trim().slice(0, 7);
 }
 
+/** Mapea los códigos de estado locales a los códigos permitidos en SQL */
 function normalizeSqlAttendanceStatus(status = '') {
   const s = String(status || '').toUpperCase();
   if (['P', 'T', 'L', 'S'].includes(s)) return 'P';
@@ -354,6 +446,7 @@ function normalizeSqlAttendanceStatus(status = '') {
   return 'P';
 }
 
+/** Valida el número del día (1-31) para asistencia */
 function normalizeAttendanceV2DayValue(value) {
   const raw = String(value || '').replace(/\D/g, '').slice(0, 2);
   if (!raw) return '';
@@ -361,15 +454,20 @@ function normalizeAttendanceV2DayValue(value) {
   return day >= 1 && day <= 31 ? String(day) : '';
 }
 
+/** Genera estructura de metadatos para un slot de asistencia */
 function createAttendanceV2SlotMeta(type = '', reason = '') {
   return { type: String(type || '').trim(), reason: String(reason || '').trim().slice(0, 140) };
 }
 
+/** Normaliza metadatos de slot */
 function normalizeAttendanceV2SlotMeta(meta) {
   if (!meta || typeof meta !== 'object') return createAttendanceV2SlotMeta(String(meta || ''));
   return createAttendanceV2SlotMeta(meta.type || '', meta.reason || '');
 }
 
+/**
+ * Transforma el JSON estructurado de asistencia de EduGest en filas aplanadas para SQL.
+ */
 function buildSqlAttendanceMonthRows(sectionId, monthKey) {
   const normalizedMonth = normalizeSqlAttendanceMonthKey(monthKey);
   const sectionRecord = S.attendance?.records?.[sectionId]?.[normalizedMonth];
@@ -406,7 +504,7 @@ function buildSqlAttendanceMonthRows(sectionId, monthKey) {
     return rows;
   }
 
-  // Legacy format
+  // Soporte para formato legado
   Object.entries(sectionRecord || {}).forEach(([studentId, days]) => {
     if (!days || typeof days !== 'object' || Array.isArray(days)) return;
     Object.entries(days).forEach(([attendanceDate, status]) => {
@@ -416,6 +514,9 @@ function buildSqlAttendanceMonthRows(sectionId, monthKey) {
   return rows;
 }
 
+/**
+ * Sincroniza inmediatamente los registros de asistencia de una sección con el servidor SQL.
+ */
 export async function syncSqlAttendanceMonth(sectionId, monthKey, options = {}) {
   if (!isEnabled()) return null;
   const schoolId = await ensureSqlSchoolIdForProfile();
@@ -431,6 +532,9 @@ export async function syncSqlAttendanceMonth(sectionId, monthKey, options = {}) 
   return replaceAttendanceMonth({ schoolId, sectionId: cleanSectionId, monthKey: normalizedMonth, rows });
 }
 
+/**
+ * Cancela cualquier sincronización de asistencia pendiente de ejecución.
+ */
 export function cancelSqlAttendanceMonthSync(sectionId, monthKey) {
   const key = `${String(sectionId || '').trim()}::${normalizeSqlAttendanceMonthKey(monthKey)}`;
   const timer = SQL_ATTENDANCE_SYNC_RUNTIME.timers.get(key);
@@ -439,6 +543,10 @@ export function cancelSqlAttendanceMonthSync(sectionId, monthKey) {
   SQL_ATTENDANCE_SYNC_RUNTIME.pending.delete(key);
 }
 
+/**
+ * Programa una sincronización de asistencia con retardo (debounced).
+ * Previene colisiones y reduce la carga del servidor durante ediciones rápidas.
+ */
 export function scheduleSqlAttendanceMonthSync(sectionId, monthKey) {
   if (!isEnabled()) return;
   const cleanSectionId = String(sectionId || '').trim();
@@ -471,7 +579,8 @@ export function scheduleSqlAttendanceMonthSync(sectionId, monthKey) {
 }
 
 /**
- * Sincroniza una actividad con la base de datos SQL.
+ * Sincroniza una actividad evaluativa con la base de datos SQL.
+ * Determina automáticamente si debe crear o actualizar basándose en el ID.
  */
 export async function syncSqlActivityCreateOrUpdate(activity, meta = {}) {
   if (!isEnabled()) return null;

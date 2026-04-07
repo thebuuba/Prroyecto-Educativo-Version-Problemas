@@ -1,42 +1,49 @@
+/**
+ * Utilidades de Interfaz de Usuario (UI) de EduGest.
+ * --------------------------------------------------------------------------
+ * Este módulo contiene funciones auxiliares para la gestión de modales, 
+ * notificaciones (toasts), manipulación básica del DOM y controles de 
+ * contexto académico del Topbar.
+ */
+
 import { S } from './state.js';
 import { fixMojibakeText } from './utils.js';
 import { DEFAULT_PERIODS } from './constants.js';
 import { getGroupLabel, getGroups, ensureActiveContext } from './academic-context-logic.js';
 
 /**
- * Core UI helpers for EduGest.
- * These functions manage modals, toasts, and basic DOM interactions.
+ * --- Ayudantes Básicos del DOM ---
  */
 
-// --- Basic DOM Helpers ---
-
 /**
- * Gets the trimmed value of an input element by ID.
- * @param {string} id 
- * @returns {string}
+ * Obtiene el valor limpio (trimmed) de un elemento input por su ID.
+ * @param {string} id - ID del elemento.
+ * @returns {string} Valor de texto.
  */
 export function v(id) {
   return (document.getElementById(id)?.value || '').trim();
 }
 
 /**
- * Generates initials from a name string (e.g., "John Doe" -> "JD").
- * @param {string} n 
- * @returns {string}
+ * Genera iniciales a partir de un nombre compuesto.
+ * @param {string} n - Nombre completo.
+ * @returns {string} Iniciales (ej. "Juan Perez" -> "JP").
  */
 export function initials(n) {
   return (n || '').split(' ').filter(Boolean).map(w => w[0].toUpperCase()).join('').slice(0, 2);
 }
 
-// --- Modal Management ---
+/**
+ * --- Gestión de Modales ---
+ */
 
 /**
- * Opens a modal and applies context.
- * @param {string} id 
- * @param {Object} context 
+ * Abre un modal y aplica las clases de contexto necesarias.
+ * @param {string} id - ID del modal.
+ * @param {Object} [context={}] - Datos de contexto (ej. para configuración inicial).
  */
 export function openM(id, context = {}) {
-  // Legacy hook for modal creation/initialization
+  // Gancho para inicialización legacy
   if (typeof window.onOpenCreateModal === 'function') {
     window.onOpenCreateModal(id, context);
   }
@@ -60,14 +67,14 @@ export function openM(id, context = {}) {
     if (typeof window.clearTermsAcceptanceError === 'function') window.clearTermsAcceptanceError();
   }
 
-  // Legacy enhancements
+  // Mejoras de accesibilidad y reparaciones legacy
   if (typeof window.enableWritingAssist === 'function') window.enableWritingAssist(modal);
   if (typeof window.queueRenderedTextRepair === 'function') window.queueRenderedTextRepair(modal);
 }
 
 /**
- * Force closes a modal, bypassing mandatory checks.
- * @param {string} id 
+ * Cierra un modal de forma forzada, saltándose las validaciones de obligatoriedad.
+ * @param {string} id - ID del modal.
  */
 export function forceCloseM(id) {
   const modal = document.getElementById(id);
@@ -84,11 +91,11 @@ export function forceCloseM(id) {
 }
 
 /**
- * Closes a modal with mandatory check validation.
- * @param {string} id 
+ * Cierra un modal validando si existen acciones obligatorias pendientes (Términos, Setup, etc).
+ * @param {string} id - ID del modal.
  */
 export function closeM(id) {
-  // Legacy mandatory checks
+  // Validaciones obligatorias de lógica de negocio (Legacy)
   if (id === 'm-terms' && typeof window.enforceMandatoryTermsAcceptance === 'function' && window.enforceMandatoryTermsAcceptance()) return;
   if (id === 'm-education-section' && typeof window.enforceMandatoryEducationSelection === 'function' && window.enforceMandatoryEducationSelection()) return;
   if (id === 'm-setup' && typeof window.enforceMandatorySetup === 'function' && window.enforceMandatorySetup()) return;
@@ -96,12 +103,15 @@ export function closeM(id) {
   forceCloseM(id);
 }
 
-// --- Notifications ---
+/**
+ * --- Notificaciones (Toasts) ---
+ */
 
 /**
- * Shows a global toast notification.
- * @param {string} msg 
- * @param {boolean|string} err 
+ * Muestra una notificación flotante (Toast) en la pantalla.
+ * Soporta diferentes tonos (error, advertencia, información) y temas.
+ * @param {string} msg - Mensaje a mostrar.
+ * @param {boolean|string} [err=false] - Tipo de error o booleano de fallo.
  */
 export function toast(msg, err = false) {
   const t = document.getElementById('toast');
@@ -131,8 +141,7 @@ export function toast(msg, err = false) {
   }, 3200);
 }
 
-// --- Compatibility Exports ---
-
+// Registro en el objeto global window para asegurar compatibilidad con paneles legacy
 window.v = v;
 window.initials = initials;
 window.openM = openM;
@@ -141,30 +150,47 @@ window.forceCloseM = forceCloseM;
 window.toast = toast;
 
 /**
- * --- Academic Context UI Helpers ---
+ * --- Ayudantes de Contexto Académico en UI ---
  */
 
+/**
+ * Retorna el nombre legible del período activo (P1-P4).
+ * @param {string} [periodId=S.activePeriodId] - ID del período.
+ * @returns {string} Nombre formateado.
+ */
 export function periodName(periodId = S.activePeriodId) {
   const p = (S.periods || DEFAULT_PERIODS).find(p => p.id === periodId);
   const rawName = p?.name || periodId || 'P1';
   return fixMojibakeText(String(rawName || '').trim()).replace(/^Periodo\b/i, 'Período');
 }
 
+/**
+ * Determina si la página actual requiere mostrar los controles de contexto (Curso/Período).
+ */
 export function shouldShowAcademicContext(pageId = S.currentPage) {
   return ['actividades', 'matriz', 'reportes'].includes(pageId);
 }
 
+/**
+ * Genera la etiqueta descriptiva del contexto activo (Grado + Sección + Período).
+ */
 export function activeContextLabel(groupId = S.activeGroupId, periodId = S.activePeriodId) {
   const courseLabel = getGroupLabel(groupId);
   const periodCode = periodId || S.activePeriodId || 'P1';
   return `${courseLabel} - Período ${periodCode}`;
 }
 
+/**
+ * Formatea el título de la página inyectando el contexto académico si es necesario.
+ */
 export function pageTitleWithContext(pageId = S.currentPage, baseTitle = '') {
   if (!shouldShowAcademicContext(pageId)) return baseTitle;
   return `${baseTitle} - ${activeContextLabel()}`;
 }
 
+/**
+ * Genera la cadena de texto descriptiva para el Topbar (Institución + Año + Período).
+ */
 export function topbarContext() {
   const institution = S.profile?.inst || 'Institución por configurar';
   const year = S.schoolYear?.name || S.profile?.year || '2025-2026';
@@ -172,6 +198,10 @@ export function topbarContext() {
   return `${institution} - ${year} - ${period}`;
 }
 
+/**
+ * Renderiza el HTML de los controles selectores de contexto del Topbar.
+ * @returns {string} Fragmento HTML.
+ */
 export function renderTopbarContextControls() {
   ensureActiveContext();
   const groups = getGroups();
@@ -192,6 +222,10 @@ export function renderTopbarContextControls() {
   `;
 }
 
+/**
+ * Inyecta los controles de contexto en un panel de vista dinámico.
+ * @param {HTMLElement} view - Contenedor de la vista.
+ */
 export function injectPanelContextControls(view) {
   if (!view) return;
   const existing = view.querySelector('.panel-context-host');

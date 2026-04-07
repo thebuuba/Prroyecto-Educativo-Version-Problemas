@@ -1,3 +1,11 @@
+/**
+ * Utilidades de Dominio y Puente Modular (EduGest Domain Utils).
+ * --------------------------------------------------------------------------
+ * Este módulo actúa como orquestador de utilidades, re-exportando funciones de 
+ * lógica académica, matemática y de interfaz. Además, implementa lógica de 
+ * alto nivel para la reparación de datos, filtrado por contexto y búsqueda global.
+ */
+
 export { 
   sortCourses, 
   normTxt, 
@@ -15,7 +23,7 @@ export {
 import { EDUCATION_SECTIONS, EDUCATION_THEME_CLASS_BY_SECTION, EDUCATION_THEME_CLASS_BY_COMBINATION } from './constants.js';
 import { normalizeEducationSections, normalizeEducationSection, normalizeEducationLevelName } from './string-utils.js';
 
-// Re-exports from Specialized Modules
+// Re-exportes de módulos especializados para facilitar las importaciones masivas
 export * from './math-utils.js';
 export * from './string-utils.js';
 export * from './instrument-logic.js';
@@ -29,7 +37,7 @@ export * from './planning-logic.js';
 import { ensurePeriodBuckets, studentsInGroup } from './academic-context-logic.js';
 import { fixMojibakeText } from './utils.js';
 
-// Helper re-exports for shell/root/panels
+// Re-exportes auxiliares para shell, root y paneles
 export { getDisplayUserName, resetToSignedOutState, logoutAuth } from './hydration.js';
 export { initials, openM, closeM, toast, forceCloseM, periodName } from './ui.js';
 export { go, currentPage } from './routing.js';
@@ -45,8 +53,11 @@ export {
 } from './interactions.js';
 export { STATIC_DOM } from './constants.js';
 
-// Academic Structure & Context logic moved to academic-context-logic.js
-
+/**
+ * Valida y repara la integridad de los datos académicos en el estado global.
+ * Corrige referencias rotas entre estudiantes y secciones basándose en nombres y metadatos.
+ * Asegura que las evaluaciones tengan asignado un groupId válido.
+ */
 export function validateAndRepairData() {
   const sectionById = new Map((S.secciones || []).map(s => [s.id, s]));
   const sectionByKey = new Map();
@@ -101,17 +112,19 @@ export function validateAndRepairData() {
 }
 
 /**
- * --- UI Themes & Scoping ---
+ * Obtiene la lista de grados institucionales filtrados por la región educativa activa.
+ * @returns {Array<Object>} Lista de grados dentro del alcance actual.
  */
-
-// Theme and scoping logic moved to theme-logic.js
-
 export function getScopedGrades() {
   const allGrades = Array.isArray(S.grades) ? S.grades : [];
   if (!shouldScopeByEducationSection()) return allGrades;
   return allGrades.filter((grade) => matchesActiveEducationSection(grade?.educationLevel || ''));
 }
 
+/**
+ * Obtiene la lista de estudiantes inscritos en las secciones del alcance actual.
+ * @returns {Array<Object>} Lista de estudiantes dentro del alcance actual.
+ */
 export function getScopedStudents() {
   const allStudents = Array.isArray(S.estudiantes) ? S.estudiantes : [];
   if (!shouldScopeByEducationSection()) return allStudents;
@@ -122,12 +135,11 @@ export function getScopedStudents() {
   });
 }
 
-// Scoping helpers moved to theme-logic.js
-
 /**
- * --- Search ---
+ * Motor de búsqueda de estudiantes enfocado en nombres y matrículas.
+ * @param {string} [query=''] - Término de búsqueda.
+ * @returns {Array<Object>} Resultados enriquecidos con información de grado y sección.
  */
-
 export function getStudentSearchResults(query = '') {
   const q = normTxt(query);
   if (!q) return [];
@@ -158,13 +170,18 @@ export function getStudentSearchResults(query = '') {
   return results;
 }
 
-// Temporary compatibility bridges
+/** Puentes temporales de compatibilidad y variables de estado de interacción. */
 export const INTERACTION_ENHANCEMENTS = {}; 
+
+/**
+ * Verifica si hay una sesión de usuario activa en el navegador.
+ * @returns {boolean}
+ */
 export function hasActiveBrowserSession() {
   return !!S.sessionUserId;
 }
 
-// Ensure window exports for legacy shell
+/** Exportación de funciones al ámbito global para compatibilidad con la shell legada. */
 window.getGroupCfg = (gid, pid) => S.periodGroupConfigs?.[pid || S.activePeriodId]?.[gid] || { B1: { activities: [] }, B2: { activities: [] }, B3: { activities: [] }, B4: { activities: [] } };
 window.ensurePeriodBuckets = ensurePeriodBuckets;
 window.studentsInGroup = studentsInGroup;

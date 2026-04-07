@@ -1,3 +1,11 @@
+/**
+ * Panel de Tablero Principal (Bento Dashboard).
+ * --------------------------------------------------------------------------
+ * Este módulo gestiona el renderizado del tablero principal de EduGest, que 
+ * utiliza un diseño tipo "Bento" para mostrar estadísticas, acciones rápidas 
+ * y sugerencias contextuales al docente.
+ */
+
 import { S } from '../core/state.js';
 import { go } from '../core/routing.js';
 import { persist } from '../core/hydration.js';
@@ -13,8 +21,8 @@ import { BLOCKS } from '../core/constants.js';
 import { escapeHtml } from '../core/utils.js';
 
 /**
- * Renders the modern Bento Dashboard.
- * @param {HTMLElement} c - Container element.
+ * Renderiza el tablero Bento moderno con estadísticas y accesos directos.
+ * @param {HTMLElement} c - Contenedor del panel.
  */
 export function registerDashboardPanel(c) {
   const teacherName = S.profile?.name || S.sessionUserName || 'Docente';
@@ -26,7 +34,7 @@ export function registerDashboardPanel(c) {
   const scopedCourseIds = new Set(courses.map(course => course.id));
   const totalStudents = scopedStudents.length;
 
-  // Stats calculation
+  // Cálculo de estadísticas globales
   const allActsList = courses.flatMap(course => {
     const cfg = getGroupCfg(course.id, S.activePeriodId);
     return BLOCKS.flatMap(block => (cfg[block]?.activities || []).map(activity => ({ sectionId: course.id, block, activity })));
@@ -43,7 +51,7 @@ export function registerDashboardPanel(c) {
   const institution = S.profile?.inst || 'Configura tu institución';
   const todayDate = new Date().toLocaleDateString('es-DO', { weekday: 'long', day: '2-digit', month: 'long' });
 
-  // Focus Items Logic
+  // Lógica de elementos de enfoque (Focus Items) para guiar al usuario
   const focusItems = buildFocusItems({
     courses, totalStudents, totalActivities, pendingInstruments, hasPlanning: (S.lessonPlans?.length > 0)
   });
@@ -51,7 +59,7 @@ export function registerDashboardPanel(c) {
   const mainFocus = focusItems[0];
   const stepNum = String((mainFocus?.eyebrow || '').match(/\d+/)?.[0] || '1').padStart(2, '0');
 
-  // Quick Actions
+  // Acciones rápidas de la columna lateral
   const quickActions = [
     { icon: 'person_add', title: 'Estudiantes', copy: 'Matrícula', action: "window.go('estudiantes')" },
     { icon: 'add_task', title: 'Actividades', copy: 'Evaluar', action: "window.go('actividades')" },
@@ -68,7 +76,7 @@ export function registerDashboardPanel(c) {
 
   c.innerHTML = `
     <div class="p-6 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <!-- Hero Section -->
+      <!-- Sección de Cabecera (Hero) -->
       <header class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">${greet}, ${escapeHtml(teacherName)}</h1>
@@ -81,7 +89,7 @@ export function registerDashboardPanel(c) {
         </div>
       </header>
 
-      <!-- KPI Grid -->
+      <!-- Cuadrícula de KPIs -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         ${renderStatCard('Cursos', courses.length, 'school', 'text-indigo-600 bg-indigo-50')}
         ${renderStatCard('Estudiantes', totalStudents, 'group', 'text-emerald-600 bg-emerald-50')}
@@ -89,9 +97,9 @@ export function registerDashboardPanel(c) {
         ${renderStatCard('Cobertura', `${courseCoverage}%`, 'analytics', 'text-rose-600 bg-rose-50')}
       </div>
 
-      <!-- Bento Layout -->
+      <!-- Diseño Bento -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Center Focus -->
+        <!-- Foco Central -->
         <div class="lg:col-span-2 space-y-6">
           <section class="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
             <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-500">
@@ -115,7 +123,7 @@ export function registerDashboardPanel(c) {
             </div>
           </section>
 
-          <!-- Mis Cursos List -->
+          <!-- Listado de Mis Cursos -->
           <section class="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
             <div class="flex items-center justify-between mb-6">
               <h2 class="text-xl font-bold text-slate-800 dark:text-white">Mis cursos activos</h2>
@@ -128,7 +136,7 @@ export function registerDashboardPanel(c) {
           </section>
         </div>
 
-        <!-- Sidebar Actions -->
+        <!-- Acciones Laterales -->
         <div class="space-y-6">
           <section class="bg-indigo-600 rounded-3xl p-8 text-white shadow-xl shadow-indigo-200 dark:shadow-none">
             <h2 class="text-xl font-bold mb-6">Accesos rápidos</h2>
@@ -158,6 +166,10 @@ export function registerDashboardPanel(c) {
   `;
 }
 
+/**
+ * Renderiza una tarjeta de estadística tipo KPI.
+ * @private
+ */
 function renderStatCard(label, value, icon, iconClass) {
   return `
     <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex items-center gap-4 transition-transform hover:scale-[1.02]">
@@ -172,9 +184,12 @@ function renderStatCard(label, value, icon, iconClass) {
   `;
 }
 
+/**
+ * Renderiza un ítem compacto para la lista de cursos en el tablero.
+ * @private
+ */
 function renderCourseItem(sec) {
   const count = studentsInGroup(sec.id).length;
-  // Progress estimation for activities linked
   const cfg = getGroupCfg(sec.id, S.activePeriodId);
   const activities = BLOCKS.flatMap(b => cfg[b]?.activities || []);
   const linked = activities.filter(a => !!a.instrumentId).length;
@@ -202,6 +217,10 @@ function renderCourseItem(sec) {
   `;
 }
 
+/**
+ * Renderiza un renglón de información tipo resumen.
+ * @private
+ */
 function renderOverviewItem(label, value, icon, textClass = 'text-slate-900 dark:text-white') {
   return `
     <div class="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
@@ -216,6 +235,10 @@ function renderOverviewItem(label, value, icon, textClass = 'text-slate-900 dark
   `;
 }
 
+/**
+ * Construye la lista de elementos de enfoque prioritario basados en el estado del usuario.
+ * @private
+ */
 function buildFocusItems({ courses, totalStudents, totalActivities, pendingInstruments, hasPlanning }) {
   const items = [];
   if (courses.length === 0) {
@@ -234,11 +257,15 @@ function buildFocusItems({ courses, totalStudents, totalActivities, pendingInstr
   return items;
 }
 
+/**
+ * Inicializa el panel de Dashboard y lo registra en el orquestador global.
+ * Expone puentes de compatibilidad para eventos de UI.
+ */
 export function init() {
   if (!window.RENDERS) window.RENDERS = {};
   window.RENDERS.dashboard = registerDashboardPanel;
   
-  // Bridge utility
+  /** Abre un curso específico desde el tablero y navega a actividades. */
   window.openDashboardCourse = (id) => {
     S.activeGroupId = id;
     S.activeCourseId = id;

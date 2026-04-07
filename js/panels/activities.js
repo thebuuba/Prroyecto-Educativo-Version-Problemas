@@ -1,7 +1,9 @@
 /**
- * Activities Panel Module
- * Modernized version of the activities management system.
- * Handles Blocks View, Matrix View, and Activity Configuration.
+ * Módulo del Panel de Actividades (EduGest Activities).
+ * --------------------------------------------------------------------------
+ * Gestiona la visualización y configuración de las actividades evaluativas.
+ * Ofrece tres vistas principales: Vista de Bloques, Matriz de Calificaciones
+ * y Configuración de Puntaje/Meta.
  */
 
 import { S } from '../core/state.js';
@@ -32,14 +34,16 @@ import {
 } from '../core/domain-utils.js';
 
 /**
- * View State
+ * Obtiene el modo de vista actual del panel de actividades desde el estado.
+ * @returns {string} Modo de vista ('blocks', 'matrix' o 'config').
  */
 export function getActViewMode() {
   return S.activityViewMode || ACT_VIEW_MODE_DEFAULT;
 }
 
 /**
- * Navigation Actions
+ * Cambia el modo de vista de las actividades y actualiza el estado.
+ * @param {string} mode - Nuevo modo de vista.
  */
 window.setActView = (mode) => {
   S.activityViewMode = ['blocks', 'matrix', 'config'].includes(mode) ? mode : 'blocks';
@@ -48,9 +52,10 @@ window.setActView = (mode) => {
 };
 
 /**
- * UI Components
+ * Renderiza la cabecera del panel de actividades con el selector de vistas.
+ * @private
+ * @returns {string} HTML de la cabecera.
  */
-
 function renderHeader() {
   const mode = getActViewMode();
   return `
@@ -74,6 +79,15 @@ function renderHeader() {
   `;
 }
 
+/**
+ * Renderiza una tarjeta de bloque pedagógico con el resumen de sus actividades.
+ * @private
+ * @param {string} b - Identificador del bloque (ej. 'B1').
+ * @param {Array} acts - Lista de actividades del bloque.
+ * @param {Object} cfg - Configuración del bloque.
+ * @param {Array} ests - Lista de estudiantes vinculados.
+ * @returns {string} HTML de la tarjeta de bloque.
+ */
 function renderBlockCard(b, acts, cfg, ests) {
   const rawMax = blockRawMax(b);
   const meta = blockMeta(b);
@@ -156,6 +170,11 @@ function renderBlockCard(b, acts, cfg, ests) {
   `;
 }
 
+/**
+ * Renderiza la vista de bloques pedagógicos.
+ * @private
+ * @returns {string} HTML de los bloques.
+ */
 function renderBlocksView() {
   const cfg = getGroupCfg(S.activeGroupId);
   const ests = studentsInGroup(S.activeGroupId);
@@ -167,6 +186,11 @@ function renderBlocksView() {
   `;
 }
 
+/**
+ * Renderiza la matriz interactiva de calificaciones para el grupo activo.
+ * @private
+ * @returns {string} HTML de la matriz.
+ */
 function renderMatrixView() {
   const ests = studentsInGroup(S.activeGroupId);
   if (ests.length === 0) {
@@ -186,7 +210,7 @@ function renderMatrixView() {
   const blockActs = {};
   BLOCKS.forEach(b => blockActs[b] = cfg[b].activities);
 
-  // Table Building Logic
+  // Lógica de construcción de la cabecera de la tabla
   let headerHtml = `
     <thead class="bg-slate-50 border-b border-slate-200">
       <tr>
@@ -276,6 +300,11 @@ function renderMatrixView() {
   `;
 }
 
+/**
+ * Renderiza la interfaz de configuración de actividades por competencia.
+ * @private
+ * @returns {string} HTML de la vista de configuración.
+ */
 function renderConfigView() {
   return `
     <div class="max-w-[800px] mx-auto animate-in slide-in-from-bottom-4 duration-500">
@@ -295,9 +324,9 @@ function renderConfigView() {
 }
 
 /**
- * Renderiza un bloque individual en el panel de configuración.
+ * Renderiza un bloque individual en el panel de configuración de actividades.
  * @param {string} b - Identificador del bloque (B1-B4).
- * @returns {string} HTML del bloque.
+ * @returns {string} HTML del componente de bloque.
  */
 export function renderActivitiesConfigBlock(b) {
   const cfg = getGroupCfg(S.activeGroupId)[b];
@@ -375,9 +404,10 @@ export function renderActivitiesConfigBlock(b) {
 }
 
 /**
- * --- Action Handlers (Attached to window for HTML compatibility) ---
+ * --- Controladores de Acción (Expuestos a window para compatibilidad con HTML) ---
  */
 
+/** Actualiza la meta de puntos de un bloque. */
 window.updateBlockMeta = (b, val) => {
   const n = parseFloat(val) || 100;
   getGroupCfg(S.activeGroupId)[b].meta = n;
@@ -385,26 +415,22 @@ window.updateBlockMeta = (b, val) => {
   window.go('actividades');
 };
 
+/** Sincroniza el cambio de nombre de una actividad con el estado persistente. */
 window.handleActNameInput = (b, id, el) => {
   const f = findActivity(id);
   if (f) f.activity.name = el.value;
   persist();
 };
 
+/** Actualiza los puntos asignados a una actividad. */
 window.updateActPts = (b, id, val) => {
   const n = parseFloat(val) || 0;
   const f = findActivity(id);
   if (f) f.activity.pts = n;
   persist();
-  // No full re-render for points on every typing, but maybe reflect slider? 
-  // Let's do a re-render for clarity on small inputs
-  const container = document.getElementById('cfg-blocks-container');
-  if (container) {
-    // Debounced re-render would be better, but let's just do it
-    // Or just update the progress bar via DOM
-  }
 };
 
+/** Agrega una nueva actividad a un bloque específico. */
 window.addActToBlock = (b) => {
   const activities = getGroupCfg(S.activeGroupId)[b].activities;
   activities.push({
@@ -421,15 +447,16 @@ window.addActToBlock = (b) => {
   window.go('actividades');
 };
 
+/** Elimina una actividad y sus evaluaciones asociadas. */
 window.removeActFromBlock = (b, id) => {
   const cfg = getGroupCfg(S.activeGroupId)[b];
   cfg.activities = cfg.activities.filter(a => a.id !== id);
-  // Clean evaluations
   S.evaluations = S.evaluations.filter(e => !(e.activityId === id && (e.periodId || 'P1') === S.activePeriodId));
   persist();
   window.go('actividades');
 };
 
+/** Distribuye equitativamente la meta de puntos entre todas las actividades del bloque. */
 window.autoAdjustBlock = (b) => {
   const cfg = getGroupCfg(S.activeGroupId)[b];
   const acts = cfg.activities;
@@ -445,7 +472,8 @@ window.autoAdjustBlock = (b) => {
 };
 
 /**
- * Entry Point
+ * Función principal de renderizado del Panel de Actividades.
+ * @param {HTMLElement} container - Contenedor donde se inyectará el panel.
  */
 export function renderActivitiesPanel(container) {
   const mode = getActViewMode();
@@ -459,12 +487,7 @@ export function renderActivitiesPanel(container) {
       </div>
     </div>
   `;
-  
-  if (mode === 'config') {
-    // If the legacy bundle was loaded, we might need to bridge or refactor the config logic.
-    // For now, let's keep it simple.
-  }
 }
 
-// Global Registration
+// Registro global para el orquestador de paneles
 window.RENDERS.actividades = renderActivitiesPanel;

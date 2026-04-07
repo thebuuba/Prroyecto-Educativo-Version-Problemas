@@ -1,6 +1,9 @@
 /**
- * Global Delete Handlers
- * Centralized logic for deleting academic entities.
+ * Gestores de Eliminación Global (EduGest Deleters).
+ * --------------------------------------------------------------------------
+ * Este módulo centraliza la lógica para eliminar entidades académicas (estudiantes,
+ * secciones, grados y plantillas), asegurando la integridad de los datos
+ * y la sincronización con el backend SQL si está habilitado.
  */
 
 import { S } from './state.js';
@@ -13,7 +16,10 @@ import {
 } from './domain-utils.js';
 
 /**
- * Elimina un estudiante y limpia su rastro en evaluaciones y notas.
+ * Elimina un estudiante del sistema y limpia su rastro en evaluaciones y notas.
+ * Si la sincronización SQL está activa, intenta eliminarlo también del servidor.
+ * @param {string} id - Identificador único del estudiante.
+ * @returns {Promise<void>}
  */
 export async function delEst(id) {
   if (!confirm('¿Eliminar estudiante y todas sus calificaciones?')) return;
@@ -31,7 +37,7 @@ export async function delEst(id) {
   const before = Array.isArray(S.estudiantes) ? S.estudiantes.length : 0;
   S.estudiantes = (S.estudiantes || []).filter(e => e.id !== id);
   
-  // Limpiar notas
+  // Limpiar notas en todos los periodos registrados
   Object.keys(S.notasByPeriod || {}).forEach(pid => {
     if (S.notasByPeriod[pid]) delete S.notasByPeriod[pid][id];
   });
@@ -47,7 +53,11 @@ export async function delEst(id) {
 }
 
 /**
- * Elimina una sección o materia.
+ * Elimina una sección o materia específica.
+ * Si la sección comparte roster (misma sección administrativa, distinta materia),
+ * los estudiantes se reasignan a la sección hermana restante.
+ * @param {string} id - Identificador único de la sección/materia.
+ * @returns {Promise<void>}
  */
 export async function delSec(id) {
   const siblingSections = getRosterSections(id).filter(s => s.id !== id);
@@ -70,7 +80,7 @@ export async function delSec(id) {
 
   const studentsToCleanup = replacementId ? [] : S.estudiantes.filter(e => (e.seccionId === id || e.sectionId === id)).map(e => e.id);
   
-  // Cleanup evaluations for those students
+  // Limpiar evaluaciones asociadas a los estudiantes eliminados
   S.evaluations = (S.evaluations || []).filter(e => !studentsToCleanup.includes(e.studentId));
   
   if (replacementId) {
@@ -89,6 +99,7 @@ export async function delSec(id) {
   S.secciones = S.secciones.filter(s => s.id !== id);
   S.grades.forEach(g => g.sections = (g.sections || []).filter(s => s.id !== id));
   
+  // Eliminar configuración de grupo para esta sección en todos los periodos
   Object.keys(S.periodGroupConfigs || {}).forEach(pid => {
     if (S.periodGroupConfigs[pid]) delete S.periodGroupConfigs[pid][id];
   });
@@ -103,7 +114,9 @@ export async function delSec(id) {
 }
 
 /**
- * Elimina un grado completo.
+ * Elimina un grado institucional completo, incluyendo todas sus secciones y estudiantes.
+ * @param {string} gradeId - Identificador único del grado.
+ * @returns {Promise<void>}
  */
 export async function delGrade(gradeId) {
   const g = S.grades.find(x => x.id === gradeId);
@@ -127,11 +140,18 @@ export async function delGrade(gradeId) {
 }
 
 /**
- * Export to window for legacy compatibility
+ * Inicializa los controladores de eliminación y los expone al ámbito global.
+ * Permite la compatibilidad con el entorno heredado (legacy).
  */
 export function initDeleters() {
   window.delEst = delEst;
   window.delSec = delSec;
   window.delGrade = delGrade;
-  window.delTpl = (id) => { S.templates = (S.templates || []).filter(t => t.id !== id); persist({ immediate: true }); go('config'); toast('Plantilla eliminada'); };
+  /** Elimina una plantilla de planificación y navega a configuración. */
+  window.delTpl = (id) => { 
+    S.templates = (S.templates || []).filter(t => t.id !== id); 
+    persist({ immediate: true }); 
+    go('config'); 
+    toast('Plantilla eliminada'); 
+  };
 }

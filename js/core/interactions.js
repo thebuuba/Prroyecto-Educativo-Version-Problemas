@@ -1,12 +1,24 @@
+/**
+ * Lógica de Interacciones de la Interfaz (UI).
+ * --------------------------------------------------------------------------
+ * Este módulo gestiona el comportamiento dinámico de la barra lateral (sidebar),
+ * las preferencias del usuario, el modo oscuro y la sincronización visual 
+ * de la carcasa (shell) de la aplicación.
+ */
+
 import { S } from './state.js';
 import { persist } from './hydration.js';
 import { toast } from './ui.js';
 import { applyEducationSectionTheme } from './theme-logic.js';
 import { pageTitleWithContext, topbarContext, injectPanelContextControls } from './ui.js';
 
+/** Estado de interacción de la barra lateral */
 export const SIDEBAR_INTERACTION = { closeTimer: null, suppressAutoCloseUntil: 0 };
+
+/** Métricas de rendimiento de la barra lateral */
 export const SIDEBAR_PERF = { rafId: null };
 
+/** Tiempos y retardos para animaciones y auto-cierre */
 export const SIDEBAR_TIMINGS = {
   expandMs: 220,
   collapseMs: 200,
@@ -15,6 +27,10 @@ export const SIDEBAR_TIMINGS = {
   reopenGraceMs: 150,
 };
 
+/**
+ * Define si la barra lateral debe permanecer fija (pinned).
+ * @param {boolean} pinned - Estado deseado.
+ */
 export function setSidebarPinned(pinned) {
   const sidebar = document.getElementById('sb');
   if (!sidebar) return;
@@ -24,16 +40,27 @@ export function setSidebarPinned(pinned) {
   syncSidebarOverlayState();
 }
 
+/**
+ * Cancela cualquier temporizador de cierre automático pendiente.
+ */
 export function clearSidebarCloseTimer() {
   if (!SIDEBAR_INTERACTION.closeTimer) return;
   clearTimeout(SIDEBAR_INTERACTION.closeTimer);
   SIDEBAR_INTERACTION.closeTimer = null;
 }
 
+/**
+ * Verifica si se debe posponer el cierre automático (ej. tras reapertura rápida).
+ */
 export function shouldDeferSidebarAutoClose() {
   return Date.now() < SIDEBAR_INTERACTION.suppressAutoCloseUntil;
 }
 
+/**
+ * Programa el cierre automático de la barra lateral tras un retardo.
+ * @param {HTMLElement} sidebar - Referencia al elemento DOM.
+ * @param {number} delayMs - Tiempo de espera.
+ */
 export function scheduleSidebarAutoClose(sidebar, delayMs) {
   if (!sidebar) return;
   if (shouldKeepSidebarPinned() || shouldDeferSidebarAutoClose()) return;
@@ -45,6 +72,9 @@ export function scheduleSidebarAutoClose(sidebar, delayMs) {
   }, delayMs);
 }
 
+/**
+ * Sincroniza el estado del fondo (backdrop) y las clases de overlay del body.
+ */
 export function syncSidebarOverlayState() {
   const sidebar = document.getElementById('sb');
   const backdrop = document.getElementById('sb-backdrop');
@@ -58,6 +88,10 @@ export function syncSidebarOverlayState() {
   }
 }
 
+/**
+ * Expande o contrae visualmente la barra lateral.
+ * @param {boolean} expanded - Estado deseado.
+ */
 export function setSidebarExpanded(expanded) {
   const sidebar = document.getElementById('sb');
   if (!sidebar) return;
@@ -73,10 +107,17 @@ export function setSidebarExpanded(expanded) {
   syncSidebarOverlayState();
 }
 
+/**
+ * Determina si el usuario ha configurado la barra como "siempre visible".
+ */
 export function shouldKeepSidebarPinned() {
   return !!S.preferences?.sidebarPinned;
 }
 
+/**
+ * Fuerza el colapso de la barra lateral si las condiciones lo permiten.
+ * Quita el foco de cualquier elemento interno para evitar re-aperturas por accesibilidad.
+ */
 export function collapseSidebarIfAllowed() {
   clearSidebarCloseTimer();
   if (shouldKeepSidebarPinned()) {
@@ -92,8 +133,9 @@ export function collapseSidebarIfAllowed() {
   setSidebarExpanded(false);
 }
 
-// --- Migrated from Monolith ---
-
+/**
+ * Verifica si el monitoreo de rendimiento de la barra lateral está activo.
+ */
 export function isSidebarPerfEnabled() {
   try {
     return window.localStorage?.getItem('edugestPerfSidebar') === '1';
@@ -102,11 +144,19 @@ export function isSidebarPerfEnabled() {
   }
 }
 
+/**
+ * Detiene cualquier sonda de rendimiento activa.
+ */
 export function stopSidebarPerfProbe() {
   if (SIDEBAR_PERF.rafId) cancelAnimationFrame(SIDEBAR_PERF.rafId);
   SIDEBAR_PERF.rafId = null;
 }
 
+/**
+ * Inicia una sonda de rendimiento para medir FPS y cuadros caídos durante 
+ * las transiciones de la barra lateral.
+ * @param {string} phase - Nombre de la fase (ej. "expand", "collapse").
+ */
 export function startSidebarPerfProbe(phase) {
   if (!isSidebarPerfEnabled()) return;
   stopSidebarPerfProbe();
@@ -142,12 +192,19 @@ export function startSidebarPerfProbe(phase) {
   SIDEBAR_PERF.rafId = requestAnimationFrame(loop);
 }
 
+/**
+ * Ajusta la duración de la animación CSS de la barra lateral.
+ * @param {number} ms - Milisegundos.
+ */
 export function setSidebarMotionDuration(ms) {
   const sidebar = document.getElementById('sb');
   if (!sidebar) return;
   sidebar.style.setProperty('--sb-width-duration', `${ms}ms`);
 }
 
+/**
+ * Asegura que el objeto de preferencias del usuario esté inicializado con valores válidos.
+ */
 export function ensureUserPreferences() {
   if (!S.preferences || typeof S.preferences !== 'object') {
     S.preferences = { density: 'comfortable', animations: true, authLoginAnimation: true, darkMode: false };
@@ -166,6 +223,9 @@ export function ensureUserPreferences() {
   }
 }
 
+/**
+ * Actualiza los elementos visuales (iconos, etiquetas) del interruptor de modo oscuro.
+ */
 export function syncDarkModeToggleUI() {
   const darkToggle = document.getElementById('sb-dark-toggle');
   const darkState = document.getElementById('sb-dark-state');
@@ -189,11 +249,15 @@ export function syncDarkModeToggleUI() {
   }
 }
 
+/**
+ * Aplica todas las preferencias de usuario al DOM de la aplicación.
+ * Gestiona densidad visual, modo oscuro, animaciones y fijación de sidebar.
+ */
 export function applyUserPreferences() {
   ensureUserPreferences();
   document.body.classList.toggle('pref-compact', S.preferences.density === 'compact');
   document.body.classList.toggle('pref-reduce-motion', S.preferences.animations === false);
-  // Note: applyMotionProfile and applyEducationSectionTheme should be imported or moved if needed
+  
   if (typeof window.applyMotionProfile === 'function') window.applyMotionProfile();
   document.body.classList.toggle('theme-dark', S.preferences.darkMode === true);
   if (typeof window.applyEducationSectionTheme === 'function') window.applyEducationSectionTheme();
@@ -211,6 +275,9 @@ export function applyUserPreferences() {
   syncDarkModeToggleUI();
 }
 
+/**
+ * Alterna el estado de fijación de la barra lateral y guarda la preferencia.
+ */
 export function toggleSidebarPinnedPreference() {
   ensureUserPreferences();
   S.preferences.sidebarPinned = !S.preferences.sidebarPinned;
@@ -219,6 +286,9 @@ export function toggleSidebarPinnedPreference() {
   toast(S.preferences.sidebarPinned ? 'Barra lateral fijada' : 'Barra lateral automática');
 }
 
+/**
+ * Alterna entre modo oscuro y claro.
+ */
 export function toggleDarkMode() {
   ensureUserPreferences();
   S.preferences.darkMode = !S.preferences.darkMode;
@@ -226,6 +296,9 @@ export function toggleDarkMode() {
   toast(S.preferences.darkMode ? 'Modo oscuro activado' : 'Modo oscuro desactivado');
 }
 
+/**
+ * Navega al panel de ajustes del usuario.
+ */
 export function openSettingsPanel() {
   if (typeof window.closeProfileMenu === 'function') window.closeProfileMenu();
   if (typeof window.go === 'function') {
@@ -236,11 +309,12 @@ export function openSettingsPanel() {
 }
 
 /**
- * Refresca el encabezado superior y sus contadores visibles.
+ * Refresca dinámicamente el encabezado superior (Topbar) y sus contadores.
+ * Inyecta los controles de contexto específicos del panel activo.
  */
 export function refreshTop() {
   applyEducationSectionTheme();
-  const PAGE = window.EduGestConfig?.PAGE || {}; // Fallback for legacy access
+  const PAGE = window.EduGestConfig?.PAGE || {}; // Fallback para compatibilidad legacy
   const currentPage = S.currentPage || 'dashboard';
   const cfg = PAGE[currentPage];
   if (!cfg) return;

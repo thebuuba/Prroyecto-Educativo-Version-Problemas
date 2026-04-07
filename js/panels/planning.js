@@ -1,13 +1,13 @@
 /**
- * Planning Panel Module
- * 
+ * Módulo del Panel de Planificaciones (EduGest Planning).
+ * --------------------------------------------------------------------------
  * Este módulo implementa la interfaz de diseño curricular basado en una arquitectura
- * de "Bento Grid" para el home y un "Multi-step wizard" para el editor.
- * Consolida la lógica de las antiguas secciones 14, 15, 16 y 23.
+ * de "Bento Grid" para la vista principal y un "Wizard" de múltiples pasos para el editor.
+ * Consolida la lógica de diseño pedagógico, competencias y secuencias didácticas.
  * 
  * Depende de:
- * - ../core/domain-utils.js: Lógica de negocio y cálculos.
- * - ../core/state.js (vía window.S): Estado reactivo simplificado.
+ * - ../core/domain-utils.js: Lógica de negocio y cálculos curriculares.
+ * - ../core/state.js: Estado reactivo compartido.
  */
 
 import { 
@@ -32,7 +32,8 @@ import {
 
 /**
  * Helper para obtener el estado actual asegurando que los contenedores de 
- * planificaciones estén inicializados en window.S.
+ * planificaciones estén inicializados en el estado global (S).
+ * @private
  * @returns {Object} Referencia al estado global.
  */
 function getPlanningState() {
@@ -42,7 +43,7 @@ function getPlanningState() {
 
 /**
  * Acción global para crear una nueva planificación.
- * Inicializa un borrador blanco y cambia la UI al modo editor.
+ * Inicializa un borrador en blanco y cambia la interfaz al modo editor.
  */
 window.lessonPlanNew = () => {
   const S = getPlanningState();
@@ -100,9 +101,10 @@ window.lessonPlanSetCurriculumField = (field, value) => {
 
 /**
  * Renderiza el encabezado del panel con contadores de actividad.
- * @param {number} draftsCount - Cantidad de borradores.
- * @param {number} totalCount - Cantidad total de planes.
- * @returns {string} HTML.
+ * @private
+ * @param {number} draftsCount - Cantidad de borradores pendientes.
+ * @param {number} totalCount - Cantidad total de planificaciones finalizadas.
+ * @returns {string} Fragmento HTML.
  */
 function renderHeader(draftsCount, totalCount) {
   return `
@@ -125,6 +127,11 @@ function renderHeader(draftsCount, totalCount) {
   `;
 }
 
+/**
+ * Renderiza la tarjeta de llamado a la acción (CTA) para crear una planificación.
+ * @private
+ * @returns {string} HTML.
+ */
 function renderCtaCard() {
   return `
     <div class="group relative overflow-hidden bg-gradient-to-br from-indigo-600 to-violet-700 rounded-[2rem] p-8 text-white shadow-xl shadow-indigo-200 transition-all hover:shadow-2xl hover:-translate-y-1">
@@ -143,6 +150,12 @@ function renderCtaCard() {
   `;
 }
 
+/**
+ * Renderiza la lista lateral de borradores recientes.
+ * @private
+ * @param {Array} drafts - Lista de objetos de planificación en estado de borrador.
+ * @returns {string} HTML del contenedor de borradores.
+ */
 function renderDraftList(drafts) {
   if (!drafts.length) {
     return `
@@ -173,6 +186,12 @@ function renderDraftList(drafts) {
   `;
 }
 
+/**
+ * Renderiza la tarjeta detallada de una planificación finalizada.
+ * @private
+ * @param {Object} plan - Objeto de planificación.
+ * @returns {string} HTML.
+ */
 function renderPlanCard(plan) {
   return `
     <div class="bg-white border border-slate-200 rounded-[2rem] p-6 hover:shadow-xl hover:border-slate-300 transition-all group">
@@ -210,9 +229,15 @@ function renderPlanCard(plan) {
 }
 
 /**
- * Editor Steps
+ * --- Pasos del Editor (Wizard) ---
  */
 
+/**
+ * Renderiza la barra de navegación de pasos del editor.
+ * @private
+ * @param {string} activeId - ID del paso activo.
+ * @returns {string} HTML.
+ */
 function renderStepRail(activeId) {
   const steps = [
     { id: 'general', label: 'General', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
@@ -239,6 +264,12 @@ function renderStepRail(activeId) {
   `;
 }
 
+/**
+ * Renderiza el primer paso del editor: Información General.
+ * @private
+ * @param {Object} draft - El borrador actual.
+ * @returns {string} HTML.
+ */
 function renderEditorGeneral(draft) {
   const grades = lessonPlanAvailableGrades();
   const sections = lessonPlanSectionOptionsForGradeId(draft.general.gradeId);
@@ -314,6 +345,12 @@ function renderEditorGeneral(draft) {
   `;
 }
 
+/**
+ * Renderiza el segundo paso del editor: Base Curricular.
+ * @private
+ * @param {Object} draft - El borrador actual.
+ * @returns {string} HTML.
+ */
 function renderEditorCurriculum(draft) {
   return `
     <div class="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
@@ -353,6 +390,12 @@ function renderEditorCurriculum(draft) {
   `;
 }
 
+/**
+ * Renderiza el tercer paso del editor: Secuencia de Clases (Diseño).
+ * @private
+ * @param {Object} draft - El borrador actual con el arreglo de clases.
+ * @returns {string} HTML.
+ */
 function renderEditorDesign(draft) {
   return `
     <div class="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
@@ -406,6 +449,12 @@ function renderEditorDesign(draft) {
   `;
 }
 
+/**
+ * Renderiza el cuarto paso del editor: Evaluación y Recursos.
+ * @private
+ * @param {Object} draft - El borrador actual.
+ * @returns {string} HTML.
+ */
 function renderEditorEvaluation(draft) {
   return `
     <div class="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
@@ -451,6 +500,12 @@ function renderEditorEvaluation(draft) {
   `;
 }
 
+/**
+ * Renderiza el paso final del editor: Vista Previa y Exportación.
+ * @private
+ * @param {Object} draft - El borrador actual.
+ * @returns {string} HTML.
+ */
 function renderEditorPreview(draft) {
   return `
     <div class="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
@@ -511,7 +566,12 @@ function renderEditorPreview(draft) {
 }
 
 /**
- * Main Render Entry Point
+ * --- Punto de Entrada de Renderizado Principal ---
+ */
+/**
+ * Orquestador principal de renderizado del panel de planificaciones.
+ * Discrimina entre la vista de inicio (home) y el editor interactivo.
+ * @param {HTMLElement} container - Elemento raíz donde se inyectará el HTML.
  */
 export function renderPlanningPanel(container) {
   const S = getPlanningState();
@@ -526,7 +586,7 @@ export function renderPlanningPanel(container) {
         ${renderHeader(drafts.length, totalCount)}
         
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <!-- Main Bento Section -->
+          <!-- Sección Principal Bento -->
           <div class="lg:col-span-8 flex flex-col gap-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
               ${renderCtaCard()}
@@ -561,7 +621,7 @@ export function renderPlanningPanel(container) {
             </div>
           </div>
           
-          <!-- Sidebar Stats Bento Section -->
+          <!-- Sidebar: Métricas y Estadísticas -->
           <div class="lg:col-span-4 flex flex-col gap-8">
             <div class="bg-slate-900 rounded-[2rem] p-8 text-white">
               <h3 class="text-lg font-bold mb-6">Métricas de Diseño</h3>

@@ -1,6 +1,14 @@
-// General utility functions for EduGest
+/**
+ * Utilidades Generales de EduGest.
+ * --------------------------------------------------------------------------
+ * Este módulo centraliza funciones auxiliares para el manejo de UI, fechas,
+ * errores, reparación de texto corrupto (Mojibake) y depuración del sistema.
+ */
 
-// Scheduling
+/**
+ * Planificador de tareas no críticas para ejecución durante el tiempo de inactividad del navegador.
+ * Utiliza requestIdleCallback si está disponible, de lo contrario cae a setTimeout.
+ */
 export const scheduleNonCriticalTask = (() => {
   if (typeof window.requestIdleCallback === 'function') {
     return (task, timeout = 180) => window.requestIdleCallback(() => task(), { timeout });
@@ -8,8 +16,13 @@ export const scheduleNonCriticalTask = (() => {
   return (task) => window.setTimeout(task, 32);
 })();
 
-// Libraries
+// Soporte para librerías externas de exportación
 let xlsxLibraryPromise = null;
+
+/**
+ * Asegura la carga dinámica de la librería SheetJS (XLSX).
+ * @returns {Promise<Object>} Instancia de XLSX.
+ */
 export function ensureXlsxLibrary() {
   if (typeof window.XLSX !== 'undefined') return Promise.resolve(window.XLSX);
   if (xlsxLibraryPromise) return xlsxLibraryPromise;
@@ -30,7 +43,12 @@ export function ensureXlsxLibrary() {
   return xlsxLibraryPromise;
 }
 
-// Error Handling
+/**
+ * Resuelve el mensaje de error más amigable para el usuario.
+ * @param {Error|Object} error - Objeto de error capturado.
+ * @param {string} [fallback] - Mensaje por defecto.
+ * @returns {string} Mensaje final en español.
+ */
 export function errorMessage(error, fallback = 'No se pudo completar la acción.') {
   if (window.EduGestCloud?.friendlyError) {
     const cloudMessage = String(window.EduGestCloud.friendlyError(error) || '').trim();
@@ -41,13 +59,24 @@ export function errorMessage(error, fallback = 'No se pudo completar la acción.
   return fallback;
 }
 
+/**
+ * Registra un error en consola y muestra una notificación (toast) al usuario.
+ * @param {string} context - Contexto donde ocurrió el error (ej. "Auth").
+ * @param {Error} error - Excepción capturada.
+ * @param {Object} [options] - Configuración de visualización.
+ */
 export function reportError(context, error, options = {}) {
   const { fallback = 'No se pudo completar la acción.', tone = 'error' } = options;
   console.error(`[EduGest][${context}]`, error);
   if (window.toast) window.toast(`${errorMessage(error, fallback)}`, tone);
 }
 
-// UI & HTML
+/**
+ * Escapa caracteres especiales de HTML para prevenir ataques XSS.
+ * Incluye reparación previa de texto corrupto.
+ * @param {string} value - Texto a escapar.
+ * @returns {string}
+ */
 export function escapeHtml(value) {
   const text = fixMojibakeText(String(value == null ? '' : value));
   return text
@@ -58,6 +87,11 @@ export function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
+/**
+ * Verifica si un elemento del DOM es un campo de entrada editable.
+ * @param {HTMLElement} el - Elemento a validar.
+ * @returns {boolean}
+ */
 export function isEditableTarget(el) {
   if (!el || !(el instanceof HTMLElement)) return false;
   if (el.isContentEditable) return true;
@@ -67,6 +101,8 @@ export function isEditableTarget(el) {
 
 /**
  * Formatea una fecha ISO (YYYY-MM-DD) a un formato legible corto (es-DO).
+ * @param {string} d - Fecha en formato ISO.
+ * @returns {string} Ej: "7 Abr".
  */
 export function fmtDate(d) {
   if (!d) return '';
@@ -78,7 +114,8 @@ export function fmtDate(d) {
 }
 
 /**
- * Obtiene la llave del mes actual en formato YYYY-MM.
+ * Obtiene la llave del mes actual en formato estandarizado YYYY-MM.
+ * @returns {string}
  */
 export function getCurrentMonthKey() {
   const now = new Date();
@@ -86,7 +123,9 @@ export function getCurrentMonthKey() {
 }
 
 /**
- * Normaliza una llave de mes al formato YYYY-MM.
+ * Normaliza una llave de mes al formato YYYY-MM, validando su estructura.
+ * @param {string} monthKey - Llave a normalizar.
+ * @returns {string}
  */
 export function normalizeAttendanceMonthKey(monthKey) {
   const match = String(monthKey || '').match(/^(\d{4})-(\d{2})$/);
@@ -98,6 +137,8 @@ export function normalizeAttendanceMonthKey(monthKey) {
 
 /**
  * Genera una llave de mes (YYYY-MM) a partir de un objeto Date.
+ * @param {Date|string} date - Objeto de fecha.
+ * @returns {string}
  */
 export function attendanceMonthKey(date) {
   const d = date instanceof Date ? date : new Date(date);
@@ -105,7 +146,9 @@ export function attendanceMonthKey(date) {
 }
 
 /**
- * Obtiene la fecha de inicio de un mes (1ero del mes) a partir de una llave YYYY-MM.
+ * Obtiene la fecha de inicio de un mes (1ero del mes) a las 12:00 PM para evitar problemas de zona horaria.
+ * @param {string} monthKey - Llave YYYY-MM.
+ * @returns {Date}
  */
 export function attendanceMonthStart(monthKey) {
   const normalized = normalizeAttendanceMonthKey(monthKey);
@@ -115,17 +158,28 @@ export function attendanceMonthStart(monthKey) {
 
 /**
  * Redondea un número a 2 decimales de forma segura.
+ * @param {number|string} n - Número a redondear.
+ * @returns {number}
  */
 export function round2(n) {
   return Math.round((Number(n) + Number.EPSILON) * 100) / 100;
 }
 
-// Text & Mojibake Repair
+/**
+ * Detecta si una cadena contiene marcadores típicos de errores de codificación (Mojibake).
+ * @param {string} str - Texto a analizar.
+ * @returns {boolean}
+ */
 export function hasMojibakeMarkers(str) {
   if (typeof str !== 'string') return false;
   return /(?:\u00C3[\u0080-\u00BF]|\u00C2[\u0080-\u00BF]|\u00E2[\u0080-\u00BF]{1,2}|\u00F0[\u0080-\u00BF]{2,3}|\uFFFD)/.test(str);
 }
 
+/**
+ * Intenta decodificar una cadena mal interpretada como CP1252 a UTF-8.
+ * @param {string} str - Cadena dañada.
+ * @returns {string}
+ */
 export function decodeCp1252Utf8(str) {
   try {
     const bytes = new Uint8Array(Array.from(str, ch => ch.charCodeAt(0) & 255));
@@ -135,6 +189,10 @@ export function decodeCp1252Utf8(str) {
   }
 }
 
+/**
+ * Calcula la puntuación de "daño" por mojibake en una cadena.
+ * @returns {number} Conteo de patrones de error.
+ */
 export function scoreMojibake(str) {
   if (typeof str !== 'string') return 0;
   const markers = ['Ã','Â','â','ð','ï?½'];
@@ -144,6 +202,12 @@ export function scoreMojibake(str) {
   }, 0);
 }
 
+/**
+ * Repara textos con errores de codificación UTF-8 comunes en el intercambio de datos.
+ * Aplica decodificación heurística y reemplazos directos para tildes y ñ.
+ * @param {string} str - Texto fuente.
+ * @returns {string} Texto reparado.
+ */
 export function fixMojibakeText(str) {
   if (!hasMojibakeMarkers(str)) return str;
   let best = str;
@@ -169,24 +233,47 @@ export function fixMojibakeText(str) {
   return best;
 }
 
+/**
+ * Retorna la marca de tiempo actual en formato ISO.
+ * @returns {string}
+ */
 export function nowIso() {
   return new Date().toISOString();
 }
 
+/**
+ * Genera un identificador único corto basado en tiempo y aleatoriedad.
+ * @returns {string}
+ */
 export function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
 }
 
+/**
+ * Filtra un array eliminando valores nulos/falsos y duplicados.
+ * @param {Array} arr - Array fuente.
+ * @returns {Array} Array limpio.
+ */
 export function uniqueValues(arr) {
   if (!Array.isArray(arr)) return [];
   return [...new Set(arr.filter(Boolean))];
 }
 
+/**
+ * Normaliza una cadena para comparaciones de texto (sin tildes, minúsculas, sin espacios extra).
+ * @param {string} str - Texto a normalizar.
+ * @returns {string}
+ */
 export function normTxt(str) {
   if (typeof str !== 'string') return '';
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 }
 
+/**
+ * Intenta extraer el número ordinal del grado a partir de su nombre (1ro, 2do, etc.).
+ * @param {string} gradeName - Nombre del grado.
+ * @returns {number} Número del 1 al 6, o 0 si no se identifica.
+ */
 export function parseGradeLevel(gradeName = '') {
   const g = String(gradeName || '').toLowerCase().trim();
   if (g.includes('primero') || g.includes('1ro')) return 1;
@@ -198,6 +285,11 @@ export function parseGradeLevel(gradeName = '') {
   return 0;
 }
 
+/**
+ * Normaliza la letra de sección (A, B, C, etc.) a partir de un string sucio.
+ * @param {string} sec - Texto de la sección.
+ * @returns {string} Letra única en mayúscula.
+ */
 export function parseSection(sec = '') {
   const s = String(sec || '').trim().toUpperCase();
   if (!s) return 'A';
@@ -205,6 +297,11 @@ export function parseSection(sec = '') {
   return m ? m[0] : 'A';
 }
 
+/**
+ * Ordena una lista de secciones por nivel de grado y luego por letra de sección.
+ * @param {Array} sections - Lista de objetos de sección.
+ * @returns {Array} Lista ordenada.
+ */
 export function sortCourses(sections = []) {
   return [...sections].sort((a, b) => {
     const la = a.gradeLevel || 0;
@@ -216,6 +313,11 @@ export function sortCourses(sections = []) {
   });
 }
 
+/**
+ * Recorre recursivamente un objeto de estado y repara todas las cadenas con Mojibake.
+ * @param {Object} state - El árbol de estado a reparar.
+ * @returns {boolean} True si se realizaron cambios.
+ */
 export function repairUtf8State(state) {
   if (!state || typeof state !== 'object') return false;
   let changed = false;
@@ -237,7 +339,10 @@ export function repairUtf8State(state) {
   return changed;
 }
 
-// Debugging & Logging
+/**
+ * Verifica si la depuración de sesión está habilitada vía URL o LocalStorage.
+ * @returns {boolean}
+ */
 export function isSessionDebugEnabled() {
   try {
     const params = new URLSearchParams(window.location.search || '');
@@ -249,6 +354,10 @@ export function isSessionDebugEnabled() {
   }
 }
 
+/**
+ * Verifica si la depuración de autenticación está habilitada.
+ * @returns {boolean}
+ */
 export function isAuthDebugEnabled() {
   try {
     const params = new URLSearchParams(window.location.search || '');
@@ -260,6 +369,9 @@ export function isAuthDebugEnabled() {
   }
 }
 
+/**
+ * Registra un evento de depuración de sesión en la consola si está habilitado.
+ */
 export function debugSessionFlow(event, payload = {}) {
   if (!isSessionDebugEnabled()) return;
   try {
@@ -267,6 +379,9 @@ export function debugSessionFlow(event, payload = {}) {
   } catch (_) {}
 }
 
+/**
+ * Registra un evento de depuración de autenticación en la consola si está habilitado.
+ */
 export function debugAuthFlow(event, payload = {}) {
   if (!isAuthDebugEnabled()) return;
   try {
@@ -274,11 +389,20 @@ export function debugAuthFlow(event, payload = {}) {
   } catch (_) {}
 }
 
-// Auth Helpers
+/**
+ * Normaliza una dirección de correo electrónico para usarla como llave de búsqueda.
+ * @param {string} email - Correo fuente.
+ * @returns {string}
+ */
 export function authEmailKey(email) {
   return String(email || '').trim().toLowerCase();
 }
 
+/**
+ * Formatea una duración en milisegundos a un formato de mm:ss para visualización.
+ * @param {number} ms - Milisegundos.
+ * @returns {string} Ej: "5m 30s".
+ */
 export function formatMsToMinSec(ms = 0) {
   const safeMs = Math.max(0, Number(ms) || 0);
   const totalSeconds = Math.ceil(safeMs / 1000);
@@ -288,16 +412,30 @@ export function formatMsToMinSec(ms = 0) {
   return `${minutes}m ${String(seconds).padStart(2, '0')}s`;
 }
 
+/**
+ * Valida y normaliza el modo de acceso de autenticación (Google, Facebook, Email, etc).
+ * @param {string} mode - Modo de entrada.
+ * @returns {string} Modo válido o cadena vacía.
+ */
 export function normalizeAuthAccessMode(mode) {
   const value = String(mode || '').trim().toLowerCase();
   const valid = ['google', 'facebook', 'local', 'email'];
   return valid.includes(value) ? value : '';
 }
 
+/**
+ * Verifica si los servicios de autenticación en la nube están disponibles y configurados.
+ * @returns {boolean}
+ */
 export function canUseCloudAuth() {
   return !!window.EduGestCloud?.isConfigured?.();
 }
 
+/**
+ * Determina si el sistema debe intentar autenticación local tras un fallo en la nube.
+ * @param {Error} error - Error capturado de la nube.
+ * @returns {boolean}
+ */
 export function shouldFallbackToLocalAuth(error) {
   const code = String(error?.code || '').trim();
   const fallbackCodes = new Set([

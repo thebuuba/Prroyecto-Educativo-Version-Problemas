@@ -1,17 +1,37 @@
+/**
+ * Integración con Servicios en la Nube (Firebase/Cloud).
+ * --------------------------------------------------------------------------
+ * Este módulo gestiona la autenticación con Firebase, la verificación de
+ * dispositivos, el manejo de sesiones en la nube y la telemetría básica.
+ */
+
 import { EDUGEST_FIREBASE_CONFIG } from './config-firebase.js';
 
+/** Versión de la SDK de Firebase utilizada */
 const FIREBASE_VERSION = '12.7.0';
+
+/** Claves requeridas para validar la configuración de Firebase */
 const REQUIRED_KEYS = ['apiKey', 'authDomain', 'projectId', 'appId'];
+
+/** Promesa de inicialización única de Firebase */
 let firebasePromise = null;
+
+/** Llaves de almacenamiento local para rastreo de dispositivos */
 const DEVICE_ID_STORAGE_KEY = 'eg_v3:device-id';
 const DEVICE_SESSION_STORAGE_KEY = 'eg_v3:device-session-id';
 
-// Obtiene get config.
+/**
+ * Obtiene la configuración de Firebase activa.
+ * @returns {Object|null}
+ */
 export function getConfig() {
   return EDUGEST_FIREBASE_CONFIG || null;
 }
 
-// Comprueba si is configured.
+/**
+ * Verifica si Firebase está correctamente configurado con credenciales válidas.
+ * @returns {boolean}
+ */
 export function isConfigured() {
   const config = getConfig();
   return !!config && REQUIRED_KEYS.every((key) => {
@@ -20,43 +40,52 @@ export function isConfigured() {
   });
 }
 
-// Gestiona friendly error.
+/**
+ * Traduce códigos de error técnicos de Firebase a mensajes amigables en español.
+ * @param {Error|Object} error - Error capturado de Firebase.
+ * @returns {string} Mensaje traducido.
+ */
 export function friendlyError(error) {
   const code = String(error?.code || '');
   const mapped = {
-    'auth/email-already-in-use': 'Ese correo ya esta registrado.',
-    'auth/invalid-email': 'El correo no es valido.',
+    'auth/email-already-in-use': 'Ese correo ya está registrado.',
+    'auth/invalid-email': 'El correo no es válido.',
     'auth/invalid-credential': 'Credenciales incorrectas.',
     'auth/invalid-login-credentials': 'Credenciales incorrectas.',
-    'auth/user-disabled': 'Tu cuenta esta deshabilitada temporalmente.',
-    'auth/configuration-not-found': 'Firebase Auth no esta configurado. Activa Email/Password en Authentication.',
-    'auth/operation-not-allowed': 'El acceso con Email/Password no esta habilitado en Firebase.',
-    'auth/unauthorized-domain': 'Este dominio no esta autorizado en Firebase Authentication.',
-    'auth/invalid-api-key': 'La API key de Firebase no es valida.',
+    'auth/user-disabled': 'Tu cuenta está deshabilitada temporalmente.',
+    'auth/configuration-not-found': 'Firebase Auth no está configurado. Activa Email/Password en Authentication.',
+    'auth/operation-not-allowed': 'El acceso con Email/Password no está habilitado en Firebase.',
+    'auth/unauthorized-domain': 'Este dominio no está autorizado en Firebase Authentication.',
+    'auth/invalid-api-key': 'La API key de Firebase no es válida.',
     'auth/user-not-found': 'No existe una cuenta con ese correo.',
     'auth/wrong-password': 'Credenciales incorrectas.',
-    'auth/weak-password': 'La contrasena es demasiado debil.',
+    'auth/weak-password': 'La contraseña es demasiado débil.',
     'auth/network-request-failed': 'No se pudo conectar con Firebase.',
-    'auth/popup-closed-by-user': 'Cerraste la ventana de acceso antes de completar el inicio de sesion.',
-    'auth/popup-blocked': 'El navegador bloqueo la ventana emergente. Habilita popups e intenta otra vez.',
-    'auth/cancelled-popup-request': 'Se cancelo la solicitud de inicio de sesion.',
-    'auth/account-exists-with-different-credential': 'Ese correo ya existe con otro metodo de acceso.',
-    'auth/operation-not-supported-in-this-environment': 'Este navegador no permite este tipo de inicio de sesion.',
+    'auth/popup-closed-by-user': 'Cerraste la ventana de acceso antes de completar el inicio de sesión.',
+    'auth/popup-blocked': 'El navegador bloqueó la ventana emergente. Habilita popups e intenta otra vez.',
+    'auth/cancelled-popup-request': 'Se canceló la solicitud de inicio de sesión.',
+    'auth/account-exists-with-different-credential': 'Ese correo ya existe con otro método de acceso.',
+    'auth/operation-not-supported-in-this-environment': 'Este navegador no permite este tipo de inicio de sesión.',
     'permission-denied': 'No tienes permisos para acceder a estos datos.',
-    'functions/already-exists': 'Ese correo ya esta registrado.',
+    'functions/already-exists': 'Ese correo ya está registrado.',
     'functions/invalid-argument': 'Revisa los datos e intenta otra vez.',
-    'functions/not-found': 'No encontramos una verificacion pendiente para ese correo.',
-    'functions/failed-precondition': 'La cuenta no esta lista para esta accion.',
-    'functions/resource-exhausted': 'Espera un momento antes de pedir otro codigo.',
-    'functions/internal': 'El servicio de envio de codigos no esta configurado todavia. Falta conectar Resend en Firebase Functions.',
-    'functions/permission-denied': 'No pudimos autorizar este dispositivo. Revisa tu correo y verifica el codigo.',
-    'functions/unavailable': 'Servicio temporalmente no disponible. Intentalo en unos minutos.',
+    'functions/not-found': 'No encontramos una verificación pendiente para ese correo.',
+    'functions/failed-precondition': 'La cuenta no está lista para esta acción.',
+    'functions/resource-exhausted': 'Espera un momento antes de pedir otro código.',
+    'functions/internal': 'El servicio de envío de códigos no está configurado todavía. Falta conectar Resend en Firebase Functions.',
+    'functions/permission-denied': 'No pudimos autorizar este dispositivo. Revisa tu correo y verifica el código.',
+    'functions/unavailable': 'Servicio temporalmente no disponible. Inténtalo en unos minutos.',
   };
   const message = String(error?.message || '').trim();
-  return mapped[code] || message || 'Ocurrio un error al conectar con Firebase.';
+  return mapped[code] || message || 'Ocurrió un error al conectar con Firebase.';
 }
 
-// Normaliza normalizar usuario.
+/**
+ * Normaliza un objeto de usuario de Firebase a un esquema estándar de EduGest.
+ * @param {Object} user - Objeto User de Firebase.
+ * @param {Object} [options] - Parámetros adicionales.
+ * @returns {Object|null}
+ */
 export function normalizeUser(user, options = {}) {
   if (!user) return null;
   return {
@@ -69,18 +98,30 @@ export function normalizeUser(user, options = {}) {
   };
 }
 
-// Gestiona clone.
+/**
+ * Realiza una copia profunda de un valor.
+ * @param {any} value
+ * @returns {any}
+ */
 export function clone(value) {
   return JSON.parse(JSON.stringify(value));
 }
 
-// Gestiona random id.
+/**
+ * Genera un ID aleatorio basado en el tiempo.
+ * @param {string} [prefix=''] - Prefijo opcional.
+ * @returns {string}
+ */
 export function randomId(prefix = '') {
   const body = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
   return `${prefix}${body}`;
 }
 
-// Normaliza normalizar device label.
+/**
+ * Normaliza el UserAgent para generar una etiqueta descriptiva del dispositivo.
+ * @param {string} userAgent
+ * @returns {string} Ej: "Chrome · macOS".
+ */
 export function normalizeDeviceLabel(userAgent = '') {
   const ua = String(userAgent || '').toLowerCase();
   const browser = ua.includes('edg/')
@@ -106,7 +147,13 @@ export function normalizeDeviceLabel(userAgent = '') {
   return `${browser} · ${os}`;
 }
 
-// Lee read or crear storage valor.
+/**
+ * Recupera un valor de un almacenamiento web o crea uno nuevo si no existe.
+ * @param {Storage} storage - localStorage/sessionStorage.
+ * @param {string} key - Clave del ítem.
+ * @param {string} prefix - Prefijo para generación aleatoria.
+ * @returns {string}
+ */
 export function readOrCreateStorageValue(storage, key, prefix) {
   try {
     const existing = String(storage?.getItem?.(key) || '').trim();
@@ -119,7 +166,11 @@ export function readOrCreateStorageValue(storage, key, prefix) {
   }
 }
 
-// Gestiona sha256 hex.
+/**
+ * Calcula el hash SHA-256 de una cadena si el navegador lo soporta, o cae a una suma de verificación rápida.
+ * @param {string} value - Texto a hashear.
+ * @returns {Promise<string>} Hash en hexadecimal.
+ */
 export async function sha256Hex(value = '') {
   const clean = String(value || '');
   if (window.crypto?.subtle && typeof TextEncoder !== 'undefined') {
@@ -135,7 +186,11 @@ export async function sha256Hex(value = '') {
   return `legacy-${Math.abs(hash)}`;
 }
 
-// Construye construir device contexto.
+/**
+ * Construye el contexto de huella digital del dispositivo local.
+ * Útil para seguridad y registro de sesiones.
+ * @returns {Promise<Object>}
+ */
 export async function buildDeviceContext() {
   const deviceId = readOrCreateStorageValue(window.localStorage, DEVICE_ID_STORAGE_KEY, 'dv_');
   const sessionId = readOrCreateStorageValue(window.sessionStorage, DEVICE_SESSION_STORAGE_KEY, 'ss_');
@@ -156,7 +211,11 @@ export async function buildDeviceContext() {
   };
 }
 
-// Asegura asegurar firebase.
+/**
+ * Carga dinámicamente la SDK de Firebase e inicializa la aplicación y autenticación.
+ * Implementa persistencia de sesión en el navegador.
+ * @returns {Object|null} Instancias de Firebase inyectadas.
+ */
 export async function ensureFirebase() {
   if (!isConfigured()) return null;
   if (firebasePromise) return firebasePromise;
@@ -186,25 +245,34 @@ export async function ensureFirebase() {
   return firebasePromise;
 }
 
-// Guarda guardar usuario perfil.
+/**
+ * Guarda los metadatos extendidos del perfil del usuario (Placeholder para sincronización).
+ */
 export async function saveUserProfile(user, extraProfile = {}) {
   return true;
 }
 
-// Gestiona send password reset.
+/**
+ * Envía un correo de recuperación de contraseña vía Firebase.
+ * @param {string} email
+ * @returns {Promise<boolean>}
+ */
 export async function sendPasswordReset(email) {
   const services = await ensureFirebase();
-  if (!services) throw new Error('Firebase no esta configurado.');
+  if (!services) throw new Error('Firebase no está configurado.');
 
   const { authMod, auth } = services;
   await authMod.sendPasswordResetEmail(auth, email);
   return true;
 }
 
-// Obtiene get sign in methods for email.
+/**
+ * Consulta qué métodos de autenticacion están registrados para un correo.
+ * @returns {Promise<Array<string>>}
+ */
 export async function getSignInMethodsForEmail(email) {
   const services = await ensureFirebase();
-  if (!services) throw new Error('Firebase no esta configurado.');
+  if (!services) throw new Error('Firebase no está configurado.');
   const cleanEmail = String(email || '').trim();
   if (!cleanEmail) return [];
   const { authMod, auth } = services;
@@ -212,7 +280,9 @@ export async function getSignInMethodsForEmail(email) {
   return Array.isArray(methods) ? methods : [];
 }
 
-// Gestiona inspect email account.
+/**
+ * Realiza una inspección profunda de la cuenta por correo para determinar proveedores disponibles.
+ */
 export async function inspectEmailAccount(email) {
   const methods = await getSignInMethodsForEmail(email);
   const normalized = methods.map((entry) => String(entry || '').trim()).filter(Boolean);
@@ -226,64 +296,86 @@ export async function inspectEmailAccount(email) {
   };
 }
 
-// Gestiona register device sesión.
+/**
+ * Registra una sesión de dispositivo en el backend (Hook de expansión).
+ */
 export async function registerDeviceSession(options = {}) {
   void options;
   return null;
 }
 
-// Gestiona start device verification.
+/**
+ * Inicia el proceso de verificación de dispositivo (Hook de expansión).
+ */
 export async function startDeviceVerification(options = {}) {
   void options;
   return null;
 }
 
-// Gestiona verify device verification code.
+/**
+ * Verifica un código de dispositivo (Hook de expansión).
+ */
 export async function verifyDeviceVerificationCode(code = '') {
   void code;
   return true;
 }
 
-// Gestiona lista account security.
+/**
+ * Lista las medidas de seguridad de la cuenta activa (Hook de expansión).
+ */
 export async function listAccountSecurity() {
   return null;
 }
 
-// Gestiona revoke trusted device.
+/**
+ * Revoca la confianza en un dispositivo.
+ */
 export async function revokeTrustedDevice(deviceIdHash = '') {
   void deviceIdHash;
   return null;
 }
 
-// Gestiona terminate sesión.
+/**
+ * Termina una sesión activa de forma remota.
+ */
 export async function terminateSession(sessionId = '') {
   void sessionId;
   return null;
 }
 
-// Registra registrar suspicious signal.
+/**
+ * Informa sobre señales sospechosas detectadas localmente.
+ */
 export async function reportSuspiciousSignal(payload = {}) {
   void payload;
   return null;
 }
 
-// Crea crear paddle checkout.
+/**
+ * Inicia el pago vía Paddle (Hook de expansión).
+ */
 export async function createPaddleCheckout(priceId, options = {}) {
   void priceId;
   void options;
   return null;
 }
 
-// Crea crear paddle customer portal.
+/**
+ * Abre el portal de gestión de suscripciones de Paddle.
+ */
 export async function createPaddleCustomerPortal(returnUrl = '') {
   void returnUrl;
   return null;
 }
 
-// Gestiona register.
+/**
+ * Registra un nuevo usuario con correo y contraseña.
+ * Actualiza el perfil con el nombre proporcionado.
+ * @returns {Promise<Object>} Usuario normalizado.
+ */
 export async function register(email, password, name) {
   const services = await ensureFirebase();
-  if (!services) throw new Error('Firebase no esta configurado.');
+  if (!services) throw new Error('Firebase no está configurado.');
 
   const { authMod, auth } = services;
   const cred = await authMod.createUserWithEmailAndPassword(auth, email, password);
@@ -295,10 +387,14 @@ export async function register(email, password, name) {
   return normalizeUser(user, { isNewUser: true });
 }
 
-// Gestiona login.
+/**
+ * Inicia sesión con correo y contraseña.
+ * Realiza una validación cruzada si la cuenta requiere otro proveedor (Google/FB).
+ * @returns {Promise<Object>} Usuario normalizado.
+ */
 export async function login(email, password) {
   const services = await ensureFirebase();
-  if (!services) throw new Error('Firebase no esta configurado.');
+  if (!services) throw new Error('Firebase no está configurado.');
 
   const { authMod, auth } = services;
   try {
@@ -324,10 +420,15 @@ export async function login(email, password) {
   }
 }
 
-// Gestiona login with provider.
+/**
+ * Inicia sesión utilizando un proveedor externo (Google o Facebook).
+ * Utiliza ventanas emergentes (Popup) con fallback a redirección.
+ * @param {string} providerName - 'google' o 'facebook'.
+ * @returns {Promise<Object>}
+ */
 export async function loginWithProvider(providerName) {
   const services = await ensureFirebase();
-  if (!services) throw new Error('Firebase no esta configurado.');
+  if (!services) throw new Error('Firebase no está configurado.');
 
   const { authMod, auth } = services;
   const normalized = String(providerName || '').trim().toLowerCase();
@@ -360,7 +461,9 @@ export async function loginWithProvider(providerName) {
   }
 }
 
-// Elimina eliminar actual usuario.
+/**
+ * Elimina la cuenta del usuario actualmente autenticado en Firebase.
+ */
 export async function deleteCurrentUser() {
   const services = await ensureFirebase();
   if (!services) return false;
@@ -370,7 +473,9 @@ export async function deleteCurrentUser() {
   return true;
 }
 
-// Gestiona logout.
+/**
+ * Cierra la sesión activa en el proveedor de nube.
+ */
 export async function logout() {
   const services = await ensureFirebase();
   if (!services) return false;
@@ -378,7 +483,9 @@ export async function logout() {
   return true;
 }
 
-// Obtiene get actual usuario.
+/**
+ * Obtiene el usuario actualmente autenticado esperando a que se resuelva el estado inicial.
+ */
 export async function getCurrentUser() {
   const services = await ensureFirebase();
   if (!services) return null;

@@ -1,7 +1,9 @@
 /**
- * Schedule and Planner Module
- * Modernized version of the teacher's weekly schedule and monthly calendar.
- * Features: Timeline view, MINERD Official Events, and Journey Wizard.
+ * Módulo de Horario y Calendario Docente (EduGest Schedule).
+ * --------------------------------------------------------------------------
+ * Versión modernizada de la agenda semanal y el calendario mensual del docente.
+ * Incluye: Vista de línea de tiempo, Eventos Oficiales del MINERD y 
+ * Asistente de Jornada Escolar.
  */
 
 import { S } from '../core/state.js';
@@ -23,23 +25,29 @@ import {
   curriculumOfficialSubjectArea
 } from '../core/domain-utils.js';
 
-// --- Internal Constants ---
+/**
+ * --- Constantes Internas ---
+ */
 
 const ALL_WEEKDAYS = [0, 1, 2, 3, 4, 5, 6];
 const DEFAULT_WEEKDAYS = [0, 1, 2, 3, 4];
 const BLOCK_TYPES = ['class', 'planning', 'break', 'lunch', 'event'];
 const JOURNEY_TYPES = ['extended', 'morning', 'afternoon', 'double', 'custom'];
 
-// UI State (Not persisted, but lives for the session)
+/** 
+ * Estado de UI local (Solo persiste durante la sesión).
+ * @type {Object}
+ */
 const UI = {
-  activeTab: 'schedule', // 'schedule' or 'calendar'
+  activeTab: 'schedule', // 'schedule' o 'calendar'
   editor: { mode: 'edit', originalKey: '', weekday: 0, startTime: '', endTime: '', draft: null, errors: {} },
   wizard: { step: 1, journeyType: 'extended', startTime: '07:30', endTime: '11:55', durationsRaw: '40' },
   monthKey: getCurrentMonthKey()
 };
 
 /**
- * Ensures the teacher planner state is initialized in S.
+ * Asegura que el estado del planificador docente esté inicializado en el Store global.
+ * @private
  */
 function ensureState() {
   if (!S.teacherPlanner || typeof S.teacherPlanner !== 'object') {
@@ -57,9 +65,13 @@ function ensureState() {
 }
 
 /**
- * --- Logic & Helpers ---
+ * --- Lógica y Helpers ---
  */
 
+/**
+ * Retorna la lista de eventos del calendario (oficiales MINERD y personalizados).
+ * @returns {Array<Object>} Lista de eventos ordenados por fecha.
+ */
 function getPlannerEvents() {
   ensureState();
   const schoolYearId = String(S.schoolYear?.id || S.schoolYear?.name || '2025-2026');
@@ -78,22 +90,41 @@ function getPlannerEvents() {
   return [...official, ...custom].sort((a, b) => a.date.localeCompare(b.date));
 }
 
+/**
+ * Retorna los nombres de los días de la semana en español.
+ * @returns {string[]}
+ */
 function getWeekdays() {
   return ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 }
 
+/**
+ * Convierte un formato HH:mm a minutos totales desde medianoche.
+ * @param {string} time - Hora en formato 'HH:mm'.
+ * @returns {number|null} Minutos.
+ */
 function timeToMin(time) {
   if (!time) return null;
   const [h, m] = time.split(':').map(Number);
   return h * 60 + m;
 }
 
+/**
+ * Convierte minutos totales internacionales a formato de hora HH:mm.
+ * @param {number} min - Minutos.
+ * @returns {string} Hora formateada.
+ */
 function minToTime(min) {
   const h = Math.floor(min / 60);
   const m = min % 60;
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 }
 
+/**
+ * Formatea una hora HH:mm a un formato legible AM/PM.
+ * @param {string} time - Hora.
+ * @returns {string} Eje: "08:30 AM".
+ */
 function formatTimeLabel(time) {
     if (!time) return '--:--';
     const [h, m] = time.split(':').map(Number);
@@ -103,16 +134,20 @@ function formatTimeLabel(time) {
 }
 
 /**
- * --- Renders ---
+ * --- Renders Principal ---
  */
 
+/**
+ * Renderiza el orquestador principal del panel de Horario/Agenda.
+ * @param {HTMLElement} container - Contenedor raíz.
+ */
 export function renderSchedulePanel(container) {
   ensureState();
   
   container.innerHTML = `
     <div class="p-6 md:p-10 max-w-[1400px] mx-auto animate-in fade-in duration-500">
       
-      <!-- Top Header & Tabs -->
+      <!-- Encabezado y Pestañas -->
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div>
           <h1 class="text-3xl font-black text-slate-900 tracking-tight">Agenda Docente</h1>
@@ -138,6 +173,11 @@ export function renderSchedulePanel(container) {
   `;
 }
 
+/**
+ * Renderiza la vista de horario semanal con franjas horarias.
+ * @private
+ * @returns {string} HTML.
+ */
 function renderWeeklySchedule() {
   const activeDays = S.teacherPlanner.activeWeekdays;
   const rows = S.teacherPlanner.weeklySchedule;
@@ -157,7 +197,7 @@ function renderWeeklySchedule() {
     `;
   }
 
-  // Get distinct time slots
+  // Obtener franjas horarias únicas
   const slots = Array.from(new Set(rows.map(r => `${r.startTime}-${r.endTime}`)))
     .sort((a, b) => a.localeCompare(b));
 
@@ -215,6 +255,15 @@ function renderWeeklySchedule() {
   `;
 }
 
+/**
+ * Renderiza una celda específica del horario (un bloque de tiempo).
+ * @private
+ * @param {Object|null} cell - Objeto con la info del bloque.
+ * @param {number} weekday - Día de la semana (0-6).
+ * @param {string} start - Hora de inicio HH:mm.
+ * @param {string} end - Hora de fin HH:mm.
+ * @returns {string} HTML.
+ */
 function renderScheduleCell(cell, weekday, start, end) {
     if (!cell) {
         return `<td class="p-4"><div class="h-16 border-2 border-dashed border-slate-100 rounded-2xl flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
@@ -264,10 +313,15 @@ function renderScheduleCell(cell, weekday, start, end) {
     `;
 }
 
+/**
+ * Renderiza la vista de calendario mensual con cuadrícula de días.
+ * @private
+ * @returns {string} HTML.
+ */
 function renderMonthlyCalendar() {
     return `
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
-         <!-- Calendar Grid -->
+         <!-- Cuadrícula de Calendario -->
          <div class="lg:col-span-2 space-y-8">
             <div class="bg-white border border-slate-200 rounded-[3rem] p-8 shadow-sm">
                <div class="flex items-center justify-between mb-8 px-4">
@@ -289,7 +343,7 @@ function renderMonthlyCalendar() {
             </div>
          </div>
          
-         <!-- Events List -->
+         <!-- Lista de Eventos -->
          <div class="space-y-8">
             <div class="bg-slate-900 rounded-[3rem] p-8 text-white shadow-2xl relative overflow-hidden">
                <div class="relative z-10">
@@ -313,6 +367,11 @@ function renderMonthlyCalendar() {
     `;
 }
 
+/**
+ * Renderiza la lista de eventos próximos para el sidebar.
+ * @private
+ * @returns {string} HTML.
+ */
 function renderUpcomingEvents() {
     const events = getPlannerEvents();
     const now = new Date();
@@ -344,12 +403,17 @@ function renderUpcomingEvents() {
     }).join('');
 }
 
+/**
+ * Renderiza los días individuales del calendario mensual.
+ * @private
+ * @returns {string} HTML.
+ */
 function renderCalendarDays() {
   const start = attendanceMonthStart(UI.monthKey);
   const month = start.getMonth();
   const year = start.getFullYear();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const firstDay = (start.getDay() + 6) % 7; // Monday start
+  const firstDay = (start.getDay() + 6) % 7; // Lunes como inicio
   
   const cells = [];
   for (let i = 0; i < firstDay; i++) cells.push(null);
@@ -381,14 +445,16 @@ function renderCalendarDays() {
 }
 
 /**
- * --- Global Actions ---
+ * --- Acciones Globales (Windows Hooks) ---
  */
 
+/** Cambia la pestaña activa (Horario <=> Calendario). */
 window.setScheduleTab = (tab) => {
     UI.activeTab = tab;
     renderSchedulePanel(document.getElementById('p-content'));
 };
 
+/** Cambia el mes visualizado en el calendario. */
 window.changeCalendarMonth = (offset) => {
     const d = attendanceMonthStart(UI.monthKey);
     d.setMonth(d.getMonth() + offset);
@@ -396,24 +462,24 @@ window.changeCalendarMonth = (offset) => {
     renderSchedulePanel(document.getElementById('p-content'));
 };
 
-// Wizard and Cell Editors should launch real Modals...
-// For now, these are placeholder hooks to be connected with the app shell.
-
+/** Lanza el asistente de configuración de horario. */
 window.openScheduleWizard = () => {
     toast("El asistente de horario modular está cargando...", false);
-    // Here logic for the wizard modal would go.
+    // Aquí iría la lógica del modal del asistente.
 };
 
+/** Lanza el editor de bloque de horario. */
 window.editScheduleCell = (weekday, start, end) => {
-    // Logic to open full editor.
+    // Lógica para abrir el editor completo.
     toast(`Editando bloque: ${weekday} @ ${start}`, false);
 };
 
+/** Abre el modal para agregar eventos personales al calendario. */
 window.openAddEventModal = () => {
     toast("Abre el creador de eventos personalizados.", false);
 };
 
-// Global Registration
+/** Registro global de orquestadores de renderizado. */
 window.RENDERS.horario = (c) => renderSchedulePanel(c);
 window.RENDERS.calendario = (c) => {
     UI.activeTab = 'calendar';

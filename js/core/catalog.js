@@ -1,11 +1,30 @@
+/**
+ * Catálogo Curricular y Diccionario de Datos Docentes (EduGest Catalog).
+ * --------------------------------------------------------------------------
+ * Este archivo centraliza todas las constantes estáticas utilizadas por el 
+ * sistema para la construcción de planificaciones, instrumentos y reportes.
+ * 
+ * Contenido:
+ * - Recursos predefinidos para planes de clase.
+ * - Ejes Transversales (MINERD).
+ * - Competencias Fundamentales y Específicas por grado (Secundaria).
+ * - Tipos de actividades y técnicas de evaluación.
+ */
+
 import { SECONDARY_CURRICULUM_GRADE_KEYS } from './constants.js';
 
+/**
+ * Recursos típicos sugeridos para el desarrollo de clases.
+ */
 export const LESSON_PLAN_RESOURCE_PRESETS = [
   'Pizarra', 'Cuaderno', 'Lápiz', 'Marcadores', 'Borrador', 'Libro de texto',
   'Guía impresa', 'Imágenes', 'Diapositivas', 'Video', 'Simulador',
   'Computadora', 'Televisor', 'Internet',
 ];
 
+/**
+ * Ejes Transversales del Diseño Curricular Dominicano.
+ */
 export const LESSON_PLAN_TRANSVERSAL_AXES = [
   { value: 'Educación ambiental y desarrollo sostenible', description: 'Promueve el cuidado del medio ambiente y el uso responsable de los recursos.' },
   { value: 'Educación en valores y ciudadanía', description: 'Fomenta el respeto, la responsabilidad y la convivencia.' },

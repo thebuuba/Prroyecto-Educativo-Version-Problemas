@@ -1,3 +1,11 @@
+/**
+ * Lógica de Currículo y Competencias Dominicanas.
+ * --------------------------------------------------------------------------
+ * Este módulo gestiona las reglas del Diseño Curricular Dominicano, incluyendo 
+ * la normalización de grados, búsqueda de competencias específicas por área y 
+ * la gestión del catálogo de indicadores.
+ */
+
 import { S } from './state.js';
 import { curriculumNormalizeSpecificCompetencyText } from './string-utils.js';
 import * as Catalog from './catalog.js';
@@ -5,7 +13,9 @@ import { SECONDARY_CURRICULUM_GRADE_KEYS } from './constants.js';
 import { parseGradeLevel } from './utils.js';
 
 /**
- * Normaliza un nombre de grado a una clave técnica.
+ * Normaliza el nombre de un grado a una clave técnica reconocida por el catálogo.
+ * @param {string} value - Nombre del grado (ej. "1ro Secundaria", "6to").
+ * @returns {string} Clave técnica (ej. "S1", "S6").
  */
 export function curriculumNormalizeGradeKey(value = '') {
   const clean = String(value || '').trim();
@@ -16,14 +26,19 @@ export function curriculumNormalizeGradeKey(value = '') {
 }
 
 /**
- * Normaliza múltiples nombres de grados.
+ * Normaliza una lista de nombres de grados eliminando duplicados y valores inválidos.
+ * @param {Array|string} values - Lista de nombres o un único nombre.
+ * @returns {Array<string>} Lista de claves técnicas normalizadas.
  */
 export function curriculumNormalizeGradeKeys(values = []) {
   return [...new Set((Array.isArray(values) ? values : [values]).map((item) => curriculumNormalizeGradeKey(item)).filter(Boolean))];
 }
 
 /**
- * Recupera el catálogo de competencias específicas.
+ * Recupera el catálogo de competencias específicas dinámicamente según el grado y el área.
+ * @param {string} gradeLabel - Etiqueta del grado.
+ * @param {string} areaLabel - Área académica (ej. "Matemática", "Lengua Española").
+ * @returns {Object} Mapa de competencias específicas y sus descripciones.
  */
 export function curriculumSpecificCompetencyCatalog(gradeLabel, areaLabel) {
   const cleanLevel = 'Secundaria';
@@ -34,6 +49,7 @@ export function curriculumSpecificCompetencyCatalog(gradeLabel, areaLabel) {
   const gradeEntry = registry[gradeKey] || {};
   const areaEntry = gradeEntry[area] || gradeEntry['General'] || {};
 
+  // Reintento usando bloques estáticos si el registro dinámico falla
   if (Object.keys(areaEntry).length === 0) {
     const block = Catalog.DOMINICAN_SECONDARY_SPECIFIC_COMPETENCY_BLOCKS.find(b =>
       b.area === area && b.gradeKeys.includes(gradeKey)
@@ -45,7 +61,11 @@ export function curriculumSpecificCompetencyCatalog(gradeLabel, areaLabel) {
 }
 
 /**
- * Busca la descripción de una competencia específica.
+ * Busca la descripción detallada de una competencia específica.
+ * @param {string} gradeLabel - Grado.
+ * @param {string} areaLabel - Área.
+ * @param {string} competencyName - Nombre o fragmento de la competencia.
+ * @returns {string} Descripción completa.
  */
 export function curriculumSpecificCompetencyLookup(gradeLabel, areaLabel, competencyName) {
   const catalog = curriculumSpecificCompetencyCatalog(gradeLabel, areaLabel);
@@ -54,7 +74,9 @@ export function curriculumSpecificCompetencyLookup(gradeLabel, areaLabel, compet
 }
 
 /**
- * Devuelve el contexto curricular para un grado.
+ * Obtiene el contexto curricular (conceptos y procedimientos) para un grado específico.
+ * @param {string} gradeLabel - Grado solicitado.
+ * @returns {Object} Contexto con clave de grado y listas de contenidos.
  */
 export function curriculumGradeContext(gradeLabel) {
   const gradeKey = curriculumNormalizeGradeKey(gradeLabel);
@@ -66,7 +88,9 @@ export function curriculumGradeContext(gradeLabel) {
 }
 
 /**
- * Normaliza un objeto de fallbacks curriculares.
+ * Normaliza y limpia un objeto de 'fallbacks' (valores de reserva) curriculares.
+ * @param {Object} [source] - Objeto fuente de competencias.
+ * @returns {Object} Objeto normalizado y limpio.
  */
 export function curriculumNormalizeSpecificCompetencyFallbacks(source = Catalog.DOMINICAN_SECONDARY_SPECIFIC_COMPETENCY_FALLBACKS) {
   const result = {};
@@ -86,7 +110,7 @@ export function curriculumNormalizeSpecificCompetencyFallbacks(source = Catalog.
 }
 
 /**
- * Asegura que el catálogo de currículo en el estado esté inicializado.
+ * Garantiza que la estructura de catálogos personalizados en el estado S esté inicializada.
  */
 export function ensureCurriculumCatalogState() {
   if (!S.curriculumCatalog || typeof S.curriculumCatalog !== 'object') S.curriculumCatalog = {};
@@ -96,12 +120,15 @@ export function ensureCurriculumCatalogState() {
 }
 
 /**
- * Obtiene el área oficial de una asignatura a partir del catálogo nacional.
+ * Infiere el área oficial de una asignatura basándose en el catálogo nacional.
+ * @param {string} subject - Nombre de la asignatura.
+ * @param {string} [gradeId] - ID del grado.
+ * @param {string} [gradeName] - Nombre del grado.
+ * @returns {string} Área detectada (ej. "Ciencias de la Naturaleza").
  */
 export function curriculumOfficialSubjectArea(subject = '', gradeId = '', gradeName = '') {
   const cleanSubject = (subject || '').trim().toLowerCase();
   if (!cleanSubject) return '';
-  // Simplificación para la versión modular: usamos los bloques de competencias para inferir el área
   for (const block of Catalog.DOMINICAN_SECONDARY_SPECIFIC_COMPETENCY_BLOCKS) {
     if (block.competencies && Object.keys(block.competencies).length > 0) {
       if (block.area && cleanSubject.includes(block.area.toLowerCase())) return block.area;
@@ -111,18 +138,19 @@ export function curriculumOfficialSubjectArea(subject = '', gradeId = '', gradeN
 }
 
 /**
- * Genera opciones de asignaturas filtradas por grado y área.
+ * Genera una lista de opciones de asignaturas filtradas.
+ * @param {Object} params - Parámetros de filtrado.
+ * @returns {Array<string>} Lista ordenada de asignaturas.
  */
 export function curriculumSubjectOptions({ gradeId = '', gradeName = '', area = '', sectionName = '', scopeToExistingSections = false } = {}) {
   const areaLabel = String(area || '').trim();
-  const catalog = curriculumSpecificCompetencyCatalog(gradeName, areaLabel);
   const subjects = new Set();
   
   if (areaLabel) {
     subjects.add(areaLabel);
   }
   
-  // Agregar asignaturas del catálogo que coincidan con el área
+  // Agregar asignaturas del catálogo oficial que coincidan con el área seleccionada
   if (Catalog.OFFICIAL_CURRICULUM_SUBJECT_CATALOG && Catalog.OFFICIAL_CURRICULUM_SUBJECT_CATALOG[areaLabel]) {
     Catalog.OFFICIAL_CURRICULUM_SUBJECT_CATALOG[areaLabel].forEach(s => subjects.add(s));
   }

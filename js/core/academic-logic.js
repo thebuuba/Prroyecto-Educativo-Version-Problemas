@@ -1,15 +1,19 @@
+/**
+ * Lógica de Calendario Académico y Gestión de Actividades.
+ * --------------------------------------------------------------------------
+ * Este módulo gestiona la normalización de periodos escolares, el calendario 
+ * de asistencia y la manipulación de registros de actividades y evaluaciones.
+ */
+
 import { S } from './state.js';
 import { uid, nowIso } from './utils.js';
 import { getGroupCfg } from './math-utils.js';
 import { BLOCKS, DEFAULT_ACADEMIC_CALENDAR, DEFAULT_PERIODS } from './constants.js';
 
 /**
- * Academic Calendar & Attendance Logic
- * --------------------------------------------------------------------------
- */
-
-/**
- * Normaliza el calendario académico para que llegue a la app con una forma predecible.
+ * Normaliza el calendario académico para asegurar una estructura predecible.
+ * @param {Object} input - Datos del calendario a normalizar.
+ * @returns {Object} Calendario normalizado con periodos y meses activos.
  */
 export function normalizeAcademicCalendar(input) {
   const base = JSON.parse(JSON.stringify(DEFAULT_ACADEMIC_CALENDAR));
@@ -43,7 +47,8 @@ export function normalizeAcademicCalendar(input) {
 }
 
 /**
- * Garantiza que el calendario académico esté sincronizado con el estado global.
+ * Garantiza que el calendario académico esté sincronizado con el estado global S.
+ * @returns {Object} El calendario académico actualizado.
  */
 export function ensureAcademicCalendar() {
   const calendar = normalizeAcademicCalendar(S.academicCalendar);
@@ -57,22 +62,37 @@ export function ensureAcademicCalendar() {
 }
 
 /**
- * Devuelve los periodos del calendario normalizados.
+ * Obtiene los periodos del calendario académico actual.
+ * @returns {Array} Lista de objetos de periodo.
  */
 export function academicCalendarPeriods() {
   return ensureAcademicCalendar().periods;
 }
 
+/**
+ * Determina qué meses están marcados como activos para la asistencia.
+ * @returns {Array<string>} Lista de meses (ej. ['08', '09']).
+ */
 export function academicCalendarActiveMonths() {
   const settings = S.calendarSettings || {};
   return Array.isArray(settings.activeMonths) ? settings.activeMonths : ['08', '09', '10', '11', '12', '01', '02', '03', '04', '05', '06'];
 }
 
+/**
+ * Verifica si un mes dado (formato YYYY-MM) está dentro del calendario activo.
+ * @param {string} monthKey - Clave del mes.
+ * @returns {boolean}
+ */
 export function isAcademicMonthActive(monthKey) {
   const month = String(monthKey || '').split('-')[1];
   return academicCalendarActiveMonths().includes(month);
 }
 
+/**
+ * Sugiere el ID de periodo (P1, P2...) correspondiente a un mes del calendario.
+ * @param {string} monthKey - Clave del mes.
+ * @returns {string|null}
+ */
 export function suggestedAcademicPeriodIdForMonth(monthKey) {
   const month = String(monthKey || '').split('-')[1];
   const map = S.calendarSettings?.periodMonthMap || {
@@ -84,6 +104,11 @@ export function suggestedAcademicPeriodIdForMonth(monthKey) {
   return map[month] || null;
 }
 
+/**
+ * Retorna el nombre legible de un mes a partir de su clave.
+ * @param {string} monthKey - Clave del mes.
+ * @returns {string} Nombre en español.
+ */
 export function plannerMonthLabel(monthKey) {
   const month = String(monthKey || '').split('-')[1];
   const names = {
@@ -94,10 +119,12 @@ export function plannerMonthLabel(monthKey) {
   return names[month] || month;
 }
 
-// Students and Roster functions moved to academic-context-logic.js
-
 /**
- * Busca una actividad en la configuración de un grupo.
+ * Busca una actividad específica dentro de los bloques de un grupo.
+ * @param {string} actId - ID de la actividad.
+ * @param {string} [groupId=S.activeGroupId] - ID del grupo.
+ * @param {string} [periodId=S.activePeriodId] - ID del periodo.
+ * @returns {Object|null} Metadatos de la actividad encontrada.
  */
 export function findActivity(actId, groupId = S.activeGroupId, periodId = S.activePeriodId) {
   const cfg = getGroupCfg(groupId, periodId);
@@ -109,7 +136,9 @@ export function findActivity(actId, groupId = S.activeGroupId, periodId = S.acti
 }
 
 /**
- * Cuenta el total de actividades en un grupo para el periodo activo.
+ * Calcula el número total de actividades registradas para un grupo en el periodo actual.
+ * @param {string} [groupId=S.activeGroupId] - ID del grupo.
+ * @returns {number}
  */
 export function totalActs(groupId = S.activeGroupId) {
   const cfg = getGroupCfg(groupId, S.activePeriodId);
@@ -117,7 +146,9 @@ export function totalActs(groupId = S.activeGroupId) {
 }
 
 /**
- * Obtiene todas las actividades de un periodo para el grupo activo.
+ * Obtiene el listado completo de todas las actividades (con su bloque) para un periodo.
+ * @param {string} [periodId=S.activePeriodId] - ID del periodo.
+ * @returns {Array<{ block: string, activity: Object }>}
  */
 export function allActivities(periodId = S.activePeriodId) {
   const out = [];
@@ -129,7 +160,10 @@ export function allActivities(periodId = S.activePeriodId) {
 }
 
 /**
- * Guarda una evaluación localmente en el estado S.evaluations y en el mapa dinámico de notas.
+ * Registra o actualiza una evaluación localmente tanto en el histórico (S.evaluations)
+ * como en la caché rápida de notas (S.notasByPeriod).
+ * @param {Object} payload - Datos de la evaluación (studentId, activityId, score, etc.).
+ * @returns {Object} El registro de evaluación final guardado.
  */
 export function upsertLocalEvaluationRecord(payload) {
   if (!payload || !payload.activityId || !payload.studentId) return null;
@@ -162,6 +196,7 @@ export function upsertLocalEvaluationRecord(payload) {
     S.evaluations.push(next);
   }
 
+  // Sincronización con el mapa rápido de notas para Reactividad en Paneles
   if (!S.notasByPeriod) S.notasByPeriod = {};
   if (!S.notasByPeriod[periodId]) S.notasByPeriod[periodId] = {};
   if (!S.notasByPeriod[periodId][next.studentId]) S.notasByPeriod[periodId][next.studentId] = {};

@@ -1,3 +1,10 @@
+/**
+ * Gestión de Hidratación y Persistencia de Datos.
+ * Este módulo se encarga de cargar y guardar el estado de la aplicación en 
+ * LocalStorage, SessionStorage y sincronizarlo con bases de datos externas (SQL/Cloud).
+ * También gestiona el ciclo de vida de la sesión del usuario.
+ */
+
 import { S, setS } from './state.js';
 import { 
   STORAGE_KEY, 
@@ -44,17 +51,21 @@ import {
 } from './domain-utils.js';
 import * as DB from './api-db.js';
 
-// --- Persistence & Session ---
+// --- Persistencia y Sesión ---
 
 let persistDebounceTimer = null;
 let persistPending = false;
 let suppressSqlStateSave = false;
 
+/**
+ * Ejecuta el guardado físico del estado en los diferentes almacenamientos.
+ */
 export function persistNow() {
   try {
     const localSnapshotRaw = JSON.stringify(buildLocalRootSnapshot());
     persistLocalAuthUsers();
     if (S.sessionUserId) {
+      // Si hay sesión, guardamos un estado inicial limpio en la raíz global
       DB.scheduleRawStateSave(STORAGE_KEY, JSON.stringify(createInitialState()));
     } else {
       DB.scheduleRawStateSave(STORAGE_KEY, localSnapshotRaw);
@@ -66,6 +77,9 @@ export function persistNow() {
   } catch(e){}
 }
 
+/**
+ * Fuerza la ejecución de cualquier persistencia pendiente de forma inmediata.
+ */
 export function flushPersistQueue() {
   if (persistDebounceTimer) {
     window.clearTimeout(persistDebounceTimer);
@@ -76,6 +90,11 @@ export function flushPersistQueue() {
   persistNow();
 }
 
+/**
+ * Programa una operación de persistencia con debounce.
+ * @param {Object} options - Opciones de persistencia.
+ * @param {boolean} options.immediate - Si es true, guarda inmediatamente sin esperar al temporizador.
+ */
 export function persist(options = {}) {
   const immediate = options && options.immediate === true;
   if (immediate) {
@@ -97,22 +116,38 @@ export function persist(options = {}) {
   }, PERSIST_DEBOUNCE_MS);
 }
 
+/**
+ * Crea una copia profunda del estado actual para ser persistida.
+ * @returns {Object} El estado filtrado y listo para serializar.
+ */
 export function buildLocalRootSnapshot() {
   const snapshot = JSON.parse(JSON.stringify(S));
-  snapshot.authUsers = [];
+  snapshot.authUsers = []; // No persistimos la lista de usuarios dentro del workspace individual
   return snapshot;
 }
 
+/**
+ * Genera la clave de almacenamiento para el workspace de un usuario específico.
+ * @param {string} uid - ID del usuario.
+ * @returns {string}
+ */
 export function buildUserWorkspaceKey(uid) {
   return `${USER_WORKSPACE_STORAGE_PREFIX}${uid}`;
 }
 
+/**
+ * Guarda la lista de usuarios autenticados localmente.
+ */
 export function persistLocalAuthUsers() {
   try {
     DB.scheduleRawStateSave(AUTH_USERS_STORAGE_KEY, () => JSON.stringify(S.authUsers || []));
   } catch (_) {}
 }
 
+/**
+ * Guarda el workspace del usuario activo.
+ * @param {string|null} localSnapshotRaw - Snapshot ya serializado (opcional).
+ */
 export function persistActiveUserWorkspace(localSnapshotRaw = null) {
   try {
     if (!S.sessionUserId) return;
@@ -121,6 +156,10 @@ export function persistActiveUserWorkspace(localSnapshotRaw = null) {
   } catch (_) {}
 }
 
+/**
+ * Carga la lista de usuarios autenticados recientemente.
+ * @returns {Promise<Array>}
+ */
 export async function loadLocalAuthUsers() {
   try {
     const raw = await DB.loadRawState(AUTH_USERS_STORAGE_KEY);
@@ -132,6 +171,11 @@ export async function loadLocalAuthUsers() {
   }
 }
 
+/**
+ * Carga el workspace guardado para un usuario específico.
+ * @param {string} uid - ID del usuario.
+ * @returns {Promise<Object|null>}
+ */
 export async function loadLocalWorkspace(uid) {
   try {
     if (!uid) return null;
@@ -144,6 +188,10 @@ export async function loadLocalWorkspace(uid) {
   }
 }
 
+/**
+ * Lee la información de sesión técnica del navegador.
+ * @returns {Object|null}
+ */
 export function readBrowserSession() {
   try {
     const sessionRaw = window.sessionStorage.getItem(SESSION_STORAGE_KEY);
@@ -152,6 +200,7 @@ export function readBrowserSession() {
     if (!raw) return null;
     const session = JSON.parse(raw);
     if (!session || typeof session !== 'object') return null;
+    // Reparación de sesión si estaba en localStorage (persistente) pero no en sessionStorage
     if (!sessionRaw && localRaw) {
       window.sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
       window.localStorage.removeItem(SESSION_STORAGE_KEY);
@@ -162,6 +211,9 @@ export function readBrowserSession() {
   }
 }
 
+/**
+ * Persiste la sesión actual en el almacenamiento del navegador.
+ */
 export function persistBrowserSession() {
   try {
     if (!S.sessionUserId) {
@@ -178,6 +230,9 @@ export function persistBrowserSession() {
   } catch (_) {}
 }
 
+/**
+ * Limpia cualquier rastro de sesión del navegador.
+ */
 export function clearBrowserSession() {
   try {
     window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
@@ -186,8 +241,8 @@ export function clearBrowserSession() {
 }
 
 /**
- * Syncs the active user to global state and manages session window.
- * @param {Object} user 
+ * Aplica un usuario de sesión al estado global y gestiona las marcas de tiempo.
+ * @param {Object} user - Datos del usuario.
  */
 export function applySessionUser(user) {
   const prevUserId = S.sessionUserId;
@@ -204,8 +259,8 @@ export function applySessionUser(user) {
 }
 
 /**
- * Resolves the display name for the current session user.
- * @param {string} fallback 
+ * Obtiene un nombre legible para mostrar en la interfaz.
+ * @param {string} fallback - Valor por defecto si no hay nombre.
  * @returns {string}
  */
 export function getDisplayUserName(fallback = 'Sin perfil') {
@@ -221,7 +276,7 @@ export function getDisplayUserName(fallback = 'Sin perfil') {
 }
 
 /**
- * Refreshes the session start timestamp and persists.
+ * Refresca y persiste la ventana de tiempo de la sesión actual.
  */
 export function refreshSessionWindow() {
   if (!S.sessionStartedAt) S.sessionStartedAt = nowIso();
@@ -230,7 +285,7 @@ export function refreshSessionWindow() {
 }
 
 /**
- * Clears the session window timestamps.
+ * Borra las marcas de tiempo de la sesión activa.
  */
 export function clearSessionWindow() {
   S.sessionStartedAt = null;
@@ -239,8 +294,8 @@ export function clearSessionWindow() {
 }
 
 /**
- * Replaces the entire root state while preserving auth users if necessary.
- * @param {Object} nextState 
+ * Reemplaza todo el estado S por uno nuevo o vacío, preservando usuarios de confianza.
+ * @param {Object} nextState - El nuevo estado a cargar.
  */
 export function replaceState(nextState = {}) {
   const fresh = createInitialState();
@@ -255,7 +310,7 @@ export function replaceState(nextState = {}) {
 }
 
 /**
- * Stops any active cloud state synchronization.
+ * Detiene cualquier proceso activo de sincronización con la nube.
  */
 export function stopCloudStateSync() {
   if (typeof window.stopCloudStateSync === 'function') {
@@ -264,8 +319,8 @@ export function stopCloudStateSync() {
 }
 
 /**
- * Hydrates the full workspace for a cloud user.
- * @param {Object} user 
+ * Hidrata el workspace completo de un usuario desde la nube y/o almacenamiento local.
+ * @param {Object} user - Usuario autenticado.
  */
 export async function hydrateCloudStateForUser(user) {
   stopCloudStateSync();
@@ -281,6 +336,7 @@ export async function hydrateCloudStateForUser(user) {
 
   applySessionUser(user);
   
+  // Puentes para hidratar bloques SQL específicos (asistencia/evaluación)
   if (typeof window.hydrateSqlStateBlocksForActiveUser === 'function') {
     await window.hydrateSqlStateBlocksForActiveUser();
   }
@@ -288,7 +344,6 @@ export async function hydrateCloudStateForUser(user) {
     await window.hydrateSqlAcademicSnapshotForActiveUser();
   }
   
-  // Mark as cloud-hydrated (internal flag can be added to S or tracked locally)
   persist({ immediate: true });
   
   debugSessionFlow('hydrateCloudStateForUser:done', {
@@ -298,8 +353,8 @@ export async function hydrateCloudStateForUser(user) {
 }
 
 /**
- * Hydrates the local workspace when cloud is unavailable.
- * @param {Object} user 
+ * Hidrata el workspace localmente para un usuario sin conexión a la nube obligatoria.
+ * @param {Object} user - Usuario autenticado.
  */
 export async function hydrateLocalWorkspaceForUser(user) {
   stopCloudStateSync();
@@ -330,7 +385,7 @@ export async function hydrateLocalWorkspaceForUser(user) {
 }
 
 /**
- * Resets the application to a signed-out state.
+ * Reinicia la aplicación al estado predeterminado de 'sin sesión'.
  */
 export function resetToSignedOutState() {
   replaceState();
@@ -363,8 +418,13 @@ export async function logoutAuth() {
   }
 }
 
-// --- Hydration & Initialization ---
+// --- Hidratación e Inicialización del Sistema ---
 
+/**
+ * Realiza la carga inicial (bootstrapping) de los datos del sistema.
+ * @param {Object} options - Parámetros de carga.
+ * @param {boolean} options.skipRootState - Si es true, ignora el archivo raíz legado.
+ */
 export async function hydrate(options = {}) {
   const skipRootState = options && options.skipRootState === true;
   try {
@@ -374,13 +434,14 @@ export async function hydrate(options = {}) {
       const d = JSON.parse(raw);
       const storageHasMojibake = hasMojibakeMarkers(raw);
       
-      // Merge with current state
+      // Fusión con el estado actual
       Object.assign(S, d);
       
       ensurePeriodsAndYear();
       if (!S.periodGroupConfigs || typeof S.periodGroupConfigs !== 'object') S.periodGroupConfigs = {};
       if (!S.notasByPeriod || typeof S.notasByPeriod !== 'object') S.notasByPeriod = {};
       
+      // Sincronización de Periodo 1 (Migración legacy)
       if (!S.periodGroupConfigs.P1) { 
         S.periodGroupConfigs.P1 = JSON.parse(JSON.stringify(S.groupConfigs || {})); 
         changed = true; 
@@ -400,9 +461,10 @@ export async function hydrate(options = {}) {
       
       if (repairUtf8State(S)) changed = true;
       
-      // Legacy migrations
+      // Migraciones de estructuras antiguas
       migrateLegacyState(S, changed);
       
+      // Inicializar ayudantes curriculares y académicos
       ensureCurriculumCatalogState();
       rebuildAcademicHelpers();
       
@@ -440,6 +502,7 @@ export async function hydrate(options = {}) {
       });
     }
     
+    // Cargar historial de autenticación
     const localAuthUsers = await loadLocalAuthUsers();
     if (localAuthUsers.length) S.authUsers = localAuthUsers;
   } catch(e){
@@ -447,6 +510,9 @@ export async function hydrate(options = {}) {
   }
 }
 
+/**
+ * Migra estructuras de bloques de la versión pre-modular.
+ */
 function migrateLegacyState(S, changed) {
   const oldToNew = {com:'B1', res:'B2', eth:'B3', cyt:'B4'};
   if (S.blockCfg && !S.blockCfg.B1) {
@@ -459,6 +525,9 @@ function migrateLegacyState(S, changed) {
   }
 }
 
+/**
+ * Garantiza que los periodos y el año escolar estén definidos.
+ */
 export function ensurePeriodsAndYear() {
   if (!S.schoolYear || typeof S.schoolYear !== 'object') S.schoolYear = {id:'2025-2026', name:'2025-2026'};
   ensureAcademicCalendar();
@@ -467,11 +536,18 @@ export function ensurePeriodsAndYear() {
   if (!S.activePeriodId || !S.periods.find(p=>p.id===S.activePeriodId)) S.activePeriodId = S.periods[0]?.id || 'P1';
 }
 
+/**
+ * Inicializa el catálogo de centros educativos.
+ */
 export function ensureSchoolCatalog() {
   mergeSchoolsIntoCatalog([]);
   if (typeof window.syncSchoolCatalogFromSql === 'function') window.syncSchoolCatalogFromSql();
 }
 
+/**
+ * Fusiona nuevos centros educativos en el catálogo global garantizando unicidad.
+ * @param {Array} items - Nuevos centros a añadir.
+ */
 export function mergeSchoolsIntoCatalog(items = []) {
   if (!Array.isArray(S.schools)) S.schools = [];
   const merged = [...S.schools, ...items, ...CONST_DEFAULT_SCHOOLS].map(n => String(n || '').trim()).filter(Boolean);
@@ -486,24 +562,20 @@ export function mergeSchoolsIntoCatalog(items = []) {
   S.schools = uniq.sort((a, b) => a.localeCompare(b, 'es'));
 }
 
-
-
-
-
+/**
+ * Sincroniza el directorio rápido de estudiantes para búsquedas offline.
+ */
 export function ensureStudentDirectory() {
   if (!Array.isArray(S.studentDirectory)) S.studentDirectory = [];
   const before = S.studentDirectory.length;
-  // Deep sync from estudiantes
+  // Sincronización profunda desvinculada
   S.studentDirectory = JSON.parse(JSON.stringify(S.estudiantes || []));
   return S.studentDirectory.length !== before;
 }
 
-
-
-
-
-
-
+/**
+ * Garantiza que el calendario académico y sus periodos asociados estén normalizados.
+ */
 export function ensureAcademicCalendar() {
   const calendar = normalizeAcademicCalendar(S.academicCalendar);
   S.academicCalendar = calendar;
@@ -515,11 +587,15 @@ export function ensureAcademicCalendar() {
   return calendar;
 }
 
+/**
+ * Normaliza internamente la estructura de un calendario académico.
+ */
 function normalizeAcademicCalendar(calendar) {
   if (!calendar || typeof calendar !== 'object') return JSON.parse(JSON.stringify(DEFAULT_ACADEMIC_CALENDAR));
   return calendar;
 }
 
+/** @type {Object} Calendario por defecto para la República Dominicana */
 const DEFAULT_ACADEMIC_CALENDAR = {
   country: 'DO',
   activeMonths: [8, 9, 10, 11, 12, 1, 2, 3, 4, 5],
@@ -530,3 +606,4 @@ const DEFAULT_ACADEMIC_CALENDAR = {
     { id: 'P4', name: 'Periodo 4', order: 4, months: [4, 5] },
   ],
 };
+

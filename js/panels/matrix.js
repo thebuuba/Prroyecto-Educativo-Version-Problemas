@@ -1,7 +1,9 @@
 /**
- * General Matrix Panel Module
- * Modernized version of the consolidated academic matrix.
- * Shows B1-B4 progress and final scores in a premium table.
+ * Módulo del Panel de Matriz General (EduGest Matrix).
+ * --------------------------------------------------------------------------
+ * Proporciona una vista consolidada y tabular de todo el progreso académico.
+ * Muestra el rendimiento de los estudiantes en los 4 bloques (B1-B4), 
+ * detallando actividades individuales, totales por bloque y promedios finales.
  */
 
 import { S } from '../core/state.js';
@@ -21,9 +23,14 @@ import {
 } from '../core/domain-utils.js';
 
 /**
- * UI Components
+ * --- Componentes de Interfaz ---
  */
 
+/**
+ * Renderiza la cabecera del panel con el título y el contexto académico.
+ * @private
+ * @returns {string} HTML de la cabecera.
+ */
 function renderHeader() {
   return `
     <header class="mb-10 animate-in fade-in slide-in-from-top-4 duration-500">
@@ -41,6 +48,12 @@ function renderHeader() {
   `;
 }
 
+/**
+ * Renderiza un estado vacío amigable cuando no hay datos para mostrar.
+ * @private
+ * @param {Array} ests - Lista de estudiantes.
+ * @returns {string} HTML del estado vacío.
+ */
 function renderEmptyState(ests) {
   return `
     <div class="py-20 text-center bg-white border border-slate-200 rounded-[2.5rem] shadow-sm animate-in zoom-in-95 duration-500">
@@ -60,7 +73,9 @@ function renderEmptyState(ests) {
 }
 
 /**
- * Entry Point
+ * Renderiza el panel de la matriz académica en el contenedor proporcionado.
+ * Construye una tabla compleja con cabeceras dinámicas por bloque y actividades.
+ * @param {HTMLElement} container - Contenedor del panel.
  */
 export function renderMatrixPanel(container) {
   const ests = studentsInGroup(S.activeGroupId);
@@ -79,7 +94,7 @@ export function renderMatrixPanel(container) {
   const blockActs = {};
   BLOCKS.forEach(b => blockActs[b] = cfg[b].activities);
 
-  // Table Building Logic
+  // Lógica de construcción de cabeceras de la tabla
   let headerHtml = `
     <thead class="bg-white border-b border-slate-200">
       <tr>
@@ -184,7 +199,7 @@ export function renderMatrixPanel(container) {
       <div class="bg-white border-2 border-slate-100 rounded-[3rem] overflow-hidden shadow-2xl shadow-slate-200/50 relative">
         <div class="p-6 border-b border-slate-50 bg-slate-50/30 flex items-center justify-between">
            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
+              <div class="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-100">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
               </div>
               <h4 class="font-bold text-slate-900 tracking-tight">Reporte Consolidado Estudiantil</h4>
@@ -210,5 +225,6 @@ export function renderMatrixPanel(container) {
   `;
 }
 
-// Global Registration
+/** Registro global del renderizador para el sistema de navegación. */
 window.RENDERS.matriz = renderMatrixPanel;
+;

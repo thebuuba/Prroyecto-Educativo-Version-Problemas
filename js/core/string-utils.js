@@ -1,8 +1,19 @@
+/**
+ * Utilidades de Procesamiento de Texto y Normalización Curricular.
+ * --------------------------------------------------------------------------
+ * Este módulo se encarga de la limpieza de cadenas, corrección de errores de 
+ * codificación (UTF-8) y normalización de términos educativos para asegurar 
+ * consistencia en los catálogos.
+ */
+
 import { normTxt } from './utils.js';
 import { EDUCATION_SECTIONS } from './constants.js';
 
 /**
- * Corrige fallos de codificación en textos comunes del currículo.
+ * Corrige fallos de codificación (caracteres sustitutos ) en textos comunes del currículo.
+ * Reemplaza patrones de corrupción por sus equivalentes con tildes correctas.
+ * @param {string} value - Texto con posible corrupción.
+ * @returns {string} Texto restaurado.
  */
 export function restoreSpanishQuestionCorruption(value = '') {
   let text = String(value || '');
@@ -40,16 +51,19 @@ export function restoreSpanishQuestionCorruption(value = '') {
 }
 
 /**
- * Normaliza y limpia textos de competencias específicas.
+ * Normaliza y limpia textos de competencias específicas eliminando espacios extra.
+ * @param {string} value - Texto de la competencia.
+ * @returns {string} Texto limpio y normalizado.
  */
 export function curriculumNormalizeSpecificCompetencyText(value = '') {
-  // Simplified Version
   const base = restoreSpanishQuestionCorruption(value || '');
   return base.replace(/\s+/g, ' ').replace(/\s+([,.;:])/g, '$1').trim();
 }
 
 /**
- * Normaliza el nombre de un nivel educativo.
+ * Normaliza el nombre de un nivel educativo (Inicial, Primaria, Secundaria).
+ * @param {string} level - Nombre del nivel.
+ * @returns {string} Nombre estandarizado.
  */
 export function normalizeEducationLevelName(level) {
   const v = normTxt(level);
@@ -60,7 +74,9 @@ export function normalizeEducationLevelName(level) {
 }
 
 /**
- * Valida y normaliza una sección educativa.
+ * Valida si un nivel educativo es uno de los permitidos oficialmente.
+ * @param {string} section - Nombre de la sección/nivel.
+ * @returns {string} Nivel válido o cadena vacía.
  */
 export function normalizeEducationSection(section) {
   if (!String(section || '').trim()) return '';
@@ -69,7 +85,9 @@ export function normalizeEducationSection(section) {
 }
 
 /**
- * Convierte un set de niveles en una lista normalizada única.
+ * Convierte un set de niveles (como array o string separado por comas) en una lista normalizada.
+ * @param {Array|string} value - Niveles a normalizar.
+ * @returns {Array<string>} Lista de niveles únicos y válidos.
  */
 export function normalizeEducationSections(value) {
   const rawValues = Array.isArray(value)
@@ -84,7 +102,9 @@ export function normalizeEducationSections(value) {
 }
 
 /**
- * Normaliza texto para búsqueda.
+ * Normaliza texto para operaciones de búsqueda (insensible a tildes y mayúsculas).
+ * @param {string} text - Texto fuente.
+ * @returns {string} Texto normalizado NFD.
  */
 export function normalizeCourseSearchText(text = '') {
   return String(text || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();

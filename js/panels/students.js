@@ -1,3 +1,11 @@
+/**
+ * Módulo del Panel de Estudiantes (EduGest Students).
+ * --------------------------------------------------------------------------
+ * Proporciona la interfaz principal para la gestión de alumnos.
+ * Incluye visualización en cuadrícula (grid) y tabla, filtrado por grados 
+ * y secciones, y un motor de búsqueda global integrado.
+ */
+
 import { S } from '../core/state.js';
 import { go } from '../core/routing.js';
 import { 
@@ -13,11 +21,12 @@ import {
 } from '../core/domain-utils.js';
 import { sortCourses, escapeHtml } from '../core/utils.js';
 
-let STUDENTS_VIEW_MODE = 'grid'; // 'grid' or 'table'
+/** Modo de visualización actual de la lista de estudiantes. */
+let STUDENTS_VIEW_MODE = 'grid'; // 'grid' o 'table'
 
 /**
- * Renders the modern Bento Students Management panel.
- * @param {HTMLElement} c - Container element.
+ * Renderiza el panel bento moderno de gestión de estudiantes.
+ * @param {HTMLElement} c - Elemento contenedor.
  */
 export function registerStudentsPanel(c) {
   const scopedGrades = getScopedGrades();
@@ -55,7 +64,7 @@ export function registerStudentsPanel(c) {
 
   c.innerHTML = `
     <div class="p-6 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <!-- Top Action Bar -->
+      <!-- Barra de Acciones Superior -->
       <header class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div class="relative flex-1 max-w-2xl">
           <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
@@ -81,7 +90,7 @@ export function registerStudentsPanel(c) {
         </div>
       </header>
 
-      <!-- Grade Tabs -->
+      <!-- Pestañas de Grados -->
       <nav class="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
         ${scopedGrades.map(gr => `
           <button onclick="window.setStudentsGradeView('${gr.id}')" 
@@ -91,9 +100,9 @@ export function registerStudentsPanel(c) {
         `).join('')}
       </nav>
 
-      <!-- Main Workspace -->
+      <!-- Espacio de Trabajo Principal -->
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <!-- Sidebar: Sections -->
+        <!-- Sidebar: Secciones de la asignatura -->
         <aside class="space-y-4">
           <div class="flex items-center justify-between mb-2">
             <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Asignaturas / Secciones</h3>
@@ -107,7 +116,7 @@ export function registerStudentsPanel(c) {
           </div>
         </aside>
 
-        <!-- Main Content: Student Grid -->
+        <!-- Contenido Principal: Lista de Estudiantes -->
         <main class="lg:col-span-3 space-y-6">
           ${selectedSection ? `
             <div class="flex items-center justify-between">
@@ -165,6 +174,10 @@ export function registerStudentsPanel(c) {
   `;
 }
 
+/**
+ * Renderiza una mini tarjeta lateral para una sección/asignatura.
+ * @private
+ */
 function renderSectionMiniCard(sec, selectedId) {
   const isActive = sec.id === selectedId;
   const count = studentsInGroup(sec.id).length;
@@ -180,11 +193,15 @@ function renderSectionMiniCard(sec, selectedId) {
   `;
 }
 
+/**
+ * Renderiza una tarjeta de estudiante (modo Grid).
+ * @private
+ */
 function renderStudentCard(st, sectionId) {
   const final = studentFinal(st.id, sectionId);
   const { l, c } = final !== null ? getGrade(final) : { l: '?', c: 'bg-slate-100 dark:bg-slate-800 text-slate-400' };
   
-  // Status logic
+  // Lógica de estados basados en la calificación final
   const statusLabel = final === null ? 'Pendiente' : final >= 75 ? 'Aprobado' : final >= 60 ? 'En riesgo' : 'Reprobado';
   const statusColor = final === null ? 'bg-slate-100 text-slate-500' : final >= 75 ? 'bg-emerald-50 text-emerald-600' : final >= 60 ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600';
 
@@ -216,6 +233,10 @@ function renderStudentCard(st, sectionId) {
   `;
 }
 
+/**
+ * Renderiza una fila de estudiante en la tabla (modo Table).
+ * @private
+ */
 function renderStudentTableRow(st, sectionId) {
   const final = studentFinal(st.id, sectionId);
   const statusLabel = final === null ? 'Pendiente' : final >= 75 ? 'Aprobado' : final >= 60 ? 'En riesgo' : 'Reprobado';
@@ -241,6 +262,10 @@ function renderStudentTableRow(st, sectionId) {
   `;
 }
 
+/**
+ * Renderiza un resultado individual de búsqueda enriquecido.
+ * @private
+ */
 function renderSearchResult(res) {
   return `
     <button onclick="window.openStudentSearchResult('${res.id}')" 
@@ -262,11 +287,14 @@ function renderSearchResult(res) {
   `;
 }
 
+/**
+ * Inicializa el panel de estudiantes y registra los puentes hacia el estado global.
+ */
 export function init() {
   if (!window.RENDERS) window.RENDERS = {};
   window.RENDERS.estudiantes = registerStudentsPanel;
 
-  // State bridges
+  /** Puentes (Bridges) hacia el estado reactivo */
   window.setStudentsGradeView = (id) => {
     S.activeGradeId = id;
     go('estudiantes');
@@ -294,7 +322,7 @@ export function init() {
         S.activeCourseId = secId;
       }
       window.STUDENTS_GLOBAL_QUERY = '';
-      window.openViewStudent(id); // Legacy modal
+      window.openViewStudent(id); // Modal legado
     }
   };
 }

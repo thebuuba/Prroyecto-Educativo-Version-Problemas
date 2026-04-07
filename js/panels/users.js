@@ -19,7 +19,7 @@ export function renderUsersPanel(container) {
   
   if (S.usuarios.length === 0) {
     container.innerHTML = `
-      <div class="px-6 md:p-10 max-w-[1200px] mx-auto animate-in fade-in duration-500">
+      <div class="px-6 md:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-500">
         <div class="bg-white border border-slate-100 rounded-[3rem] p-12 text-center shadow-sm">
            <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
               <svg class="w-10 h-10 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
@@ -38,7 +38,7 @@ export function renderUsersPanel(container) {
   }
 
   container.innerHTML = `
-    <div class="px-6 md:p-10 max-w-[1200px] mx-auto animate-in fade-in duration-500">
+    <div class="px-6 md:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-500">
       <div class="flex items-center justify-between gap-6 mb-12">
         <div>
           <h1 class="text-3xl font-black text-slate-900 tracking-tight">Colaboradores</h1>

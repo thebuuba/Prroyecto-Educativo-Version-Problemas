@@ -314,7 +314,7 @@ function renderBentoLayout(container, group, monthKey) {
   const statusColor = isAcademicMonthActive(monthKey) ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-50 text-slate-500';
 
   container.innerHTML = `
-    <div class="grid grid-cols-12 gap-6 p-6 overflow-y-auto h-full">
+    <div class="max-w-[1600px] mx-auto grid grid-cols-12 gap-6 p-6 overflow-y-auto h-full">
       
       <!-- Tarjeta: Cabecera y Navegación de Mes -->
       <div class="col-span-12 lg:col-span-8 bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">

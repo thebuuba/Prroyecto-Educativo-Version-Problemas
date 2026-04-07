@@ -13,7 +13,7 @@ import { periodName, logoutAuth } from '../core/domain-utils.js';
 
 export function renderSettingsPanel(container) {
   container.innerHTML = `
-    <div class="max-w-[800px] mx-auto p-6 md:p-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div class="max-w-[1600px] mx-auto p-6 md:p-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       
       <!-- Header -->
       <header class="mb-12">

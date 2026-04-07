@@ -52,7 +52,7 @@ export function renderInstrumentsPanel(container) {
   const filtered = filterInstruments();
   
   container.innerHTML = `
-    <div class="p-6 md:p-10 max-w-[1400px] mx-auto animate-in fade-in duration-700">
+    <div class="p-6 md:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-700">
       
       <!-- Cabecera -->
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">

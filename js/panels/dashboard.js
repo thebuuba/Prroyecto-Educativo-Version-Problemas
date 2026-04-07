@@ -75,7 +75,7 @@ export function registerDashboardPanel(c) {
   });
 
   c.innerHTML = `
-    <div class="p-6 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+    <div class="p-6 max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-500">
       <!-- Sección de Cabecera (Hero) -->
       <header class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>

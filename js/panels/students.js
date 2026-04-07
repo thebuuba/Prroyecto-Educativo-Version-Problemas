@@ -63,7 +63,7 @@ export function registerStudentsPanel(c) {
   const searchResults = getStudentSearchResults(searchQuery);
 
   c.innerHTML = `
-    <div class="p-6 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+    <div class="p-6 max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-500">
       <!-- Barra de Acciones Superior -->
       <header class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div class="relative flex-1 max-w-2xl">

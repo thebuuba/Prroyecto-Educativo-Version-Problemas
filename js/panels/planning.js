@@ -582,7 +582,7 @@ export function renderPlanningPanel(container) {
   
   if (mode === 'home') {
     container.innerHTML = `
-      <div class="max-w-[1240px] mx-auto p-6 md:p-10 animate-in fade-in duration-500">
+      <div class="max-w-[1600px] mx-auto p-6 md:p-10 animate-in fade-in duration-500">
         ${renderHeader(drafts.length, totalCount)}
         
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -654,7 +654,7 @@ export function renderPlanningPanel(container) {
     const draft = S.lessonPlanDraft;
     const activeSectionId = S.lessonPlanUi.activeSectionId || 'general';
     container.innerHTML = `
-      <div class="max-w-[1000px] mx-auto p-6 md:p-10 animate-in slide-in-from-bottom-5 duration-500">
+      <div class="max-w-[1600px] mx-auto p-6 md:p-10 animate-in slide-in-from-bottom-5 duration-500">
         <div class="flex items-center justify-between mb-8">
           <button onclick="lessonPlanReturnHome()" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors font-medium">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>

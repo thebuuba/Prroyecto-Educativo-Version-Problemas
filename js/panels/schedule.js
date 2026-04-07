@@ -145,7 +145,7 @@ export function renderSchedulePanel(container) {
   ensureState();
   
   container.innerHTML = `
-    <div class="p-6 md:p-10 max-w-[1400px] mx-auto animate-in fade-in duration-500">
+    <div class="p-6 md:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-500">
       
       <!-- Encabezado y Pestañas -->
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">

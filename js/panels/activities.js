@@ -307,7 +307,7 @@ function renderMatrixView() {
  */
 function renderConfigView() {
   return `
-    <div class="max-w-[800px] mx-auto animate-in slide-in-from-bottom-4 duration-500">
+    <div class="max-w-[1600px] mx-auto animate-in slide-in-from-bottom-4 duration-500">
        <div class="p-8 bg-indigo-600 rounded-[2.5rem] text-white shadow-xl shadow-indigo-200 mb-10 overflow-hidden relative">
           <div class="relative z-10">
             <h3 class="text-2xl font-bold mb-2">Configuración de Evaluación</h3>
@@ -478,7 +478,7 @@ window.autoAdjustBlock = (b) => {
 export function renderActivitiesPanel(container) {
   const mode = getActViewMode();
   container.innerHTML = `
-    <div class="max-w-[1240px] mx-auto p-6 md:p-10 animate-in fade-in duration-500">
+    <div class="max-w-[1600px] mx-auto p-6 md:p-10 animate-in fade-in duration-500">
       ${renderHeader()}
       <div id="act-content-area">
         ${mode === 'blocks' ? renderBlocksView() : ''}

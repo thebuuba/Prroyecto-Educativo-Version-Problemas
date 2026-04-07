@@ -393,7 +393,7 @@ export function renderReportsPanel(container) {
   const ests = studentsInGroup(S.activeGroupId);
   
   container.innerHTML = `
-    <div class="max-w-[1240px] mx-auto p-6 md:p-10 animate-in fade-in duration-700">
+    <div class="max-w-[1600px] mx-auto p-6 md:p-10 animate-in fade-in duration-700">
       ${renderReportHeader()}
       ${renderExportCards()}
       ${renderBlockAverages()}

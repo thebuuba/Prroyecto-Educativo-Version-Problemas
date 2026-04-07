@@ -495,7 +495,6 @@ async function hydrate(options = {}) {
         studentsCount: S.estudiantes.length,
         activeCourseId: S.activeCourseId,
         activePeriodId: S.activePeriodId,
-        utf8RepairApplied: changed,
         storageHadMojibake: storageHasMojibake
       });
     } else if (skipRootState) {

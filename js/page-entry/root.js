@@ -18,10 +18,15 @@ import { hydrate, persist } from '../core/hydration.js';
 import * as DomainUtils from '../core/domain-utils.js';
 import * as Interactions from '../core/interactions.js';
 import { boot } from '../core/app.js';
-import { initShell } from '../core/shell.js';
+import { initShell, updateSBUser } from '../core/shell.js';
 import { initDeleters } from '../core/deleters.js';
 import * as Cloud from '../core/api-cloud.js';
+import * as DB from '../core/api-db.js';
+import * as SQL from '../core/api-sql.js';
 import * as SetupPanel from '../panels/setup.js';
+import * as UsersPanel from '../panels/users.js';
+import * as DashboardPanel from '../panels/dashboard.js';
+import { ensurePanelBundleLoaded } from '../core/routing.js';
 
 console.log('[EduGest] Cargando punto de entrada raíz modular...');
 
@@ -84,6 +89,7 @@ window.collapseSidebarIfAllowed = Interactions.collapseSidebarIfAllowed;
 window.syncSidebarOverlayState = Interactions.syncSidebarOverlayState;
 window.applyUserPreferences = DomainUtils.applyUserPreferences;
 window.refreshTop = Interactions.refreshTop;
+window.updateSBUser = updateSBUser; // Exportar explícitamente desde Shell
 
 // --- Sincronización de Datos ---
 /** @namespace SyncBridge */
@@ -97,10 +103,47 @@ window.doNormalize = DomainUtils.doNormalize;
 window.blockMeta = DomainUtils.blockMeta;
 
 /**
+ * --- Motor de Renderizado Reactivo ---
+ */
+
+/**
+ * Orquestador principal de renderizado de paneles.
+ * Busca la función de renderizado en el registro 'RENDERS' y la ejecuta 
+ * sobre el contenedor principal. Si el panel no está cargado, intenta 
+ * descargar su bundle dinámicamente.
+ */
+window._renderPanel = async () => {
+  const container = document.getElementById('view');
+  if (!container) return;
+  
+  const page = S.currentPage || 'dashboard';
+  
+  // 1. Verificar si ya tenemos el renderizador en memoria
+  if (window.RENDERS && typeof window.RENDERS[page] === 'function') {
+    window.RENDERS[page](container);
+    window.refreshTop();
+    return;
+  }
+  
+  // 2. Si no, intentar cargar el bundle dinámicante
+  try {
+    const loaded = await ensurePanelBundleLoaded(page, window.RENDERS || {});
+    if (loaded && window.RENDERS[page]) {
+      window.RENDERS[page](container);
+      window.refreshTop();
+    } else {
+      console.warn(`[EduGest][render] No se encontró renderizador para el panel: ${page}`);
+    }
+  } catch (err) {
+    console.error(`[EduGest][render] Error cargando bundle para ${page}:`, err);
+  }
+};
+
+/**
  * Inicialización principal al cargar el DOM.
  * Gestiona el arranque de los subsistemas y la hidratación de datos.
  */
-document.addEventListener('DOMContentLoaded', () => {
+function startEduGest() {
   // Inicializar componentes del shell (Sidebars, Modales, Tooltips)
   initShell();
   
@@ -108,10 +151,18 @@ document.addEventListener('DOMContentLoaded', () => {
   initDeleters();
   
   // Inicializar paneles reactivos modernos
+  if (DashboardPanel.init) DashboardPanel.init();
   if (UsersPanel.init) UsersPanel.init();
+  if (SetupPanel.init) SetupPanel.init();
 
   // Ejecutar el orquestador de arranque (Hidratación, Auth, Sincronización)
   boot().catch(err => {
     console.error('[EduGest][boot] Fallo crítico durante el arranque:', err);
   });
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startEduGest);
+} else {
+  startEduGest();
+}

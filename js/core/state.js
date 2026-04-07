@@ -1,8 +1,10 @@
 /**
  * Gestión del Estado Global Reactivo de EduGest.
- * Este módulo centraliza el estado de la aplicación, flags de sincronización,
- * filtros de búsqueda y estados de flujos de usuario (onboarding, términos, etc.).
+ * Este módulo centraliza el estado de la aplicación y contenedores globales.
  */
+
+// Inicialización de contenedores globales para compatibilidad y registro de paneles
+window.RENDERS = window.RENDERS || {};
 
 import { createInitialState } from './config.js';
 
@@ -23,12 +25,14 @@ import { createInitialState } from './config.js';
  */
 export const S = createInitialState();
 
+// Exposición global para compatibilidad
+window.S = S;
+
 /**
  * Actualiza parcialmente el estado global fusionando el nuevo valor.
  * @param {Partial<GlobalState>} val - Objeto con las propiedades a actualizar.
  */
 export function setS(val) { Object.assign(S, val); }
-window.S = S;
 
 /** 
  * Indica si el estado ha sido hidratado desde la nube (Firestore).

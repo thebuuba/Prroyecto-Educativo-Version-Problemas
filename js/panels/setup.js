@@ -5,7 +5,8 @@
  * Reemplaza la lógica legada que residía en el monolito 00-core-state-and-utils.js.
  */
 
-import { S, persist } from '../core/state.js';
+import { S } from '../core/state.js';
+import { persist } from '../core/hydration.js';
 import { openM, closeM } from '../core/ui.js';
 import { go } from '../core/routing.js';
 import { 

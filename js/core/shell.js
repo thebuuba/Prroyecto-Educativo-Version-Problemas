@@ -40,24 +40,32 @@ import {
 export function updateSBUser() {
   const sidebarName = document.getElementById('sb-name');
   const sidebarRole = document.getElementById('sb-role');
+  const sidebarEmail = document.getElementById('sb-email');
   const topName = document.getElementById('top-inline-name');
   const topRole = document.getElementById('top-inline-role');
   const avatar = document.getElementById('sb-av');
   const avatarImg = document.getElementById('sb-av-img');
+  const dropdownAvatarImg = document.getElementById('sb-pd-av-img');
   
   const displayName = getDisplayUserName();
+  const displayEmail = S.sessionUserName || S.profile?.email || (S.sessionUserId ? 'usuario@aulabase.edu' : 'sin.correo@aulabase.edu');
   const roleText = S.profile ? `${S.profile.role} - ${periodName()}` : (S.sessionUserId ? 'Perfil incompleto' : 'Sin sesión');
 
   if (sidebarName) sidebarName.textContent = displayName;
   if (sidebarRole) sidebarRole.textContent = roleText;
+  if (sidebarEmail) sidebarEmail.textContent = displayEmail;
   if (topName) topName.textContent = displayName;
   if (topRole) topRole.textContent = roleText;
   
   if (avatar) avatar.textContent = initials(displayName);
-  if (avatarImg) {
-    const cleanName = encodeURIComponent(displayName !== 'Sin perfil' ? displayName : 'Usuario');
-    avatarImg.src = `https://ui-avatars.com/api/?name=${cleanName}&background=1E293B&color=fff&size=40`;
-  }
+  
+  const avatarUrl = (name) => {
+    const cleanName = encodeURIComponent(name !== 'Sin perfil' ? name : 'Usuario');
+    return `https://ui-avatars.com/api/?name=${cleanName}&background=1E293B&color=fff&size=48`;
+  };
+
+  if (avatarImg) avatarImg.src = avatarUrl(displayName);
+  if (dropdownAvatarImg) dropdownAvatarImg.src = avatarUrl(displayName);
   
   // Alternar visibilidad del botón de cierre de sesión según la sesión activa
   const logoutBtn = document.getElementById('sb-logout');

@@ -21,6 +21,10 @@ export async function boot() {
   // 1. Hidratación inicial del estado desde LocalStorage/DB
   await hydrate();
   
+  // Sincronizar UI tras carga de datos
+  if (typeof window.updateSBUser === 'function') window.updateSBUser();
+  if (typeof window.refreshTop === 'function') window.refreshTop();
+  
   // 2. Determinación de la página inicial (parámetro URL o estado persistido)
   const urlParams = new URLSearchParams(window.location.search);
   const page = urlParams.get('p') || S.currentPage || 'dashboard';

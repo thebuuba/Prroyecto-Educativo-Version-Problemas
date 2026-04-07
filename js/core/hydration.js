@@ -200,11 +200,16 @@ export function readBrowserSession() {
     if (!raw) return null;
     const session = JSON.parse(raw);
     if (!session || typeof session !== 'object') return null;
-    // Reparación de sesión si estaba en localStorage (persistente) pero no en sessionStorage
+    
+    // Sincronización: Si está en localStorage pero no en sessionStorage (nueva pestaña), restaurar
     if (!sessionRaw && localRaw) {
-      window.sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
-      window.localStorage.removeItem(SESSION_STORAGE_KEY);
+      window.sessionStorage.setItem(SESSION_STORAGE_KEY, localRaw);
     }
+    // Si está en sessionStorage pero no en localStorage (sesión antigua migrada), persistir
+    if (sessionRaw && !localRaw) {
+      window.localStorage.setItem(SESSION_STORAGE_KEY, sessionRaw);
+    }
+    
     return session;
   } catch (_) {
     return null;
@@ -221,12 +226,13 @@ export function persistBrowserSession() {
       window.localStorage.removeItem(SESSION_STORAGE_KEY);
       return;
     }
-    window.sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({
+    const sessionData = JSON.stringify({
       uid: S.sessionUserId,
       name: S.sessionUserName || '',
       startedAt: S.sessionStartedAt,
-    }));
-    window.localStorage.removeItem(SESSION_STORAGE_KEY);
+    });
+    window.sessionStorage.setItem(SESSION_STORAGE_KEY, sessionData);
+    window.localStorage.setItem(SESSION_STORAGE_KEY, sessionData);
   } catch (_) {}
 }
 
@@ -346,6 +352,9 @@ export async function hydrateCloudStateForUser(user) {
   
   persist({ immediate: true });
   
+  if (typeof window.updateSBUser === 'function') window.updateSBUser();
+  if (typeof window.refreshTop === 'function') window.refreshTop();
+
   debugSessionFlow('hydrateCloudStateForUser:done', {
     uid: S.sessionUserId,
     students: Array.isArray(S.estudiantes) ? S.estudiantes.length : null,
@@ -379,6 +388,9 @@ export async function hydrateLocalWorkspaceForUser(user) {
   
   persist({ immediate: true });
   
+  if (typeof window.updateSBUser === 'function') window.updateSBUser();
+  if (typeof window.refreshTop === 'function') window.refreshTop();
+
   debugSessionFlow('hydrateLocalWorkspaceForUser:done', {
     uid: S.sessionUserId,
   });
@@ -495,10 +507,10 @@ export async function hydrate(options = {}) {
         coursesCount: S.grades.length,
         sectionsCount: S.secciones.length,
         studentsCount: S.estudiantes ? S.estudiantes.length : 0,
-        activeCourseId: S.activeCourseId,
         activePeriodId: S.activePeriodId,
         changed,
-        storageHadMojibake
+        storageHasMojibake,
+        __DEBUG_VERSION__: 'v3.1.2_FIXED_TYPO'
       });
     }
     

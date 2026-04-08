@@ -242,7 +242,7 @@ function renderOverviewItem(label, value, icon, textClass = 'text-slate-900 dark
 function buildFocusItems({ courses, totalStudents, totalActivities, pendingInstruments, hasPlanning }) {
   const items = [];
   if (courses.length === 0) {
-    items.push({ tone: 'rose', icon: 'add_circle', eyebrow: 'Paso 1', title: 'Crea tu primer curso', text: 'Define los grados y secciones que impartirás este año escolar.', clickAction: "window.openM('m-grade')", action: '<button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-700 transition-colors">Crear grado</button>' });
+    items.push({ tone: 'rose', icon: 'add_circle', eyebrow: 'Paso 1', title: 'Crea tu primer curso', text: 'Define los grados y secciones que impartirás este año escolar.', clickAction: "window.go('grade-setup')", action: '<button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-700 transition-colors">Crear grado</button>' });
   } else if (totalStudents === 0) {
     items.push({ tone: 'aqua', icon: 'person_add', eyebrow: 'Paso 2', title: 'Carga tu matrícula', text: 'Agrega los estudiantes a tus secciones para habilitar el registro de asistencia y notas.', clickAction: "window.go('estudiantes')", action: '<button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-700 transition-colors">Ir a estudiantes</button>' });
   } else if (!hasPlanning) {

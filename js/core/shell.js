@@ -68,8 +68,13 @@ export function updateSBUser() {
   if (dropdownAvatarImg) dropdownAvatarImg.src = avatarUrl(displayName);
   
   // Alternar visibilidad del botón de cierre de sesión según la sesión activa
-  const logoutBtn = document.getElementById('sb-logout-compact');
-  if (logoutBtn) logoutBtn.style.display = S.sessionUserId ? '' : 'none';
+  const logoutBtns = [
+    document.getElementById('sb-logout-compact'),
+    document.getElementById('sb-logout')
+  ];
+  logoutBtns.forEach(btn => {
+    if (btn) btn.style.display = S.sessionUserId ? '' : 'none';
+  });
 }
 
 /**

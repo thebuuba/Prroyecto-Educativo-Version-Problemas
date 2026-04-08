@@ -18,7 +18,10 @@ export {
   getCurrentMonthKey, 
   normalizeAttendanceMonthKey, 
   attendanceMonthKey, 
-  attendanceMonthStart 
+  attendanceMonthStart,
+  v,
+  normalizeEducationLevelName,
+  getActiveEducationSections
 } from './utils.js';
 import { EDUCATION_SECTIONS, EDUCATION_THEME_CLASS_BY_SECTION, EDUCATION_THEME_CLASS_BY_COMBINATION } from './constants.js';
 import { normalizeEducationSections, normalizeEducationSection, normalizeEducationLevelName } from './string-utils.js';
@@ -34,12 +37,16 @@ export * from './theme-logic.js';
 export * from './academic-context-logic.js';
 export * from './curriculum-logic.js';
 export * from './planning-logic.js';
+export * from './grade-logic.js';
+export * from './sync-logic.js';
+import * as SQL from './api-sql.js';
+export { SQL as AulaBaseSqlApi };
 
 import { ensurePeriodBuckets, studentsInGroup } from './academic-context-logic.js';
 import { fixMojibakeText } from './utils.js';
 
 // Re-exportes auxiliares para shell, root y paneles
-export { getDisplayUserName, resetToSignedOutState, logoutAuth } from './hydration.js';
+export { getDisplayUserName, resetToSignedOutState, logoutAuth, persist } from './hydration.js';
 export { initials, openM, closeM, toast, forceCloseM, periodName } from './ui.js';
 export { go, currentPage } from './routing.js';
 export { 
@@ -52,7 +59,8 @@ export {
   scheduleSidebarAutoClose,
   SIDEBAR_TIMINGS
 } from './interactions.js';
-export { STATIC_DOM } from './constants.js';
+export { STATIC_DOM, DEFAULT_PERIODS } from './constants.js';
+export { emptyGroupCfg } from './config.js';
 
 /**
  * Valida y repara la integridad de los datos académicos en el estado global.

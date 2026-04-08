@@ -230,7 +230,7 @@ export async function ensureFirebase() {
     const auth = authMod.getAuth(app);
     auth.languageCode = 'es';
     try {
-      await authMod.setPersistence(auth, authMod.browserSessionPersistence);
+      await authMod.setPersistence(auth, authMod.browserLocalPersistence);
     } catch (_) {
       await authMod.setPersistence(auth, authMod.inMemoryPersistence);
     }

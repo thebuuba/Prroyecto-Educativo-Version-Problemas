@@ -40,7 +40,7 @@ export function registerStudentsPanel(c) {
         </div>
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Comienza configurando tus grados</h2>
         <p class="text-slate-500 dark:text-slate-400 max-w-md mb-8">Necesitas registrar al menos un grado académico antes de poder gestionar estudiantes.</p>
-        <button class="px-6 py-3 bg-blue-600 text-white font-bold rounded-2xl shadow-xl shadow-blue-100 dark:shadow-none hover:bg-blue-700 transition-all hover:scale-105" onclick="window.openM('m-grade')">+ Crear grado</button>
+        <button class="px-6 py-3 bg-blue-600 text-white font-bold rounded-2xl shadow-xl shadow-blue-100 dark:shadow-none hover:bg-blue-700 transition-all hover:scale-105" onclick="window.go('grade-setup')">+ Crear grado</button>
       </div>
     `;
     return;

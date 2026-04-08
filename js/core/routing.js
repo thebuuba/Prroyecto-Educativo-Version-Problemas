@@ -45,6 +45,7 @@ export const PANEL_ROUTES = {
   asistencia: '/registro-asistencia',
   usuarios: '/usuarios',
   settings: '/configuracion',
+  'grade-setup': '/configuracion-academica',
 };
 
 /** @type {Object} Reservado para rutas de modales específicos. */
@@ -69,6 +70,7 @@ export const PANEL_BUNDLES = {
   asistencia: 'asistencia',
   settings: 'ajustes',
   usuarios: 'usuarios',
+  'grade-setup': 'grados',
 };
 
 /**
@@ -88,6 +90,7 @@ export const PANEL_BUNDLE_URLS = {
   asistencia: '/js/panels/attendance.js',
   ajustes: '/js/panels/settings.js',
   auth: '/js/panels/auth.js',
+  grados: '/js/panels/grade-setup.js',
 };
 
 /** Registro de bundles ya cargados en la sesión actual. */

@@ -102,6 +102,9 @@ window.studentBlockRaw = DomainUtils.studentBlockRaw;
 window.doNormalize = DomainUtils.doNormalize;
 window.blockMeta = DomainUtils.blockMeta;
 
+// --- Motor de Creación Académica ---
+window.saveGrade = DomainUtils.saveGrade;
+
 /**
  * --- Motor de Renderizado Reactivo ---
  */

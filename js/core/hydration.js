@@ -489,29 +489,43 @@ export async function hydrate(options = {}) {
       if (!('currentPage' in S)) S.currentPage = 'dashboard';
       if (!('activityViewMode' in S)) S.activityViewMode = ACT_VIEW_MODE_DEFAULT;
 
-      const browserSession = readBrowserSession();
-      if (browserSession?.uid && browserSession.uid === S.sessionUserId) {
-        S.sessionUserName = browserSession.name || S.sessionUserName;
-        S.sessionStartedAt = browserSession.startedAt || S.sessionStartedAt;
-      }
-      
       ensurePeriodBuckets(S.activePeriodId);
-      
       validateAndRepairData();
-      
       ensureActiveContext();
       
       if (changed) persist();
 
-      console.debug('[EduGest][load]', {
-        coursesCount: S.grades.length,
-        sectionsCount: S.secciones.length,
-        studentsCount: S.estudiantes ? S.estudiantes.length : 0,
-        activePeriodId: S.activePeriodId,
-        changed,
-        storageHasMojibake,
-        __DEBUG_VERSION__: 'v3.1.2_FIXED_TYPO'
-      });
+      console.debug('[EduGest][load:root] Global state hydrated');
+    }
+
+    // --- SESIÓN Y WORKSPACE: Siempre intentar restaurar si hay sesión en el browser ---
+    const browserSession = readBrowserSession();
+    if (browserSession?.uid) {
+      S.sessionUserId = browserSession.uid;
+      S.sessionUserName = browserSession.name || S.sessionUserName;
+      S.sessionStartedAt = browserSession.startedAt || S.sessionStartedAt;
+      
+      // Intentamos cargar el workspace privado del usuario
+      const localWorkspace = await loadLocalWorkspace(browserSession.uid);
+      
+      // Solo cargamos el workspace si tiene datos reales (para no sobreescribir datos globales durante migración)
+      const hasWorkspaceData = localWorkspace && (
+        (localWorkspace.profile && localWorkspace.profile.name) || 
+        (Array.isArray(localWorkspace.grades) && localWorkspace.grades.length > 0)
+      );
+
+      if (hasWorkspaceData) {
+        console.debug('[EduGest][load:workspace] Success - Data restored');
+        Object.assign(S, localWorkspace);
+        // Re-sincronizar ayudantes con los datos del workspace
+        ensureCurriculumCatalogState();
+        rebuildAcademicHelpers();
+        ensurePeriodBuckets(S.activePeriodId);
+      } else if (localWorkspace) {
+        console.debug('[EduGest][load:workspace] Workspace exists but is empty, keeping current data');
+      } else {
+        console.warn('[EduGest][load:workspace] No local workspace found for user', browserSession.uid);
+      }
     }
     
     // Cargar historial de autenticación

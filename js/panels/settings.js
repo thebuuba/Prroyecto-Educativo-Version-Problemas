@@ -26,14 +26,14 @@ export function renderSettingsPanel(container) {
         <div class="md:col-span-2 bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
            <div class="flex items-center gap-6 mb-8">
               <div class="relative">
-                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(S.user?.name || 'User')}&background=1877F2&color=fff&size=80" alt="Avatar" class="w-20 h-20 rounded-3xl shadow-lg">
+                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(S.profile?.name || 'User')}&background=1877F2&color=fff&size=80" alt="Avatar" class="w-20 h-20 rounded-3xl shadow-lg">
                 <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 border-4 border-white rounded-full"></div>
               </div>
               <div>
-                <h3 class="text-xl font-bold text-slate-900">${S.user?.name || 'Docente Invitado'}</h3>
-                <p class="text-slate-500 font-medium">${S.user?.email || 'sin-correo@aulabase.edu'}</p>
+                <h3 class="text-xl font-bold text-slate-900">${S.profile?.name || 'Docente Invitado'}</h3>
+                <p class="text-slate-500 font-medium">${S.profile?.email || S.sessionUserName || 'sin-correo@aulabase.edu'}</p>
                 <div class="mt-2 inline-flex items-center px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold uppercase tracking-widest rounded-lg">
-                  Rol: ${S.user?.role || 'Docente'}
+                  Rol: ${S.profile?.role || 'Docente'}
                 </div>
               </div>
            </div>
@@ -41,11 +41,11 @@ export function renderSettingsPanel(container) {
            <div class="grid grid-cols-1 gap-6">
               <div class="space-y-1.5">
                 <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Nombre Completo</label>
-                <input type="text" value="${S.user?.name || ''}" readonly class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-slate-500 cursor-not-allowed">
+                <input type="text" value="${S.profile?.name || ''}" readonly class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-slate-500 cursor-not-allowed">
               </div>
               <div class="space-y-1.5">
                 <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Correo Electrónico</label>
-                <input type="email" value="${S.user?.email || ''}" readonly class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-slate-500 cursor-not-allowed">
+                <input type="email" value="${S.profile?.email || S.sessionUserName || ''}" readonly class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-slate-500 cursor-not-allowed">
               </div>
            </div>
         </div>
@@ -77,10 +77,10 @@ export function renderSettingsPanel(container) {
         <div class="space-y-6">
           <div class="space-y-1.5">
             <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Nombre del Centro Educativo</label>
-            <input type="text" id="set-inst" value="${S.school?.name || ''}" 
+            <input type="text" id="set-inst" value="${S.profile?.inst || ''}" 
                    class="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl font-bold text-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all outline-none"
                    placeholder="Ej. Colegio San Miguel"
-                   oninput="window.S.school.name = this.value; window.persist()">
+                   oninput="if(!window.S.profile) window.S.profile = {}; window.S.profile.inst = this.value; window.persist()">
           </div>
           
           <div class="p-5 bg-amber-50/50 border border-amber-100 rounded-2xl flex items-start gap-4">

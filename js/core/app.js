@@ -5,7 +5,7 @@
  */
 
 import { S } from './state.js';
-import { hydrate } from './hydration.js';
+import { hydrate, clearBrowserSession } from './hydration.js';
 import { go } from './routing.js';
 import '../panels/auth.js';
 
@@ -35,6 +35,23 @@ export async function boot() {
   // 4. Ocultar pantalla de bienvenida (Splash Screen) una vez listo
   if (typeof window.hideBootSplash === 'function') {
     window.hideBootSplash('boot_complete');
+  }
+
+  // 5. Verificación post-boot: si no hay sesión activa real pero hay tokens de sesión
+  //    guardados (sesión fantasma), limpiarlos y mostrar el login.
+  if (!S.sessionUserId) {
+    clearBrowserSession(); // elimina tokens eg_v3:session del browser storage
+    window.setTimeout(() => {
+      const modal = document.getElementById('m-auth');
+      if (modal && !modal.classList.contains('open')) {
+        if (typeof window.openM === 'function') {
+          window.openM('m-auth');
+        } else {
+          modal.classList.add('open');
+          document.body?.classList.add('auth-screen-open');
+        }
+      }
+    }, 150);
   }
 }
 

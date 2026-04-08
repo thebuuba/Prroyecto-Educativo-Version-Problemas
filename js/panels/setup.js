@@ -96,6 +96,7 @@ export async function saveSetup() {
 
   S.schoolYear = { id: year, name: year };
   S.activePeriodId = pid;
+  S.profile.setupCompleted = true; // Nueva marca para evitar redundancia
 
   // Persistir cambios inmediatamente
   try {
@@ -141,6 +142,7 @@ export function cancelSetup() {
  */
 export function isProfileSetupComplete() {
   const p = S.profile || {};
+  if (p.setupCompleted) return true; // Si ya se completó una vez, no forzar
   return !!p.name && !!(p.firstName || p.lastName) && phoneHasValidDigits(p.phone || '') && !!p.role && !!p.inst && !!p.year && !!p.period;
 }
 

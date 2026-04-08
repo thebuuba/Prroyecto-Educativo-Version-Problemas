@@ -588,7 +588,8 @@ export function resolveEducationThemeClass(sectionOrSections = '') {
  * @param {Object} S - Estado global.
  * @returns {Array<string>}
  */
-export function getActiveEducationSections(S) {
+export function getActiveEducationSections(state) {
+  const S = state || window.S || {};
   const sections = normalizeEducationSections(S.profile?.educationSections || []);
   if (sections.length) return sections;
   const fallback = normalizeEducationLevelName(S.profile?.educationSection || '');

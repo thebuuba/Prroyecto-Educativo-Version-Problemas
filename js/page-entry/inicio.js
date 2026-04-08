@@ -8,7 +8,7 @@
  */
 
 window.__AULABASE_PAGE_ENTRY = { route: 'inicio', panel: 'dashboard' };
-window.__AULABASE_ASSET_VERSION = '20260405i';
+window.__AULABASE_ASSET_VERSION = '20260408b';
 window.__AULABASE_LOADED_BUNDLES = window.__AULABASE_LOADED_BUNDLES || { core: false, shell: false };
 
 (function loadAulaBaseSplitBundles() {

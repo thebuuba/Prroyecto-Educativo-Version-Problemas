@@ -156,11 +156,11 @@ export function renderSchedulePanel(container) {
         
         <div class="flex bg-slate-100 p-1.5 rounded-[1.5rem] self-start md:self-auto">
           <button onclick="window.setScheduleTab('schedule')" 
-            class="px-6 py-2.5 rounded-2xl text-sm font-bold transition-all ${UI.activeTab === 'schedule' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-700'}">
+            class="px-6 py-2.5 rounded-2xl text-sm font-bold transition-all ${UI.activeTab === 'schedule' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}">
             Horario Semanal
           </button>
           <button onclick="window.setScheduleTab('calendar')" 
-            class="px-6 py-2.5 rounded-2xl text-sm font-bold transition-all ${UI.activeTab === 'calendar' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-700'}">
+            class="px-6 py-2.5 rounded-2xl text-sm font-bold transition-all ${UI.activeTab === 'calendar' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}">
             Calendario Escolar
           </button>
         </div>
@@ -184,13 +184,13 @@ function renderWeeklySchedule() {
   
   if (rows.length === 0) {
     return `
-      <div class="bg-indigo-50 border-2 border-dashed border-indigo-200 rounded-[3rem] p-16 text-center">
-        <div class="w-20 h-20 bg-indigo-600 text-white rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-indigo-200">
+      <div class="bg-blue-50 border-2 border-dashed border-blue-200 rounded-[3rem] p-16 text-center">
+        <div class="w-20 h-20 bg-blue-600 text-white rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-blue-200">
            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
         </div>
         <h2 class="text-2xl font-black text-slate-800 mb-4">¡Organicemos tu jornada!</h2>
         <p class="text-slate-500 max-w-md mx-auto mb-8 font-medium">Aún no has configurado tu horario. Usa el asistente para generar una base profesional en segundos.</p>
-        <button onclick="window.openScheduleWizard()" class="px-8 py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
+        <button onclick="window.openScheduleWizard()" class="px-8 py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
           Iniciar Asistente de Horario
         </button>
       </div>
@@ -234,7 +234,7 @@ function renderWeeklySchedule() {
         <div class="p-6 bg-slate-50 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4">
            <div class="flex items-center gap-6">
               <div class="flex items-center gap-2">
-                 <div class="w-3 h-3 rounded-full bg-indigo-500"></div>
+                 <div class="w-3 h-3 rounded-full bg-blue-500"></div>
                  <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Clase</span>
               </div>
               <div class="flex items-center gap-2">
@@ -247,7 +247,7 @@ function renderWeeklySchedule() {
               </div>
            </div>
            
-           <button onclick="window.openScheduleWizard()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
+           <button onclick="window.openScheduleWizard()" class="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors">
               Reiniciar horario con el asistente
            </button>
         </div>
@@ -280,9 +280,9 @@ function renderScheduleCell(cell, weekday, start, end) {
     let borderColor = 'border-slate-100';
     
     if (isClass) {
-        bgColor = 'bg-indigo-50 hover:bg-indigo-100';
-        textColor = 'text-indigo-700';
-        borderColor = 'border-indigo-100';
+        bgColor = 'bg-blue-50 hover:bg-blue-100';
+        textColor = 'text-blue-700';
+        borderColor = 'border-blue-100';
     } else if (isBreak) {
         bgColor = 'bg-amber-50 hover:bg-amber-100';
         textColor = 'text-amber-700';
@@ -349,17 +349,17 @@ function renderMonthlyCalendar() {
                <div class="relative z-10">
                  <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
                     Próximos Eventos
-                    <span class="px-2 py-0.5 bg-indigo-500 rounded-lg text-[10px] font-black uppercase tracking-wider">Escolar</span>
+                    <span class="px-2 py-0.5 bg-blue-500 rounded-lg text-[10px] font-black uppercase tracking-wider">Escolar</span>
                  </h3>
                  <div class="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
                     ${renderUpcomingEvents()}
                  </div>
                </div>
-               <div class="absolute -right-20 -top-20 w-60 h-60 bg-indigo-600/20 rounded-full blur-3xl"></div>
+               <div class="absolute -right-20 -top-20 w-60 h-60 bg-blue-600/20 rounded-full blur-3xl"></div>
             </div>
             
             <button onclick="window.openAddEventModal()" class="w-full py-5 bg-white border border-slate-200 text-slate-900 font-bold rounded-[2rem] hover:bg-slate-50 transition-all flex items-center justify-center gap-3 shadow-sm hover:shadow-md">
-               <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+               <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                Agregar Evento Personal
             </button>
          </div>
@@ -386,7 +386,7 @@ function renderUpcomingEvents() {
         
         let accent = 'bg-slate-800 border-slate-700';
         if (e.type === 'holiday') accent = 'bg-amber-500/10 border-amber-500/20 text-amber-400';
-        if (e.type === 'minerd') accent = 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400';
+        if (e.type === 'minerd') accent = 'bg-blue-500/10 border-blue-500/20 text-blue-400';
 
         return `
           <div class="flex items-center gap-5 p-4 rounded-3xl border border-transparent hover:border-slate-800 hover:bg-white/5 transition-all">
@@ -430,10 +430,10 @@ function renderCalendarDays() {
       
       return `
         <div class="min-h-[100px] p-2 border border-slate-50 hover:bg-slate-50/50 transition-colors relative group">
-           <div class="text-sm font-black ${isToday ? 'w-7 h-7 bg-indigo-600 text-white rounded-lg flex items-center justify-center mx-auto' : 'text-slate-400 text-center'} transition-all">${d}</div>
+           <div class="text-sm font-black ${isToday ? 'w-7 h-7 bg-blue-600 text-white rounded-lg flex items-center justify-center mx-auto' : 'text-slate-400 text-center'} transition-all">${d}</div>
            <div class="mt-2 space-y-1">
               ${dayEvents.slice(0, 2).map(e => `
-                <div class="text-[8px] font-black uppercase tracking-tighter truncate px-1.5 py-0.5 rounded-md ${e.type === 'holiday' ? 'bg-amber-100 text-amber-700' : 'bg-indigo-50 text-indigo-600'}" title="${e.title}">
+                <div class="text-[8px] font-black uppercase tracking-tighter truncate px-1.5 py-0.5 rounded-md ${e.type === 'holiday' ? 'bg-amber-100 text-amber-700' : 'bg-blue-50 text-blue-600'}" title="${e.title}">
                    ${e.title}
                 </div>
               `).join('')}

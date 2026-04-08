@@ -65,13 +65,13 @@ function renderHeader() {
         <p class="text-slate-500 mt-1">Sigue el progreso de tus estudiantes por competencias.</p>
       </div>
       <div class="flex p-1 bg-slate-100 rounded-2xl shrink-0">
-        <button onclick="setActView('blocks')" class="px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${mode === 'blocks' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}">
+        <button onclick="setActView('blocks')" class="px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${mode === 'blocks' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}">
           Bloques
         </button>
-        <button onclick="setActView('matrix')" class="px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${mode === 'matrix' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}">
+        <button onclick="setActView('matrix')" class="px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${mode === 'matrix' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}">
           Matriz
         </button>
-        <button onclick="setActView('config')" class="px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${mode === 'config' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}">
+        <button onclick="setActView('config')" class="px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${mode === 'config' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}">
           Configuración
         </button>
       </div>
@@ -91,7 +91,7 @@ function renderHeader() {
 function renderBlockCard(b, acts, cfg, ests) {
   const rawMax = blockRawMax(b);
   const meta = blockMeta(b);
-  const color = BCOLOR[b] || 'var(--indigo)';
+  const color = BCOLOR[b] || 'var(--blue)';
   const icon = BICON[b] || '📄';
   const name = BNAME[b] || b;
   const progress = meta > 0 ? Math.min((rawMax / meta) * 100, 100) : 0;
@@ -127,7 +127,7 @@ function renderBlockCard(b, acts, cfg, ests) {
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="window.openApplyInstrumentModal('${a.id}')" class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Evaluar">
+            <button onclick="window.openApplyInstrumentModal('${a.id}')" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Evaluar">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
             </button>
             <div class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold min-w-[45px] text-center">
@@ -201,7 +201,7 @@ function renderMatrixView() {
         </div>
         <h4 class="text-xl font-bold text-slate-800 mb-2">No hay estudiantes</h4>
         <p class="text-slate-500 mb-6">Registra estudiantes para visualizar la matriz de evaluación.</p>
-        <button onclick="go('estudiantes')" class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-bold">Ir a Estudiantes</button>
+        <button onclick="go('estudiantes')" class="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-bold">Ir a Estudiantes</button>
       </div>
     `;
   }
@@ -267,7 +267,7 @@ function renderMatrixView() {
         const val = (S.notas[e.id] || {})[a.id];
         const hasVal = (val === 0 || !!val);
         bodyHtml += `
-          <td class="p-3 text-center cursor-pointer hover:bg-indigo-50 transition-colors" onclick="window.openApplyInstrumentModal('${a.id}', '${e.id}')">
+          <td class="p-3 text-center cursor-pointer hover:bg-blue-50 transition-colors" onclick="window.openApplyInstrumentModal('${a.id}', '${e.id}')">
             <span class="text-sm ${hasVal ? 'font-bold text-slate-900' : 'text-slate-300'}">${hasVal ? val : '?'}</span>
           </td>
         `;
@@ -277,7 +277,7 @@ function renderMatrixView() {
       }
     });
 
-    bodyHtml += `<td class="p-4 text-center font-black text-indigo-600 bg-indigo-50/30 border-l-2 border-slate-900">${studentFinal(e.id, S.activeGroupId) ?? '---'}</td></tr>`;
+    bodyHtml += `<td class="p-4 text-center font-black text-blue-600 bg-blue-50/30 border-l-2 border-slate-900">${studentFinal(e.id, S.activeGroupId) ?? '---'}</td></tr>`;
   });
   bodyHtml += '</tbody>';
 
@@ -285,7 +285,7 @@ function renderMatrixView() {
     <div class="bg-white border border-slate-200 rounded-[2rem] overflow-hidden shadow-sm animate-in fade-in duration-500">
       <div class="p-6 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
         <h4 class="font-bold text-slate-800 flex items-center gap-2">
-          <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2-2v8a2 2 0 002 2z"></path></svg>
+          <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2-2v8a2 2 0 002 2z"></path></svg>
           Matriz Operativa ${periodName()}
         </h4>
         <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${getGroupLabel(S.activeGroupId)}</div>
@@ -308,10 +308,10 @@ function renderMatrixView() {
 function renderConfigView() {
   return `
     <div class="max-w-[1600px] mx-auto animate-in slide-in-from-bottom-4 duration-500">
-       <div class="p-8 bg-indigo-600 rounded-[2.5rem] text-white shadow-xl shadow-indigo-200 mb-10 overflow-hidden relative">
+       <div class="p-8 bg-blue-600 rounded-[2.5rem] text-white shadow-xl shadow-blue-200 mb-10 overflow-hidden relative">
           <div class="relative z-10">
             <h3 class="text-2xl font-bold mb-2">Configuración de Evaluación</h3>
-            <p class="text-indigo-100 max-w-md">Ajusta los puntos meta por competencia y normaliza los resultados automáticamente.</p>
+            <p class="text-blue-100 max-w-md">Ajusta los puntos meta por competencia y normaliza los resultados automáticamente.</p>
           </div>
           <div class="absolute -right-4 -bottom-4 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
        </div>
@@ -334,7 +334,7 @@ export function renderActivitiesConfigBlock(b) {
   const rawMax = blockRawMax(b);
   const meta = blockMeta(b);
   const diff = round2(rawMax - meta);
-  const color = BCOLOR[b] || 'var(--indigo)';
+  const color = BCOLOR[b] || 'var(--blue)';
   const icon = BICON[b] || '📄';
   const name = BNAME[b] || b;
 
@@ -354,7 +354,7 @@ export function renderActivitiesConfigBlock(b) {
             <h4 class="font-bold text-slate-900">${name}</h4>
             <div class="flex items-center gap-2 mt-0.5">
                <span class="text-[10px] font-bold text-slate-400">PUNTOS META:</span>
-               <input type="number" value="${meta}" onchange="window.updateBlockMeta('${b}', this.value)" class="w-12 text-[10px] font-black text-indigo-600 bg-indigo-50 border-none rounded-md px-1 py-0.5 text-center focus:ring-2 focus:ring-indigo-500">
+               <input type="number" value="${meta}" onchange="window.updateBlockMeta('${b}', this.value)" class="w-12 text-[10px] font-black text-blue-600 bg-blue-50 border-none rounded-md px-1 py-0.5 text-center focus:ring-2 focus:ring-blue-500">
             </div>
           </div>
         </div>
@@ -362,7 +362,7 @@ export function renderActivitiesConfigBlock(b) {
            <button onclick="window.addActToBlock('${b}')" class="px-4 py-2 bg-slate-100 text-slate-800 rounded-xl text-xs font-bold hover:bg-slate-200 transition-colors">
              + Actividad
            </button>
-           <button onclick="window.autoAdjustBlock('${b}')" class="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-xs font-bold hover:bg-indigo-100 transition-colors">
+           <button onclick="window.autoAdjustBlock('${b}')" class="px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-xs font-bold hover:bg-blue-100 transition-colors">
              Autoajustar
            </button>
         </div>
@@ -372,9 +372,9 @@ export function renderActivitiesConfigBlock(b) {
         ${acts.map((a, i) => `
           <div class="flex items-center gap-4 animate-in fade-in duration-300">
             <div class="w-6 text-[10px] font-black text-slate-300">${i+1}</div>
-            <input type="text" value="${a.name}" oninput="window.handleActNameInput('${b}', '${a.id}', this)" placeholder="Nombre actividad..." class="flex-1 px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none">
+            <input type="text" value="${a.name}" oninput="window.handleActNameInput('${b}', '${a.id}', this)" placeholder="Nombre actividad..." class="flex-1 px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none">
             <div class="flex items-center gap-2 w-[100px]">
-              <input type="number" value="${a.pts}" oninput="window.updateActPts('${b}', '${a.id}', this.value)" class="w-full px-3 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold text-center focus:ring-2 focus:ring-indigo-500 transition-all outline-none">
+              <input type="number" value="${a.pts}" oninput="window.updateActPts('${b}', '${a.id}', this.value)" class="w-full px-3 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold text-center focus:ring-2 focus:ring-blue-500 transition-all outline-none">
               <span class="text-[10px] font-bold text-slate-400">pts</span>
             </div>
             <button onclick="window.removeActFromBlock('${b}', '${a.id}')" class="p-2 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors">

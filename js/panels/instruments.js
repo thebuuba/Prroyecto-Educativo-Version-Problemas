@@ -62,7 +62,7 @@ export function renderInstrumentsPanel(container) {
         </div>
         
         <button onclick="window.openInstrumentCreator()" 
-          class="px-8 py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 flex items-center gap-2">
+          class="px-8 py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 flex items-center gap-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
           Nuevo Instrumento
         </button>
@@ -79,11 +79,11 @@ export function renderInstrumentsPanel(container) {
            <h2 class="text-xl font-black text-slate-800">Biblioteca Personal</h2>
            
            <div class="flex flex-wrap gap-3">
-              <select onchange="window.setInstFilter('gradeId', this.value)" class="px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold text-slate-500 outline-none focus:ring-2 focus:ring-indigo-100">
+              <select onchange="window.setInstFilter('gradeId', this.value)" class="px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold text-slate-500 outline-none focus:ring-2 focus:ring-blue-100">
                 <option value="">Todos los Grados</option>
                 ${getGroups().map(g => `<option value="${g.id}">${g.gradeName} ${g.sectionName}</option>`).join('')}
               </select>
-              <select onchange="window.setInstFilter('type', this.value)" class="px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold text-slate-500 outline-none focus:ring-2 focus:ring-indigo-100">
+              <select onchange="window.setInstFilter('type', this.value)" class="px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold text-slate-500 outline-none focus:ring-2 focus:ring-blue-100">
                 <option value="">Todos los Tipos</option>
                 ${BASIC_INSTRUMENT_TYPES.map(t => `<option value="${t}">${INSTRUMENT_META[t].title}</option>`).join('')}
               </select>
@@ -105,7 +105,7 @@ function renderTypeShortCard(type) {
   return `
     <div onclick="window.createNewInstrument('${type}')" 
          class="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group">
-      <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl group-hover:bg-indigo-50 group-hover:scale-110 transition-all mb-6">
+      <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl group-hover:bg-blue-50 group-hover:scale-110 transition-all mb-6">
         ${meta.icon}
       </div>
       <h3 class="text-lg font-black text-slate-800 mb-2">${meta.title}</h3>
@@ -188,7 +188,7 @@ function renderInstrumentRow(inst) {
       </td>
       <td class="px-6 py-6 text-right">
         <div class="flex items-center justify-end gap-2 opacity-10 md:opacity-0 group-hover:opacity-100 transition-all">
-           <button onclick="window.editInstrument('${inst.id}')" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="Editar">
+           <button onclick="window.editInstrument('${inst.id}')" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Editar">
              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
            </button>
            <button onclick="window.deleteInstrument('${inst.id}')" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all" title="Eliminar">

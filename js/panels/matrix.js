@@ -41,7 +41,7 @@ function renderHeader() {
         </div>
         <div class="hidden md:flex flex-col items-end">
            <div class="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">${getGroupLabel(S.activeGroupId)}</div>
-           <div class="text-sm font-bold text-indigo-600">${periodName()}</div>
+           <div class="text-sm font-bold text-blue-600">${periodName()}</div>
         </div>
       </div>
     </header>
@@ -65,7 +65,7 @@ function renderEmptyState(ests) {
         ${ests.length === 0 ? 'Comienza registrando a tus estudiantes para ver sus calificaciones consolidadas.' : 'Define actividades en los bloques para generar esta matriz.'}
       </p>
       <div class="flex items-center justify-center gap-4">
-        ${ests.length === 0 ? `<button onclick="window.go('estudiantes')" class="px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">Registrar Estudiantes</button>` : ''}
+        ${ests.length === 0 ? `<button onclick="window.go('estudiantes')" class="px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">Registrar Estudiantes</button>` : ''}
         ${totalActs() === 0 ? `<button onclick="window.go('config')" class="px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-2xl font-bold hover:bg-slate-50 transition-all shadow-sm">Configurar Actividades</button>` : ''}
       </div>
     </div>
@@ -145,10 +145,10 @@ export function renderMatrixPanel(container) {
   let bodyHtml = '<tbody class="bg-white divide-y divide-slate-50">';
   ests.forEach(e => {
     bodyHtml += `
-      <tr class="hover:bg-indigo-50/20 transition-all group/row">
+      <tr class="hover:bg-blue-50/20 transition-all group/row">
         <td class="sticky left-0 z-20 bg-white group-hover/row:bg-slate-50 p-4 font-bold text-slate-800 border-r-2 border-slate-100 whitespace-nowrap shadow-[4px_0_10px_-4px_rgba(0,0,0,0.02)]">
           <div class="flex items-center gap-3">
-             <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400 group-hover/row:bg-indigo-100 group-hover/row:text-indigo-600 transition-colors uppercase">
+             <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400 group-hover/row:bg-blue-100 group-hover/row:text-blue-600 transition-colors uppercase">
                ${e.nombre.charAt(0)}${e.apellido.charAt(0)}
              </div>
              ${e.nombre} ${e.apellido}
@@ -185,7 +185,7 @@ export function renderMatrixPanel(container) {
       <td class="p-4 text-center font-black text-lg text-slate-900 bg-slate-50 border-l-4 border-slate-900/10">
         ${avg}
       </td>
-      <td class="p-4 text-center font-black text-lg text-indigo-600 bg-indigo-50/30">
+      <td class="p-4 text-center font-black text-lg text-blue-600 bg-blue-50/30">
         ${avg}%
       </td>
     </tr>`;
@@ -199,7 +199,7 @@ export function renderMatrixPanel(container) {
       <div class="bg-white border-2 border-slate-100 rounded-[3rem] overflow-hidden shadow-2xl shadow-slate-200/50 relative">
         <div class="p-6 border-b border-slate-50 bg-slate-50/30 flex items-center justify-between">
            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-100">
+              <div class="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-100">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
               </div>
               <h4 class="font-bold text-slate-900 tracking-tight">Reporte Consolidado Estudiantil</h4>

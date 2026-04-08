@@ -26,13 +26,13 @@ export function renderSettingsPanel(container) {
         <div class="md:col-span-2 bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
            <div class="flex items-center gap-6 mb-8">
               <div class="relative">
-                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(S.user?.name || 'User')}&background=4F46E5&color=fff&size=80" alt="Avatar" class="w-20 h-20 rounded-3xl shadow-lg">
+                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(S.user?.name || 'User')}&background=1877F2&color=fff&size=80" alt="Avatar" class="w-20 h-20 rounded-3xl shadow-lg">
                 <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 border-4 border-white rounded-full"></div>
               </div>
               <div>
                 <h3 class="text-xl font-bold text-slate-900">${S.user?.name || 'Docente Invitado'}</h3>
                 <p class="text-slate-500 font-medium">${S.user?.email || 'sin-correo@aulabase.edu'}</p>
-                <div class="mt-2 inline-flex items-center px-3 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-bold uppercase tracking-widest rounded-lg">
+                <div class="mt-2 inline-flex items-center px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold uppercase tracking-widest rounded-lg">
                   Rol: ${S.user?.role || 'Docente'}
                 </div>
               </div>
@@ -50,14 +50,14 @@ export function renderSettingsPanel(container) {
            </div>
         </div>
         
-        <div class="bg-indigo-600 rounded-[2.5rem] p-8 text-white shadow-xl shadow-indigo-100 flex flex-col justify-between relative overflow-hidden">
+        <div class="bg-blue-600 rounded-[2.5rem] p-8 text-white shadow-xl shadow-blue-100 flex flex-col justify-between relative overflow-hidden">
            <div class="relative z-10">
              <h4 class="font-bold text-lg mb-2">Estado de Cuenta</h4>
-             <p class="text-indigo-100 text-sm leading-relaxed">Tu cuenta está activa y sincronizada con la nube.</p>
+             <p class="text-blue-100 text-sm leading-relaxed">Tu cuenta está activa y sincronizada con la nube.</p>
            </div>
            
            <div class="mt-8 relative z-10">
-              <div class="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1">Periodo Activo</div>
+              <div class="text-[10px] font-bold text-blue-300 uppercase tracking-widest mb-1">Periodo Activo</div>
               <div class="text-xl font-black">${periodName()}</div>
            </div>
 
@@ -78,7 +78,7 @@ export function renderSettingsPanel(container) {
           <div class="space-y-1.5">
             <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Nombre del Centro Educativo</label>
             <input type="text" id="set-inst" value="${S.school?.name || ''}" 
-                   class="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl font-bold text-slate-800 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 transition-all outline-none"
+                   class="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl font-bold text-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all outline-none"
                    placeholder="Ej. Colegio San Miguel"
                    oninput="window.S.school.name = this.value; window.persist()">
           </div>

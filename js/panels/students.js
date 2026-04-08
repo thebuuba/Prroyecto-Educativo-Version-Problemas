@@ -40,7 +40,7 @@ export function registerStudentsPanel(c) {
         </div>
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Comienza configurando tus grados</h2>
         <p class="text-slate-500 dark:text-slate-400 max-w-md mb-8">Necesitas registrar al menos un grado académico antes de poder gestionar estudiantes.</p>
-        <button class="px-6 py-3 bg-indigo-600 text-white font-bold rounded-2xl shadow-xl shadow-indigo-100 dark:shadow-none hover:bg-indigo-700 transition-all hover:scale-105" onclick="window.openM('m-grade')">+ Crear grado</button>
+        <button class="px-6 py-3 bg-blue-600 text-white font-bold rounded-2xl shadow-xl shadow-blue-100 dark:shadow-none hover:bg-blue-700 transition-all hover:scale-105" onclick="window.openM('m-grade')">+ Crear grado</button>
       </div>
     `;
     return;
@@ -71,7 +71,7 @@ export function registerStudentsPanel(c) {
             <span class="material-symbols-outlined text-slate-400">search</span>
           </div>
           <input type="search" id="students-global-search" 
-                 class="w-full pl-12 pr-4 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all" 
+                 class="w-full pl-12 pr-4 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 transition-all" 
                  placeholder="Buscar estudiante por nombre o matrícula..." 
                  value="${escapeHtml(searchQuery)}"
                  oninput="window.setStudentsGlobalSearch(this.value)">
@@ -85,7 +85,7 @@ export function registerStudentsPanel(c) {
           ` : ''}
         </div>
         <div class="flex flex-wrap gap-3">
-          <button class="px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-100 dark:shadow-none" onclick="window.openEstM('${S.activeGroupId}')">+ Estudiante</button>
+          <button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-100 dark:shadow-none" onclick="window.openEstM('${S.activeGroupId}')">+ Estudiante</button>
           <button class="px-5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-bold rounded-xl hover:bg-slate-50 transition-colors" onclick="window.openBulkEstM('${S.activeGroupId}')">Carga Masiva</button>
         </div>
       </header>
@@ -94,7 +94,7 @@ export function registerStudentsPanel(c) {
       <nav class="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
         ${scopedGrades.map(gr => `
           <button onclick="window.setStudentsGradeView('${gr.id}')" 
-                  class="shrink-0 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${gr.id === S.activeGradeId ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}">
+                  class="shrink-0 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${gr.id === S.activeGradeId ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}">
             ${escapeHtml(gr.name)}
           </button>
         `).join('')}
@@ -106,7 +106,7 @@ export function registerStudentsPanel(c) {
         <aside class="space-y-4">
           <div class="flex items-center justify-between mb-2">
             <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Asignaturas / Secciones</h3>
-            <button class="text-indigo-600 p-1 hover:bg-indigo-50 rounded-lg" onclick="window.openSecM('${activeGrade.id}')">
+            <button class="text-blue-600 p-1 hover:bg-blue-50 rounded-lg" onclick="window.openSecM('${activeGrade.id}')">
               <span class="material-symbols-outlined text-sm font-bold">add</span>
             </button>
           </div>
@@ -125,10 +125,10 @@ export function registerStudentsPanel(c) {
                  <p class="text-slate-500 font-medium">${escapeHtml(activeGrade.name)} ${escapeHtml(selectedSection.sec)} · ${tableStudents.length} estudiantes</p>
                </div>
                <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
-                 <button onclick="window.setStudentsViewMode('grid')" class="p-2 rounded-lg ${STUDENTS_VIEW_MODE === 'grid' ? 'bg-white dark:bg-slate-700 shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}">
+                 <button onclick="window.setStudentsViewMode('grid')" class="p-2 rounded-lg ${STUDENTS_VIEW_MODE === 'grid' ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600' : 'text-slate-400 hover:text-slate-600'}">
                    <span class="material-symbols-outlined">grid_view</span>
                  </button>
-                 <button onclick="window.setStudentsViewMode('table')" class="p-2 rounded-lg ${STUDENTS_VIEW_MODE === 'table' ? 'bg-white dark:bg-slate-700 shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}">
+                 <button onclick="window.setStudentsViewMode('table')" class="p-2 rounded-lg ${STUDENTS_VIEW_MODE === 'table' ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600' : 'text-slate-400 hover:text-slate-600'}">
                    <span class="material-symbols-outlined">list</span>
                  </button>
                </div>
@@ -160,7 +160,7 @@ export function registerStudentsPanel(c) {
             ${tableStudents.length === 0 ? `
               <div class="py-20 text-center border-2 border-dashed border-slate-200 rounded-3xl">
                 <p class="text-slate-400">No hay estudiantes registrados en esta sección.</p>
-                <button class="mt-4 text-indigo-600 font-bold hover:underline" onclick="window.openEstM('${selectedSection.id}')">Agregar ahora</button>
+                <button class="mt-4 text-blue-600 font-bold hover:underline" onclick="window.openEstM('${selectedSection.id}')">Agregar ahora</button>
               </div>
             ` : ''}
           ` : `
@@ -183,7 +183,7 @@ function renderSectionMiniCard(sec, selectedId) {
   const count = studentsInGroup(sec.id).length;
   return `
     <button onclick="window.setActiveSection('${sec.id}')" 
-            class="w-full p-4 text-left rounded-2xl border transition-all ${isActive ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100 dark:shadow-none translate-x-1' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-indigo-300'}">
+            class="w-full p-4 text-left rounded-2xl border transition-all ${isActive ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-100 dark:shadow-none translate-x-1' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-blue-300'}">
       <div class="font-bold text-sm mb-1">${escapeHtml(sec.materia || 'General')}</div>
       <div class="flex items-center justify-between opacity-80 decoration-inherit">
         <span class="text-[10px] font-bold uppercase tracking-wider">${escapeHtml(sec.sec)}</span>
@@ -208,11 +208,11 @@ function renderStudentCard(st, sectionId) {
   return `
     <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm hover:shadow-md transition-all group relative overflow-hidden" ondblclick="window.openViewStudent('${st.id}')">
       <div class="flex justify-between items-start mb-4">
-        <div class="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-500 transition-colors">
+        <div class="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">
           <span class="material-symbols-outlined">person</span>
         </div>
         <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-           <button class="p-2 text-slate-400 hover:text-indigo-600" onclick="window.openEditStudent('${st.id}')"><span class="material-symbols-outlined text-sm">edit</span></button>
+           <button class="p-2 text-slate-400 hover:text-blue-600" onclick="window.openEditStudent('${st.id}')"><span class="material-symbols-outlined text-sm">edit</span></button>
            <button class="p-2 text-slate-400 hover:text-rose-500" onclick="window.delEst('${st.id}')"><span class="material-symbols-outlined text-sm">delete</span></button>
         </div>
       </div>
@@ -224,7 +224,7 @@ function renderStudentCard(st, sectionId) {
         <span class="px-2 py-1 ${statusColor} text-[10px] font-black uppercase rounded tracking-wider">${statusLabel}</span>
         <div class="flex items-center gap-2">
           <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Promedio</span>
-          <span class="w-8 h-8 rounded-lg ${c.replace('g','bg-').replace('A','emerald-500').replace('B','indigo-500').replace('C','amber-500').replace('D','rose-500')} flex items-center justify-center text-xs font-black text-white">
+          <span class="w-8 h-8 rounded-lg ${c.replace('g','bg-').replace('A','emerald-500').replace('B','blue-500').replace('C','amber-500').replace('D','rose-500')} flex items-center justify-center text-xs font-black text-white">
             ${final !== null ? final : '?'}
           </span>
         </div>
@@ -254,7 +254,7 @@ function renderStudentTableRow(st, sectionId) {
       </td>
       <td class="px-6 py-4 text-right">
         <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-           <button class="p-1 hover:text-indigo-600" onclick="window.openEditStudent('${st.id}')"><span class="material-symbols-outlined text-sm">edit</span></button>
+           <button class="p-1 hover:text-blue-600" onclick="window.openEditStudent('${st.id}')"><span class="material-symbols-outlined text-sm">edit</span></button>
            <button class="p-1 hover:text-rose-500" onclick="window.delEst('${st.id}')"><span class="material-symbols-outlined text-sm">delete</span></button>
         </div>
       </td>
@@ -271,7 +271,7 @@ function renderSearchResult(res) {
     <button onclick="window.openStudentSearchResult('${res.id}')" 
             class="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition-colors">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
           <span class="material-symbols-outlined">person</span>
         </div>
         <div>
@@ -280,7 +280,7 @@ function renderSearchResult(res) {
         </div>
       </div>
       <div class="shrink-0 text-right">
-         <div class="text-xs font-black text-indigo-600">${res.final !== null ? res.final : '?'}</div>
+         <div class="text-xs font-black text-blue-600">${res.final !== null ? res.final : '?'}</div>
          <div class="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Final</div>
       </div>
     </button>

@@ -291,12 +291,12 @@ export function registerAttendancePanel(container) {
 function renderEmpty(container) {
   container.innerHTML = `
     <div class="flex flex-col items-center justify-center h-full p-12 text-center bg-white rounded-3xl border border-slate-100 shadow-sm">
-      <div class="w-20 h-20 mb-6 flex items-center justify-center bg-indigo-50 text-indigo-500 rounded-full">
+      <div class="w-20 h-20 mb-6 flex items-center justify-center bg-blue-50 text-blue-500 rounded-full">
         <span class="material-symbols-outlined text-4xl">inventory_2</span>
       </div>
       <h2 class="text-2xl font-bold text-slate-800 mb-2">No hay secciones creadas</h2>
       <p class="text-slate-500 max-w-md mb-8">Crea una sección para poder llevar el registro de asistencia por curso.</p>
-      <button class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-all shadow-lg shadow-indigo-200" onclick="go('estudiantes')">
+      <button class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all shadow-lg shadow-blue-200" onclick="go('estudiantes')">
         Ir a estudiantes
       </button>
     </div>
@@ -319,7 +319,7 @@ function renderBentoLayout(container, group, monthKey) {
       <!-- Tarjeta: Cabecera y Navegación de Mes -->
       <div class="col-span-12 lg:col-span-8 bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="flex items-center gap-4">
-          <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center">
+          <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
             <span class="material-symbols-outlined">calendar_month</span>
           </div>
           <div>
@@ -380,13 +380,13 @@ function renderBentoLayout(container, group, monthKey) {
       <div class="col-span-12 flex flex-wrap items-center justify-between gap-4 py-2">
         <div class="flex items-center gap-3">
           <div class="relative group">
-            <select class="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-2 pr-10 text-sm font-semibold text-slate-700 hover:border-indigo-300 focus:ring-4 focus:ring-indigo-100 focus:outline-none transition-all cursor-pointer shadow-sm" onchange="setActiveGroup(this.value)">
+            <select class="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-2 pr-10 text-sm font-semibold text-slate-700 hover:border-blue-300 focus:ring-4 focus:ring-blue-100 focus:outline-none transition-all cursor-pointer shadow-sm" onchange="setActiveGroup(this.value)">
               ${getGroups().map(g => `<option value="${g.id}" ${g.id === group.id ? 'selected' : ''}>${escapeHtml(getAttendanceGroupLabel(g))}</option>`).join('')}
             </select>
             <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xl">unfold_more</span>
           </div>
           
-          <button class="flex items-center gap-2 px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl font-bold text-sm transition-all shadow-sm" onclick="applyWeeklySchedule()">
+          <button class="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl font-bold text-sm transition-all shadow-sm" onclick="applyWeeklySchedule()">
             <span class="material-symbols-outlined text-lg">auto_fix_high</span>
             Generar dias
           </button>
@@ -446,7 +446,7 @@ function renderTableHeaders(sectionId, monthKey) {
       <th class="border-b border-slate-100 p-0 min-w-[48px]">
         <div class="flex flex-col items-center py-2 h-full">
           <input type="text" 
-                 class="w-10 h-10 text-center font-bold text-sm rounded-lg border-transparent focus:border-indigo-300 focus:ring-0 transition-all ${dayColor}" 
+                 class="w-10 h-10 text-center font-bold text-sm rounded-lg border-transparent focus:border-blue-300 focus:ring-0 transition-all ${dayColor}" 
                  value="${day}" 
                  placeholder="--"
                  maxlength="2"
@@ -467,10 +467,10 @@ function renderTableHeaders(sectionId, monthKey) {
 
 function renderTableRows(sectionId, monthKey, students) {
   return students.map((s, idx) => `
-    <tr class="group hover:bg-indigo-50/20 transition-colors">
-      <td class="sticky left-0 z-10 bg-white group-hover:bg-indigo-50/20 border-r border-slate-100 p-4 transition-colors">
+    <tr class="group hover:bg-blue-50/20 transition-colors">
+      <td class="sticky left-0 z-10 bg-white group-hover:bg-blue-50/20 border-r border-slate-100 p-4 transition-colors">
         <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-400 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-all">
+          <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-400 group-hover:bg-blue-100 group-hover:text-blue-600 transition-all">
             ${idx + 1}
           </div>
           <div class="flex flex-col truncate">
@@ -480,7 +480,7 @@ function renderTableRows(sectionId, monthKey, students) {
         </div>
       </td>
       ${renderAttendanceCells(sectionId, monthKey, s)}
-      <td class="sticky right-0 z-10 bg-white group-hover:bg-indigo-50/20 border-l border-slate-100 p-4 text-center font-bold text-slate-700 transition-colors" id="total-${s.id}">
+      <td class="sticky right-0 z-10 bg-white group-hover:bg-blue-50/20 border-l border-slate-100 p-4 text-center font-bold text-slate-700 transition-colors" id="total-${s.id}">
         0
       </td>
     </tr>
@@ -519,9 +519,9 @@ function getMarkClass(code) {
   if (code === 'P') return 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 shadow-sm shadow-emerald-100/50';
   if (code === 'A') return 'bg-rose-50 text-rose-600 hover:bg-rose-100 shadow-sm shadow-rose-100/50';
   if (code === 'T') return 'bg-amber-50 text-amber-600 hover:bg-amber-100 shadow-sm shadow-amber-100/50';
-  if (code === 'E') return 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 shadow-sm shadow-indigo-100/50';
+  if (code === 'E') return 'bg-blue-50 text-blue-600 hover:bg-blue-100 shadow-sm shadow-blue-100/50';
   if (code === 'R') return 'bg-slate-100 text-slate-500 hover:bg-slate-200 shadow-sm';
-  return 'bg-white text-slate-300 border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/30';
+  return 'bg-white text-slate-300 border border-slate-100 hover:border-blue-200 hover:bg-blue-50/30';
 }
 
 /**

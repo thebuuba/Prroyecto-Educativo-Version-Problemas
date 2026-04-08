@@ -27,7 +27,7 @@ export function renderUsersPanel(container) {
            <h2 class="text-2xl font-black text-slate-800 mb-2">Sin usuarios adicionales</h2>
            <p class="text-slate-400 font-medium mb-10">Agrega coordinadores, directores u otros docentes <br> para gestionar la plataforma de forma colaborativa.</p>
            
-           <button onclick="window.openUsrM()" class="px-8 py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 flex items-center gap-2 mx-auto">
+           <button onclick="window.openUsrM()" class="px-8 py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 flex items-center gap-2 mx-auto">
              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
              Agregar Usuario
            </button>
@@ -71,7 +71,7 @@ export function renderUsersPanel(container) {
 }
 
 function renderUserRow(u) {
-  const rolClass = u.rol === 'Dirección' ? 'bg-rose-50 text-rose-600' : u.rol === 'Coordinador' ? 'bg-amber-50 text-amber-600' : 'bg-indigo-50 text-indigo-600';
+  const rolClass = u.rol === 'Dirección' ? 'bg-rose-50 text-rose-600' : u.rol === 'Coordinador' ? 'bg-amber-50 text-amber-600' : 'bg-blue-50 text-blue-600';
   
   return `
     <tr class="group hover:bg-slate-50/50 transition-colors border-b border-slate-50 last:border-0">

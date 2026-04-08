@@ -190,7 +190,7 @@ function renderReportHeader() {
       </div>
       <div class="flex items-center gap-3">
          <span class="px-4 py-2 bg-slate-100 rounded-xl text-xs font-bold text-slate-500">GRUPO: ${getGroupLabel(S.activeGroupId)}</span>
-         <span class="px-4 py-2 bg-indigo-50 rounded-xl text-xs font-bold text-indigo-600">${periodName()}</span>
+         <span class="px-4 py-2 bg-blue-50 rounded-xl text-xs font-bold text-blue-600">${periodName()}</span>
       </div>
     </header>
   `;
@@ -220,8 +220,8 @@ function renderExportCards() {
         <p class="text-xs text-slate-400 font-medium uppercase tracking-widest leading-none">Informe Oficial</p>
       </button>
       
-      <button onclick="reportDownloadWord()" class="group bg-white p-8 border border-slate-200 rounded-[2.5rem] flex flex-col items-center text-center hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-50 transition-all">
-        <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner">
+      <button onclick="reportDownloadWord()" class="group bg-white p-8 border border-slate-200 rounded-[2.5rem] flex flex-col items-center text-center hover:border-blue-200 hover:shadow-xl hover:shadow-blue-50 transition-all">
+        <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner">
           <img src="/assets/icons/logoword.png" alt="Word" class="w-8 h-8 object-contain">
         </div>
         <h3 class="font-bold text-slate-900 mb-1">Editar Word</h3>
@@ -248,7 +248,7 @@ function renderBlockAverages() {
   return `
     <div class="bg-white border border-slate-200 rounded-[2.5rem] p-10 mb-10 shadow-sm relative overflow-hidden">
        <div class="flex items-center gap-2 mb-10 relative z-10">
-          <div class="w-2 h-6 bg-indigo-600 rounded-full"></div>
+          <div class="w-2 h-6 bg-blue-600 rounded-full"></div>
           <h3 class="text-xl font-bold text-slate-900">Promedio Global por Competencia</h3>
        </div>
        
@@ -265,7 +265,7 @@ function renderBlockAverages() {
                    <div class="absolute bottom-1 left-1 right-1 transition-all duration-1000 group-hover:scale-110 origin-bottom" style="height: ${progress * 0.9}%; background: ${col.color}; border-radius: 12px; opacity: 0.8; box-shadow: 0 10px 20px -5px ${col.color}"></div>
                 </div>
                 <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest max-w-[120px] leading-tight">
-                  ${col.lbl} ${col.norm ? '<span class="text-indigo-400" title="Normalizado">*</span>' : ''}
+                  ${col.lbl} ${col.norm ? '<span class="text-blue-400" title="Normalizado">*</span>' : ''}
                 </div>
                 <div class="mt-1 text-[9px] font-bold text-slate-300">Escala Meta: ${col.meta}</div>
               </div>
@@ -298,7 +298,7 @@ function renderGradesAndAnnual(ests) {
     <div class="bg-white border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-sm mb-10">
       <div class="p-6 bg-slate-50/50 border-b border-slate-100">
         <h4 class="font-bold text-slate-800 uppercase tracking-widest text-xs flex items-center gap-2">
-          <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+          <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
           Tabla de Calificaciones por Bloque
         </h4>
       </div>
@@ -316,7 +316,7 @@ function renderGradesAndAnnual(ests) {
                   </div>
                 </th>
               `).join('')}
-              <th class="p-4 text-center text-[10px] font-black text-indigo-600 uppercase tracking-widest bg-indigo-50/30">Promedio B</th>
+              <th class="p-4 text-center text-[10px] font-black text-blue-600 uppercase tracking-widest bg-blue-50/30">Promedio B</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
@@ -326,7 +326,7 @@ function renderGradesAndAnnual(ests) {
                 <tr class="hover:bg-slate-50/50 transition-colors">
                   <td class="p-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 z-10 border-r border-slate-200/50 whitespace-nowrap">${e.nombre} ${e.apellido}</td>
                   ${BLOCKS.map(b => `<td class="p-4 text-center font-bold text-slate-700">${studentBlockScore(e.id, b)}</td>`).join('')}
-                  <td class="p-4 text-center font-black text-lg text-indigo-600 bg-indigo-50/20">${fin ?? '---'}</td>
+                  <td class="p-4 text-center font-black text-lg text-blue-600 bg-blue-50/20">${fin ?? '---'}</td>
                 </tr>
               `;
             }).join('')}

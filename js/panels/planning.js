@@ -134,14 +134,14 @@ function renderHeader(draftsCount, totalCount) {
  */
 function renderCtaCard() {
   return `
-    <div class="group relative overflow-hidden bg-gradient-to-br from-indigo-600 to-violet-700 rounded-[2rem] p-8 text-white shadow-xl shadow-indigo-200 transition-all hover:shadow-2xl hover:-translate-y-1">
+    <div class="group relative overflow-hidden bg-gradient-to-br from-blue-600 to-violet-700 rounded-[2rem] p-8 text-white shadow-xl shadow-blue-200 transition-all hover:shadow-2xl hover:-translate-y-1">
       <div class="relative z-10">
         <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
         </div>
         <h3 class="text-2xl font-bold mb-2">Nueva Planificación</h3>
-        <p class="text-indigo-100 mb-8 max-w-[240px]">Inicia un nuevo diseño curricular guiado paso a paso.</p>
-        <button onclick="lessonPlanNew()" class="px-6 py-3 bg-white text-indigo-600 rounded-xl font-bold shadow-lg shadow-black/5 hover:bg-slate-50 transition-colors">
+        <p class="text-blue-100 mb-8 max-w-[240px]">Inicia un nuevo diseño curricular guiado paso a paso.</p>
+        <button onclick="lessonPlanNew()" class="px-6 py-3 bg-white text-blue-600 rounded-xl font-bold shadow-lg shadow-black/5 hover:bg-slate-50 transition-colors">
           Comenzar ahora
         </button>
       </div>
@@ -171,7 +171,7 @@ function renderDraftList(drafts) {
   return `
     <div class="space-y-3">
       ${drafts.slice(0, 3).map(plan => `
-        <div onclick="lessonPlanContinue('${plan.id}')" class="flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl hover:border-indigo-200 hover:bg-indigo-50/30 transition-all cursor-pointer group">
+        <div onclick="lessonPlanContinue('${plan.id}')" class="flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl hover:border-blue-200 hover:bg-blue-50/30 transition-all cursor-pointer group">
           <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center shrink-0">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
           </div>
@@ -179,7 +179,7 @@ function renderDraftList(drafts) {
             <h4 class="font-bold text-slate-800 truncate">${plan.general?.themeTitle || plan.general?.title || 'Sin título'}</h4>
             <p class="text-xs text-slate-500">${lessonPlanRelativeUpdatedAt(plan.updatedAt)}</p>
           </div>
-          <svg class="w-5 h-5 text-slate-300 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          <svg class="w-5 h-5 text-slate-300 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
         </div>
       `).join('')}
     </div>
@@ -197,11 +197,11 @@ function renderPlanCard(plan) {
     <div class="bg-white border border-slate-200 rounded-[2rem] p-6 hover:shadow-xl hover:border-slate-300 transition-all group">
       <div class="flex items-start justify-between mb-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+          <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           </div>
           <div>
-            <h4 class="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">${plan.general.themeTitle || plan.general.title || 'Planificación'}</h4>
+            <h4 class="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">${plan.general.themeTitle || plan.general.title || 'Planificación'}</h4>
             <p class="text-xs text-slate-500">${fmtDate(plan.general.classDate || plan.general.startDate)}</p>
           </div>
         </div>
@@ -252,7 +252,7 @@ function renderStepRail(activeId) {
       ${steps.map((step) => {
         const isActive = step.id === activeId;
         return `
-          <button onclick="lessonPlanSetActiveSection('${step.id}')" class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all ${isActive ? 'bg-white text-indigo-600 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700'}">
+          <button onclick="lessonPlanSetActiveSection('${step.id}')" class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all ${isActive ? 'bg-white text-blue-600 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700'}">
             <span class="w-5 h-5 flex items-center justify-center shrink-0">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${step.icon}"></path></svg>
             </span>
@@ -278,39 +278,39 @@ function renderEditorGeneral(draft) {
     <div class="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div class="space-y-6">
-          <h4 class="text-sm font-bold text-indigo-600 uppercase tracking-widest">Contexto Institucional</h4>
+          <h4 class="text-sm font-bold text-blue-600 uppercase tracking-widest">Contexto Institucional</h4>
           <div class="space-y-4">
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Centro Educativo</label>
-              <input type="text" value="${draft.general.center || ''}" oninput="lessonPlanSetGeneralField('general.center', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium">
+              <input type="text" value="${draft.general.center || ''}" oninput="lessonPlanSetGeneralField('general.center', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium">
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Nombre del Docente</label>
-              <input type="text" value="${draft.general.teacher || ''}" oninput="lessonPlanSetGeneralField('general.teacher', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium">
+              <input type="text" value="${draft.general.teacher || ''}" oninput="lessonPlanSetGeneralField('general.teacher', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium">
             </div>
           </div>
         </div>
         
         <div class="space-y-6">
-          <h4 class="text-sm font-bold text-indigo-600 uppercase tracking-widest">Detalles del Curso</h4>
+          <h4 class="text-sm font-bold text-blue-600 uppercase tracking-widest">Detalles del Curso</h4>
           <div class="grid grid-cols-2 gap-4">
             <div class="flex flex-col gap-1.5 col-span-2">
               <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Grado Académico</label>
-              <select onchange="lessonPlanSetGeneralField('general.gradeId', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
+              <select onchange="lessonPlanSetGeneralField('general.gradeId', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
                 <option value="">Seleccionar grado...</option>
                 ${grades.map(g => `<option value="${g.id}" ${draft.general.gradeId === g.id ? 'selected' : ''}>${g.name}</option>`).join('')}
               </select>
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Sección</label>
-              <select onchange="lessonPlanSetGeneralField('general.sectionName', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
+              <select onchange="lessonPlanSetGeneralField('general.sectionName', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
                 <option value="">Seleccionar...</option>
                 ${sections.map(s => `<option value="${s.value}" ${draft.general.sectionName === s.value ? 'selected' : ''}>${s.label}</option>`).join('')}
               </select>
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Período</label>
-              <select onchange="lessonPlanSetGeneralField('general.periodId', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
+              <select onchange="lessonPlanSetGeneralField('general.periodId', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
                 <option value="P1" ${draft.general.periodId === 'P1' ? 'selected' : ''}>P1</option>
                 <option value="P2" ${draft.general.periodId === 'P2' ? 'selected' : ''}>P2</option>
                 <option value="P3" ${draft.general.periodId === 'P3' ? 'selected' : ''}>P3</option>
@@ -322,19 +322,19 @@ function renderEditorGeneral(draft) {
       </div>
 
       <div class="space-y-6 pt-10 border-t border-slate-100">
-        <h4 class="text-sm font-bold text-indigo-600 uppercase tracking-widest">Identificación de la Planificación</h4>
+        <h4 class="text-sm font-bold text-blue-600 uppercase tracking-widest">Identificación de la Planificación</h4>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="flex flex-col gap-1.5 md:col-span-2">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Título del Tema o Unidad</label>
-            <input type="text" value="${draft.general.themeTitle || draft.general.title || ''}" oninput="lessonPlanSetGeneralField('general.themeTitle', this.value)" placeholder="Ej. Los ecosistemas marinos" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-bold text-lg">
+            <input type="text" value="${draft.general.themeTitle || draft.general.title || ''}" oninput="lessonPlanSetGeneralField('general.themeTitle', this.value)" placeholder="Ej. Los ecosistemas marinos" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-bold text-lg">
           </div>
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Fecha de Inicio</label>
-            <input type="date" value="${draft.general.startDate || ''}" onchange="lessonPlanSetGeneralField('general.startDate', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium">
+            <input type="date" value="${draft.general.startDate || ''}" onchange="lessonPlanSetGeneralField('general.startDate', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium">
           </div>
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Eje Transversal</label>
-            <select onchange="lessonPlanSetGeneralField('general.transversalAxis', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
+            <select onchange="lessonPlanSetGeneralField('general.transversalAxis', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
               <option value="">Ninguno</option>
               ${LESSON_PLAN_TRANSVERSAL_AXES.map(axis => `<option value="${axis.value}" ${draft.general.transversalAxis === axis.value ? 'selected' : ''}>${axis.value}</option>`).join('')}
             </select>
@@ -354,35 +354,35 @@ function renderEditorGeneral(draft) {
 function renderEditorCurriculum(draft) {
   return `
     <div class="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-      <div class="p-6 bg-indigo-50/50 rounded-3xl border border-indigo-100 flex items-start gap-4">
-        <div class="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-indigo-200">
+      <div class="p-6 bg-blue-50/50 rounded-3xl border border-blue-100 flex items-start gap-4">
+        <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-200">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         </div>
         <div>
-          <h4 class="font-bold text-indigo-900">Base Curricular</h4>
-          <p class="text-sm text-indigo-700/70">Define las competencias y contenidos clave. Estos elementos aparecerán automáticamente en tu plantilla final.</p>
+          <h4 class="font-bold text-blue-900">Base Curricular</h4>
+          <p class="text-sm text-blue-700/70">Define las competencias y contenidos clave. Estos elementos aparecerán automáticamente en tu plantilla final.</p>
         </div>
       </div>
 
       <div class="grid grid-cols-1 gap-6">
         <div class="space-y-3">
           <label class="text-sm font-bold text-slate-500 uppercase tracking-wider ml-1">Competencias Fundamentales</label>
-          <textarea oninput="lessonPlanSetCurriculumField('fundamentalCompetencies', this.value)" rows="3" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium leading-relaxed" placeholder="Ej. Ética y Ciudadana, Comunicativa...">${draft.curriculum.fundamentalCompetencies || ''}</textarea>
+          <textarea oninput="lessonPlanSetCurriculumField('fundamentalCompetencies', this.value)" rows="3" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed" placeholder="Ej. Ética y Ciudadana, Comunicativa...">${draft.curriculum.fundamentalCompetencies || ''}</textarea>
         </div>
 
         <div class="space-y-3">
           <label class="text-sm font-bold text-slate-500 uppercase tracking-wider ml-1">Competencias Específicas</label>
-          <textarea oninput="lessonPlanSetCurriculumField('specificCompetencies', this.value)" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium leading-relaxed" placeholder="Describe las competencias específicas de la unidad...">${draft.curriculum.specificCompetencies || ''}</textarea>
+          <textarea oninput="lessonPlanSetCurriculumField('specificCompetencies', this.value)" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed" placeholder="Describe las competencias específicas de la unidad...">${draft.curriculum.specificCompetencies || ''}</textarea>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-3">
             <label class="text-sm font-bold text-slate-500 uppercase tracking-wider ml-1">Contenidos Conceptuales</label>
-            <textarea oninput="lessonPlanSetCurriculumField('conceptualContents', this.value)" rows="5" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${draft.curriculum.conceptualContents || ''}</textarea>
+            <textarea oninput="lessonPlanSetCurriculumField('conceptualContents', this.value)" rows="5" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${draft.curriculum.conceptualContents || ''}</textarea>
           </div>
           <div class="space-y-3">
             <label class="text-sm font-bold text-slate-500 uppercase tracking-wider ml-1">Indicadores de Logro</label>
-            <textarea oninput="lessonPlanSetCurriculumField('indicators', this.value)" rows="5" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${draft.curriculum.indicators || ''}</textarea>
+            <textarea oninput="lessonPlanSetCurriculumField('indicators', this.value)" rows="5" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${draft.curriculum.indicators || ''}</textarea>
           </div>
         </div>
       </div>
@@ -404,7 +404,7 @@ function renderEditorDesign(draft) {
           <h4 class="text-xl font-bold text-slate-800">Secuencia de Clases</h4>
           <p class="text-sm text-slate-500">Planifica el desarrollo de cada clase diaria.</p>
         </div>
-        <button class="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl font-bold flex items-center gap-2 hover:bg-indigo-100 transition-colors">
+        <button class="px-4 py-2 bg-blue-50 text-blue-600 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-100 transition-colors">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
           Agregar Clase
         </button>
@@ -431,15 +431,15 @@ function renderEditorDesign(draft) {
             <div class="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
               <div class="space-y-3">
                 <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Inicio (15%)</label>
-                <textarea rows="4" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm leading-relaxed" placeholder="Introducción, saberes previos...">${c.start?.description || ''}</textarea>
+                <textarea rows="4" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all text-sm leading-relaxed" placeholder="Introducción, saberes previos...">${c.start?.description || ''}</textarea>
               </div>
               <div class="space-y-3">
                 <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Desarrollo (70%)</label>
-                <textarea rows="4" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm leading-relaxed" placeholder="Actividades centrales...">${c.development?.description || ''}</textarea>
+                <textarea rows="4" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all text-sm leading-relaxed" placeholder="Actividades centrales...">${c.development?.description || ''}</textarea>
               </div>
               <div class="space-y-3">
                 <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cierre (15%)</label>
-                <textarea rows="4" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm leading-relaxed" placeholder="Síntesis y evaluación...">${c.closure?.summary || ''}</textarea>
+                <textarea rows="4" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all text-sm leading-relaxed" placeholder="Síntesis y evaluación...">${c.closure?.summary || ''}</textarea>
               </div>
             </div>
           </div>
@@ -460,7 +460,7 @@ function renderEditorEvaluation(draft) {
     <div class="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div class="p-6 bg-slate-900 rounded-3xl text-white flex items-start gap-6">
         <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0">
-          <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+          <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
         </div>
         <div>
           <h4 class="text-lg font-bold">Evaluación y Recursos</h4>
@@ -472,18 +472,18 @@ function renderEditorEvaluation(draft) {
         <div class="space-y-6">
           <div class="space-y-3">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Estrategias de Evaluación</label>
-            <textarea oninput="lessonPlanSetGeneralField('strategy.methodology', this.value)" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${draft.strategy?.methodology || ''}</textarea>
+            <textarea oninput="lessonPlanSetGeneralField('strategy.methodology', this.value)" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${draft.strategy?.methodology || ''}</textarea>
           </div>
           <div class="space-y-3">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Técnicas e Instrumentos</label>
-            <textarea rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium leading-relaxed" placeholder="Menciona las técnicas (ej. observación) e instrumentos (ej. rúbrica)..."></textarea>
+            <textarea rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed" placeholder="Menciona las técnicas (ej. observación) e instrumentos (ej. rúbrica)..."></textarea>
           </div>
         </div>
 
         <div class="space-y-6">
           <div class="space-y-3">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Recursos Didácticos</label>
-            <textarea oninput="lessonPlanSetGeneralField('resources.notes', this.value)" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${draft.resources?.notes || ''}</textarea>
+            <textarea oninput="lessonPlanSetGeneralField('resources.notes', this.value)" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${draft.resources?.notes || ''}</textarea>
           </div>
           <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100">
             <h5 class="text-sm font-bold text-slate-700 mb-3">Sugerencias de Recursos</h5>
@@ -511,7 +511,7 @@ function renderEditorPreview(draft) {
     <div class="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div class="flex items-center justify-between">
         <h4 class="text-xl font-bold text-slate-800">Vista Previa Institucional</h4>
-        <button class="px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200">
+        <button class="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
           Exportar PDF
         </button>
@@ -641,7 +641,7 @@ export function renderPlanningPanel(container) {
                     <span class="text-2xl font-bold">12</span>
                   </div>
                   <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                   </div>
                 </div>
               </div>

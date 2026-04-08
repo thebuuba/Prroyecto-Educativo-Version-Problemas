@@ -163,36 +163,58 @@ body:not(.auth-screen-open) {
   -webkit-backdrop-filter: blur(8px);
 }
 
-/* Shell lateral del escritorio: navegación, fondo y sombra general. */
+/* Shell lateral del escritorio: barra tipo isla flotante premium. */
 #sb {
+  position: fixed !important;
+  left: 1.25rem !important;
+  top: 1.25rem !important;
+  bottom: 1.25rem !important;
   width: 80px;
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  z-index: 50;
+  z-index: 100;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
 }
 
 #sb.sb-expanded {
-  width: 260px;
+  width: 280px;
 }
 
 .sb-shell {
   height: 100%;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-right: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.02);
+  pointer-events: auto;
+  /* Fondo Navy profundo con cristalado (Stitch Premium style) */
+  background: rgba(5, 7, 32, 0.82);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2.25rem;
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 25px 50px -12px rgba(5, 7, 32, 0.35);
   display: flex;
   flex-direction: column;
+  padding: 1.5rem 0;
   overflow: hidden;
+  transition: all 0.4s ease;
 }
 
 body.theme-dark .sb-shell {
-  background: rgba(15, 23, 42, 0.9);
-  border-right-color: rgba(255, 255, 255, 0.05);
+  background: rgba(2, 4, 18, 0.9);
+  border-color: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+}
+
+/* Ajuste del contenido principal para que la isla respire */
+#main {
+  flex: 1;
+  margin-left: 100px;
+  transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 0;
+}
+
+body.sb-expanded #main, 
+#sb.sb-expanded ~ #main {
+  margin-left: 300px;
 }
 
 .sb-nav {
@@ -204,72 +226,126 @@ body.theme-dark .sb-shell {
   display: flex;
   align-items: center;
   height: 48px;
-  margin: 4px 12px;
-  padding: 0 14px;
-  border-radius: 12px;
-  color: #64748b;
+  margin: 0.25rem 0.75rem;
+  padding: 0 1rem;
+  border-radius: 1.25rem;
+  color: rgba(255, 255, 255, 0.6);
   text-decoration: none;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
 }
 
+/* Color oficial Azure (#1877F2) para el estado activo */
 .sb-link.on {
-  background: #4f46e5;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+  background: #1877F2 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 8px 16px -4px rgba(24, 119, 242, 0.4) !important;
 }
 
 body.theme-dark .sb-link.on {
-  background: #6366f1;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  background: #1877F2;
+  color: #ffffff;
 }
 
 .sb-link:hover:not(.on) {
-  background: rgba(0, 0, 0, 0.04);
-  color: #1e293b;
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  transform: translateX(4px);
 }
 
 body.theme-dark .sb-link:hover:not(.on) {
-  background: rgba(255, 255, 255, 0.08);
-  color: #f8fafc;
-}
-
-.sb-ico {
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
 }
 
 .sb-ico img, .sb-ico svg {
   width: 20px;
   height: 20px;
   transition: transform 0.2s ease;
+  filter: brightness(0) invert(1) opacity(0.8);
+}
+
+.sb-link.on .sb-ico img, 
+.sb-link.on .sb-ico svg {
+  filter: brightness(0) invert(1) opacity(1) drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+}
+
+/* Efecto de resplandor para el ítem activo */
+.sb-link.on::after {
+  content: "";
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 20px;
+  background: #ffffff;
+  border-radius: 999px;
+  box-shadow: 0 0 10px #ffffff;
+}
+
+#sb:not(.sb-expanded) .sb-link.on::after {
+  right: 6px;
 }
 
 .sb-link.on .sb-ico {
-  filter: brightness(0) invert(1);
+  transform: scale(1.1);
 }
 
+/* Ocultamos labels con opacidad y traslación para look fluido */
 .sb-link-label {
   margin-left: 14px;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.875rem;
   opacity: 0;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
 }
 
 #sb.sb-expanded .sb-link-label {
   opacity: 1;
-  pointer-events: auto;
+  transform: translateX(0);
+}
+
+/* Footer y Utilidades */
+.sb-footer {
+  padding: 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sb-utility, .sb-logout-compact {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 1rem;
+  border-radius: 1rem;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.sb-logout-compact {
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+}
+
+.sb-logout-compact:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* Ocultar scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .sb-link.on {
   background: rgba(79, 70, 229, 0.08);
-  color: #4f46e5;
+  color: #1877F2;
   font-weight: 500;
 }
 
@@ -1553,15 +1629,20 @@ body.theme-dark #toast {
 }
 
 /* STITCH TOPBAR REDESIGN
-   Rediseño de barra superior inspirado en Stitch. */
+   Rediseño de barra superior inspirado en Stitch con efectos de cristal. */
 .stitch-topbar {
   display: flex !important;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 16px !important;
-  background: white !important;
-  border-bottom: 1px solid var(--line) !important;
+  padding: 8px 24px !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
   min-height: 64px !important;
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }
 
 .tb-stitch-left {

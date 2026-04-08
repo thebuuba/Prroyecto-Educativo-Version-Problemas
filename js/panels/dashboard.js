@@ -83,7 +83,7 @@ export function registerDashboardPanel(c) {
           <p class="text-slate-500 dark:text-slate-400 capitalize">${todayDate}</p>
         </div>
         <div class="flex flex-wrap gap-2">
-          <span class="px-3 py-1 bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 rounded-full text-xs font-semibold border border-indigo-100 dark:border-indigo-800">${escapeHtml(institution)}</span>
+          <span class="px-3 py-1 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 rounded-full text-xs font-semibold border border-blue-100 dark:border-blue-800">${escapeHtml(institution)}</span>
           <span class="px-3 py-1 bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 rounded-full text-xs font-medium">${escapeHtml(schoolYear)}</span>
           <span class="px-3 py-1 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 rounded-full text-xs font-medium">${escapeHtml(activePeriod)}</span>
         </div>
@@ -91,7 +91,7 @@ export function registerDashboardPanel(c) {
 
       <!-- Cuadrícula de KPIs -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        ${renderStatCard('Cursos', courses.length, 'school', 'text-indigo-600 bg-indigo-50')}
+        ${renderStatCard('Cursos', courses.length, 'school', 'text-blue-600 bg-blue-50')}
         ${renderStatCard('Estudiantes', totalStudents, 'group', 'text-emerald-600 bg-emerald-50')}
         ${renderStatCard('Actividades', totalActivities, 'event_note', 'text-amber-600 bg-amber-50')}
         ${renderStatCard('Cobertura', `${courseCoverage}%`, 'analytics', 'text-rose-600 bg-rose-50')}
@@ -115,8 +115,8 @@ export function registerDashboardPanel(c) {
                 ${stepNum}
               </div>
               <div class="flex-1">
-                <p class="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-1">${mainFocus.eyebrow}</p>
-                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-indigo-600 transition-colors">${mainFocus.title}</h3>
+                <p class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-1">${mainFocus.eyebrow}</p>
+                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-blue-600 transition-colors">${mainFocus.title}</h3>
                 <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">${mainFocus.text}</p>
                 ${mainFocus.action}
               </div>
@@ -127,7 +127,7 @@ export function registerDashboardPanel(c) {
           <section class="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
             <div class="flex items-center justify-between mb-6">
               <h2 class="text-xl font-bold text-slate-800 dark:text-white">Mis cursos activos</h2>
-              <button class="text-indigo-600 text-sm font-semibold hover:underline" onclick="window.go('estudiantes')">Gestionar todos</button>
+              <button class="text-blue-600 text-sm font-semibold hover:underline" onclick="window.go('estudiantes')">Gestionar todos</button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               ${filteredCourses.map(sec => renderCourseItem(sec)).join('')}
@@ -138,7 +138,7 @@ export function registerDashboardPanel(c) {
 
         <!-- Acciones Laterales -->
         <div class="space-y-6">
-          <section class="bg-indigo-600 rounded-3xl p-8 text-white shadow-xl shadow-indigo-200 dark:shadow-none">
+          <section class="bg-blue-600 rounded-3xl p-8 text-white shadow-xl shadow-blue-200 dark:shadow-none">
             <h2 class="text-xl font-bold mb-6">Accesos rápidos</h2>
             <div class="grid grid-cols-2 gap-3">
               ${quickActions.map(action => `
@@ -200,7 +200,7 @@ function renderCourseItem(sec) {
          onclick="window.openDashboardCourse('${sec.id}')">
       <div class="flex items-center justify-between mb-3">
         <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 flex items-center justify-center">
+          <div class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center">
              <span class="material-symbols-outlined text-sm">school</span>
           </div>
           <div>
@@ -208,10 +208,10 @@ function renderCourseItem(sec) {
             <p class="text-[10px] text-slate-500 font-medium">${escapeHtml(sec.materia || 'General')} · ${count} est.</p>
           </div>
         </div>
-        <span class="text-[10px] font-bold text-indigo-600">${prog}%</span>
+        <span class="text-[10px] font-bold text-blue-600">${prog}%</span>
       </div>
       <div class="h-1.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-        <div class="h-full bg-indigo-600 transition-all duration-700" style="width: ${prog}%"></div>
+        <div class="h-full bg-blue-600 transition-all duration-700" style="width: ${prog}%"></div>
       </div>
     </div>
   `;
@@ -242,13 +242,13 @@ function renderOverviewItem(label, value, icon, textClass = 'text-slate-900 dark
 function buildFocusItems({ courses, totalStudents, totalActivities, pendingInstruments, hasPlanning }) {
   const items = [];
   if (courses.length === 0) {
-    items.push({ tone: 'rose', icon: 'add_circle', eyebrow: 'Paso 1', title: 'Crea tu primer curso', text: 'Define los grados y secciones que impartirás este año escolar.', clickAction: "window.openM('m-grade')", action: '<button class="px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 transition-colors">Crear grado</button>' });
+    items.push({ tone: 'rose', icon: 'add_circle', eyebrow: 'Paso 1', title: 'Crea tu primer curso', text: 'Define los grados y secciones que impartirás este año escolar.', clickAction: "window.openM('m-grade')", action: '<button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-700 transition-colors">Crear grado</button>' });
   } else if (totalStudents === 0) {
-    items.push({ tone: 'aqua', icon: 'person_add', eyebrow: 'Paso 2', title: 'Carga tu matrícula', text: 'Agrega los estudiantes a tus secciones para habilitar el registro de asistencia y notas.', clickAction: "window.go('estudiantes')", action: '<button class="px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 transition-colors">Ir a estudiantes</button>' });
+    items.push({ tone: 'aqua', icon: 'person_add', eyebrow: 'Paso 2', title: 'Carga tu matrícula', text: 'Agrega los estudiantes a tus secciones para habilitar el registro de asistencia y notas.', clickAction: "window.go('estudiantes')", action: '<button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-700 transition-colors">Ir a estudiantes</button>' });
   } else if (!hasPlanning) {
-    items.push({ tone: 'green', icon: 'drafts', eyebrow: 'Paso 3', title: 'Prepara tu planificación', text: 'Organiza las competencias y bloques para el período activo.', clickAction: "window.go('planificaciones')", action: '<button class="px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 transition-colors">Planificar ahora</button>' });
+    items.push({ tone: 'green', icon: 'drafts', eyebrow: 'Paso 3', title: 'Prepara tu planificación', text: 'Organiza las competencias y bloques para el período activo.', clickAction: "window.go('planificaciones')", action: '<button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-700 transition-colors">Planificar ahora</button>' });
   } else if (totalActivities === 0) {
-    items.push({ tone: 'amber', icon: 'assignment_add', eyebrow: 'Paso 4', title: 'Define tus actividades', text: 'Crea las actividades evaluativas para comenzar a calificar a tus estudiantes.', clickAction: "window.go('actividades')", action: '<button class="px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 transition-colors">Crear actividades</button>' });
+    items.push({ tone: 'amber', icon: 'assignment_add', eyebrow: 'Paso 4', title: 'Define tus actividades', text: 'Crea las actividades evaluativas para comenzar a calificar a tus estudiantes.', clickAction: "window.go('actividades')", action: '<button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-700 transition-colors">Crear actividades</button>' });
   } else if (pendingInstruments > 0) {
     items.push({ tone: 'rose', icon: 'rule', eyebrow: 'Pendiente', title: 'Vincula instrumentos', text: `Tienes ${pendingInstruments} actividad(es) sin instrumento de evaluación asignado.`, clickAction: "window.go('instrumentos')", action: '<button class="px-5 py-2.5 bg-rose-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-rose-200 dark:shadow-none hover:bg-rose-700 transition-colors">Vincular instrumentos</button>' });
   } else {

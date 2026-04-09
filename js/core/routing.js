@@ -249,9 +249,13 @@ export function ensurePanelBundleLoaded(pageKey, RENDERS) {
  */
 export function readPanelLocation(activeP, activeActViewM) {
   let path = String(window.location.pathname || '/').trim();
+  
+  // Normalización agresiva de la ruta
   path = path.replace(/\/index\.html$/i, '');
   if (path.length > 1) path = path.replace(/\/+$/, '');
-  if (!path) path = '/';
+  if (!path || path === '/') path = '/';
+
+  console.debug(`[EduGest][routing] Detectando panel para ruta: "${path}"`);
   
   const modalEntry = Object.entries(MODAL_ROUTES).find(([, route]) => route === path);
   if (modalEntry) {
@@ -262,12 +266,17 @@ export function readPanelLocation(activeP, activeActViewM) {
     };
   }
   
-  const entry = Object.entries(PANEL_ROUTES).find(([, route]) => route === path);
+  // Buscar en el mapeo de rutas (incluyendo rutas exactas como /configuracion)
+  const entry = Object.entries(PANEL_ROUTES).find(([, route]) => {
+    const r = String(route || '').trim();
+    return r === path || r === (path + '/') || path === (r + '/');
+  });
+
   if (entry) {
     const [requestedPage] = entry;
     return {
       requestedPage,
-      activityViewMode: requestedPage === 'config' ? 'config' : (requestedPage === 'actividades' ? 'blocks' : null),
+      activityViewMode: requestedPage === 'config' ? 'config' : (requestedPage === 'actividades' ? 'blocks' : (activeActViewM || null)),
     };
   }
   

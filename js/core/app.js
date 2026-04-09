@@ -6,7 +6,7 @@
 
 import { S } from './state.js';
 import { hydrate, clearBrowserSession } from './hydration.js';
-import { go } from './routing.js';
+import { go, readPanelLocation } from './routing.js';
 import '../panels/auth.js';
 
 /**
@@ -25,9 +25,13 @@ export async function boot() {
   if (typeof window.updateSBUser === 'function') window.updateSBUser();
   if (typeof window.refreshTop === 'function') window.refreshTop();
   
-  // 2. Determinación de la página inicial (parámetro URL o estado persistido)
+  // 2. Determinación de la página inicial (URL > Estado > Default)
+  const urlLocation = readPanelLocation(S.currentPage, S.activityViewMode);
   const urlParams = new URLSearchParams(window.location.search);
-  const page = urlParams.get('p') || S.currentPage || 'dashboard';
+  
+  const page = urlLocation?.requestedPage || urlParams.get('p') || S.currentPage || 'dashboard';
+  
+  console.debug(`[EduGest][boot] Página resuelta para arranque: ${page}`);
   
   // 3. Inicio de la navegación al panel correspondiente
   go(page, { replace: true });
@@ -37,10 +41,17 @@ export async function boot() {
     window.hideBootSplash('boot_complete');
   }
 
-  // 5. Verificación post-boot: si no hay sesión activa real pero hay tokens de sesión
-  //    guardados (sesión fantasma), limpiarlos y mostrar el login.
-  if (!S.sessionUserId) {
-    clearBrowserSession(); // elimina tokens eg_v3:session del browser storage
+  // 5. Verificación post-boot: Resiliencia de sesión
+  //    Si no hay sesión en S pero SÍ hay un token en el navegador, evitamos borrarlo
+  //    para permitir recuperación en el siguiente ciclo o via Cloud.
+  const browserSession = typeof window.readBrowserSession === 'function' 
+    ? window.readBrowserSession() 
+    : null;
+
+  if (!S.sessionUserId && !browserSession?.uid) {
+    console.warn('[EduGest][boot] Sin sesión detectada, limpiando rastro local.');
+    clearBrowserSession(); 
+    
     window.setTimeout(() => {
       const modal = document.getElementById('m-auth');
       if (modal && !modal.classList.contains('open')) {
@@ -52,6 +63,8 @@ export async function boot() {
         }
       }
     }, 150);
+  } else if (!S.sessionUserId && browserSession?.uid) {
+    console.debug('[EduGest][boot] Sesión latente detectada en storage pero no hidratada en S.');
   }
 }
 

@@ -14,7 +14,7 @@
 
 import { S } from '../core/state.js';
 import { go } from '../core/routing.js';
-import { hydrate, persist } from '../core/hydration.js';
+import { hydrate, persist, readBrowserSession, clearBrowserSession } from '../core/hydration.js';
 import * as DomainUtils from '../core/domain-utils.js';
 import * as Interactions from '../core/interactions.js';
 import { boot } from '../core/app.js';
@@ -46,6 +46,8 @@ window.S = S;
 window.go = go;
 window.hydrate = hydrate;
 window.persist = persist;
+window.readBrowserSession = readBrowserSession;
+window.clearBrowserSession = clearBrowserSession;
 
 // --- Utilidades de Currículo y Normalización ---
 /** @namespace CurriculumBridge */
@@ -101,6 +103,9 @@ window.blockRawMax = DomainUtils.blockRawMax;
 window.studentBlockRaw = DomainUtils.studentBlockRaw;
 window.doNormalize = DomainUtils.doNormalize;
 window.blockMeta = DomainUtils.blockMeta;
+
+// --- Motor de Autenticación y Sesión ---
+window.logoutAuth = DomainUtils.logoutAuth;
 
 // --- Motor de Creación Académica ---
 window.saveGrade = DomainUtils.saveGrade;

@@ -410,17 +410,21 @@ export function resetToSignedOutState() {
  * Cierra la sesión activa del usuario, limpia el estado y persiste los cambios.
  */
 export async function logoutAuth() {
+  console.log('[EduGest][auth] Iniciando proceso de cierre de sesión...');
   try {
     stopCloudStateSync();
     if (typeof window.EduGestCloud?.logout === 'function') {
-      await window.EduGestCloud.logout();
+      // Intentamos cerrar sesión en la nube, pero no bloqueamos el cierre local si falla o tarda
+      await Promise.race([
+        window.EduGestCloud.logout(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000))
+      ]).catch(err => console.warn('[EduGest][auth] Logout en nube omitido o fallido:', err));
     }
   } catch (error) {
-    if (typeof window.EduGestCloud?.friendlyError === 'function') {
-      console.error(window.EduGestCloud.friendlyError(error));
-    }
+    console.warn('[EduGest][auth] Error durante stop/cloud logout:', error);
   }
 
+  // Cierre de sesión local: Siempre ocurre
   replaceState();
   clearSessionWindow();
   persist({ immediate: true });
@@ -428,6 +432,9 @@ export async function logoutAuth() {
   if (typeof window.resetSidebarUser === 'function') {
     window.resetSidebarUser();
   }
+  
+  console.log('[EduGest][auth] Sesión cerrada localmente. Redirigiendo...');
+  go('dashboard', { replace: true });
 }
 
 // --- Hidratación e Inicialización del Sistema ---
@@ -531,6 +538,13 @@ export async function hydrate(options = {}) {
     // Cargar historial de autenticación
     const localAuthUsers = await loadLocalAuthUsers();
     if (localAuthUsers.length) S.authUsers = localAuthUsers;
+
+    console.debug('[EduGest][load] Hidratación finalizada con éxito.');
+    
+    // Forzar actualización de la UI si hay sesión
+    if (S.sessionUserId && typeof window.updateSBUser === 'function') {
+      window.updateSBUser();
+    }
   } catch(e){
     console.error('[EduGest][hydrate] Error during hydration:', e);
   }

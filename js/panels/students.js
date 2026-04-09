@@ -85,7 +85,7 @@ export function registerStudentsPanel(c) {
           ` : ''}
         </div>
         <div class="flex flex-wrap gap-3">
-          <button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-100 dark:shadow-none" onclick="window.openEstM('${S.activeGroupId}')">+ Estudiante</button>
+          <button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-100 dark:shadow-none" onclick="window.go('student-create')">+ Estudiante</button>
           <button class="px-5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-bold rounded-xl hover:bg-slate-50 transition-colors" onclick="window.openBulkEstM('${S.activeGroupId}')">Carga Masiva</button>
         </div>
       </header>
@@ -106,7 +106,7 @@ export function registerStudentsPanel(c) {
         <aside class="space-y-4">
           <div class="flex items-center justify-between mb-2">
             <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Asignaturas / Secciones</h3>
-            <button class="text-blue-600 p-1 hover:bg-blue-50 rounded-lg" onclick="window.openSecM('${activeGrade.id}')">
+            <button class="text-blue-600 p-1 hover:bg-blue-50 rounded-lg" onclick="window.go('section-create')">
               <span class="material-symbols-outlined text-sm font-bold">add</span>
             </button>
           </div>
@@ -160,7 +160,7 @@ export function registerStudentsPanel(c) {
             ${tableStudents.length === 0 ? `
               <div class="py-20 text-center border-2 border-dashed border-slate-200 rounded-3xl">
                 <p class="text-slate-400">No hay estudiantes registrados en esta sección.</p>
-                <button class="mt-4 text-blue-600 font-bold hover:underline" onclick="window.openEstM('${selectedSection.id}')">Agregar ahora</button>
+                <button class="mt-4 text-blue-600 font-bold hover:underline" onclick="window.go('student-create')">Agregar ahora</button>
               </div>
             ` : ''}
           ` : `
@@ -324,5 +324,9 @@ export function init() {
       window.STUDENTS_GLOBAL_QUERY = '';
       window.openViewStudent(id); // Modal legado
     }
+  };
+  window.openEditStudent = (id) => {
+    S.editingStudentId = id;
+    go('student-edit');
   };
 }

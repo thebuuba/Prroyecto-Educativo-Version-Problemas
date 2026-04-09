@@ -1,0 +1,351 @@
+/**
+ * Panel de Creación de Estudiantes (Moderno/Bento)
+ * --------------------------------------------------------------------------
+ * Reemplaza el modal 'm-est' con una interfaz de navegación fluida.
+ */
+
+import { S } from '../core/state.js';
+import { 
+  toast, 
+  buildStudentAvatarDataUrl,
+  sortCourses,
+  getScopedSections
+} from '../core/domain-utils.js';
+
+const FormState = {
+  nombre: '',
+  apellido: '',
+  matricula: '',
+  courseId: '',
+  photoUrl: ''
+};
+
+/**
+ * Renderiza el panel de creación de estudiantes.
+ */
+export function renderStudentCreatePanel(container) {
+  const sections = sortCourses(getScopedSections());
+  
+  if (sections.length === 0) {
+    toast('Crea una sección antes de registrar estudiantes', true);
+    setTimeout(() => window.go('section-create'), 500);
+    return;
+  }
+
+  // Inicializar sección por defecto
+  if (!FormState.courseId) {
+    FormState.courseId = S.activeGroupId || sections[0].id;
+  }
+
+  container.innerHTML = `
+    <div class="max-w-[1400px] mx-auto p-6 md:p-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      
+      <!-- Header -->
+      <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <button onclick="window.go('estudiantes')" class="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-400">
+               <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+            <span class="text-[10px] font-bold text-blue-500 uppercase tracking-[0.2em]">Gestión Escolar</span>
+          </div>
+          <h1 class="text-4xl font-black text-slate-900 tracking-tight">Nuevo Estudiante</h1>
+          <p class="text-slate-500 mt-2 text-lg">Registra la información básica del alumno para su seguimiento académico.</p>
+        </div>
+      </header>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Main Form Column -->
+        <div class="lg:col-span-8 space-y-8">
+          
+          <!-- STEP 1: DATOS PERSONALES -->
+          <section class="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
+            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+              <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-[10px]">1</span>
+              Información Personal
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider ml-2">Nombres</label>
+                <input type="text" id="sc-nom" placeholder="Ej. Juan Gabriel" 
+                       class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-medium text-slate-800 focus:ring-4 focus:ring-blue-50 outline-none transition-all"
+                       oninput="window.updateStudentCreateField('nombre', this.value)">
+              </div>
+              <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider ml-2">Apellidos</label>
+                <input type="text" id="sc-ape" placeholder="Ej. Pérez Rosario" 
+                       class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-medium text-slate-800 focus:ring-4 focus:ring-blue-50 outline-none transition-all"
+                       oninput="window.updateStudentCreateField('apellido', this.value)">
+              </div>
+              <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider ml-2">Matrícula</label>
+                <input type="text" id="sc-mat" placeholder="00-0000-0" 
+                       class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-medium text-slate-800 focus:ring-4 focus:ring-blue-50 outline-none transition-all"
+                       oninput="window.updateStudentCreateField('matricula', this.value)">
+              </div>
+            </div>
+          </section>
+
+          <!-- STEP 2: ASIGNACIÓN ACADÉMICA -->
+          <section class="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
+            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+              <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-[10px]">2</span>
+              Curso o Sección
+            </h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              ${sections.map(s => {
+                const isSelected = FormState.courseId === s.id;
+                return `
+                  <button 
+                    onclick="window.updateStudentCreateField('courseId', '${s.id}')"
+                    class="p-4 rounded-3xl border-2 transition-all text-left flex flex-col justify-between h-32 ${isSelected ? 'border-blue-600 bg-blue-50/50' : 'border-slate-100 bg-slate-50/50 hover:border-slate-200'}"
+                  >
+                    <div class="font-black text-slate-900 leading-tight">${s.grado} ${s.sec}</div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1 truncate">${s.materia}</div>
+                    <div class="mt-auto flex items-center justify-between">
+                       <span class="text-[10px] text-blue-600 font-bold">${isSelected ? 'Seleccionado' : ''}</span>
+                       <span class="material-symbols-outlined text-sm ${isSelected ? 'text-blue-600' : 'text-slate-200'}">check_circle</span>
+                    </div>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </section>
+
+          <!-- STEP 3: FOTO (Opcional) -->
+          <section class="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
+            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+              <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-[10px]">3</span>
+              Fotografía
+            </h3>
+            
+            <div class="flex flex-col md:flex-row items-center gap-8">
+               <div class="relative group">
+                 <div class="w-40 h-40 rounded-[2.5rem] overflow-hidden bg-slate-100 border-4 border-white shadow-xl">
+                    <img id="sc-photo-preview" src="${buildStudentAvatarDataUrl('')}" class="w-full h-full object-cover">
+                 </div>
+                 <label for="sc-photo-file" class="absolute -bottom-2 -right-2 w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center cursor-pointer hover:scale-110 transition-all shadow-lg">
+                    <span class="material-symbols-outlined text-lg">add_a_photo</span>
+                    <input type="file" id="sc-photo-file" class="hidden" accept="image/*" onchange="window.handleStudentCreatePhoto(this)">
+                 </label>
+               </div>
+               
+               <div class="flex-1 space-y-4">
+                  <p class="text-slate-400 text-sm leading-relaxed">Sube una foto del estudiante para identificarlo fácilmente en las listas y reportes. Si no subes una, se generará un avatar con sus iniciales.</p>
+                  <button onclick="document.getElementById('sc-photo-file').click()" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-bold text-sm transition-all flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg">upload</span>
+                    Seleccionar Archivo
+                  </button>
+               </div>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- Sidebar / Preview Column -->
+        <div class="lg:col-span-4">
+          <div class="sticky top-8 space-y-6">
+            
+            <!-- Student ID Card Preview -->
+            <div class="bg-slate-900 rounded-[3rem] p-8 text-white shadow-2xl relative overflow-hidden">
+               <div class="relative z-10">
+                 <h4 class="text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-8">Credencial de Estudiante</h4>
+                 
+                 <div class="flex flex-col items-center text-center">
+                    <div class="w-24 h-24 rounded-3xl overflow-hidden bg-white/10 mb-6 border-2 border-white/20">
+                       <img id="preview-student-photo" src="${buildStudentAvatarDataUrl('')}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="text-2xl font-black tracking-tight" id="preview-student-name">Nuevo Alumno</div>
+                    <div class="text-blue-400 font-bold text-xs mt-1 uppercase tracking-widest" id="preview-student-mat">SIN MATRÍCULA</div>
+                    
+                    <div class="mt-8 pt-8 border-t border-white/5 w-full grid grid-cols-2 gap-4">
+                       <div class="text-left">
+                          <div class="text-[9px] text-slate-500 font-bold uppercase">Grado · Sec</div>
+                          <div class="text-sm font-bold" id="preview-student-grade">-</div>
+                       </div>
+                       <div class="text-right">
+                          <div class="text-[9px] text-slate-500 font-bold uppercase">Estado</div>
+                          <div class="text-sm font-bold text-emerald-400 flex items-center justify-end gap-1">
+                             <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
+                             Activo
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+
+                 <div class="mt-10 space-y-3">
+                    <button onclick="window.confirmSaveStudent(true)" id="sc-save-bulk-btn" class="w-full py-4 bg-white/10 hover:bg-white/20 disabled:opacity-30 text-white rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-2">
+                      <span class="material-symbols-outlined text-lg">playlist_add</span>
+                      Guardar y Agregar Otro
+                    </button>
+                    <button onclick="window.confirmSaveStudent(false)" id="sc-save-btn" class="w-full py-5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-900/20 flex items-center justify-center gap-2 group">
+                      Registrar Estudiante
+                      <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    </button>
+                    <button onclick="window.go('estudiantes')" class="w-full py-3 text-slate-500 hover:text-white rounded-2xl font-bold transition-all text-sm">
+                      Cancelar
+                    </button>
+                 </div>
+               </div>
+
+               <!-- Decorations -->
+               <div class="absolute -right-20 -top-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"></div>
+               <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl"></div>
+            </div>
+
+            <!-- Hint -->
+            <div class="bg-blue-50 rounded-3xl p-6 border border-blue-100 flex gap-4">
+              <div class="text-blue-500 flex-shrink-0">
+                <span class="material-symbols-outlined">lightbulb</span>
+              </div>
+              <p class="text-xs text-blue-900/60 leading-relaxed font-medium">
+                La matrícula debe tener el formato <span class="text-blue-700 font-bold">00-0000-0</span>. El sistema la formateará automáticamente mientras escribes.
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Hidden inputs for legacy logic compatibility -->
+      <div class="hidden">
+        <input type="hidden" id="e-nom">
+        <input type="hidden" id="e-ape">
+        <input type="hidden" id="e-mat">
+        <input type="hidden" id="e-sec">
+        <input type="hidden" id="e-photo-data">
+      </div>
+    </div>
+  `;
+
+  updatePreviews();
+}
+
+/**
+ * Actualiza los elementos dinámicos del preview.
+ */
+function updatePreviews() {
+  const nameEl = document.getElementById('preview-student-name');
+  const matEl = document.getElementById('preview-student-mat');
+  const gradeEl = document.getElementById('preview-student-grade');
+  const photoPreview = document.getElementById('preview-student-photo');
+  const formPhotoPreview = document.getElementById('sc-photo-preview');
+  const saveBtn = document.getElementById('sc-save-btn');
+  const saveBulkBtn = document.getElementById('sc-save-bulk-btn');
+
+  const fullName = [FormState.nombre, FormState.apellido].filter(Boolean).join(' ');
+  const displayMat = FormState.matricula || 'SIN MATRÍCULA';
+  
+  if (nameEl) nameEl.textContent = fullName || 'Nuevo Alumno';
+  if (matEl) matEl.textContent = displayMat;
+  
+  const sec = S.secciones.find(s => s.id === FormState.courseId);
+  if (gradeEl) gradeEl.textContent = sec ? `${sec.grado}${sec.sec}` : '-';
+  
+  const avatar = buildStudentAvatarDataUrl(fullName);
+  if (photoPreview) photoPreview.src = FormState.photoUrl || avatar;
+  if (formPhotoPreview) formPhotoPreview.src = FormState.photoUrl || avatar;
+
+  const isValid = FormState.nombre && FormState.apellido && FormState.matricula && FormState.courseId;
+  if (saveBtn) saveBtn.disabled = !isValid;
+  if (saveBulkBtn) saveBulkBtn.disabled = !isValid;
+
+  // Sync hidden inputs for legacy logic compatibility
+  const setHidden = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+  setHidden('e-nom', FormState.nombre);
+  setHidden('e-ape', FormState.apellido);
+  setHidden('e-mat', FormState.matricula);
+  setHidden('e-sec', FormState.courseId);
+  setHidden('e-photo-data', FormState.photoUrl);
+}
+
+/**
+ * Bridge functions
+ */
+window.updateStudentCreateField = (field, value) => {
+  if (field === 'matricula') {
+     // Formateo básico mientras escribe
+     value = value.replace(/\D/g, '').slice(0, 9);
+     if (value.length > 2) value = value.slice(0, 2) + '-' + value.slice(2);
+     if (value.length > 7) value = value.slice(0, 7) + '-' + value.slice(7);
+     
+     const input = document.getElementById('sc-mat');
+     if (input) input.value = value;
+  }
+  
+  FormState[field] = value;
+  updatePreviews();
+};
+
+window.handleStudentCreatePhoto = (input) => {
+  const file = input?.files?.[0];
+  if (!file) {
+    FormState.photoUrl = '';
+    updatePreviews();
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    FormState.photoUrl = e.target.result;
+    updatePreviews();
+  };
+  reader.readAsDataURL(file);
+};
+
+window.confirmSaveStudent = async (isBulk = false) => {
+  if (typeof window.saveEst !== 'function') {
+    toast('Error: Motor de guardado no disponible', true);
+    return;
+  }
+
+  try {
+    // Preparar objeto para la lógica modular
+    const payload = {
+      ...FormState,
+      nom: FormState.nombre,
+      ape: FormState.apellido,
+      mat: FormState.matricula,
+      keepOpen: isBulk
+    };
+
+    // Inyectar valores en los campos ocultos que saveEst aún espera (compatibilidad)
+    const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+    setVal('e-nom', FormState.nombre);
+    setVal('e-ape', FormState.apellido);
+    setVal('e-mat', FormState.matricula);
+    setVal('e-sec', FormState.courseId);
+    setVal('e-photo-data', FormState.photoUrl);
+
+    await window.saveEst({ keepOpen: isBulk });
+    
+    if (isBulk) {
+       // Limpiar para el siguiente
+       FormState.nombre = '';
+       FormState.apellido = '';
+       FormState.matricula = '';
+       FormState.photoUrl = '';
+       
+       const nInput = document.getElementById('sc-nom');
+       const aInput = document.getElementById('sc-ape');
+       const mInput = document.getElementById('sc-mat');
+       if (nInput) { nInput.value = ''; nInput.focus(); }
+       if (aInput) aInput.value = '';
+       if (mInput) mInput.value = '';
+       
+       updatePreviews();
+    } else {
+       window.go('estudiantes');
+    }
+  } catch (err) {
+    console.error('[EduGest][student-create] Error:', err);
+    toast('Error al guardar estudiante', true);
+  }
+};
+
+if (!window.RENDERS) window.RENDERS = {};
+window.RENDERS['student-create'] = renderStudentCreatePanel;

@@ -46,6 +46,9 @@ export const PANEL_ROUTES = {
   usuarios: '/usuarios',
   settings: '/configuracion',
   'grade-setup': '/configuracion-academica',
+  'student-create': '/nuevo-estudiante',
+  'section-create': '/nueva-asignatura',
+  'student-edit': '/editar-estudiante',
 };
 
 /** @type {Object} Reservado para rutas de modales específicos. */
@@ -71,6 +74,9 @@ export const PANEL_BUNDLES = {
   settings: 'ajustes',
   usuarios: 'usuarios',
   'grade-setup': 'grados',
+  'student-create': 'estudiantes-nuevo',
+  'section-create': 'secciones-nuevo',
+  'student-edit': 'estudiantes-edicion',
 };
 
 /**
@@ -91,6 +97,9 @@ export const PANEL_BUNDLE_URLS = {
   ajustes: '/js/panels/settings.js',
   auth: '/js/panels/auth.js',
   grados: '/js/panels/grade-setup.js',
+  'estudiantes-nuevo': '/js/panels/student-create.js',
+  'secciones-nuevo': '/js/panels/section-create.js',
+  'estudiantes-edicion': '/js/panels/student-edit.js',
 };
 
 /** Registro de bundles ya cargados en la sesión actual. */

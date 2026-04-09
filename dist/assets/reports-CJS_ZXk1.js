@@ -1,4 +1,4 @@
-import{s as y,S as i,j as x,p as m,e as c,B as b,d as u,P as k,a as v,Q as $,c as j,i as g,h as R,R as B,T,f as E,t as p,U as L}from"./main-Dd9jDrfc.js";function w(){const o=x(i.activeGroupId)||"grupo",t=m()||"periodo",r=`${o}-${t}`;return`reporte-${L(r).replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")||"general"}`}function d(o){return o?Array.from(o.querySelectorAll("tr")).map(t=>Array.from(t.querySelectorAll("th,td")).map(r=>String(r.textContent||"").replace(/\s+/g," ").trim())).filter(t=>t.length>0):[]}function f(o){if(!o.length)return"<table><tbody><tr><td>Sin datos</td></tr></tbody></table>";const[t,...r]=o,e=`<thead><tr>${t.map(s=>`<th>${p(s)}</th>`).join("")}</tr></thead>`,l=`<tbody>${r.map(s=>`<tr>${s.map(n=>`<td>${p(n)}</td>`).join("")}</tr>`).join("")}</tbody>`;return`<table>${e}${l}</table>`}function h(o,t,r){const e=p(o),l=f(t),s=f(r);return`<!doctype html><html><head><meta charset="utf-8"><title>${e}</title>
+import{s as y,S as d,j as x,p as m,e as c,B as b,d as u,P as k,a as v,Q as $,c as j,i as f,h as R,R as B,T,f as E,t as p,U as L}from"./main-DzuOqHLs.js";function w(){const o=x(d.activeGroupId)||"grupo",t=m()||"periodo",r=`${o}-${t}`;return`reporte-${L(r).replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")||"general"}`}function i(o){return o?Array.from(o.querySelectorAll("tr")).map(t=>Array.from(t.querySelectorAll("th,td")).map(r=>String(r.textContent||"").replace(/\s+/g," ").trim())).filter(t=>t.length>0):[]}function g(o){if(!o.length)return"<table><tbody><tr><td>Sin datos</td></tr></tbody></table>";const[t,...r]=o,e=`<thead><tr>${t.map(s=>`<th>${p(s)}</th>`).join("")}</tr></thead>`,l=`<tbody>${r.map(s=>`<tr>${s.map(n=>`<td>${p(n)}</td>`).join("")}</tr>`).join("")}</tbody>`;return`<table>${e}${l}</table>`}function h(o,t,r){const e=p(o),l=g(t),s=g(r);return`<!doctype html><html><head><meta charset="utf-8"><title>${e}</title>
   <style>
     body{font-family:Arial,sans-serif;color:#111827;margin:24px;}
     h1{font-size:20px;margin:0 0 4px;}
@@ -9,20 +9,20 @@ import{s as y,S as i,j as x,p as m,e as c,B as b,d as u,P as k,a as v,Q as $,c a
     th{background:#f3f4f6;font-weight:700;}
   </style></head><body>
     <h1>${e}</h1>
-    <p class="sub">${p(x(i.activeGroupId)||"Sin grupo")} • ${p(m())}</p>
+    <p class="sub">${p(x(d.activeGroupId)||"Sin grupo")} • ${p(m())}</p>
     <h2>Tabla de calificaciones</h2>
     ${l}
     <h2>Resumen anual por estudiante</h2>
     ${s}
-  </body></html>`}window.reportDownloadExcel=()=>{const o=document.querySelector(".reportes-stack table"),t=document.querySelector(".annual-report-table"),r=d(o),e=d(t);if(!r.length&&!e.length){typeof window.toast=="function"&&window.toast("No hay datos para exportar",!0);return}const l=h("Reporte AulaBase",r,e),s=new Blob(["\uFEFF",l],{type:"application/vnd.ms-excel;charset=utf-8"}),n=URL.createObjectURL(s),a=document.createElement("a");a.href=n,a.download=`${w()}.xls`,document.body.appendChild(a),a.click(),a.remove(),setTimeout(()=>URL.revokeObjectURL(n),1200)};window.reportDownloadPdf=async()=>{const o=document.querySelector(".reportes-stack table"),t=document.querySelector(".annual-report-table"),r=d(o),e=d(t);if(!(!r.length&&!e.length))try{const s=h("Reporte AulaBase",r,e).replace("</body>","<script>window.addEventListener('load', function () { setTimeout(function () { try { window.focus(); window.print(); } catch (_) {} }, 180); });<\/script></body>"),n=new Blob([s],{type:"text/html;charset=utf-8"}),a=URL.createObjectURL(n);if(!window.open(a,"_blank")){URL.revokeObjectURL(a),typeof window.toast=="function"&&window.toast("Habilita pop-ups para imprimir.",!0);return}setTimeout(()=>URL.revokeObjectURL(a),6e4)}catch(l){console.error("Error PDF:",l)}};window.reportDownloadWord=()=>{const o=document.querySelector(".reportes-stack table"),t=document.querySelector(".annual-report-table"),r=d(o),e=d(t);if(!r.length&&!e.length)return;const l=h("Reporte AulaBase",r,e),s=new Blob(["\uFEFF",l],{type:"application/msword"}),n=URL.createObjectURL(s),a=document.createElement("a");a.href=n,a.download=`${w()}.doc`,document.body.appendChild(a),a.click(),a.remove(),setTimeout(()=>URL.revokeObjectURL(n),1200)};function M(){return`
+  </body></html>`}window.reportDownloadExcel=()=>{const o=document.querySelector(".reportes-stack table"),t=document.querySelector(".annual-report-table"),r=i(o),e=i(t);if(!r.length&&!e.length){typeof window.toast=="function"&&window.toast("No hay datos para exportar",!0);return}const l=h("Reporte AulaBase",r,e),s=new Blob(["\uFEFF",l],{type:"application/vnd.ms-excel;charset=utf-8"}),n=URL.createObjectURL(s),a=document.createElement("a");a.href=n,a.download=`${w()}.xls`,document.body.appendChild(a),a.click(),a.remove(),setTimeout(()=>URL.revokeObjectURL(n),1200)};window.reportDownloadPdf=async()=>{const o=document.querySelector(".reportes-stack table"),t=document.querySelector(".annual-report-table"),r=i(o),e=i(t);if(!(!r.length&&!e.length))try{const s=h("Reporte AulaBase",r,e).replace("</body>","<script>window.addEventListener('load', function () { setTimeout(function () { try { window.focus(); window.print(); } catch (_) {} }, 180); });<\/script></body>"),n=new Blob([s],{type:"text/html;charset=utf-8"}),a=URL.createObjectURL(n);if(!window.open(a,"_blank")){URL.revokeObjectURL(a),typeof window.toast=="function"&&window.toast("Habilita pop-ups para imprimir.",!0);return}setTimeout(()=>URL.revokeObjectURL(a),6e4)}catch(l){console.error("Error PDF:",l)}};window.reportDownloadWord=()=>{const o=document.querySelector(".reportes-stack table"),t=document.querySelector(".annual-report-table"),r=i(o),e=i(t);if(!r.length&&!e.length)return;const l=h("Reporte AulaBase",r,e),s=new Blob(["\uFEFF",l],{type:"application/msword"}),n=URL.createObjectURL(s),a=document.createElement("a");a.href=n,a.download=`${w()}.doc`,document.body.appendChild(a),a.click(),a.remove(),setTimeout(()=>URL.revokeObjectURL(n),1200)};function M(){return`
     <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
       <div>
         <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Centro de Reportes y Descargas</h1>
         <p class="text-slate-500 mt-1">Genera informes académicos oficiales en múltiples formatos.</p>
       </div>
       <div class="flex items-center gap-3">
-         <span class="px-4 py-2 bg-slate-100 rounded-xl text-xs font-bold text-slate-500">GRUPO: ${x(i.activeGroupId)}</span>
-         <span class="px-4 py-2 bg-indigo-50 rounded-xl text-xs font-bold text-indigo-600">${m()}</span>
+         <span class="px-4 py-2 bg-slate-100 rounded-xl text-xs font-bold text-slate-500">GRUPO: ${x(d.activeGroupId)}</span>
+         <span class="px-4 py-2 bg-blue-50 rounded-xl text-xs font-bold text-blue-600">${m()}</span>
       </div>
     </header>
   `}function P(){return`
@@ -43,8 +43,8 @@ import{s as y,S as i,j as x,p as m,e as c,B as b,d as u,P as k,a as v,Q as $,c a
         <p class="text-xs text-slate-400 font-medium uppercase tracking-widest leading-none">Informe Oficial</p>
       </button>
       
-      <button onclick="reportDownloadWord()" class="group bg-white p-8 border border-slate-200 rounded-[2.5rem] flex flex-col items-center text-center hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-50 transition-all">
-        <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner">
+      <button onclick="reportDownloadWord()" class="group bg-white p-8 border border-slate-200 rounded-[2.5rem] flex flex-col items-center text-center hover:border-blue-200 hover:shadow-xl hover:shadow-blue-50 transition-all">
+        <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner">
           <img src="/assets/icons/logoword.png" alt="Word" class="w-8 h-8 object-contain">
         </div>
         <h3 class="font-bold text-slate-900 mb-1">Editar Word</h3>
@@ -54,7 +54,7 @@ import{s as y,S as i,j as x,p as m,e as c,B as b,d as u,P as k,a as v,Q as $,c a
   `}function A(){return`
     <div class="bg-white border border-slate-200 rounded-[2.5rem] p-10 mb-10 shadow-sm relative overflow-hidden">
        <div class="flex items-center gap-2 mb-10 relative z-10">
-          <div class="w-2 h-6 bg-indigo-600 rounded-full"></div>
+          <div class="w-2 h-6 bg-blue-600 rounded-full"></div>
           <h3 class="text-xl font-bold text-slate-900">Promedio Global por Competencia</h3>
        </div>
        
@@ -69,7 +69,7 @@ import{s as y,S as i,j as x,p as m,e as c,B as b,d as u,P as k,a as v,Q as $,c a
                    <div class="absolute bottom-1 left-1 right-1 transition-all duration-1000 group-hover:scale-110 origin-bottom" style="height: ${r*.9}%; background: ${t.color}; border-radius: 12px; opacity: 0.8; box-shadow: 0 10px 20px -5px ${t.color}"></div>
                 </div>
                 <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest max-w-[120px] leading-tight">
-                  ${t.lbl} ${t.norm?'<span class="text-indigo-400" title="Normalizado">*</span>':""}
+                  ${t.lbl} ${t.norm?'<span class="text-blue-400" title="Normalizado">*</span>':""}
                 </div>
                 <div class="mt-1 text-[9px] font-bold text-slate-300">Escala Meta: ${t.meta}</div>
               </div>
@@ -86,7 +86,7 @@ import{s as y,S as i,j as x,p as m,e as c,B as b,d as u,P as k,a as v,Q as $,c a
     <div class="bg-white border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-sm mb-10">
       <div class="p-6 bg-slate-50/50 border-b border-slate-100">
         <h4 class="font-bold text-slate-800 uppercase tracking-widest text-xs flex items-center gap-2">
-          <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+          <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
           Tabla de Calificaciones por Bloque
         </h4>
       </div>
@@ -104,15 +104,15 @@ import{s as y,S as i,j as x,p as m,e as c,B as b,d as u,P as k,a as v,Q as $,c a
                   </div>
                 </th>
               `).join("")}
-              <th class="p-4 text-center text-[10px] font-black text-indigo-600 uppercase tracking-widest bg-indigo-50/30">Promedio B</th>
+              <th class="p-4 text-center text-[10px] font-black text-blue-600 uppercase tracking-widest bg-blue-50/30">Promedio B</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
-            ${o.map(e=>{const l=g(e.id);return`
+            ${o.map(e=>{const l=f(e.id);return`
                 <tr class="hover:bg-slate-50/50 transition-colors">
                   <td class="p-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 z-10 border-r border-slate-200/50 whitespace-nowrap">${e.nombre} ${e.apellido}</td>
                   ${c.map(s=>`<td class="p-4 text-center font-bold text-slate-700">${R(e.id,s)}</td>`).join("")}
-                  <td class="p-4 text-center font-black text-lg text-indigo-600 bg-indigo-50/20">${l??"---"}</td>
+                  <td class="p-4 text-center font-black text-lg text-blue-600 bg-blue-50/20">${l??"---"}</td>
                 </tr>
               `}).join("")}
           </tbody>
@@ -139,7 +139,7 @@ import{s as y,S as i,j as x,p as m,e as c,B as b,d as u,P as k,a as v,Q as $,c a
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50 text-slate-700">
-            ${o.map(e=>{const l=["P1","P2","P3","P4"].map(a=>g(e.id,i.activeGroupId,a)),s=c.map(a=>B(e.id,a,i.activeGroupId)),n=T(e.id,i.activeGroupId);return`
+            ${o.map(e=>{const l=["P1","P2","P3","P4"].map(a=>f(e.id,d.activeGroupId,a)),s=c.map(a=>B(e.id,a,d.activeGroupId)),n=T(e.id,d.activeGroupId);return`
                 <tr class="hover:bg-slate-50/50 transition-colors text-sm">
                   <td class="p-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 z-10 border-r border-slate-200/50 whitespace-nowrap">${e.nombre} ${e.apellido}</td>
                   ${l.map(a=>`<td class="p-4 text-center">${a??'<span class="opacity-30">?</span>'}</td>`).join("")}
@@ -157,8 +157,8 @@ import{s as y,S as i,j as x,p as m,e as c,B as b,d as u,P as k,a as v,Q as $,c a
       ${t}
       ${r}
     </div>
-  `}function z(o){const t=y(i.activeGroupId);o.innerHTML=`
-    <div class="max-w-[1240px] mx-auto p-6 md:p-10 animate-in fade-in duration-700">
+  `}function z(o){const t=y(d.activeGroupId);o.innerHTML=`
+    <div class="max-w-[1600px] mx-auto p-6 md:p-10 animate-in fade-in duration-700">
       ${M()}
       ${P()}
       ${A()}

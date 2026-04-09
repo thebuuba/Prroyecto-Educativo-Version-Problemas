@@ -144,5 +144,6 @@ export function createInitialState() {
     currentPage: 'dashboard',
     activityViewMode: 'blocks',
     aiChatHistory: [],
+    editingStudentId: null,
   };
 }

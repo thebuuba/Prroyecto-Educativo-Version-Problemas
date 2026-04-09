@@ -6,6 +6,35 @@
  * alto nivel para la reparación de datos, filtrado por contexto y búsqueda global.
  */
 
+import { 
+  sortCourses, 
+  normTxt, 
+  parseSection, 
+  parseGradeLevel, 
+  escapeHtml, 
+  uid, 
+  nowIso, 
+  fmtDate, 
+  getCurrentMonthKey, 
+  normalizeAttendanceMonthKey, 
+  attendanceMonthKey, 
+  attendanceMonthStart,
+  v,
+  getActiveEducationSections,
+  formatMatricula,
+  normalizeMatricula,
+  isValidMatricula,
+  buildStudentAvatarDataUrl,
+  resetForm,
+  fillSel
+} from './utils.js';
+
+import { 
+  normalizeEducationSections, 
+  normalizeEducationSection, 
+  normalizeEducationLevelName 
+} from './string-utils.js';
+
 export { 
   sortCourses, 
   normTxt, 
@@ -20,11 +49,19 @@ export {
   attendanceMonthKey, 
   attendanceMonthStart,
   v,
+  getActiveEducationSections,
+  normalizeEducationSections,
+  normalizeEducationSection,
   normalizeEducationLevelName,
-  getActiveEducationSections
-} from './utils.js';
+  formatMatricula,
+  normalizeMatricula,
+  isValidMatricula,
+  buildStudentAvatarDataUrl,
+  resetForm,
+  fillSel
+};
+
 import { EDUCATION_SECTIONS, EDUCATION_THEME_CLASS_BY_SECTION, EDUCATION_THEME_CLASS_BY_COMBINATION } from './constants.js';
-import { normalizeEducationSections, normalizeEducationSection, normalizeEducationLevelName } from './string-utils.js';
 import { shouldScopeByEducationSection, matchesActiveEducationSection } from './theme-logic.js';
 
 // Re-exportes de módulos especializados para facilitar las importaciones masivas

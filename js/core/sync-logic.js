@@ -9,7 +9,8 @@
 import * as SQL from './api-sql.js';
 import { 
   mapGradeToSqlPayload, 
-  mapSectionToSqlPayload 
+  mapSectionToSqlPayload,
+  mapStudentToSqlPayload
 } from './api-mappings.js';
 import { isSqlUuidLike } from './api-sql.js';
 
@@ -58,4 +59,55 @@ export async function syncSqlGradeCreateOrUpdate(grade, section) {
     grade: gradeResult || grade,
     section: sectionResult || section
   };
+}
+
+/**
+ * Sincroniza un Estudiante con el servidor SQL.
+ * @param {Object} student - Objeto de estudiante local.
+ * @returns {Promise<Object>} Estudiante actualizado con ID de SQL.
+ */
+export async function syncSqlStudentCreateOrUpdate(student) {
+  if (!SQL.isEnabled()) return student;
+
+  const context = await SQL.ensureSqlAcademicContext();
+  if (!context?.schoolId) return student;
+
+  const sectionId = student.sectionId || student.seccionId || student.courseId;
+  const gradeId = student.gradeId;
+  
+  const payload = mapStudentToSqlPayload(student, context.schoolId, gradeId, sectionId);
+  const isUpdate = isSqlUuidLike(student.id);
+
+  let result = null;
+  if (isUpdate) {
+    result = await SQL.updateStudent(student.id, payload);
+  } else {
+    result = await SQL.createStudent(payload);
+  }
+
+  return result || student;
+}
+
+/**
+ * Sincroniza una Sección independiente con el servidor SQL.
+ * @param {Object} section - Objeto de sección local.
+ * @returns {Promise<Object>} Sección actualizada con ID de SQL.
+ */
+export async function syncSqlSectionCreateOrUpdate(section) {
+  if (!SQL.isEnabled()) return section;
+
+  const context = await SQL.ensureSqlAcademicContext();
+  if (!context?.schoolId) return section;
+
+  const payload = mapSectionToSqlPayload(section, context.schoolId, section.gradeId);
+  const isUpdate = isSqlUuidLike(section.id);
+
+  let result = null;
+  if (isUpdate) {
+    result = await SQL.updateSection(section.id, payload);
+  } else {
+    result = await SQL.createSection(payload);
+  }
+
+  return result || section;
 }

@@ -23,9 +23,16 @@ import { initDeleters } from '../core/deleters.js';
 import * as Cloud from '../core/api-cloud.js';
 import * as DB from '../core/api-db.js';
 import * as SQL from '../core/api-sql.js';
+import * as StudentLogic from '../core/student-logic.js';
+import * as SectionLogic from '../core/section-logic.js';
 import * as SetupPanel from '../panels/setup.js';
 import * as UsersPanel from '../panels/users.js';
+import * as GradeSetupPanel from '../panels/grade-setup.js';
+import * as StudentCreatePanel from '../panels/student-create.js';
+import * as StudentEditPanel from '../panels/student-edit.js';
+import * as SectionCreatePanel from '../panels/section-create.js';
 import * as DashboardPanel from '../panels/dashboard.js';
+import * as StudentsPanel from '../panels/students.js';
 import { ensurePanelBundleLoaded } from '../core/routing.js';
 
 console.log('[EduGest] Cargando punto de entrada raíz modular...');
@@ -121,6 +128,27 @@ window.logoutAuth = DomainUtils.logoutAuth;
 // --- Motor de Creación Académica ---
 window.saveGrade = DomainUtils.saveGrade;
 
+// Estudiantes
+window.openEstM = StudentLogic.openEstM;
+window.saveEst = StudentLogic.saveEst;
+window.openViewStudent = StudentLogic.openViewStudent;
+window.openEditStudent = StudentLogic.openEditStudent;
+window.saveEditStudent = StudentLogic.saveEditStudent;
+window.openBulkEstM = StudentLogic.openBulkEstM;
+window.chooseStudentAddMode = StudentLogic.chooseStudentAddMode;
+window.openStudentAddModeModal = StudentLogic.openStudentAddModeModal;
+window.handleBulkFileChange = StudentLogic.handleBulkFileChange;
+window.analyzeBulkInput = StudentLogic.analyzeBulkInput;
+window.saveBulkEst = StudentLogic.saveBulkEst;
+
+// Secciones / Asignaturas
+window.openSecM = SectionLogic.openSecM;
+window.saveSec = SectionLogic.saveSec;
+window.openEditSection = SectionLogic.openEditSection;
+window.saveEditSection = SectionLogic.saveEditSection;
+window.openSubjectInGrade = SectionLogic.openSubjectInGrade;
+window.migrateSectionReferences = SectionLogic.migrateSectionReferences;
+
 /**
  * --- Motor de Renderizado Reactivo ---
  */
@@ -172,6 +200,7 @@ function startEduGest() {
   // Inicializar paneles reactivos modernos
   if (DashboardPanel.init) DashboardPanel.init();
   if (UsersPanel.init) UsersPanel.init();
+  if (StudentsPanel.init) StudentsPanel.init();
   if (SetupPanel.init) SetupPanel.init();
 
   // Ejecutar el orquestador de arranque (Hidratación, Auth, Sincronización)

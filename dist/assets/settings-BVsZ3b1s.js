@@ -1,5 +1,5 @@
-import{S as e,p as n}from"./main-Dd9jDrfc.js";function c(r){var t,s,o,a,l,d,i;r.innerHTML=`
-    <div class="max-w-[800px] mx-auto p-6 md:p-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+import{S as e,p as n}from"./main-DzuOqHLs.js";function c(r){var t,l,s,o,a,i,d;r.innerHTML=`
+    <div class="max-w-[1600px] mx-auto p-6 md:p-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       
       <!-- Header -->
       <header class="mb-12">
@@ -12,14 +12,14 @@ import{S as e,p as n}from"./main-Dd9jDrfc.js";function c(r){var t,s,o,a,l,d,i;r.
         <div class="md:col-span-2 bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
            <div class="flex items-center gap-6 mb-8">
               <div class="relative">
-                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(((t=e.user)==null?void 0:t.name)||"User")}&background=4F46E5&color=fff&size=80" alt="Avatar" class="w-20 h-20 rounded-3xl shadow-lg">
+                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(((t=e.profile)==null?void 0:t.name)||"User")}&background=1877F2&color=fff&size=80" alt="Avatar" class="w-20 h-20 rounded-3xl shadow-lg">
                 <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 border-4 border-white rounded-full"></div>
               </div>
               <div>
-                <h3 class="text-xl font-bold text-slate-900">${((s=e.user)==null?void 0:s.name)||"Docente Invitado"}</h3>
-                <p class="text-slate-500 font-medium">${((o=e.user)==null?void 0:o.email)||"sin-correo@aulabase.edu"}</p>
-                <div class="mt-2 inline-flex items-center px-3 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-bold uppercase tracking-widest rounded-lg">
-                  Rol: ${((a=e.user)==null?void 0:a.role)||"Docente"}
+                <h3 class="text-xl font-bold text-slate-900">${((l=e.profile)==null?void 0:l.name)||"Docente Invitado"}</h3>
+                <p class="text-slate-500 font-medium">${((s=e.profile)==null?void 0:s.email)||e.sessionUserName||"sin-correo@aulabase.edu"}</p>
+                <div class="mt-2 inline-flex items-center px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold uppercase tracking-widest rounded-lg">
+                  Rol: ${((o=e.profile)==null?void 0:o.role)||"Docente"}
                 </div>
               </div>
            </div>
@@ -27,23 +27,23 @@ import{S as e,p as n}from"./main-Dd9jDrfc.js";function c(r){var t,s,o,a,l,d,i;r.
            <div class="grid grid-cols-1 gap-6">
               <div class="space-y-1.5">
                 <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Nombre Completo</label>
-                <input type="text" value="${((l=e.user)==null?void 0:l.name)||""}" readonly class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-slate-500 cursor-not-allowed">
+                <input type="text" value="${((a=e.profile)==null?void 0:a.name)||""}" readonly class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-slate-500 cursor-not-allowed">
               </div>
               <div class="space-y-1.5">
                 <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Correo Electrónico</label>
-                <input type="email" value="${((d=e.user)==null?void 0:d.email)||""}" readonly class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-slate-500 cursor-not-allowed">
+                <input type="email" value="${((i=e.profile)==null?void 0:i.email)||e.sessionUserName||""}" readonly class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-slate-500 cursor-not-allowed">
               </div>
            </div>
         </div>
         
-        <div class="bg-indigo-600 rounded-[2.5rem] p-8 text-white shadow-xl shadow-indigo-100 flex flex-col justify-between relative overflow-hidden">
+        <div class="bg-blue-600 rounded-[2.5rem] p-8 text-white shadow-xl shadow-blue-100 flex flex-col justify-between relative overflow-hidden">
            <div class="relative z-10">
              <h4 class="font-bold text-lg mb-2">Estado de Cuenta</h4>
-             <p class="text-indigo-100 text-sm leading-relaxed">Tu cuenta está activa y sincronizada con la nube.</p>
+             <p class="text-blue-100 text-sm leading-relaxed">Tu cuenta está activa y sincronizada con la nube.</p>
            </div>
            
            <div class="mt-8 relative z-10">
-              <div class="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1">Periodo Activo</div>
+              <div class="text-[10px] font-bold text-blue-300 uppercase tracking-widest mb-1">Periodo Activo</div>
               <div class="text-xl font-black">${n()}</div>
            </div>
 
@@ -63,10 +63,10 @@ import{S as e,p as n}from"./main-Dd9jDrfc.js";function c(r){var t,s,o,a,l,d,i;r.
         <div class="space-y-6">
           <div class="space-y-1.5">
             <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Nombre del Centro Educativo</label>
-            <input type="text" id="set-inst" value="${((i=e.school)==null?void 0:i.name)||""}" 
-                   class="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl font-bold text-slate-800 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 transition-all outline-none"
+            <input type="text" id="set-inst" value="${((d=e.profile)==null?void 0:d.inst)||""}" 
+                   class="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl font-bold text-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all outline-none"
                    placeholder="Ej. Colegio San Miguel"
-                   oninput="window.S.school.name = this.value; window.persist()">
+                   oninput="if(!window.S.profile) window.S.profile = {}; window.S.profile.inst = this.value; window.persist()">
           </div>
           
           <div class="p-5 bg-amber-50/50 border border-amber-100 rounded-2xl flex items-start gap-4">

@@ -1,4 +1,4 @@
-import{E as u,F as g,G as x,H as c,I as d,J as v,K as b,L as f,M as m,N as h,O as p}from"./main-Dd9jDrfc.js";function r(){return x(),window.S}window.lessonPlanNew=()=>{const e=r();e.lessonPlanDraft=m(e.activeGroupId,e.activePeriodId),e.lessonPlanUi.mode="editor",e.lessonPlanUi.activeSectionId="general",window.go("planificaciones")};window.lessonPlanContinue=e=>{const t=r(),a=t.lessonPlans.find(s=>s.id===e);a&&(t.lessonPlanDraft=JSON.parse(JSON.stringify(a)),t.lessonPlanUi.mode="editor",t.lessonPlanUi.activeSectionId=a.editorStep||"general",window.go("planificaciones"))};window.lessonPlanReturnHome=()=>{const e=r();e.lessonPlanUi.mode="home",window.go("planificaciones")};window.lessonPlanSetActiveSection=e=>{const t=r();t.lessonPlanUi.activeSectionId=e,h(),window.go("planificaciones")};window.lessonPlanSetGeneralField=(e,t)=>{const a=p(),s=e.split(".");s.length===2?a[s[0]][s[1]]=t:a[e]=t};window.lessonPlanSetCurriculumField=(e,t)=>{const a=p();a.curriculum[e]=t};function w(e,t){return`
+import{E as p,F as x,G as b,H as c,I as d,J as v,K as g,L as f,M as m,N as h,O as u}from"./main-DzuOqHLs.js";function r(){return b(),window.S}window.lessonPlanNew=()=>{const e=r();e.lessonPlanDraft=m(e.activeGroupId,e.activePeriodId),e.lessonPlanUi.mode="editor",e.lessonPlanUi.activeSectionId="general",window.go("planificaciones")};window.lessonPlanContinue=e=>{const t=r(),l=t.lessonPlans.find(s=>s.id===e);l&&(t.lessonPlanDraft=JSON.parse(JSON.stringify(l)),t.lessonPlanUi.mode="editor",t.lessonPlanUi.activeSectionId=l.editorStep||"general",window.go("planificaciones"))};window.lessonPlanReturnHome=()=>{const e=r();e.lessonPlanUi.mode="home",window.go("planificaciones")};window.lessonPlanSetActiveSection=e=>{const t=r();t.lessonPlanUi.activeSectionId=e,h(),window.go("planificaciones")};window.lessonPlanSetGeneralField=(e,t)=>{const l=u(),s=e.split(".");s.length===2?l[s[0]][s[1]]=t:l[e]=t};window.lessonPlanSetCurriculumField=(e,t)=>{const l=u();l.curriculum[e]=t};function w(e,t){return`
     <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
       <div>
         <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Planificaciones</h1>
@@ -16,14 +16,14 @@ import{E as u,F as g,G as x,H as c,I as d,J as v,K as b,L as f,M as m,N as h,O a
       </div>
     </header>
   `}function k(){return`
-    <div class="group relative overflow-hidden bg-gradient-to-br from-indigo-600 to-violet-700 rounded-[2rem] p-8 text-white shadow-xl shadow-indigo-200 transition-all hover:shadow-2xl hover:-translate-y-1">
+    <div class="group relative overflow-hidden bg-gradient-to-br from-blue-600 to-violet-700 rounded-[2rem] p-8 text-white shadow-xl shadow-blue-200 transition-all hover:shadow-2xl hover:-translate-y-1">
       <div class="relative z-10">
         <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
         </div>
         <h3 class="text-2xl font-bold mb-2">Nueva Planificación</h3>
-        <p class="text-indigo-100 mb-8 max-w-[240px]">Inicia un nuevo diseño curricular guiado paso a paso.</p>
-        <button onclick="lessonPlanNew()" class="px-6 py-3 bg-white text-indigo-600 rounded-xl font-bold shadow-lg shadow-black/5 hover:bg-slate-50 transition-colors">
+        <p class="text-blue-100 mb-8 max-w-[240px]">Inicia un nuevo diseño curricular guiado paso a paso.</p>
+        <button onclick="lessonPlanNew()" class="px-6 py-3 bg-white text-blue-600 rounded-xl font-bold shadow-lg shadow-black/5 hover:bg-slate-50 transition-colors">
           Comenzar ahora
         </button>
       </div>
@@ -31,16 +31,16 @@ import{E as u,F as g,G as x,H as c,I as d,J as v,K as b,L as f,M as m,N as h,O a
     </div>
   `}function y(e){return e.length?`
     <div class="space-y-3">
-      ${e.slice(0,3).map(t=>{var a,s;return`
-        <div onclick="lessonPlanContinue('${t.id}')" class="flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl hover:border-indigo-200 hover:bg-indigo-50/30 transition-all cursor-pointer group">
+      ${e.slice(0,3).map(t=>{var l,s;return`
+        <div onclick="lessonPlanContinue('${t.id}')" class="flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl hover:border-blue-200 hover:bg-blue-50/30 transition-all cursor-pointer group">
           <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center shrink-0">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
           </div>
           <div class="min-w-0 flex-1">
-            <h4 class="font-bold text-slate-800 truncate">${((a=t.general)==null?void 0:a.themeTitle)||((s=t.general)==null?void 0:s.title)||"Sin título"}</h4>
+            <h4 class="font-bold text-slate-800 truncate">${((l=t.general)==null?void 0:l.themeTitle)||((s=t.general)==null?void 0:s.title)||"Sin título"}</h4>
             <p class="text-xs text-slate-500">${c(t.updatedAt)}</p>
           </div>
-          <svg class="w-5 h-5 text-slate-300 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          <svg class="w-5 h-5 text-slate-300 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
         </div>
       `}).join("")}
     </div>
@@ -55,11 +55,11 @@ import{E as u,F as g,G as x,H as c,I as d,J as v,K as b,L as f,M as m,N as h,O a
     <div class="bg-white border border-slate-200 rounded-[2rem] p-6 hover:shadow-xl hover:border-slate-300 transition-all group">
       <div class="flex items-start justify-between mb-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+          <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           </div>
           <div>
-            <h4 class="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">${e.general.themeTitle||e.general.title||"Planificación"}</h4>
+            <h4 class="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">${e.general.themeTitle||e.general.title||"Planificación"}</h4>
             <p class="text-xs text-slate-500">${d(e.general.classDate||e.general.startDate)}</p>
           </div>
         </div>
@@ -85,52 +85,52 @@ import{E as u,F as g,G as x,H as c,I as d,J as v,K as b,L as f,M as m,N as h,O a
     </div>
   `}function $(e){return`
     <div class="flex items-center gap-1 p-1 bg-slate-100 rounded-2xl mb-8">
-      ${[{id:"general",label:"General",icon:"M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"},{id:"curriculum",label:"Currículo",icon:"M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"},{id:"design",label:"Diseño",icon:"M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"},{id:"evaluation",label:"Evaluación",icon:"M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"},{id:"preview",label:"Vista Final",icon:"M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"}].map(a=>{const s=a.id===e;return`
-          <button onclick="lessonPlanSetActiveSection('${a.id}')" class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all ${s?"bg-white text-indigo-600 shadow-sm font-bold":"text-slate-500 hover:text-slate-700"}">
+      ${[{id:"general",label:"General",icon:"M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"},{id:"curriculum",label:"Currículo",icon:"M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"},{id:"design",label:"Diseño",icon:"M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"},{id:"evaluation",label:"Evaluación",icon:"M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"},{id:"preview",label:"Vista Final",icon:"M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"}].map(l=>{const s=l.id===e;return`
+          <button onclick="lessonPlanSetActiveSection('${l.id}')" class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all ${s?"bg-white text-blue-600 shadow-sm font-bold":"text-slate-500 hover:text-slate-700"}">
             <span class="w-5 h-5 flex items-center justify-center shrink-0">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${a.icon}"></path></svg>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${l.icon}"></path></svg>
             </span>
-            <span class="hidden md:inline text-sm">${a.label}</span>
+            <span class="hidden md:inline text-sm">${l.label}</span>
           </button>
         `}).join("")}
     </div>
-  `}function C(e){const t=v(),a=b(e.general.gradeId);return`
+  `}function C(e){const t=v(),l=g(e.general.gradeId);return`
     <div class="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div class="space-y-6">
-          <h4 class="text-sm font-bold text-indigo-600 uppercase tracking-widest">Contexto Institucional</h4>
+          <h4 class="text-sm font-bold text-blue-600 uppercase tracking-widest">Contexto Institucional</h4>
           <div class="space-y-4">
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Centro Educativo</label>
-              <input type="text" value="${e.general.center||""}" oninput="lessonPlanSetGeneralField('general.center', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium">
+              <input type="text" value="${e.general.center||""}" oninput="lessonPlanSetGeneralField('general.center', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium">
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Nombre del Docente</label>
-              <input type="text" value="${e.general.teacher||""}" oninput="lessonPlanSetGeneralField('general.teacher', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium">
+              <input type="text" value="${e.general.teacher||""}" oninput="lessonPlanSetGeneralField('general.teacher', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium">
             </div>
           </div>
         </div>
         
         <div class="space-y-6">
-          <h4 class="text-sm font-bold text-indigo-600 uppercase tracking-widest">Detalles del Curso</h4>
+          <h4 class="text-sm font-bold text-blue-600 uppercase tracking-widest">Detalles del Curso</h4>
           <div class="grid grid-cols-2 gap-4">
             <div class="flex flex-col gap-1.5 col-span-2">
               <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Grado Académico</label>
-              <select onchange="lessonPlanSetGeneralField('general.gradeId', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
+              <select onchange="lessonPlanSetGeneralField('general.gradeId', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
                 <option value="">Seleccionar grado...</option>
                 ${t.map(s=>`<option value="${s.id}" ${e.general.gradeId===s.id?"selected":""}>${s.name}</option>`).join("")}
               </select>
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Sección</label>
-              <select onchange="lessonPlanSetGeneralField('general.sectionName', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
+              <select onchange="lessonPlanSetGeneralField('general.sectionName', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
                 <option value="">Seleccionar...</option>
-                ${a.map(s=>`<option value="${s.value}" ${e.general.sectionName===s.value?"selected":""}>${s.label}</option>`).join("")}
+                ${l.map(s=>`<option value="${s.value}" ${e.general.sectionName===s.value?"selected":""}>${s.label}</option>`).join("")}
               </select>
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Período</label>
-              <select onchange="lessonPlanSetGeneralField('general.periodId', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
+              <select onchange="lessonPlanSetGeneralField('general.periodId', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
                 <option value="P1" ${e.general.periodId==="P1"?"selected":""}>P1</option>
                 <option value="P2" ${e.general.periodId==="P2"?"selected":""}>P2</option>
                 <option value="P3" ${e.general.periodId==="P3"?"selected":""}>P3</option>
@@ -142,19 +142,19 @@ import{E as u,F as g,G as x,H as c,I as d,J as v,K as b,L as f,M as m,N as h,O a
       </div>
 
       <div class="space-y-6 pt-10 border-t border-slate-100">
-        <h4 class="text-sm font-bold text-indigo-600 uppercase tracking-widest">Identificación de la Planificación</h4>
+        <h4 class="text-sm font-bold text-blue-600 uppercase tracking-widest">Identificación de la Planificación</h4>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="flex flex-col gap-1.5 md:col-span-2">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Título del Tema o Unidad</label>
-            <input type="text" value="${e.general.themeTitle||e.general.title||""}" oninput="lessonPlanSetGeneralField('general.themeTitle', this.value)" placeholder="Ej. Los ecosistemas marinos" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-bold text-lg">
+            <input type="text" value="${e.general.themeTitle||e.general.title||""}" oninput="lessonPlanSetGeneralField('general.themeTitle', this.value)" placeholder="Ej. Los ecosistemas marinos" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-bold text-lg">
           </div>
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Fecha de Inicio</label>
-            <input type="date" value="${e.general.startDate||""}" onchange="lessonPlanSetGeneralField('general.startDate', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium">
+            <input type="date" value="${e.general.startDate||""}" onchange="lessonPlanSetGeneralField('general.startDate', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium">
           </div>
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Eje Transversal</label>
-            <select onchange="lessonPlanSetGeneralField('general.transversalAxis', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
+            <select onchange="lessonPlanSetGeneralField('general.transversalAxis', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
               <option value="">Ninguno</option>
               ${f.map(s=>`<option value="${s.value}" ${e.general.transversalAxis===s.value?"selected":""}>${s.value}</option>`).join("")}
             </select>
@@ -164,35 +164,35 @@ import{E as u,F as g,G as x,H as c,I as d,J as v,K as b,L as f,M as m,N as h,O a
     </div>
   `}function S(e){return`
     <div class="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-      <div class="p-6 bg-indigo-50/50 rounded-3xl border border-indigo-100 flex items-start gap-4">
-        <div class="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-indigo-200">
+      <div class="p-6 bg-blue-50/50 rounded-3xl border border-blue-100 flex items-start gap-4">
+        <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-200">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         </div>
         <div>
-          <h4 class="font-bold text-indigo-900">Base Curricular</h4>
-          <p class="text-sm text-indigo-700/70">Define las competencias y contenidos clave. Estos elementos aparecerán automáticamente en tu plantilla final.</p>
+          <h4 class="font-bold text-blue-900">Base Curricular</h4>
+          <p class="text-sm text-blue-700/70">Define las competencias y contenidos clave. Estos elementos aparecerán automáticamente en tu plantilla final.</p>
         </div>
       </div>
 
       <div class="grid grid-cols-1 gap-6">
         <div class="space-y-3">
           <label class="text-sm font-bold text-slate-500 uppercase tracking-wider ml-1">Competencias Fundamentales</label>
-          <textarea oninput="lessonPlanSetCurriculumField('fundamentalCompetencies', this.value)" rows="3" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium leading-relaxed" placeholder="Ej. Ética y Ciudadana, Comunicativa...">${e.curriculum.fundamentalCompetencies||""}</textarea>
+          <textarea oninput="lessonPlanSetCurriculumField('fundamentalCompetencies', this.value)" rows="3" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed" placeholder="Ej. Ética y Ciudadana, Comunicativa...">${e.curriculum.fundamentalCompetencies||""}</textarea>
         </div>
 
         <div class="space-y-3">
           <label class="text-sm font-bold text-slate-500 uppercase tracking-wider ml-1">Competencias Específicas</label>
-          <textarea oninput="lessonPlanSetCurriculumField('specificCompetencies', this.value)" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium leading-relaxed" placeholder="Describe las competencias específicas de la unidad...">${e.curriculum.specificCompetencies||""}</textarea>
+          <textarea oninput="lessonPlanSetCurriculumField('specificCompetencies', this.value)" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed" placeholder="Describe las competencias específicas de la unidad...">${e.curriculum.specificCompetencies||""}</textarea>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-3">
             <label class="text-sm font-bold text-slate-500 uppercase tracking-wider ml-1">Contenidos Conceptuales</label>
-            <textarea oninput="lessonPlanSetCurriculumField('conceptualContents', this.value)" rows="5" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${e.curriculum.conceptualContents||""}</textarea>
+            <textarea oninput="lessonPlanSetCurriculumField('conceptualContents', this.value)" rows="5" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${e.curriculum.conceptualContents||""}</textarea>
           </div>
           <div class="space-y-3">
             <label class="text-sm font-bold text-slate-500 uppercase tracking-wider ml-1">Indicadores de Logro</label>
-            <textarea oninput="lessonPlanSetCurriculumField('indicators', this.value)" rows="5" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${e.curriculum.indicators||""}</textarea>
+            <textarea oninput="lessonPlanSetCurriculumField('indicators', this.value)" rows="5" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${e.curriculum.indicators||""}</textarea>
           </div>
         </div>
       </div>
@@ -204,22 +204,22 @@ import{E as u,F as g,G as x,H as c,I as d,J as v,K as b,L as f,M as m,N as h,O a
           <h4 class="text-xl font-bold text-slate-800">Secuencia de Clases</h4>
           <p class="text-sm text-slate-500">Planifica el desarrollo de cada clase diaria.</p>
         </div>
-        <button class="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl font-bold flex items-center gap-2 hover:bg-indigo-100 transition-colors">
+        <button class="px-4 py-2 bg-blue-50 text-blue-600 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-100 transition-colors">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
           Agregar Clase
         </button>
       </div>
 
       <div class="space-y-6">
-        ${e.classes.map((t,a)=>{var s,l,i;return`
+        ${e.classes.map((t,l)=>{var s,a,n;return`
           <div class="bg-slate-50 border border-slate-200 rounded-3xl overflow-hidden group">
             <div class="p-6 flex items-center justify-between bg-white border-b border-slate-100">
               <div class="flex items-center gap-4">
                 <div class="w-8 h-8 bg-slate-900 text-white rounded-lg flex items-center justify-center text-xs font-bold">
-                  ${a+1}
+                  ${l+1}
                 </div>
                 <div>
-                  <h5 class="font-bold text-slate-800">${t.title||`Clase ${a+1}`}</h5>
+                  <h5 class="font-bold text-slate-800">${t.title||`Clase ${l+1}`}</h5>
                   <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">${d(t.date)||"Sin fecha"}</p>
                 </div>
               </div>
@@ -231,26 +231,26 @@ import{E as u,F as g,G as x,H as c,I as d,J as v,K as b,L as f,M as m,N as h,O a
             <div class="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
               <div class="space-y-3">
                 <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Inicio (15%)</label>
-                <textarea rows="4" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm leading-relaxed" placeholder="Introducción, saberes previos...">${((s=t.start)==null?void 0:s.description)||""}</textarea>
+                <textarea rows="4" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all text-sm leading-relaxed" placeholder="Introducción, saberes previos...">${((s=t.start)==null?void 0:s.description)||""}</textarea>
               </div>
               <div class="space-y-3">
                 <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Desarrollo (70%)</label>
-                <textarea rows="4" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm leading-relaxed" placeholder="Actividades centrales...">${((l=t.development)==null?void 0:l.description)||""}</textarea>
+                <textarea rows="4" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all text-sm leading-relaxed" placeholder="Actividades centrales...">${((a=t.development)==null?void 0:a.description)||""}</textarea>
               </div>
               <div class="space-y-3">
                 <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cierre (15%)</label>
-                <textarea rows="4" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm leading-relaxed" placeholder="Síntesis y evaluación...">${((i=t.closure)==null?void 0:i.summary)||""}</textarea>
+                <textarea rows="4" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all text-sm leading-relaxed" placeholder="Síntesis y evaluación...">${((n=t.closure)==null?void 0:n.summary)||""}</textarea>
               </div>
             </div>
           </div>
         `}).join("")}
       </div>
     </div>
-  `}function I(e){var t,a;return`
+  `}function I(e){var t,l;return`
     <div class="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div class="p-6 bg-slate-900 rounded-3xl text-white flex items-start gap-6">
         <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0">
-          <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+          <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
         </div>
         <div>
           <h4 class="text-lg font-bold">Evaluación y Recursos</h4>
@@ -262,18 +262,18 @@ import{E as u,F as g,G as x,H as c,I as d,J as v,K as b,L as f,M as m,N as h,O a
         <div class="space-y-6">
           <div class="space-y-3">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Estrategias de Evaluación</label>
-            <textarea oninput="lessonPlanSetGeneralField('strategy.methodology', this.value)" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${((t=e.strategy)==null?void 0:t.methodology)||""}</textarea>
+            <textarea oninput="lessonPlanSetGeneralField('strategy.methodology', this.value)" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${((t=e.strategy)==null?void 0:t.methodology)||""}</textarea>
           </div>
           <div class="space-y-3">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Técnicas e Instrumentos</label>
-            <textarea rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium leading-relaxed" placeholder="Menciona las técnicas (ej. observación) e instrumentos (ej. rúbrica)..."></textarea>
+            <textarea rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed" placeholder="Menciona las técnicas (ej. observación) e instrumentos (ej. rúbrica)..."></textarea>
           </div>
         </div>
 
         <div class="space-y-6">
           <div class="space-y-3">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Recursos Didácticos</label>
-            <textarea oninput="lessonPlanSetGeneralField('resources.notes', this.value)" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${((a=e.resources)==null?void 0:a.notes)||""}</textarea>
+            <textarea oninput="lessonPlanSetGeneralField('resources.notes', this.value)" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${((l=e.resources)==null?void 0:l.notes)||""}</textarea>
           </div>
           <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100">
             <h5 class="text-sm font-bold text-slate-700 mb-3">Sugerencias de Recursos</h5>
@@ -291,7 +291,7 @@ import{E as u,F as g,G as x,H as c,I as d,J as v,K as b,L as f,M as m,N as h,O a
     <div class="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div class="flex items-center justify-between">
         <h4 class="text-xl font-bold text-slate-800">Vista Previa Institucional</h4>
-        <button class="px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200">
+        <button class="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
           Exportar PDF
         </button>
@@ -327,13 +327,13 @@ import{E as u,F as g,G as x,H as c,I as d,J as v,K as b,L as f,M as m,N as h,O a
           <section>
             <h5 class="text-xs font-bold uppercase tracking-widest bg-slate-100 px-3 py-1 rounded w-fit mb-4">III. Secuencia de Clases</h5>
             <div class="space-y-6">
-              ${e.classes.map((t,a)=>{var s,l,i;return`
+              ${e.classes.map((t,l)=>{var s,a,n;return`
                 <div class="p-4 border border-slate-100 rounded-2xl">
-                  <span class="text-xs font-bold text-slate-400">CLASE ${a+1}: ${t.title||"Tema diario"}</span>
+                  <span class="text-xs font-bold text-slate-400">CLASE ${l+1}: ${t.title||"Tema diario"}</span>
                   <div class="grid grid-cols-1 gap-2 mt-2 text-sm">
                     <p><span class="font-bold italic">Inicio:</span> ${((s=t.start)==null?void 0:s.description)||"---"}</p>
-                    <p><span class="font-bold italic">Desarrollo:</span> ${((l=t.development)==null?void 0:l.description)||"---"}</p>
-                    <p><span class="font-bold italic">Cierre:</span> ${((i=t.closure)==null?void 0:i.summary)||"---"}</p>
+                    <p><span class="font-bold italic">Desarrollo:</span> ${((a=t.development)==null?void 0:a.description)||"---"}</p>
+                    <p><span class="font-bold italic">Cierre:</span> ${((n=t.closure)==null?void 0:n.summary)||"---"}</p>
                   </div>
                 </div>
               `}).join("")}
@@ -342,9 +342,9 @@ import{E as u,F as g,G as x,H as c,I as d,J as v,K as b,L as f,M as m,N as h,O a
         </div>
       </div>
     </div>
-  `}function D(e){const t=r(),a=t.lessonPlanUi.mode||"home",s=u(),l=g(t.activeGroupId),i=l.length;if(a==="home")e.innerHTML=`
-      <div class="max-w-[1240px] mx-auto p-6 md:p-10 animate-in fade-in duration-500">
-        ${w(s.length,i)}
+  `}function D(e){const t=r(),l=t.lessonPlanUi.mode||"home",s=p(),a=x(t.activeGroupId),n=a.length;if(l==="home")e.innerHTML=`
+      <div class="max-w-[1600px] mx-auto p-6 md:p-10 animate-in fade-in duration-500">
+        ${w(s.length,n)}
         
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <!-- Sección Principal Bento -->
@@ -366,9 +366,9 @@ import{E as u,F as g,G as x,H as c,I as d,J as v,K as b,L as f,M as m,N as h,O a
                 <h3 class="text-2xl font-bold text-slate-800">Planificaciones del grupo</h3>
               </div>
               
-              ${l.length?`
+              ${a.length?`
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  ${l.map(P).join("")}
+                  ${a.map(P).join("")}
                 </div>
               `:`
                 <div class="py-20 text-center bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200">
@@ -402,7 +402,7 @@ import{E as u,F as g,G as x,H as c,I as d,J as v,K as b,L as f,M as m,N as h,O a
                     <span class="text-2xl font-bold">12</span>
                   </div>
                   <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                   </div>
                 </div>
               </div>
@@ -410,8 +410,8 @@ import{E as u,F as g,G as x,H as c,I as d,J as v,K as b,L as f,M as m,N as h,O a
           </div>
         </div>
       </div>
-    `;else if(a==="editor"){const o=t.lessonPlanDraft,n=t.lessonPlanUi.activeSectionId||"general";e.innerHTML=`
-      <div class="max-w-[1000px] mx-auto p-6 md:p-10 animate-in slide-in-from-bottom-5 duration-500">
+    `;else if(l==="editor"){const i=t.lessonPlanDraft,o=t.lessonPlanUi.activeSectionId||"general";e.innerHTML=`
+      <div class="max-w-[1600px] mx-auto p-6 md:p-10 animate-in slide-in-from-bottom-5 duration-500">
         <div class="flex items-center justify-between mb-8">
           <button onclick="lessonPlanReturnHome()" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors font-medium">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -424,14 +424,14 @@ import{E as u,F as g,G as x,H as c,I as d,J as v,K as b,L as f,M as m,N as h,O a
           </div>
         </div>
 
-        ${$(n)}
+        ${$(o)}
 
         <div class="bg-white border border-slate-200 rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-slate-200/50">
-          ${n==="general"?C(o):""}
-          ${n==="curriculum"?S(o):""}
-          ${n==="design"?j(o):""}
-          ${n==="evaluation"?I(o):""}
-          ${n==="preview"?M(o):""}
+          ${o==="general"?C(i):""}
+          ${o==="curriculum"?S(i):""}
+          ${o==="design"?j(i):""}
+          ${o==="evaluation"?I(i):""}
+          ${o==="preview"?M(i):""}
         </div>
       </div>
     `}}window.RENDERS.planificaciones=D;export{D as renderPlanningPanel};

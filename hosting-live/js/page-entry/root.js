@@ -2,6 +2,19 @@
 window.__AULABASE_PAGE_ENTRY = { route: '/', panel: 'dashboard' };
 window.__AULABASE_ASSET_VERSION = '20260405i';
 window.__AULABASE_LOADED_BUNDLES = window.__AULABASE_LOADED_BUNDLES || { core: false, shell: false };
+(function installPersistGuards() {
+  if (window.__AULABASE_PERSIST_GUARDS_INSTALLED) return;
+  window.__AULABASE_PERSIST_GUARDS_INSTALLED = true;
+  var flushPendingState = function () {
+    try {
+      if (window.EduGestDB && typeof window.EduGestDB.flushPendingSave === 'function') {
+        window.EduGestDB.flushPendingSave();
+      }
+    } catch (_) {}
+  };
+  window.addEventListener('beforeunload', flushPendingState);
+  window.addEventListener('pagehide', flushPendingState);
+})();
 (function loadAulaBaseRootBundles() {
   if (window.__AULABASE_SPLIT_BOOT_REQUESTED) return;
   window.__AULABASE_SPLIT_BOOT_REQUESTED = true;

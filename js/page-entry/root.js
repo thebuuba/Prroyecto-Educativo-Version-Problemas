@@ -30,6 +30,17 @@ import { ensurePanelBundleLoaded } from '../core/routing.js';
 
 console.log('[EduGest] Cargando punto de entrada raíz modular...');
 
+if (!window.__AULABASE_PERSIST_GUARDS_INSTALLED) {
+  window.__AULABASE_PERSIST_GUARDS_INSTALLED = true;
+  const flushPendingState = () => {
+    try {
+      window.EduGestDB?.flushPendingSave?.();
+    } catch (_) {}
+  };
+  window.addEventListener('beforeunload', flushPendingState);
+  window.addEventListener('pagehide', flushPendingState);
+}
+
 /**
  * --- Puente de Compatibilidad (Legacy Bridge) ---
  * Expone funciones modulares al objeto 'window' para que el HTML y scripts 

@@ -101,14 +101,6 @@ export async function writeIndexedDb(key, value) {
  * @returns {Promise<string|null>} JSON serializado del estado.
  */
 export async function loadRawState(storageKey = RECORD_KEY) {
-  const fromDb = await readIndexedDb(storageKey);
-  if (typeof fromDb === 'string' && fromDb) {
-    try {
-      window.localStorage.setItem(storageKey, fromDb);
-    } catch (_) {}
-    return fromDb;
-  }
-
   try {
     const localRaw = window.localStorage.getItem(storageKey);
     if (typeof localRaw === 'string' && localRaw) {
@@ -116,6 +108,14 @@ export async function loadRawState(storageKey = RECORD_KEY) {
       return localRaw;
     }
   } catch (_) {}
+
+  const fromDb = await readIndexedDb(storageKey);
+  if (typeof fromDb === 'string' && fromDb) {
+    try {
+      window.localStorage.setItem(storageKey, fromDb);
+    } catch (_) {}
+    return fromDb;
+  }
 
   return null;
 }

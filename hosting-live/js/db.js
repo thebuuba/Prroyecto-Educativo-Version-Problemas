@@ -67,16 +67,6 @@
 
   // Carga cargar raw estado.
   async function loadRawState(storageKey = RECORD_KEY) {
-    // IndexedDB is the primary source of truth when available.
-    const fromDb = await readIndexedDb(storageKey);
-    if (typeof fromDb === 'string' && fromDb) {
-      try {
-        global.localStorage.setItem(storageKey, fromDb);
-      } catch (_) {}
-      return fromDb;
-    }
-
-    // Fallback: legacy/local mirror.
     try {
       const localRaw = global.localStorage.getItem(storageKey);
       if (typeof localRaw === 'string' && localRaw) {
@@ -84,6 +74,15 @@
         return localRaw;
       }
     } catch (_) {}
+
+    // Fallback: legacy IndexedDB mirror.
+    const fromDb = await readIndexedDb(storageKey);
+    if (typeof fromDb === 'string' && fromDb) {
+      try {
+        global.localStorage.setItem(storageKey, fromDb);
+      } catch (_) {}
+      return fromDb;
+    }
 
     return null;
   }

@@ -33,6 +33,7 @@ import {
   hydrateLocalWorkspaceForUser 
 } from '../core/hydration.js';
 import { go } from '../core/routing.js';
+import { isProfileSetupComplete } from './setup.js';
 
 let REGISTER_PASSWORD_STRENGTH_VISIBLE = false;
 let AUTH_CORNER_TOAST_TIMER = 0;
@@ -535,7 +536,8 @@ function ensureIndividualLicenseModel() {
 
 function shouldOpenSetupAfterAuth() {
   const profile = S.profile || {};
-  return !profile.name || !profile.educationSection || !profile.teachingYear;
+  if (profile.setupCompleted) return false;
+  return !isProfileSetupComplete();
 }
 
 function finishAuthSession(user, options = {}) {

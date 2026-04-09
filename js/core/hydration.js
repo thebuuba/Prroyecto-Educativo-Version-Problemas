@@ -432,6 +432,23 @@ export async function logoutAuth() {
   if (typeof window.resetSidebarUser === 'function') {
     window.resetSidebarUser();
   }
+  if (typeof window.updateSBUser === 'function') {
+    window.updateSBUser();
+  }
+  if (typeof window.refreshTop === 'function') {
+    window.refreshTop();
+  }
+  if (typeof window.forceCloseM === 'function') {
+    window.forceCloseM('m-terms');
+    window.forceCloseM('m-education-section');
+    window.forceCloseM('m-setup');
+  }
+  if (typeof window.openM === 'function') {
+    window.openM('m-auth');
+  }
+  if (typeof window.setAuthMode === 'function') {
+    window.setAuthMode('login');
+  }
   
   console.log('[EduGest][auth] Sesión cerrada localmente. Redirigiendo...');
   go('dashboard', { replace: true });
@@ -646,4 +663,3 @@ const DEFAULT_ACADEMIC_CALENDAR = {
     { id: 'P4', name: 'Periodo 4', order: 4, months: [4, 5] },
   ],
 };
-

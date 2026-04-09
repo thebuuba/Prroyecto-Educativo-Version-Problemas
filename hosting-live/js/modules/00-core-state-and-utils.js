@@ -5899,14 +5899,20 @@ function applySqlAcademicSnapshot(snapshot = {}) {
 }
 // Cierra la sesión de autenticación y limpia la navegación para volver al acceso.
 async function logoutAuth() {
+  let cloudLogoutError = null;
   try {
     stopCloudStateSync();
     if (canUseCloudAuth()) {
-      await window.EduGestCloud.logout();
+      try {
+        await window.EduGestCloud.logout();
+      } catch (error) {
+        cloudLogoutError = error;
+        console.warn('[EduGest][auth] No se pudo cerrar la sesion remota', error);
+      }
     }
   } catch (error) {
-    toast(`${window.EduGestCloud.friendlyError(error)}`, true);
-    return;
+    cloudLogoutError = cloudLogoutError || error;
+    console.warn('[EduGest][auth] Error durante el cierre de sesion', error);
   }
 
   replaceState();
@@ -5923,6 +5929,9 @@ async function logoutAuth() {
   setAuthMode('login');
   applyEducationSectionTheme('');
   go('dashboard');
+  if (cloudLogoutError) {
+    console.warn('[EduGest][auth] La sesion local se cerro aunque fallo el cierre remoto', cloudLogoutError);
+  }
   toast('Sesión cerrada');
 }
 // Cancela el flujo de configuración inicial y vuelve al registro o al acceso según corresponda.

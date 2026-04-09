@@ -527,6 +527,17 @@ async function bootApp() {
     stateSessionUid: S.sessionUserId || null,
     stateCloudOwnerUid: S.cloudOwnerUid || null,
   });
+  const restoreBrowserSessionFallback = async (reason) => {
+    if (!browserSessionActive) return false;
+    const localSessionUser = getLocalSessionUser() || browserSessionIdentity;
+    if (!localSessionUser?.id) return false;
+    debugSessionFlow(reason, {
+      uid: localSessionUser.id,
+      browserSessionUid: browserSession?.uid || null,
+    });
+    await hydrateLocalWorkspaceForUser(localSessionUser);
+    return true;
+  };
   const locationNav = readPanelLocation();
   const panelSessionState = readPanelSessionState(browserSession?.uid || '');
   if (!locationNav && panelSessionState) {
@@ -554,7 +565,9 @@ async function bootApp() {
       if (authResult === AUTH_BOOT_TIMEOUT) {
         console.warn('[EduGest][cloud] Timeout al restaurar sesion durante el arranque');
         debugSessionFlow('boot:cloud-timeout', {});
-        resetToSignedOutState();
+        if (!(await restoreBrowserSessionFallback('boot:cloud-timeout:fallback'))) {
+          resetToSignedOutState();
+        }
       } else if (authResult) {
         const user = authResult;
         debugSessionFlow('boot:cloud-user', { uid: user?.id || null });
@@ -568,12 +581,16 @@ async function bootApp() {
         }
       } else {
         debugSessionFlow('boot:cloud-no-user', {});
-        resetToSignedOutState();
+        if (!(await restoreBrowserSessionFallback('boot:cloud-no-user:fallback'))) {
+          resetToSignedOutState();
+        }
       }
     } catch (error) {
       console.error('[EduGest][cloud] Error al restaurar la sesion', error);
       debugSessionFlow('boot:cloud-error', { error: String(error?.message || error || '') });
-      resetToSignedOutState();
+      if (!(await restoreBrowserSessionFallback('boot:cloud-error:fallback'))) {
+        resetToSignedOutState();
+      }
     }
   } else if (S.sessionUserId && hasActiveBrowserSession()) {
     const localSessionUser = getLocalSessionUser() || getBrowserSessionIdentity();
@@ -723,4 +740,3 @@ bootApp().catch((error) => {
     hideBootSplash();
   }
 });
-

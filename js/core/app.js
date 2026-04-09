@@ -5,7 +5,7 @@
  */
 
 import { S } from './state.js';
-import { hydrate, clearBrowserSession } from './hydration.js';
+import { hydrate, clearBrowserSession, applySessionUser, hydrateLocalWorkspaceForUser } from './hydration.js';
 import { go, readPanelLocation } from './routing.js';
 import '../panels/auth.js';
 
@@ -47,6 +47,25 @@ export async function boot() {
   const browserSession = typeof window.readBrowserSession === 'function' 
     ? window.readBrowserSession() 
     : null;
+  const browserSessionIdentity = browserSession?.uid
+    ? {
+        id: browserSession.uid,
+        uid: browserSession.uid,
+        name: browserSession.name || '',
+        email: '',
+      }
+    : null;
+
+  if (!S.sessionUserId && browserSessionIdentity) {
+    const localSessionUser = Array.isArray(S.authUsers)
+      ? S.authUsers.find((entry) => entry.id === browserSessionIdentity.uid)
+      : null;
+    if (localSessionUser) {
+      await hydrateLocalWorkspaceForUser(localSessionUser);
+    } else {
+      applySessionUser(browserSessionIdentity);
+    }
+  }
 
   if (!S.sessionUserId && !browserSession?.uid) {
     console.warn('[EduGest][boot] Sin sesión detectada, limpiando rastro local.');

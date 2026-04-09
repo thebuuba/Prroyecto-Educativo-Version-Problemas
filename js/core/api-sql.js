@@ -11,19 +11,19 @@ import { mapActivityToSqlPayload } from './api-mappings.js';
 import { normTxt } from './utils.js';
 
 /** URL base por defecto del servidor SQL */
-const DEFAULT_BASE_URL = 'http://127.0.0.1:4000';
+const DEFAULT_BASE_URL = import.meta.env?.VITE_API_URL || 'http://127.0.0.1:4000';
 
 /** Caché interna para evitar solicitudes duplicadas de contexto académico */
 const SQL_ACADEMIC_CONTEXT_CACHE = { key: '', data: null };
 
 /**
- * Obtiene la URL base de la API SQL, priorizando la configuración en LocalStorage.
+ * Obtiene la URL base de la API SQL, priorizando la configuración en LocalStorage y luego el entorno.
  * @returns {string}
  */
 export function getBaseUrl() {
   const runtime = String(window.localStorage?.getItem('aulabase:sql-api-base-url') || '').trim();
   if (runtime) return runtime.replace(/\/+$/, '');
-  return DEFAULT_BASE_URL;
+  return DEFAULT_BASE_URL.replace(/\/+$/, '');
 }
 
 /**

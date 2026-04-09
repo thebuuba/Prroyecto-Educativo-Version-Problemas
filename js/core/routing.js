@@ -300,6 +300,10 @@ export function go(requestedPage = 'dashboard', options = {}) {
   S.currentPage = requestedPage;
   if (activityViewMode) S.activityViewMode = activityViewMode;
 
+  if (typeof window.syncSidebarNavState === 'function') {
+    window.syncSidebarNavState(requestedPage);
+  }
+
   if (!skipHistory) {
      syncNavHistory(requestedPage, requestedPage, replace ? 'replace' : 'push', activityViewMode);
   }
@@ -318,4 +322,3 @@ export function go(requestedPage = 'dashboard', options = {}) {
 // Globalización para compatibilidad con llamadas desde HTML ligado (ej. onclick="go(...)")
 window.go = go;
 window.currentPage = currentPage;
-

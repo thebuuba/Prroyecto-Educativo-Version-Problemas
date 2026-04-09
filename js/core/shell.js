@@ -78,6 +78,18 @@ export function updateSBUser() {
 }
 
 /**
+ * Sincroniza el estado visual de la navegación lateral con la página activa.
+ */
+export function syncSidebarNavState(activePage = S.currentPage || 'dashboard') {
+  STATIC_DOM.navLinks.forEach((el) => {
+    const isActive = el.dataset.p === activePage;
+    el.classList.toggle('on', isActive);
+    if (isActive) el.setAttribute('aria-current', 'page');
+    else el.removeAttribute('aria-current');
+  });
+}
+
+/**
  * Cierra el menú desplegable del perfil de usuario en la parte superior.
  */
 export function closeProfileMenu() {
@@ -162,9 +174,11 @@ export function initShell() {
 
   // Sincronización Inicial
   updateSBUser();
+  syncSidebarNavState(S.currentPage || 'dashboard');
   applyUserPreferences();
   
   // Registro en el objeto window para compatibilidad legacy
   window.updateSBUser = updateSBUser;
   window.closeProfileMenu = closeProfileMenu;
+  window.syncSidebarNavState = syncSidebarNavState;
 }

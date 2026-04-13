@@ -680,8 +680,6 @@ body.theme-dark .sb-ico img.sb-logout-icon,
 body.theme-dark #sb-logout-compact .sb-ico img,
 body.theme-dark .sb-logout-compact:hover .sb-ico img.sb-logout-icon,
 body.theme-dark .sb-logout-compact:focus-visible .sb-ico img.sb-logout-icon {
-  filter: none !important;
-  -webkit-filter: none !important;
   opacity: 1 !important;
 }
 

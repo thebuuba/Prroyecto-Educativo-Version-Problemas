@@ -159,6 +159,7 @@ body:not(.auth-screen-open) {
   --premium-navy: #050720;
   --premium-navy-surface: #0a0e2a;
   --premium-azure: #1877F2;
+  --premium-berry: #df1c44;
   --premium-text-muted: #64748b;
   --premium-text-soft: #94a3b8;
   --premium-glass: rgba(5, 7, 32, 0.85);
@@ -195,8 +196,10 @@ body:not(.auth-screen-open) {
 #sb .sb-shell {
   height: 100%;
   pointer-events: auto;
-  /* Unificación bajo Navy profundo sólido */
-  background: var(--premium-navy);
+  /* Acabado Glassmorphism Premium */
+  background: linear-gradient(180deg, rgba(5, 7, 32, 0.94) 0%, rgba(10, 18, 42, 0.92) 100%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 0 !important;
   box-shadow: 
@@ -205,8 +208,16 @@ body:not(.auth-screen-open) {
   display: flex;
   flex-direction: column;
   padding: 1.5rem 0;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   transition: all 0.4s ease;
+  /* Ocultar scrollbar de forma profesional */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+#sb .sb-shell::-webkit-scrollbar {
+  display: none;
 }
 
 #sb.sb-expanded .sb-shell,
@@ -256,7 +267,9 @@ body.theme-dark .sb-shell {
   padding: 1rem 0;
 }
 
+/* Estado activo (Azure) con indicador sofisticado */
 .sb-link {
+  position: relative;
   display: flex;
   align-items: center;
   height: 48px;
@@ -269,7 +282,7 @@ body.theme-dark .sb-shell {
   white-space: nowrap;
 }
 
-/* Color oficial Azure (#1877F2) para el estado activo */
+/* Estado activo (Azure) - Fondo sólido vibrante como pidió el usuario */
 .sb-link.on {
   background: #1877F2 !important;
   color: #ffffff !important;
@@ -288,114 +301,48 @@ body.theme-dark .sb-link.on {
   transform: translateX(4px);
 }
 
-body.theme-dark .sb-link:hover:not(.on) {
-  background: rgba(255, 255, 255, 0.04);
-  color: #ffffff;
+/* Estado activo (Azure) - Fondo sólido vibrante */
+.sb-link.on {
+  background: #1877F2 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 8px 16px -4px rgba(24, 119, 242, 0.4) !important;
 }
 
-.sb-ico img, .sb-ico svg {
-  width: 20px;
-  height: 20px;
-  transition: transform 0.2s ease;
-  filter: brightness(0) invert(1) opacity(0.8);
+body.theme-dark .sb-link.on {
+  background: #1877F2 !important;
+  color: #ffffff !important;
+}
+
+.sb-link:hover:not(.on) {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  transform: translateX(4px);
 }
 
 .sb-link.on .sb-ico img, 
 .sb-link.on .sb-ico svg {
-  filter: brightness(0) invert(1) opacity(1) drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+  filter: brightness(0) invert(1) !important; /* Icono blanco puro para navegación */
+  -webkit-filter: brightness(0) invert(1) !important;
+  drop-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
 }
 
-/* Efecto de resplandor para el ítem activo */
-.sb-link.on::after {
-  content: "";
-  position: absolute;
-  right: -10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 20px;
-  background: #ffffff;
-  border-radius: 999px;
-  box-shadow: 0 0 10px #ffffff;
+/* Logout con tema Berry (Excepción) */
+.sb-link.sb-logout-btn {
+  background: transparent !important;
+  color: var(--premium-berry) !important;
+  margin-top: 0.5rem;
 }
 
-#sb:not(.sb-expanded) .sb-link.on::after {
-  right: 6px;
+.sb-link.sb-logout-btn:hover {
+  background: rgba(223, 28, 68, 0.1) !important;
+  color: #c4123a !important;
 }
 
-.sb-link.on .sb-ico {
-  transform: scale(1.1);
-}
-
-/* Ocultamos labels con opacidad y traslación para look fluido */
-.sb-link-label {
-  margin-left: 14px;
-  font-size: 0.875rem;
-  opacity: 0;
-  transform: translateX(-10px);
-  transition: all 0.3s ease;
-}
-
-#sb.sb-expanded .sb-link-label {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* Footer y Utilidades */
-.sb-footer {
-  padding: 1rem 0.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.sb-utility, .sb-logout-compact {
-  display: flex;
-  align-items: center;
-  height: 40px;
-  padding: 0 1rem;
-  border-radius: 1rem;
-  color: #64748b;
-  transition: all 0.2s ease;
-}
-
-.sb-logout-compact {
-  background: rgba(239, 68, 68, 0.08);
-  color: #ef4444;
-}
-
-.sb-logout-compact:hover {
-  background: rgba(239, 68, 68, 0.15);
-}
-
-/* Ocultar scrollbar */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.sb-link.on {
-  background: rgba(79, 70, 229, 0.08);
-  color: #1877F2;
-  font-weight: 500;
-}
-
-body.theme-dark .sb-link.on {
-  background: rgba(129, 140, 248, 0.15);
-  color: #a5b4fc;
-}
-
-.sb-link:hover:not(.on) {
-  background: rgba(0, 0, 0, 0.03);
-  color: #334155;
-}
-
-body.theme-dark .sb-link:hover:not(.on) {
-  background: rgba(255, 255, 255, 0.05);
-  color: #f1f5f9;
+.sb-link.sb-logout-btn .sb-ico .sb-logout-icon, 
+.sb-link.sb-logout-btn .sb-ico img {
+  filter: brightness(0) saturate(100%) invert(18%) sepia(91%) saturate(5423%) hue-rotate(341deg) brightness(88%) contrast(97%) !important;
+  -webkit-filter: brightness(0) saturate(100%) invert(18%) sepia(91%) saturate(5423%) hue-rotate(341deg) brightness(88%) contrast(97%) !important;
 }
 
 .sb-ico {

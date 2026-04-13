@@ -174,4 +174,24 @@ export function initShell() {
   window.updateSBUser = updateSBUser;
   window.closeProfileMenu = closeProfileMenu;
   window.syncSidebarNavState = syncSidebarNavState;
+
+  // Inicialización de la IA Copilot
+  initAICopilot();
+}
+
+/**
+ * Inicializa el botón flotante de la IA Copilot.
+ */
+export function initAICopilot() {
+  const aiFab = document.getElementById('ai-copilot-fab');
+  if (aiFab) {
+    aiFab.addEventListener('click', () => {
+      toast('🤖 EduGest AI Copilot: ¿En qué puedo ayudarte hoy?', 'info');
+      console.log('[EduGest][AI] Copilot activado. Esperando comandos...');
+      
+      // Animación de feedback al hacer clic
+      aiFab.classList.add('ai-active');
+      setTimeout(() => aiFab.classList.remove('ai-active'), 1000);
+    });
+  }
 }

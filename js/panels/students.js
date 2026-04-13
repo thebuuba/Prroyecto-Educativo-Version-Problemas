@@ -91,13 +91,19 @@ export function registerStudentsPanel(c) {
       </header>
 
       <!-- Pestañas de Grados -->
-      <nav class="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+      <nav class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
         ${scopedGrades.map(gr => `
           <button onclick="window.setStudentsGradeView('${gr.id}')" 
                   class="shrink-0 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${gr.id === S.activeGradeId ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}">
             ${escapeHtml(gr.name)}
           </button>
         `).join('')}
+
+        <button onclick="window.go('grade-setup')" 
+                class="shrink-0 w-10 h-10 flex items-center justify-center rounded-xl text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all border-2 border-dashed border-blue-100 dark:border-blue-800 ml-1"
+                title="Agregar nuevo grado">
+          <span class="material-symbols-outlined text-sm font-bold">add</span>
+        </button>
       </nav>
 
       <!-- Espacio de Trabajo Principal -->

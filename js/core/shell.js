@@ -13,7 +13,6 @@ import {
   periodName,
   getDisplayUserName,
   toggleDarkMode,
-  toggleSidebarPinnedPreference,
   applyUserPreferences,
   collapseSidebarIfAllowed,
   setSidebarExpanded,
@@ -138,12 +137,6 @@ export function initShell() {
   document.getElementById('sb-dark-toggle')?.addEventListener('click', (e) => {
     e.stopPropagation();
     toggleDarkMode();
-  });
-
-  // Fijar Barra Lateral
-  document.getElementById('sb-pin-toggle')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    toggleSidebarPinnedPreference();
   });
 
   // Click en Fondo (Backdrop) para cerrar

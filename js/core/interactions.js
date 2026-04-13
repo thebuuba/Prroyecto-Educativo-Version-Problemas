@@ -7,8 +7,6 @@
  */
 
 import { S } from './state.js';
-import { persist } from './hydration.js';
-import { toast } from './ui.js';
 import { applyEducationSectionTheme } from './theme-logic.js';
 import { pageTitleWithContext, topbarContext, injectPanelContextControls } from './ui.js';
 
@@ -26,19 +24,6 @@ export const SIDEBAR_TIMINGS = {
   focusOutCloseDelayMs: 120,
   reopenGraceMs: 150,
 };
-
-/**
- * Define si la barra lateral debe permanecer fija (pinned).
- * @param {boolean} pinned - Estado deseado.
- */
-export function setSidebarPinned(pinned) {
-  const sidebar = document.getElementById('sb');
-  if (!sidebar) return;
-  const isPinned = !!pinned;
-  sidebar.classList.toggle('sb-pinned', isPinned);
-  if (isPinned) sidebar.classList.add('sb-expanded');
-  syncSidebarOverlayState();
-}
 
 /**
  * Cancela cualquier temporizador de cierre automático pendiente.
@@ -63,10 +48,9 @@ export function shouldDeferSidebarAutoClose() {
  */
 export function scheduleSidebarAutoClose(sidebar, delayMs) {
   if (!sidebar) return;
-  if (shouldKeepSidebarPinned() || shouldDeferSidebarAutoClose()) return;
+  if (shouldDeferSidebarAutoClose()) return;
   clearSidebarCloseTimer();
   SIDEBAR_INTERACTION.closeTimer = setTimeout(() => {
-    if (shouldKeepSidebarPinned()) return;
     if (sidebar.matches(':hover') || sidebar.matches(':focus-within')) return;
     collapseSidebarIfAllowed();
   }, delayMs);
@@ -78,9 +62,8 @@ export function scheduleSidebarAutoClose(sidebar, delayMs) {
 export function syncSidebarOverlayState() {
   const sidebar = document.getElementById('sb');
   const backdrop = document.getElementById('sb-backdrop');
-  const isPinned = shouldKeepSidebarPinned();
   const isExpanded = !!sidebar?.classList.contains('sb-expanded');
-  const overlayOpen = isExpanded && !isPinned;
+  const overlayOpen = isExpanded;
   document.body.classList.toggle('sb-overlay-open', overlayOpen);
   if (backdrop) {
     backdrop.hidden = !overlayOpen;
@@ -95,11 +78,6 @@ export function syncSidebarOverlayState() {
 export function setSidebarExpanded(expanded) {
   const sidebar = document.getElementById('sb');
   if (!sidebar) return;
-  if (shouldKeepSidebarPinned()) {
-    sidebar.classList.add('sb-expanded');
-    syncSidebarOverlayState();
-    return;
-  }
   if (expanded) {
     SIDEBAR_INTERACTION.suppressAutoCloseUntil = Date.now() + SIDEBAR_TIMINGS.reopenGraceMs;
   }
@@ -108,28 +86,16 @@ export function setSidebarExpanded(expanded) {
 }
 
 /**
- * Determina si el usuario ha configurado la barra como "siempre visible".
- */
-export function shouldKeepSidebarPinned() {
-  return !!S.preferences?.sidebarPinned;
-}
-
-/**
  * Fuerza el colapso de la barra lateral si las condiciones lo permiten.
  * Quita el foco de cualquier elemento interno para evitar re-aperturas por accesibilidad.
  */
 export function collapseSidebarIfAllowed() {
   clearSidebarCloseTimer();
-  if (shouldKeepSidebarPinned()) {
-    setSidebarPinned(true);
-    return;
-  }
   const sidebar = document.getElementById('sb');
   const activeEl = document.activeElement;
   if (sidebar && activeEl && sidebar.contains(activeEl) && typeof activeEl.blur === 'function') {
     activeEl.blur();
   }
-  setSidebarPinned(false);
   setSidebarExpanded(false);
 }
 
@@ -213,7 +179,6 @@ export function ensureUserPreferences() {
   if (typeof S.preferences.animations !== 'boolean') S.preferences.animations = true;
   if (typeof S.preferences.authLoginAnimation !== 'boolean') S.preferences.authLoginAnimation = true;
   if (typeof S.preferences.darkMode !== 'boolean') S.preferences.darkMode = false;
-  if (typeof S.preferences.sidebarPinned !== 'boolean') S.preferences.sidebarPinned = false;
   if (typeof S.preferences.aiBackendUrl !== 'string') S.preferences.aiBackendUrl = '';
   if (!S.preferences.notifications || typeof S.preferences.notifications !== 'object') {
     S.preferences.notifications = { deadlineReminder: true, lowPerformanceAlert: true, dailySummary: false, syncAlert: true };
@@ -230,9 +195,7 @@ export function syncDarkModeToggleUI() {
   const darkToggle = document.getElementById('sb-dark-toggle');
   const darkState = document.getElementById('sb-dark-state');
   const darkIcon = document.getElementById('sb-dark-icon');
-  const pinToggle = document.getElementById('sb-pin-toggle');
   const enabled = S.preferences?.darkMode === true;
-  const pinned = S.preferences?.sidebarPinned === true;
   if (darkToggle) {
     darkToggle.setAttribute('aria-pressed', enabled ? 'true' : 'false');
     darkToggle.setAttribute('aria-label', enabled ? 'Modo claro' : 'Modo oscuro');
@@ -242,11 +205,6 @@ export function syncDarkModeToggleUI() {
     darkIcon.src = enabled ? '/assets/icons/modoclaro.png' : '/assets/icons/modooscuro.png';
   }
   if (darkState) darkState.textContent = enabled ? 'ON' : 'OFF';
-  if (pinToggle) {
-    pinToggle.setAttribute('aria-pressed', pinned ? 'true' : 'false');
-    pinToggle.setAttribute('aria-label', pinned ? 'Desfijar barra lateral' : 'Fijar barra lateral');
-    pinToggle.title = pinned ? 'Desfijar barra lateral' : 'Fijar barra lateral';
-  }
 }
 
 /**
@@ -261,29 +219,12 @@ export function applyUserPreferences() {
   if (typeof window.applyMotionProfile === 'function') window.applyMotionProfile();
   document.body.classList.toggle('theme-dark', S.preferences.darkMode === true);
   if (typeof window.applyEducationSectionTheme === 'function') window.applyEducationSectionTheme();
-  
-  const sidebarPinned = S.preferences.sidebarPinned === true;
-  setSidebarPinned(sidebarPinned);
-  if (sidebarPinned) {
-    setSidebarExpanded(true);
-  } else {
-    const sidebar = document.getElementById('sb');
-    if (sidebar && !sidebar.matches(':hover') && !sidebar.matches(':focus-within')) {
-      setSidebarExpanded(false);
-    }
+
+  const sidebar = document.getElementById('sb');
+  if (sidebar && !sidebar.matches(':hover') && !sidebar.matches(':focus-within')) {
+    setSidebarExpanded(false);
   }
   syncDarkModeToggleUI();
-}
-
-/**
- * Alterna el estado de fijación de la barra lateral y guarda la preferencia.
- */
-export function toggleSidebarPinnedPreference() {
-  ensureUserPreferences();
-  S.preferences.sidebarPinned = !S.preferences.sidebarPinned;
-  applyUserPreferences();
-  persist();
-  toast(S.preferences.sidebarPinned ? 'Barra lateral fijada' : 'Barra lateral automática');
 }
 
 /**

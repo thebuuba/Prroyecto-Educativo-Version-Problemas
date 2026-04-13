@@ -88,7 +88,6 @@ export { initials, openM, closeM, toast, forceCloseM, periodName } from './ui.js
 export { go, currentPage } from './routing.js';
 export { 
   toggleDarkMode, 
-  toggleSidebarPinnedPreference, 
   applyUserPreferences, 
   collapseSidebarIfAllowed, 
   setSidebarExpanded, 

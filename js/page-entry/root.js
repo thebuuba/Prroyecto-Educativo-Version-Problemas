@@ -101,9 +101,7 @@ window.lessonPlanSpecificPlaceholderForFundamental = DomainUtils.lessonPlanSpeci
 // --- Interacciones de Interfaz y UX ---
 /** @namespace UIBridge */
 window.toggleDarkMode = DomainUtils.toggleDarkMode;
-window.toggleSidebarPinnedPreference = DomainUtils.toggleSidebarPinnedPreference;
 window.openSettingsPanel = Interactions.openSettingsPanel;
-window.setSidebarPinned = Interactions.setSidebarPinned;
 window.setSidebarExpanded = Interactions.setSidebarExpanded;
 window.collapseSidebarIfAllowed = Interactions.collapseSidebarIfAllowed;
 window.syncSidebarOverlayState = Interactions.syncSidebarOverlayState;

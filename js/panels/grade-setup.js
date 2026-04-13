@@ -194,9 +194,9 @@ export function renderGradeSetupPanel(container) {
           <div class="sticky top-8 space-y-6">
             
             <!-- Summary Bento Card -->
-            <div class="bg-slate-900 rounded-[3rem] p-8 text-white shadow-2xl relative overflow-hidden">
+            <div class="bg-premium-navy rounded-[3rem] p-8 text-white shadow-2xl relative overflow-hidden">
                <div class="relative z-10">
-                 <h4 class="text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-6">Resumen del Grado</h4>
+                 <h4 class="text-premium-soft font-bold text-[10px] uppercase tracking-widest mb-6">Resumen del Grado</h4>
                  
                  <div class="space-y-6">
                     <div class="flex items-center gap-4">
@@ -204,7 +204,7 @@ export function renderGradeSetupPanel(container) {
                         <span class="material-symbols-outlined">school</span>
                       </div>
                       <div>
-                        <div class="text-[10px] text-slate-500 font-bold uppercase">Nivel y Grado</div>
+                        <div class="text-[10px] text-premium-muted font-bold uppercase">Nivel y Grado</div>
                         <div class="text-lg font-black" id="preview-grade-label">Pendiente...</div>
                       </div>
                     </div>
@@ -214,7 +214,7 @@ export function renderGradeSetupPanel(container) {
                         <span class="material-symbols-outlined">menu_book</span>
                       </div>
                       <div>
-                        <div class="text-[10px] text-slate-500 font-bold uppercase">Área · Asignatura</div>
+                        <div class="text-[10px] text-premium-muted font-bold uppercase">Área · Asignatura</div>
                         <div class="text-lg font-black" id="preview-subject-label">Pendiente...</div>
                       </div>
                     </div>
@@ -224,18 +224,18 @@ export function renderGradeSetupPanel(container) {
                         <span class="material-symbols-outlined">groups</span>
                       </div>
                       <div>
-                        <div class="text-[10px] text-slate-500 font-bold uppercase">Sección</div>
+                        <div class="text-[10px] text-premium-muted font-bold uppercase">Sección</div>
                         <div class="text-lg font-black" id="preview-section-label">Sección ${FormState.section}</div>
                       </div>
                     </div>
                  </div>
 
                  <div class="mt-10 pt-8 border-t border-white/5">
-                    <button onclick="window.confirmSaveGrade()" id="gs-save-btn" class="w-full py-4 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-900/20 flex items-center justify-center gap-2 group">
+                    <button onclick="window.confirmSaveGrade()" id="gs-save-btn" class="w-full py-4 btn-premium-azure disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-900/20 flex items-center justify-center gap-2 group">
                       Crear Grado
                       <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
                     </button>
-                    <button onclick="window.go('estudiantes')" class="w-full mt-4 py-3 bg-white/5 hover:bg-white/10 text-slate-400 rounded-2xl font-bold transition-all">
+                    <button onclick="window.go('estudiantes')" class="w-full mt-4 py-3 bg-white/5 hover:bg-white/10 text-premium-soft rounded-2xl font-bold transition-all">
                       Cancelar
                     </button>
                  </div>

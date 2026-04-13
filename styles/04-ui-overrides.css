@@ -155,8 +155,21 @@ body:not(.auth-screen-open) {
   background: transparent;
 }
 
-/* Barra superior global del panel: busqueda, acciones y perfil. */
-#topbar {
+:root {
+  --premium-navy: #050720;
+  --premium-navy-surface: #0a0e2a;
+  --premium-azure: #1877F2;
+  --premium-text-muted: #64748b;
+  --premium-text-soft: #94a3b8;
+  --premium-glass: rgba(5, 7, 32, 0.85);
+}
+
+.top {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  z-index: 90;
   background: rgba(239, 239, 242, .74);
   border-bottom: 1px solid rgba(182, 190, 204, .55);
   backdrop-filter: blur(8px);
@@ -182,10 +195,8 @@ body:not(.auth-screen-open) {
 #sb .sb-shell {
   height: 100%;
   pointer-events: auto;
-  /* Fondo Navy profundo con cristalado (Stitch Premium style) */
-  background: rgba(5, 7, 32, 0.82);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  /* Unificación bajo Navy profundo sólido */
+  background: var(--premium-navy);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 0 !important;
   box-shadow: 
@@ -205,9 +216,31 @@ body:not(.auth-screen-open) {
 }
 
 body.theme-dark .sb-shell {
-  background: rgba(2, 4, 18, 0.9);
+  background: var(--premium-navy);
   border-color: rgba(255, 255, 255, 0.04);
   box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+}
+
+/* UTILIDADES DE JERARQUÍA PROFESIONAL */
+.bg-premium-navy {
+  background: var(--premium-navy) !important;
+}
+
+.text-premium-muted {
+  color: var(--premium-text-muted) !important;
+}
+
+.text-premium-soft {
+  color: var(--premium-text-soft) !important;
+}
+
+.btn-premium-azure {
+  background-color: var(--premium-azure) !important;
+  color: #ffffff !important;
+}
+
+.btn-premium-azure:hover {
+  background-color: #2563eb !important;
 }
 
 /* Ajuste del contenido principal para que la isla respire */

@@ -166,7 +166,7 @@ export function renderGradeSetupPanel(container) {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
              <section class="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">Sección</h3>
-               <div class="grid grid-cols-4 gap-2">
+               <div id="section-selector-grid" class="grid grid-cols-4 gap-2">
                  ${['A', 'B', 'C', 'D'].map(sec => `
                    <button onclick="window.updateGradeSetupField('section', '${sec}')" 
                            class="py-3 rounded-2xl font-bold transition-all ${FormState.section === sec ? 'bg-slate-900 text-white shadow-lg' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}">
@@ -265,6 +265,7 @@ export function renderGradeSetupPanel(container) {
 
   updateGradeGrid();
   updateAreaGrid();
+  updateSectionGrid();
   updatePreviews();
 }
 
@@ -343,6 +344,26 @@ function updateSubjectGrid() {
   `).join('');
 }
 
+function updateSectionGrid() {
+  const grid = document.getElementById('section-selector-grid');
+  if (!grid) return;
+
+  const defaultSections = ['A', 'B', 'C', 'D'];
+  grid.innerHTML = defaultSections.map(sec => `
+    <button
+      onclick="window.updateGradeSetupField('section', '${sec}')"
+      class="py-3 rounded-2xl font-bold transition-all ${FormState.section === sec ? 'bg-slate-900 text-white shadow-lg' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}"
+    >
+      ${sec}
+    </button>
+  `).join('');
+
+  const customInput = document.getElementById('custom-section');
+  if (customInput) {
+    customInput.value = defaultSections.includes(FormState.section) ? '' : FormState.section;
+  }
+}
+
 function updatePreviews() {
   const label = document.getElementById('preview-grade-label');
   const sec = document.getElementById('preview-section-label');
@@ -403,15 +424,27 @@ window.updateGradeSetupField = (field, value) => {
     updateAreaGrid();
   }
 
+  if (field === 'grade') {
+    updateGradeGrid();
+  }
+
   if (field === 'area') {
     FormState.subject = ''; // Reset subject when area changes
-    updateSubjectGrid();
+    updateAreaGrid();
     // Auto-select single subject
     const subjects = subjectsForArea(FormState.level, FormState.area);
     if (subjects.length === 1) {
       FormState.subject = subjects[0];
       updateSubjectGrid();
     }
+  }
+
+  if (field === 'subject') {
+    updateSubjectGrid();
+  }
+
+  if (field === 'section') {
+    updateSectionGrid();
   }
 
   updatePreviews();
@@ -434,8 +467,6 @@ window.confirmSaveGrade = async () => {
   if (typeof window.saveGrade === 'function') {
     try {
       await window.saveGrade(FormState);
-      toast('Grado creado con éxito', 'success');
-      setTimeout(() => window.go('dashboard'), 500);
     } catch (err) {
       console.error('[EduGest][setup] Fallo al guardar grado:', err);
       toast('Error al guardar el grado', true);

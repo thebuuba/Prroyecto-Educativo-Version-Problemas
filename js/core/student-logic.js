@@ -357,3 +357,44 @@ export async function saveBulkEst() {
   go('estudiantes');
   toast(`Carga masiva completada: ${count} estudiantes agregados.`);
 }
+
+/**
+ * Registra un estudiante de forma programática (utilizado por la IA). 
+ * Salta las validaciones de UI y usa valores directos.
+ */
+export async function registerStudentSilently(nombre, apellido, sectionId = null) {
+  if (!nombre || !apellido) return { success: false, message: 'Nombre y apellido requeridos.' };
+  
+  const targetSecId = sectionId || S.activeGroupId || S.activeCourseId || (S.secciones[0]?.id);
+  if (!targetSecId) return { success: false, message: 'No hay secciones disponibles para registrar al estudiante.' };
+
+  const sec = S.secciones.find(s => s.id === targetSecId);
+  
+  // Generar matrícula ficticia o nula si no se provee (aquí generamos una basada en el tiempo para evitar duplicados rápidos)
+  const mat = `AI-${Date.now().toString().slice(-6)}`;
+
+  const student = {
+    id: uid(),
+    nombre: nombre.trim(),
+    apellido: apellido.trim(),
+    matricula: mat,
+    photoUrl: '',
+    courseId: targetSecId,
+    sectionId: targetSecId,
+    seccionId: targetSecId,
+    gradeId: sec?.gradeId || null
+  };
+
+  S.estudiantes.push(student);
+  upsertStudentDirectoryEntry(student, targetSecId);
+
+  try {
+    const sqlStudent = await syncSqlStudentCreateOrUpdate(student);
+    if (sqlStudent?.id) student.id = sqlStudent.id;
+  } catch (error) {
+    console.warn('[EduGest][AI-Student] Fallo sync SQL:', error);
+  }
+
+  persist();
+  return { success: true, student, message: `Estudiante ${nombre} ${apellido} registrado con éxito en ${sec?.grado || 'el sistema'}.` };
+}

@@ -28,6 +28,8 @@ import {
   resetToSignedOutState
 } from './domain-utils.js';
 
+import { AIEngine } from './ai-engine.js';
+
 /**
  * --- Sincronización de UI ---
  */
@@ -212,7 +214,7 @@ export function initAICopilot() {
     }
   };
 
-  const sendAIMessage = () => {
+  const sendAIMessage = async () => {
     const text = chatInput.value.trim();
     if (!text) return;
 
@@ -224,15 +226,31 @@ export function initAICopilot() {
     aiFab.style.transform = 'scale(0.8)';
     setTimeout(() => aiFab.style.transform = '', 200);
 
-    // 3. Simular respuesta de la IA (Mock)
-    setTimeout(() => {
-      appendMessage('¡Recibido! Estoy procesando tu petición en el sistema...', 'bot');
-    }, 800);
+    // 3. Procesar con el Motor de IA real (Gemini)
+    try {
+      // Mostrar indicador de carga/pensando
+      const thinkingId = 'ai-thinking-' + Date.now();
+      appendMessage('...', 'bot', thinkingId);
+      
+      const result = await AIEngine.processRequest(text);
+      
+      // Eliminar indicador y poner respuesta real
+      const thinkingEl = document.getElementById(thinkingId);
+      if (thinkingEl) {
+        thinkingEl.textContent = result.text;
+        thinkingEl.style.opacity = '1';
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+    } catch (error) {
+      console.error('[EduGest][Chat] Fallo al procesar IA:', error);
+      appendMessage('Lo siento, he tenido un pequeño error interno. ¿Puedes intentar de nuevo?', 'bot');
+    }
   };
 
-  const appendMessage = (text, type) => {
+  const appendMessage = (text, type, id = null) => {
     const msg = document.createElement('div');
     msg.className = `ai-message ai-${type}`;
+    if (id) msg.id = id;
     msg.textContent = text;
     msg.style.opacity = '0';
     msg.style.transform = 'translateY(10px)';

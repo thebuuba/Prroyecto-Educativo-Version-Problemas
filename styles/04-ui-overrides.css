@@ -2025,97 +2025,164 @@ body.miperfil-active {
 }
 
 /* ==========================================================================
-   EDUGEST AI COPILOT FAB
+   EDUGEST AI COPILOT - UNIFIED ORGANIC MORPHISM
    ========================================================================== */
 
-#ai-copilot-fab {
+#ai-copilot-container {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+/* Único Contenedor Unificado (Mórfico) */
+#ai-chat-window {
+  width: 64px; /* Círculo inicial */
+  height: 64px;
+  background: rgba(5, 7, 32, 0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 32px; /* Redondo al inicio */
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+  overflow: hidden;
+  transform-origin: bottom right;
+}
+
+#ai-copilot-container.ai-open #ai-chat-window {
+  width: 380px;
+  height: 550px;
+  border-radius: 24px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+}
+
+/* Contenido Interno (Header y Mensajes) */
+.ai-chat-header, .ai-chat-messages {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+#ai-copilot-container.ai-open .ai-chat-header, 
+#ai-copilot-container.ai-open .ai-chat-messages {
+  opacity: 1;
+  pointer-events: all;
+  transition-delay: 0.3s;
+}
+
+/* Área de Input Integrada */
+.ai-chat-input-area {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
+
+#ai-chat-input {
+  flex: 1;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 0 60px 0 20px;
+  color: white;
+  outline: none;
+  font-size: 0.9375rem;
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+#ai-copilot-container.ai-open #ai-chat-input {
+  opacity: 1;
+}
+
+#ai-copilot-container.ai-closed #ai-chat-window {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+#ai-copilot-fab {
+  position: absolute;
+  right: 12px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: linear-gradient(135deg, var(--premium-berry) 0%, var(--premium-azure) 100%);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.5s ease;
+  z-index: 10;
+  -webkit-appearance: none;
+}
+
+#ai-copilot-container.ai-closed #ai-copilot-fab {
+  right: 0;
   width: 64px;
   height: 64px;
-  border-radius: 50%;
-  padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
   background: linear-gradient(135deg, var(--premium-berry) 0%, var(--premium-azure) 100%);
-  color: #ffffff;
-  cursor: pointer;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 
-    0 10px 25px -5px rgba(0, 0, 0, 0.3),
-    0 0 20px rgba(223, 28, 68, 0.3);
-  overflow: hidden;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 10px 25px rgba(223, 28, 68, 0.4) !important;
 }
 
-#ai-copilot-fab:hover {
-  transform: scale(1.1) rotate(5deg);
-  box-shadow: 
-    0 15px 35px -5px rgba(0, 0, 0, 0.4),
-    0 0 30px rgba(24, 119, 242, 0.5);
-  border-color: rgba(255, 255, 255, 0.4);
+#ai-copilot-fab:focus, #ai-copilot-fab:active {
+  outline: 0 !important;
+  border: 0 !important;
 }
 
-#ai-copilot-fab:active {
-  transform: scale(0.95);
-}
-
+/* Conversión de Iconos (Scale + Opacity) */
 .ai-fab-icon {
+  position: relative;
   width: 28px;
   height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.3s ease;
-  z-index: 2;
 }
 
-#ai-copilot-fab:hover .ai-fab-icon {
-  transform: scale(1.2);
-}
-
-/* Efecto de resplandor interno animado */
-.ai-fab-glow {
+.icon-sparkles, .icon-send {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+  top: 0; left: 0; width: 100%; height: 100%;
+  transition: all 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+#ai-copilot-container.ai-open .icon-sparkles {
   opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 1;
+  transform: scale(0.4);
 }
 
-#ai-copilot-fab:hover .ai-fab-glow {
-  opacity: 1;
-  animation: ai-glow-pulse 2s infinite ease-in-out;
+#ai-copilot-container.ai-closed .icon-send {
+  opacity: 0;
+  transform: scale(0.4);
 }
 
-/* Animación de pulso ambiental */
-#ai-copilot-fab::after {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: inherit;
-  z-index: -1;
-  opacity: 0.4;
-  animation: ai-pulse-ambient 3s infinite ease-out;
+/* Estilos de Contenido */
+.ai-chat-header {
+  padding: 1.5rem;
+  display: flex; align-items: center; gap: 12px;
+  font-weight: 700; color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
+.ai-header-dot { width: 10px; height: 10px; background: #10b981; border-radius: 50%; box-shadow: 0 0 15px #10b981; }
 
-@keyframes ai-pulse-ambient {
-  0% { transform: scale(1); opacity: 0.4; }
-  100% { transform: scale(1.6); opacity: 0; }
+.ai-chat-messages {
+  flex: 1; padding: 1.25rem; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 12px;
+  scrollbar-width: none;
 }
+.ai-chat-messages::-webkit-scrollbar { display: none; }
 
-@keyframes ai-glow-pulse {
-  0%, 100% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.3); opacity: 0.8; }
-}
+.ai-message { padding: 10px 16px; border-radius: 18px; max-width: 85%; font-size: 0.9375rem; line-height: 1.5; }
+.ai-bot { background: rgba(255, 255, 255, 0.08); color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
+.ai-user { background: linear-gradient(135deg, var(--premium-azure) 0%, var(--premium-berry) 100%); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }

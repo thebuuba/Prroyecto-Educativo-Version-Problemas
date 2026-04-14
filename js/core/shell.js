@@ -180,18 +180,91 @@ export function initShell() {
 }
 
 /**
- * Inicializa el botón flotante de la IA Copilot.
+ * Inicializa la interfaz interactiva de la IA Copilot.
  */
 export function initAICopilot() {
+  const container = document.getElementById('ai-copilot-container');
   const aiFab = document.getElementById('ai-copilot-fab');
-  if (aiFab) {
-    aiFab.addEventListener('click', () => {
-      toast('🤖 EduGest AI Copilot: ¿En qué puedo ayudarte hoy?', 'info');
-      console.log('[EduGest][AI] Copilot activado. Esperando comandos...');
-      
-      // Animación de feedback al hacer clic
-      aiFab.classList.add('ai-active');
-      setTimeout(() => aiFab.classList.remove('ai-active'), 1000);
+  const chatInput = document.getElementById('ai-chat-input');
+  const chatMessages = document.getElementById('ai-chat-messages');
+
+  if (!container || !aiFab) return;
+
+  const toggleAIChat = () => {
+    const isOpen = container.classList.contains('ai-open');
+    const hasText = chatInput.value.trim().length > 0;
+
+    if (!isOpen) {
+      // Abrir Chat
+      container.classList.remove('ai-closed');
+      container.classList.add('ai-open');
+      setTimeout(() => chatInput.focus(), 400);
+      return;
+    }
+
+    if (hasText) {
+      // Enviar Mensaje
+      sendAIMessage();
+    } else {
+      // Cerrar Chat (si está vacío)
+      container.classList.remove('ai-open');
+      container.classList.add('ai-closed');
+    }
+  };
+
+  const sendAIMessage = () => {
+    const text = chatInput.value.trim();
+    if (!text) return;
+
+    // 1. Agregar mensaje del usuario
+    appendMessage(text, 'user');
+    chatInput.value = '';
+
+    // 2. Feedback visual en el botón
+    aiFab.style.transform = 'scale(0.8)';
+    setTimeout(() => aiFab.style.transform = '', 200);
+
+    // 3. Simular respuesta de la IA (Mock)
+    setTimeout(() => {
+      appendMessage('¡Recibido! Estoy procesando tu petición en el sistema...', 'bot');
+    }, 800);
+  };
+
+  const appendMessage = (text, type) => {
+    const msg = document.createElement('div');
+    msg.className = `ai-message ai-${type}`;
+    msg.textContent = text;
+    msg.style.opacity = '0';
+    msg.style.transform = 'translateY(10px)';
+    
+    chatMessages.appendChild(msg);
+    
+    // Animación de entrada
+    requestAnimationFrame(() => {
+      msg.style.transition = 'all 0.3s ease';
+      msg.style.opacity = '1';
+      msg.style.transform = 'translateY(0)';
+      chatMessages.scrollTop = chatMessages.scrollHeight;
     });
-  }
+  };
+
+  // Listeners
+  aiFab.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleAIChat();
+  });
+
+  chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendAIMessage();
+  });
+
+  // Cerrar al hacer clic fuera del contenedor si está abierto
+  document.addEventListener('click', (e) => {
+    if (!container.contains(e.target) && container.classList.contains('ai-open')) {
+      if (!chatInput.value.trim()) {
+        container.classList.remove('ai-open');
+        container.classList.add('ai-closed');
+      }
+    }
+  });
 }

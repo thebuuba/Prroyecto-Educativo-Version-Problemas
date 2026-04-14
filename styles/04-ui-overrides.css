@@ -1958,7 +1958,6 @@ body.theme-dark .stitch-pd-item .material-symbols-outlined {
   color: #1e293b;
   background-color: #f8fafc;
 }
-
 .stitch-pd-active .material-symbols-outlined {
   color: #1e293b;
 }
@@ -2025,7 +2024,7 @@ body.miperfil-active {
 }
 
 /* ==========================================================================
-   EDUGEST AI COPILOT - UNIFIED ORGANIC MORPHISM
+   EDUGEST AI COPILOT - UNIFIED ORGANIC MORPHISM (LIGHT THEME)
    ========================================================================== */
 
 #ai-copilot-container {
@@ -2038,18 +2037,16 @@ body.miperfil-active {
   align-items: flex-end;
 }
 
-/* Único Contenedor Unificado (Mórfico) */
+/* Único Contenedor Unificado (Mórfico - Tema Claro) */
 #ai-chat-window {
-  width: 64px; /* Círculo inicial */
+  width: 64px;
   height: 64px;
-  background: rgba(5, 7, 32, 0.96);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 32px; /* Redondo al inicio */
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 32px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
   transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
   overflow: hidden;
   transform-origin: bottom right;
@@ -2057,12 +2054,12 @@ body.miperfil-active {
 
 #ai-copilot-container.ai-open #ai-chat-window {
   width: 380px;
-  height: 550px;
+  height: 580px;
   border-radius: 24px;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
 }
 
-/* Contenido Interno (Header y Mensajes) */
+/* Contenido Interno */
 .ai-chat-header, .ai-chat-messages {
   opacity: 0;
   pointer-events: none;
@@ -2076,51 +2073,98 @@ body.miperfil-active {
   transition-delay: 0.3s;
 }
 
+/* Cabecera (Texto Oscuro) */
+.ai-chat-header {
+  padding: 1.5rem;
+  display: flex; align-items: center; gap: 12px;
+  font-weight: 700; 
+  color: #050720 !important; /* Forzar color oscuro */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+.ai-chat-header span {
+  color: #050720 !important;
+}
+.ai-header-dot { width: 10px; height: 10px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+
+/* Mensajes (Estilo AulaBase) */
+.ai-chat-messages {
+  flex: 1; padding: 1.25rem; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 14px;
+  scrollbar-width: none;
+  color: #050720;
+}
+.ai-chat-messages::-webkit-scrollbar { display: none; }
+
+.ai-message { padding: 12px 16px; border-radius: 18px; max-width: 85%; font-size: 0.9375rem; line-height: 1.5; }
+
+.ai-bot { 
+  background: #f1f5f9; 
+  color: #050720 !important; 
+  align-self: flex-start; 
+  border-bottom-left-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.ai-user { 
+  background: #474b6b; 
+  color: white !important; /* Usuario mantiene blanco para contraste */
+  align-self: flex-end; 
+  border-bottom-right-radius: 4px; 
+}
+
 /* Área de Input Integrada */
 .ai-chat-input-area {
   position: absolute;
   bottom: 0;
   right: 0;
   width: 100%;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  padding: 0 12px;
+  padding: 16px;
+  background: #ffffff;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 #ai-chat-input {
-  flex: 1;
-  height: 48px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
-  padding: 0 60px 0 20px;
-  color: white;
+  width: 100%;
+  height: 54px;
+  background: #f8fafc;
+  border: 1px solid rgba(24, 119, 242, 0.2);
+  border-radius: 27px;
+  padding: 14px 54px 14px 20px; /* Padding vertical para centrar el inicio */
+  color: #050720 !important;
   outline: none;
   font-size: 0.9375rem;
+  line-height: 1.4;
   opacity: 0;
   transition: all 0.4s ease;
+  resize: none;
+  display: block;
+  overflow-y: auto; /* Permitir scroll si hay mucho texto */
+  scrollbar-width: none;
+}
+
+#ai-chat-input::-webkit-scrollbar {
+  display: none;
+}
+
+#ai-chat-input::placeholder {
+  color: #94a3b8;
 }
 
 #ai-copilot-container.ai-open #ai-chat-input {
   opacity: 1;
 }
 
-#ai-copilot-container.ai-closed #ai-chat-window {
-  border: none !important;
-  box-shadow: none !important;
-}
-
+/* Botón de Acción (Ajustado al nuevo cuadro fino) */
 #ai-copilot-fab {
   position: absolute;
-  right: 12px;
-  width: 48px;
-  height: 48px;
+  right: 21px; /* Ajustado para estar centrado en el lateral */
+  bottom: 21px;
+  width: 38px; /* Ligeramente más pequeño para el cuadro fino */
+  height: 38px;
   border-radius: 50%;
   border: 0 !important;
   outline: 0 !important;
-  box-shadow: none !important;
-  background: linear-gradient(135deg, var(--premium-berry) 0%, var(--premium-azure) 100%);
+  background: var(--aqua);
   color: #fff;
   cursor: pointer;
   display: flex;
@@ -2128,20 +2172,21 @@ body.miperfil-active {
   justify-content: center;
   transition: all 0.5s ease;
   z-index: 10;
-  -webkit-appearance: none;
+  box-shadow: 0 4px 10px rgba(24, 119, 242, 0.2);
 }
 
 #ai-copilot-container.ai-closed #ai-copilot-fab {
   right: 0;
+  bottom: 0px;
   width: 64px;
   height: 64px;
   background: linear-gradient(135deg, var(--premium-berry) 0%, var(--premium-azure) 100%);
-  box-shadow: 0 10px 25px rgba(223, 28, 68, 0.4) !important;
+  box-shadow: 0 10px 25px rgba(223, 28, 68, 0.3) !important;
 }
 
-#ai-copilot-fab:focus, #ai-copilot-fab:active {
-  outline: 0 !important;
-  border: 0 !important;
+#ai-copilot-container.ai-closed #ai-chat-window {
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* Conversión de Iconos (Scale + Opacity) */

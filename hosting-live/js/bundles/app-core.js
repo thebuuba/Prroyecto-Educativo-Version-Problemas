@@ -180,6 +180,9 @@ function debugAuthFlow(event, payload = {}) {
     console.info(`[EduGest][auth-debug] ${event}`, payload);
   } catch (_) {}
 }
+/**
+ * Catálogo Curricular y Temas.
+ */
 const EDUCATION_SECTIONS = ['Inicial', 'Primaria', 'Secundaria'];
 const EDUCATION_THEME_CLASS_BY_SECTION = {
   Inicial: 'edu-level-inicial',
@@ -495,7 +498,6 @@ async function hydrate(options = {}) {
         studentsCount: S.estudiantes.length,
         activeCourseId: S.activeCourseId,
         activePeriodId: S.activePeriodId,
-        utf8RepairApplied: changed,
         storageHadMojibake: storageHasMojibake
       });
     } else if (skipRootState) {
@@ -569,7 +571,7 @@ const PAGE = {
   dashboard:   {t:'Inicio',            s:()=> '',
                  a:()=>renderYearPeriodSelector()},
   estudiantes: {t:'Estudiantes',              s:()=>`${studentsInGroup(S.activeGroupId).length} estudiantes en ${getGroupLabel(S.activeGroupId)} - ${periodName()}`,
-                 a:()=>withGroupSelector(`<button class="btn btn-outline btn-sm" onclick="openM('m-grade')">+ Grado</button><button class="btn btn-outline btn-sm" onclick="openSecM()">+ Sección</button><button class="btn btn-outline btn-sm" onclick="openBulkEstM()">Carga masiva</button><button class="btn btn-primary btn-sm" onclick="openEstM()">+ Estudiante</button>`)},
+                 a:()=>withGroupSelector(`<button class="btn btn-outline btn-sm" onclick="go('grade-setup')">+ Grado</button><button class="btn btn-outline btn-sm" onclick="openSecM()">+ Sección</button><button class="btn btn-outline btn-sm" onclick="openBulkEstM()">Carga masiva</button><button class="btn btn-primary btn-sm" onclick="openEstM()">+ Estudiante</button>`)},
   actividades: {t:'Actividades',              s:()=> ACT_VIEW_MODE==='config' ? `Configura bloques, actividades y puntos por grupo - ${periodName()}` : `${totalActs()} actividades configuradas en 4 bloques - ${periodName()}`,
                  a:()=>withGroupSelector(`<button class="btn btn-primary btn-sm" onclick="openM('m-act')">+ Actividad suelta</button>`)},
   config:      {t:'Configuración de actividades', s:()=>`Flexibilidad total - puntos y actividades por bloque - ${periodName()}`,
@@ -5903,20 +5905,14 @@ function applySqlAcademicSnapshot(snapshot = {}) {
 }
 // Cierra la sesión de autenticación y limpia la navegación para volver al acceso.
 async function logoutAuth() {
-  let cloudLogoutError = null;
   try {
-    stopCloudStateSync();
-    if (canUseCloudAuth()) {
-      try {
-        await window.EduGestCloud.logout();
-      } catch (error) {
-        cloudLogoutError = error;
-        console.warn('[EduGest][auth] No se pudo cerrar la sesion remota', error);
-      }
+    if (typeof stopCloudStateSync === 'function') stopCloudStateSync();
+    if (typeof window.EduGestCloud?.logout === 'function') {
+      await window.EduGestCloud.logout();
     }
   } catch (error) {
-    cloudLogoutError = cloudLogoutError || error;
-    console.warn('[EduGest][auth] Error durante el cierre de sesion', error);
+    console.error('[EduGest][auth] Cloud logout failed:', error);
+    // No detenemos el logout local por un fallo en la nube
   }
 
   replaceState();
@@ -5933,9 +5929,6 @@ async function logoutAuth() {
   setAuthMode('login');
   applyEducationSectionTheme('');
   go('dashboard');
-  if (cloudLogoutError) {
-    console.warn('[EduGest][auth] La sesion local se cerro aunque fallo el cierre remoto', cloudLogoutError);
-  }
   toast('Sesión cerrada');
 }
 // Cancela el flujo de configuración inicial y vuelve al registro o al acceso según corresponda.
@@ -6065,15 +6058,29 @@ function buildProfileFullName(firstName = '', lastName = '') {
 // Comprueba si el perfil ya tiene los datos mínimos para entrar al panel sin pasar por setup.
 function isProfileSetupComplete(profile = S.profile) {
   const data = profile && typeof profile === 'object' ? profile : {};
-  const firstName = String(data.firstName || '').trim();
-  const lastName = String(data.lastName || '').trim();
-  const name = String(data.name || buildProfileFullName(firstName, lastName) || S.sessionUserName || '').trim();
-  const phone = normalizePhoneValue(data.phone || '');
+  let firstName = String(data.firstName || '').trim();
+  let lastName = String(data.lastName || '').trim();
+  
+  // Retrocompatibilidad: Si existen perfiles antiguos que solo tienen 'name'
+  const legacyName = String(data.name || S.sessionUserName || '').trim();
+  if (legacyName && !firstName && !lastName) {
+    const parts = legacyName.split(' ');
+    firstName = parts[0] || '';
+    lastName = parts.slice(1).join(' ') || '';
+    // Auto-migrar en memoria para evitar fallos futuros
+    if (profile === S.profile) {
+      S.profile.firstName = firstName;
+      S.profile.lastName = lastName;
+    }
+  }
+
+  const name = String(data.name || buildProfileFullName(firstName, lastName) || legacyName).trim();
   const role = String(data.role || '').trim();
   const inst = String(data.inst || '').trim();
-  const year = String(data.year || S.schoolYear?.name || '').trim();
-  const period = String(data.period || '').trim();
-  return !!name && (!!firstName || !!lastName) && phoneHasValidDigits(phone) && !!role && !!inst && !!year && !!period;
+  
+  // No bloqueamos por teléfono, año o periodo, ya que son datos que se pueden completar después.
+  // Solo requerimos nombre, rol e institución para entrar al dashboard.
+  return !!name && (!!firstName || !!lastName) && !!role && !!inst;
 }
 // Indica si la cuenta sigue obligada a terminar el setup de perfil.
 function requiresProfileSetupCompletion() {
@@ -7532,7 +7539,7 @@ function fillSel(id, arr, valFn, lblFn, sel, ph) {
 }
 // Abre abrir sec m.
 function openSecM(gradeId=null) {
-  if (getSortedGrades().length===0) { toast('Crea un grado primero', true); openM('m-grade'); return; }
+  if (getSortedGrades().length===0) { toast('Crea un grado primero', true); go('grade-setup'); return; }
   openM('m-sec', {gradeId});
 }
 // Obtiene grupos.
@@ -8911,6 +8918,7 @@ async function saveSetup() {
     role,
     inst,
     year,
+    email: S.profile?.email || (S.sessionUserName && S.sessionUserName.includes('@') ? S.sessionUserName : ''),
     period: periodName(pid),
     educationSection: finalEducationSection || '',
     educationSections: finalEducationSections,
@@ -9545,6 +9553,7 @@ async function saveGrade() {
   go('estudiantes');
   toast('Grado creado con su configuración académica inicial');
 }
+window.saveGrade = saveGrade;
 // Abre el flujo guiado para crear un curso inicial.
 function openOnboardingCreateCourseFlow() {
   go('estudiantes', { animatePanelTransition: true });
@@ -9552,7 +9561,7 @@ function openOnboardingCreateCourseFlow() {
     forceCloseM('m-student-add-mode');
     forceCloseM('m-est');
     forceCloseM('m-est-bulk');
-    openM('m-grade');
+    go('grade-setup');
   }, 120);
 }
 // Abre el modal para elegir cómo agregar estudiantes.
@@ -11745,6 +11754,35 @@ async function hydrateCloudStateForUser(user) {
   else replaceState();
 
   applySessionUser(user);
+
+  // Intenta recuperar el perfil desde SQL si está vacío (ej. nuevo dispositivo o limpieza de cache)
+  if ((!S.profile || !S.profile.inst) && window.AulaBaseSqlApi?.isEnabled?.()) {
+    try {
+      const targetEmail = String(user?.email || S.sessionUserName || '').trim().toLowerCase();
+      if (targetEmail) {
+        const result = await window.AulaBaseSqlApi.syncProfile({ email: targetEmail, firebaseUid: user?.id || '' });
+        if (result && result.user) {
+          if (!S.profile) S.profile = {};
+          S.profile.name = String(result.user.display_name || result.user.displayName || S.profile.name || '').trim();
+          S.profile.firstName = String(result.user.first_name || result.user.firstName || S.profile.firstName || '').trim();
+          S.profile.lastName = String(result.user.last_name || result.user.lastName || S.profile.lastName || '').trim();
+          S.profile.phone = String(result.user.phone || S.profile.phone || '').trim();
+          S.profile.role = String(result.user.role || S.profile.role || 'Docente').trim();
+          S.profile.year = String(result.user.academic_year || result.user.academicYear || S.profile.year || '').trim();
+          if (result.school && result.school.name) {
+            S.profile.inst = String(result.school.name || '').trim();
+          }
+          // Compatibilidad: Separar nombre si no vinieron campos first/last name
+          if (S.profile.name && !S.profile.firstName && !S.profile.lastName) {
+            const parts = S.profile.name.split(' ');
+            S.profile.firstName = parts[0] || '';
+            S.profile.lastName = parts.slice(1).join(' ') || '';
+          }
+        }
+      }
+    } catch (_) {}
+  }
+
   await hydrateSqlStateBlocksForActiveUser();
   await hydrateSqlAcademicSnapshotForActiveUser();
   cloudStateHydrated = true;
@@ -14908,6 +14946,11 @@ async function cancelPendingDeviceVerification() {
 function finishAuthSession(user, options = {}) {
   const { openSetup = false, isNewAccount = false } = options;
   applySessionUser(user);
+  // Sync the authenticated user's email into S.profile so the settings panel can display it.
+  if (user?.email) {
+    if (!S.profile || typeof S.profile !== 'object') S.profile = {};
+    if (!S.profile.email) S.profile.email = user.email;
+  }
   ensureIndividualLicenseModel();
   debugAuthFlow('session:finish', {
     uid: user?.id || null,
@@ -14930,12 +14973,14 @@ function finishAuthSession(user, options = {}) {
   }
   if (openSetup) {
     closeM('m-auth');
-    openM('m-setup', { fromAuth: true });
-    // Failsafe: keep the mandatory order profile -> education level.
-    window.setTimeout(() => {
-      if (requiresProfileSetupCompletion()) openM('m-setup', { fromAuth: true });
-      else if (requiresEducationSectionSelection()) openEducationSectionSetup({ fromAuth: true });
-    }, 260);
+    if (requiresProfileSetupCompletion()) {
+      openM('m-setup', { fromAuth: true });
+    } else if (requiresEducationSectionSelection()) {
+      openEducationSectionSetup({ fromAuth: true });
+    } else {
+      go('dashboard');
+      updateSBUser();
+    }
   } else {
     TERMS_ACCEPTANCE_FLOW.openSetupAfterAccept = false;
     TERMS_ACCEPTANCE_FLOW.revokeOnDecline = false;
@@ -14949,8 +14994,9 @@ function finishAuthSession(user, options = {}) {
 // Decide si, tras autenticarse, la cuenta debe completar perfil o seccion educativa antes de entrar al panel.
 function shouldOpenSetupAfterAuth() {
   const profile = S.profile && typeof S.profile === 'object' ? S.profile : {};
-  const educationSections = normalizeEducationSections(profile.educationSections || profile.educationSection || '');
-  return educationSections.length === 0 || !isProfileSetupComplete(profile);
+  // Relaxed: if the profile is complete (Name, Role, Inst), we don't force the setup modal.
+  // We only force it if the core profile is missing or if they TRULY have no education section and we need one.
+  return !isProfileSetupComplete(profile);
 }
 // Ejecuta el registro completo: valida campos, crea cuenta en Firebase o local y abre el onboarding requerido.
 async function registerAuth() {
@@ -15275,4 +15321,7 @@ Object.assign(window, {
   registerAuth,
   authWithProvider,
   handleForgotPassword,
+  logoutAuth,
+  saveGrade,
 });
+

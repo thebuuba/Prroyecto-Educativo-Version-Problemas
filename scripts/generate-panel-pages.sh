@@ -9,7 +9,10 @@ if [ ! -f "$INDEX_FILE" ]; then
   exit 1
 fi
 
-APP_VERSION=$(sed -n 's#.*<script src="/js/page-entry/root.js?v=\([^"]*\)".*#\1#p' "$INDEX_FILE" | head -n 1)
+APP_VERSION=$(sed -n 's#.*<script[^>]*src="/js/page-entry/root.js?v=\([^"]*\)".*#\1#p' "$INDEX_FILE" | head -n 1)
+if [ -z "${APP_VERSION:-}" ]; then
+  APP_VERSION=$(sed -n 's#.*<script[^>]*src="/js/config.js?v=\([^"]*\)".*#\1#p' "$INDEX_FILE" | head -n 1)
+fi
 if [ -z "${APP_VERSION:-}" ]; then
   APP_VERSION=$(sed -n 's#.*<script src="/app.js?v=\([^"]*\)".*#\1#p' "$INDEX_FILE" | head -n 1)
 fi
@@ -75,6 +78,8 @@ echo "$ROUTES" | while IFS='|' read -r route panel bundle title; do
   mkdir -p "$TARGET_DIR/$route"
   sed \
     -e "s#<title>AulaBase</title>#<title>AulaBase - $title</title>#g" \
+    -e "s#<script type=\"module\" src=\"/js/page-entry/root.js\"></script>#<script type=\"module\" src=\"/js/page-entry/$route.js?v=$APP_VERSION\"></script>#g" \
+    -e "s#<script type=\"module\" src=\"/js/page-entry/root.js?v=[^\"]*\"></script>#<script type=\"module\" src=\"/js/page-entry/$route.js?v=$APP_VERSION\"></script>#g" \
     -e "s#<script src=\"/js/page-entry/root.js?v=[^\"]*\" defer></script>#<script src=\"/js/page-entry/$route.js?v=$APP_VERSION\" defer></script>#g" \
     -e "s#<script src=\"/app.js?v=[^\"]*\" defer></script>#<script src=\"/js/page-entry/$route.js?v=$APP_VERSION\" defer></script>#g" \
     "$INDEX_FILE" > "$TARGET_DIR/$route/index.html"

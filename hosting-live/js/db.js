@@ -75,7 +75,7 @@
       }
     } catch (_) {}
 
-    // Fallback: legacy IndexedDB mirror.
+    // Fallback: IndexedDB legacy mirror.
     const fromDb = await readIndexedDb(storageKey);
     if (typeof fromDb === 'string' && fromDb) {
       try {

@@ -8,7 +8,7 @@ LEGACY_PUBLIC_DIR="$LEGACY_DIR/public"
 LEGACY_ASSETS_DIR="$LEGACY_PUBLIC_DIR/assets"
 ROOT_PUBLIC_ASSETS_DIR="$ROOT_DIR/public/assets"
 
-for file in "$ROOT_DIR/index.html" "$ROOT_DIR/app.js" "$ROOT_DIR/styles.css" "$ROOT_DIR/terminos.html" "$ROOT_DIR/privacidad.html"; do
+for file in "$ROOT_DIR/index.html" "$ROOT_DIR/styles.css" "$ROOT_DIR/terminos.html" "$ROOT_DIR/privacidad.html"; do
   if [ ! -f "$file" ]; then
     echo "Error: falta el artefacto requerido $file." >&2
     exit 1
@@ -26,7 +26,6 @@ mkdir -p "$HOSTING_DIR/assets" "$HOSTING_DIR/js" "$HOSTING_DIR/styles"
 rm -rf "$LEGACY_DIR/dist" "$HOSTING_DIR/legacy/dist"
 
 cp -f "$ROOT_DIR/index.html" "$LEGACY_DIR/index.html"
-cp -f "$ROOT_DIR/app.js" "$LEGACY_DIR/app.js"
 cp -f "$ROOT_DIR/styles.css" "$LEGACY_DIR/styles.css"
 cp -f "$ROOT_DIR/terminos.html" "$LEGACY_DIR/terminos.html"
 cp -f "$ROOT_DIR/privacidad.html" "$LEGACY_DIR/privacidad.html"
@@ -36,7 +35,6 @@ rsync -a --delete "$ROOT_PUBLIC_ASSETS_DIR/" "$LEGACY_ASSETS_DIR/"
 "$ROOT_DIR/scripts/generate-panel-pages.sh" "$LEGACY_DIR"
 
 cp -f "$ROOT_DIR/index.html" "$HOSTING_DIR/index.html"
-cp -f "$ROOT_DIR/app.js" "$HOSTING_DIR/app.js"
 cp -f "$ROOT_DIR/styles.css" "$HOSTING_DIR/styles.css"
 cp -f "$ROOT_DIR/terminos.html" "$HOSTING_DIR/terminos.html"
 cp -f "$ROOT_DIR/privacidad.html" "$HOSTING_DIR/privacidad.html"

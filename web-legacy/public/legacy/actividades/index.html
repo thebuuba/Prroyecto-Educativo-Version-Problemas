@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=20260331k">
+<link rel="stylesheet" href="/styles.css">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
         tailwind.config = {
@@ -32,31 +32,31 @@
                         "surface-container-lowest": "#ffffff",
                         "on-tertiary": "#f9f8ff",
                         "outline": "#717c84",
-                        "on-primary-fixed-variant": "#575976",
+                        "on-primary-fixed-variant": "#003d85",
                         "tertiary-dim": "#48536b",
                         "on-background": "#29343a",
                         "on-secondary": "#f9f8ff",
-                        "on-primary-container": "#4d506c",
+                        "on-primary-container": "#002a5c",
                         "surface-container-high": "#e1e9f0",
-                        "primary-container": "#dfe0ff",
+                        "primary-container": "#dce8ff",
                         "surface-bright": "#f7f9fc",
                         "on-secondary-fixed-variant": "#0058bb",
-                        "on-primary-fixed": "#3b3d59",
+                        "on-primary-fixed": "#001d3d",
                         "tertiary-fixed-dim": "#c7d1ee",
                         "surface-container-low": "#f0f4f8",
                         "tertiary-fixed": "#d5dffd",
                         "surface-container": "#e8eff4",
-                        "on-primary": "#f9f6ff",
-                        "primary": "#5a5c79",
+                        "on-primary": "#ffffff",
+                        "primary": "#1877F2",
                         "inverse-on-surface": "#9a9da0",
                         "secondary-fixed": "#d8e2ff",
                         "on-surface": "#29343a",
-                        "primary-dim": "#4e506d",
+                        "primary-dim": "#005bc2",
                         "on-tertiary-container": "#455068",
                         "error-dim": "#4f0116",
                         "error": "#9e3f4e",
-                        "secondary": "#005bc2",
-                        "primary-fixed-dim": "#d1d2f4",
+                        "secondary": "#050720",
+                        "primary-fixed-dim": "#b3d1ff",
                         "on-tertiary-fixed-variant": "#4f5a72",
                         "tertiary": "#545f78",
                         "on-surface-variant": "#566168",
@@ -67,7 +67,7 @@
                         "outline-variant": "#a8b3bb",
                         "tertiary-container": "#d5dffd",
                         "on-secondary-fixed": "#003d85",
-                        "surface-tint": "#5a5c79",
+                        "surface-tint": "#1877F2",
                         "secondary-container": "#d8e2ff",
                         "on-error": "#fff7f7",
                         "on-secondary-container": "#004ea8",
@@ -103,6 +103,13 @@
 
     window.addEventListener('error', (event) => {
       const message = event?.error?.message || event?.message || 'error no controlado';
+      // Ignorar advertencias transitorias de navegación o de carga de módulos en modo dev (Vite)
+      if (message.includes('import statement') || message.includes('Unexpected token') || message.includes('module')) {
+        if (window.console && window.console.debug) {
+          window.console.debug('[AulaBase][boot] Error de parseo ignorado en fallback:', message);
+        }
+        return;
+      }
       hideBootSplash(message);
     });
 
@@ -157,11 +164,6 @@
 <nav id="sb" aria-label="Navegación principal">
   <div class="sb-shell">
     <div class="sb-brand">
-      <button class="sb-pin-toggle" id="sb-pin-toggle" type="button" aria-label="Fijar barra lateral" title="Fijar barra lateral" aria-pressed="false">
-        <span class="sb-pin-bars" aria-hidden="true">
-          <span></span><span></span><span></span>
-        </span>
-      </button>
     </div>
 
     <div id="sb-period-controls"></div>
@@ -218,14 +220,6 @@
         <span class="sb-link-label">Instrumentos</span>
       </button>
 
-      <button class="sb-link" data-p="calendario" type="button" aria-label="Calendario Docente" title="Calendario Docente">
-        <span class="sb-ico" aria-hidden="true">
-          <svg viewBox="0 0 24 24">
-            <path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1.5A2.5 2.5 0 0 1 22 6.5v12A2.5 2.5 0 0 1 19.5 21h-15A2.5 2.5 0 0 1 2 18.5v-12A2.5 2.5 0 0 1 4.5 4H6V3a1 1 0 0 1 1-1Zm12.5 8h-15v8.5a.5.5 0 0 0 .5.5h14a.5.5 0 0 0 .5-.5V10ZM6 6H4.5a.5.5 0 0 0-.5.5V8h16V6.5a.5.5 0 0 0-.5-.5H18v1a1 1 0 1 1-2 0V6H8v1a1 1 0 1 1-2 0V6Zm1.5 6.25h2.25a.75.75 0 0 1 0 1.5H7.5a.75.75 0 0 1 0-1.5Zm0 3.5h4.75a.75.75 0 0 1 0 1.5H7.5a.75.75 0 0 1 0-1.5Zm7-3.5h2a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5Z"/>
-          </svg>
-        </span>
-        <span class="sb-link-label">Calendario Docente</span>
-      </button>
       <button class="sb-link" data-p="planificaciones" type="button" aria-label="Planificaciones" title="Planificaciones">
         <span class="sb-ico" aria-hidden="true">
           <svg viewBox="0 0 24 24">
@@ -242,24 +236,16 @@
         <span class="sb-link-label">Registro de Asistencia</span>
       </button>
 
-      <button class="sb-link" id="sb-settings-open" data-p="settings" type="button" aria-label="Configuración" title="Configuración">
+      <button class="sb-link" data-p="settings" type="button" aria-label="Configuración" title="Configuración">
         <span class="sb-ico" aria-hidden="true">
           <img src="/assets/icons/ajustes.png" alt="" width="20" height="20" decoding="async">
         </span>
         <span class="sb-link-label">Configuración</span>
       </button>
-
     </div>
 
     <div class="sb-footer">
-      <button class="sb-utility" id="sb-dark-toggle" type="button" aria-label="Modo oscuro" title="Modo oscuro" aria-pressed="false">
-        <span class="sb-ico" aria-hidden="true">
-          <img id="sb-dark-icon" src="/assets/icons/modooscuro.png" alt="" width="20" height="20" decoding="async">
-        </span>
-        <span class="sb-link-label">Modo oscuro</span>
-        <span class="sb-utility-state" id="sb-dark-state">OFF</span>
-      </button>
-      <button class="sb-logout-compact" id="sb-logout-compact" type="button" onclick="logoutAuth()" aria-label="Cerrar sesi&oacute;n" title="Cerrar sesi&oacute;n">
+      <button class="sb-link sb-logout-btn" id="sb-logout-compact" type="button" onclick="logoutAuth()" aria-label="Cerrar sesión" title="Cerrar sesión">
         <span class="sb-ico" aria-hidden="true">
           <img class="sb-logout-icon" src="/assets/icons/logout.svg" alt="" width="20" height="20" decoding="async">
         </span>
@@ -476,11 +462,11 @@
               </div>
             </div>
         </div>
+        <div class="auth-switch-row">
+          <span class="auth-switch-copy" id="auth-switch-copy">¿No tienes una cuenta?</span>
+          <button class="auth-inline-link auth-switch-link" id="auth-switch-link" type="button">Regístrate</button>
+        </div>
       </div>
-    </div>
-    <div class="auth-switch-row">
-      <span class="auth-switch-copy" id="auth-switch-copy">¿No tienes una cuenta?</span>
-      <button class="auth-inline-link auth-switch-link" id="auth-switch-link" type="button" onclick="handleAuthRegisterTab()">Regístrate</button>
     </div>
     <div class="auth-footer-marks" aria-hidden="true">
       <span class="auth-footer-mark auth-footer-mark-muted">1</span>
@@ -1223,11 +1209,45 @@ Carlos D&iacute;az 0000034"></textarea>
 </div>
 <!-- Runtime compartido: toast global y scripts que inicializan datos, auth, SQL y entrypoint de la app. -->
 <div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
-<script src="/js/config.js?v=20260405i" defer></script>
-<script src="/js/db.js?v=20260405i" defer></script>
-<script src="/js/firebase-config.js?v=20260405i" defer></script>
-<script src="/js/cloud.js?v=20260405i" defer></script>
-<script src="/js/sql-api.js?v=20260405i" defer></script>
-<script src="/js/page-entry/actividades.js?v=20260405i" defer></script>
+<script type="module" src="/js/config.js?v=20260405i"></script>
+<script type="module" src="/js/db.js?v=20260405i"></script>
+<script type="module" src="/js/firebase-config.js?v=20260405i"></script>
+<script type="module" src="/js/cloud.js?v=20260405i"></script>
+<script type="module" src="/js/sql-api.js?v=20260405i"></script>
+<script type="module" src="/js/page-entry/actividades.js?v=20260405i"></script>
+
+<!-- EduGest AI Copilot Container -->
+<div id="ai-copilot-container" class="ai-closed">
+  <!-- Ventana de Chat Unificada (Todo en una pieza) -->
+  <div id="ai-chat-window">
+    <div class="ai-chat-header">
+      <div class="ai-header-dot"></div>
+      <span>EduGest AI Copilot</span>
+    </div>
+    <div class="ai-chat-messages" id="ai-chat-messages">
+      <div class="ai-message ai-bot">
+        ¡Hola! Soy tu asistente de EduGest. ¿En qué puedo ayudarte hoy?
+      </div>
+    </div>
+    
+    <!-- Barra de Acción Integrada -->
+    <div class="ai-chat-input-area">
+      <textarea id="ai-chat-input" placeholder="Escribe un comando..." autocomplete="off" rows="1"></textarea>
+      <button id="ai-copilot-fab" type="button" aria-label="EduGest AI Copilot" title="EduGest AI Copilot">
+        <span class="ai-fab-icon" id="ai-fab-icon">
+          <svg class="icon-sparkles" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3L14.5 9L21 12L14.5 15L12 21L9.5 15L3 12L9.5 9L12 3Z" fill="white"/>
+            <path d="M5 5L6 7L8 8L6 9L5 11L4 9L2 8L4 7L5 5Z" fill="white" opacity="0.6"/>
+            <path d="M19 16L20 18L22 19L20 20L19 22L18 20L16 19L18 18L19 16Z" fill="white" opacity="0.6"/>
+          </svg>
+          <svg class="icon-send" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

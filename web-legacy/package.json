@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run prepare:hosting-live && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "prepare:hosting-live": "sh ../scripts/prepare-hosting-live.sh",

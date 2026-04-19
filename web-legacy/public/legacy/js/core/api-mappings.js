@@ -150,18 +150,25 @@ export async function syncSqlEvaluationUpsert(evaluation, meta = {}) {
     activity = found?.activity || null;
   }
   if (activity?.id) {
-    await syncSqlActivityCreateOrUpdate(activity, {
+    const activityForSql = activity.sqlId ? { ...activity, id: activity.sqlId } : activity;
+    const syncedActivity = await syncSqlActivityCreateOrUpdate(activityForSql, {
       schoolId: context.schoolId,
       sectionId,
       periodId: String(meta.periodId || evaluation?.periodId || S.activePeriodId || 'P1').trim() || 'P1',
       blockKey: meta.blockKey || null,
     });
+    if (syncedActivity?.id) {
+      if (activity && !activity.sqlId) activity.sqlId = syncedActivity.id;
+      activity = syncedActivity;
+    }
   }
+  const sqlActivityId = String(activity?.sqlId || activity?.id || evaluation?.activityId || '').trim();
   const payload = mapEvaluationToSqlPayload(evaluation, {
     schoolId: context.schoolId,
     sectionId,
     activity,
   });
+  if (sqlActivityId) payload.activityId = sqlActivityId;
   if (!payload.activityId || !payload.studentId) return null;
   return window.AulaBaseSqlApi.upsertEvaluations(payload);
 }

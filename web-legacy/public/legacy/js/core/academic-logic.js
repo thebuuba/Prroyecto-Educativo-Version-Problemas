@@ -202,5 +202,14 @@ export function upsertLocalEvaluationRecord(payload) {
   if (!S.notasByPeriod[periodId][next.studentId]) S.notasByPeriod[periodId][next.studentId] = {};
   S.notasByPeriod[periodId][next.studentId][next.activityId] = next.activityScore;
 
+  if (typeof window.syncSqlEvaluationUpsert === 'function') {
+    window.syncSqlEvaluationUpsert(next, {
+      sectionId: next.groupId || next.courseId || S.activeGroupId || '',
+      periodId,
+    }).catch((error) => {
+      console.warn('[EduGest][sql] No se pudo sincronizar la evaluación con SQL', error);
+    });
+  }
+
   return next;
 }

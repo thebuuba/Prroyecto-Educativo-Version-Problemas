@@ -9,35 +9,64 @@ function badRequest(message) {
   return error;
 }
 
+async function resolveSchoolForUser(client, input = {}, userId) {
+  if (userId) {
+    const membershipResult = await client.query(
+      `SELECT s.id, s.name, s.academic_year, s.timezone
+       FROM school_memberships sm
+       INNER JOIN schools s ON s.id = sm.school_id
+       WHERE sm.user_id = $1
+         AND sm.status = 'active'
+       ORDER BY sm.created_at ASC
+       LIMIT 1`,
+      [userId]
+    );
+    if (membershipResult.rows[0]) return membershipResult.rows[0];
+  }
+
+  const explicitSchoolId = String(input.schoolId || '').trim();
+  if (explicitSchoolId) {
+    const schoolById = await client.query(
+      `SELECT id, name, academic_year, timezone
+       FROM schools
+       WHERE id = $1
+       LIMIT 1`,
+      [explicitSchoolId]
+    );
+    if (schoolById.rows[0]) return schoolById.rows[0];
+  }
+
+  const schoolName = String(input.schoolName || '').trim();
+  if (!schoolName) throw badRequest('La institución es obligatoria.');
+
+  const academicYear = String(input.academicYear || '').trim() || null;
+  const timezone = String(input.timezone || '').trim() || 'America/Santo_Domingo';
+  const schoolResult = await client.query(
+    `INSERT INTO schools (name, academic_year, timezone)
+     VALUES ($1, $2, $3)
+     ON CONFLICT (name) DO UPDATE
+     SET academic_year = COALESCE(EXCLUDED.academic_year, schools.academic_year),
+         timezone = COALESCE(EXCLUDED.timezone, schools.timezone),
+         updated_at = NOW()
+     RETURNING id, name, academic_year, timezone`,
+    [schoolName, academicYear, timezone]
+  );
+
+  return schoolResult.rows[0];
+}
+
 router.post('/profile', async (req, res, next) => {
   try {
     const email = String(req.body?.email || '').trim().toLowerCase();
     const displayName = String(req.body?.displayName || '').trim();
     const phone = String(req.body?.phone || '').trim() || null;
     const firebaseUid = String(req.body?.firebaseUid || '').trim() || null;
-    const schoolName = String(req.body?.schoolName || '').trim();
-    const academicYear = String(req.body?.academicYear || '').trim() || null;
-    const timezone = String(req.body?.timezone || '').trim() || 'America/Santo_Domingo';
     const role = String(req.body?.role || '').trim() || 'teacher';
 
     if (!email) throw badRequest('El correo es obligatorio.');
     if (!displayName) throw badRequest('El nombre es obligatorio.');
-    if (!schoolName) throw badRequest('La institución es obligatoria.');
 
     const result = await withTransaction(async (client) => {
-      const schoolResult = await client.query(
-        `INSERT INTO schools (name, academic_year, timezone)
-         VALUES ($1, $2, $3)
-         ON CONFLICT (name) DO UPDATE
-         SET academic_year = COALESCE(EXCLUDED.academic_year, schools.academic_year),
-             timezone = COALESCE(EXCLUDED.timezone, schools.timezone),
-             updated_at = NOW()
-         RETURNING id, name, academic_year, timezone`,
-        [schoolName, academicYear, timezone]
-      );
-
-      const school = schoolResult.rows[0];
-
       const userLookup = firebaseUid
         ? await client.query(
             `SELECT id FROM users WHERE firebase_uid = $1 OR email = $2 LIMIT 1`,
@@ -71,6 +100,8 @@ router.post('/profile', async (req, res, next) => {
         );
         user = inserted.rows[0];
       }
+
+      const school = await resolveSchoolForUser(client, req.body || {}, user.id);
 
       await client.query(
         `INSERT INTO school_memberships (school_id, user_id, role)

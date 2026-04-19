@@ -10,21 +10,38 @@ function badRequest(message) {
   return error;
 }
 
-async function ensureWorkspaceContext(client, input = {}) {
-  const email = String(input.email || '').trim().toLowerCase();
-  const schoolName = String(input.schoolName || '').trim();
-  const firebaseUid = String(input.firebaseUid || '').trim() || null;
-  const displayNameInput = String(input.displayName || '').trim();
-  const displayName = displayNameInput || email.split('@')[0] || 'Usuario AulaBase';
-  const phoneInput = String(input.phone || '').trim();
-  const phone = phoneInput || null;
-  const academicYear = String(input.academicYear || '').trim() || null;
-  const timezone = String(input.timezone || '').trim() || 'America/Santo_Domingo';
-  const role = String(input.role || '').trim() || 'teacher';
+async function resolveSchoolForUser(client, input = {}, userId) {
+  if (userId) {
+    const membershipResult = await client.query(
+      `SELECT s.id, s.name, s.academic_year, s.timezone
+       FROM school_memberships sm
+       INNER JOIN schools s ON s.id = sm.school_id
+       WHERE sm.user_id = $1
+         AND sm.status = 'active'
+       ORDER BY sm.created_at ASC
+       LIMIT 1`,
+      [userId]
+    );
+    if (membershipResult.rows[0]) return membershipResult.rows[0];
+  }
 
-  if (!email) throw badRequest('El correo es obligatorio.');
+  const explicitSchoolId = String(input.schoolId || '').trim();
+  if (explicitSchoolId) {
+    const schoolById = await client.query(
+      `SELECT id, name, academic_year, timezone
+       FROM schools
+       WHERE id = $1
+       LIMIT 1`,
+      [explicitSchoolId]
+    );
+    if (schoolById.rows[0]) return schoolById.rows[0];
+  }
+
+  const schoolName = String(input.schoolName || '').trim();
   if (!schoolName) throw badRequest('La institución es obligatoria.');
 
+  const academicYear = String(input.academicYear || '').trim() || null;
+  const timezone = String(input.timezone || '').trim() || 'America/Santo_Domingo';
   const schoolResult = await client.query(
     `INSERT INTO schools (name, academic_year, timezone)
      VALUES ($1, $2, $3)
@@ -35,7 +52,20 @@ async function ensureWorkspaceContext(client, input = {}) {
      RETURNING id, name, academic_year, timezone`,
     [schoolName, academicYear, timezone]
   );
-  const school = schoolResult.rows[0];
+
+  return schoolResult.rows[0];
+}
+
+async function ensureWorkspaceContext(client, input = {}) {
+  const email = String(input.email || '').trim().toLowerCase();
+  const firebaseUid = String(input.firebaseUid || '').trim() || null;
+  const displayNameInput = String(input.displayName || '').trim();
+  const displayName = displayNameInput || email.split('@')[0] || 'Usuario AulaBase';
+  const phoneInput = String(input.phone || '').trim();
+  const phone = phoneInput || null;
+  const role = String(input.role || '').trim() || 'teacher';
+
+  if (!email) throw badRequest('El correo es obligatorio.');
 
   const userLookup = firebaseUid
     ? await client.query(
@@ -76,6 +106,8 @@ async function ensureWorkspaceContext(client, input = {}) {
     );
     user = inserted.rows[0];
   }
+
+  const school = await resolveSchoolForUser(client, input, user.id);
 
   await client.query(
     `INSERT INTO school_memberships (school_id, user_id, role)

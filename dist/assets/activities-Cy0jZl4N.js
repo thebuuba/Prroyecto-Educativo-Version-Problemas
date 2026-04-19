@@ -1,4 +1,4 @@
-import{S as i,p as u,g as m,c as v,m as I,u as z,A as H,o as j,q as B,r as k,v as h,w as $,x as y,y as E,s as V,B as p,z as N,k as S,d as P,C as R}from"./main-BIxmY14D.js";function T(){window.setActView=t=>{i.activityViewMode=["blocks","matrix","config"].includes(t)?t:"blocks",u(),m("actividades")},window.updateBlockMeta=(t,a)=>{const s=parseFloat(a)||100;v(i.activeGroupId)[t].meta=s,u(),m("actividades")},window.handleActNameInput=(t,a,s)=>{const o=I(a);o&&(o.activity.name=s.value),u()},window.updateActPts=(t,a,s)=>{const o=parseFloat(s)||0,l=I(a);l&&(l.activity.pts=o),u()},window.addActToBlock=t=>{const a=v(i.activeGroupId)[t].activities;a.push({id:z(),name:`Actividad ${a.length+1}`,pts:20,courseId:i.activeGroupId,periodId:i.activePeriodId,instrumentId:null,instrumentIds:[],instrumentHistory:[]}),u(),m("actividades")},window.removeActFromBlock=(t,a)=>{const s=v(i.activeGroupId)[t];s.activities=s.activities.filter(o=>o.id!==a),i.evaluations=i.evaluations.filter(o=>!(o.activityId===a&&(o.periodId||"P1")===i.activePeriodId)),u(),m("actividades")},window.autoAdjustBlock=t=>{const a=v(i.activeGroupId)[t],s=a.activities;if(!s.length)return;const o=a.meta||100,l=Math.floor(o/s.length),e=o%s.length;s.forEach((n,r)=>{n.pts=l+(r<e?1:0)}),u(),m("actividades")}}function C(){return i.activityViewMode||H}function F(){const t=C();return`
+import{S as l,p as u,g as m,c as p,m as E,u as z,A as N,o as M,q as S,r as k,v as h,w as $,x as A,y as q,s as j,B as x,z as P,k as V,d as H,C as R}from"./main-C6L_ZSjG.js";async function w(t,o={}){var i,n;if(!t||!((n=(i=window.AulaBaseSqlApi)==null?void 0:i.isEnabled)!=null&&n.call(i))||typeof window.AulaBaseSqlApi.syncSqlActivityCreateOrUpdate!="function")return null;const a={...t,id:t.sqlId||t.id},e=await window.AulaBaseSqlApi.syncSqlActivityCreateOrUpdate(a,o),s=String((e==null?void 0:e.id)||"").trim();return s&&(t.sqlId=s),e}async function O(t,o={}){var e,s;if(!((s=(e=window.AulaBaseSqlApi)==null?void 0:e.isEnabled)!=null&&s.call(e)))return;const a=typeof window.AulaBaseSqlApi.ensureSqlAcademicContext=="function"?await window.AulaBaseSqlApi.ensureSqlAcademicContext():null;a!=null&&a.schoolId&&(typeof window.AulaBaseSqlApi.syncSqlActivityDelete=="function"?await window.AulaBaseSqlApi.syncSqlActivityDelete(t):typeof window.AulaBaseSqlApi.deleteActivity=="function"&&await window.AulaBaseSqlApi.deleteActivity(t,{schoolId:a.schoolId}),typeof window.AulaBaseSqlApi.deleteEvaluations=="function"&&await window.AulaBaseSqlApi.deleteEvaluations({schoolId:a.schoolId,sectionId:o.sectionId||l.activeGroupId||"",periodId:o.periodId||l.activePeriodId||"P1",activityId:t}))}function T(){window.setActView=t=>{l.activityViewMode=["blocks","matrix","config"].includes(t)?t:"blocks",u(),m("actividades")},window.updateBlockMeta=(t,o)=>{const a=parseFloat(o)||100;p(l.activeGroupId)[t].meta=a,u(),m("actividades")},window.handleActNameInput=async(t,o,a)=>{const e=E(o);e&&(e.activity.name=a.value),u(),e!=null&&e.activity&&await w(e.activity,{sectionId:l.activeGroupId,periodId:l.activePeriodId,blockKey:e.block||t}).catch(s=>{console.warn("[EduGest][sql] No se pudo sincronizar el nombre de la actividad",s)})},window.updateActPts=async(t,o,a)=>{const e=parseFloat(a)||0,s=E(o);s&&(s.activity.pts=e),u(),s!=null&&s.activity&&await w(s.activity,{sectionId:l.activeGroupId,periodId:l.activePeriodId,blockKey:s.block||t}).catch(i=>{console.warn("[EduGest][sql] No se pudo sincronizar los puntos de la actividad",i)})},window.addActToBlock=async t=>{const o=p(l.activeGroupId)[t].activities,a={id:z(),name:`Actividad ${o.length+1}`,pts:20,courseId:l.activeGroupId,periodId:l.activePeriodId,instrumentId:null,instrumentIds:[],instrumentHistory:[]};o.push(a),u(),await w(a,{sectionId:l.activeGroupId,periodId:l.activePeriodId,blockKey:t}).catch(e=>{console.warn("[EduGest][sql] No se pudo sincronizar la actividad creada",e)}),m("actividades")},window.removeActFromBlock=async(t,o)=>{const a=p(l.activeGroupId)[t],e=a.activities.find(s=>s.id===o);a.activities=a.activities.filter(s=>s.id!==o),l.evaluations=l.evaluations.filter(s=>!(s.activityId===o&&(s.periodId||"P1")===l.activePeriodId)),u(),await O((e==null?void 0:e.sqlId)||o,{sectionId:l.activeGroupId,periodId:l.activePeriodId}).catch(s=>{console.warn("[EduGest][sql] No se pudo sincronizar la eliminación de la actividad",s)}),m("actividades")},window.autoAdjustBlock=t=>{const o=p(l.activeGroupId)[t],a=o.activities;if(!a.length)return;const e=o.meta||100,s=Math.floor(e/a.length),i=e%a.length;a.forEach((n,r)=>{n.pts=s+(r<i?1:0)}),u(),Promise.all(a.map(n=>w(n,{sectionId:l.activeGroupId,periodId:l.activePeriodId,blockKey:t}))).catch(n=>{console.warn("[EduGest][sql] No se pudo sincronizar el ajuste automático de actividades",n)}),m("actividades")}}function G(){return l.activityViewMode||N}function F(){const t=G();return`
     <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
       <div>
         <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Actividades y Evaluación</h1>
@@ -16,24 +16,24 @@ import{S as i,p as u,g as m,c as v,m as I,u as z,A as H,o as j,q as B,r as k,v a
         </button>
       </div>
     </header>
-  `}function L(t,a,s,o){const l=j(t),e=B(t),n=h[t]||"var(--blue)",r=$[t]||"📄",c=y[t]||t,x=e>0?Math.min(l/e*100,100):0;let b="";return a.length===0?b=`
+  `}function D(t,o,a,e){const s=M(t),i=S(t),n=h[t]||"var(--blue)",r=$[t]||"📄",c=A[t]||t,v=i>0?Math.min(s/i*100,100):0;let b="";return o.length===0?b=`
       <div class="flex flex-col items-center justify-center py-10 text-center">
         <div class="w-12 h-12 bg-slate-50 text-slate-300 rounded-2xl flex items-center justify-center mb-3">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
         </div>
         <p class="text-sm text-slate-400">Sin actividades</p>
       </div>
-    `:b=a.map((d,g)=>{const w=o.map(f=>(i.notas[f.id]||{})[d.id]).filter(f=>f!==void 0),A=w.length?E(w.reduce((f,G)=>f+G,0)/w.length):null,M=d.instrumentId;return`
+    `:b=o.map((d,g)=>{const y=e.map(f=>(l.notas[f.id]||{})[d.id]).filter(f=>f!==void 0),I=y.length?q(y.reduce((f,C)=>f+C,0)/y.length):null,B=d.instrumentId;return`
         <div class="flex items-center gap-4 py-4 border-b border-slate-50 last:border-0 group/row">
           <div class="w-6 text-xs font-bold text-slate-300">${g+1}</div>
           <div class="flex-1 min-w-0">
             <h5 class="text-sm font-bold text-slate-800 truncate">${d.name}</h5>
             <div class="flex items-center gap-3 mt-1">
-               <span class="text-[10px] uppercase font-bold tracking-wider ${M?"text-emerald-500":"text-slate-400"}">
-                 ${M?"✓ Vinculado":"⚠ Sin instrumento"}
+               <span class="text-[10px] uppercase font-bold tracking-wider ${B?"text-emerald-500":"text-slate-400"}">
+                 ${B?"✓ Vinculado":"⚠ Sin instrumento"}
                </span>
                <span class="text-[10px] font-medium text-slate-400">
-                 Promedio: ${A!==null?`${A}/${d.pts}`:"---"}
+                 Promedio: ${I!==null?`${I}/${d.pts}`:"---"}
                </span>
             </div>
           </div>
@@ -60,12 +60,12 @@ import{S as i,p as u,g as m,c as v,m as I,u as z,A as H,o as j,q as B,r as k,v a
             </div>
           </div>
           <div class="text-right">
-            <div class="text-lg font-bold text-slate-900">${l}/${e}</div>
+            <div class="text-lg font-bold text-slate-900">${s}/${i}</div>
             <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Puntos</div>
           </div>
         </div>
         <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-          <div class="h-full transition-all duration-1000" style="width: ${x}%; background: ${n}"></div>
+          <div class="h-full transition-all duration-1000" style="width: ${v}%; background: ${n}"></div>
         </div>
       </div>
       <div class="p-6 bg-slate-50/30">
@@ -74,11 +74,11 @@ import{S as i,p as u,g as m,c as v,m as I,u as z,A as H,o as j,q as B,r as k,v a
         </div>
       </div>
     </div>
-  `}function O(){const t=v(i.activeGroupId),a=V(i.activeGroupId);return`
+  `}function L(){const t=p(l.activeGroupId),o=j(l.activeGroupId);return`
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      ${p.map(s=>L(s,t[s].activities,t[s],a)).join("")}
+      ${x.map(a=>D(a,t[a].activities,t[a],o)).join("")}
     </div>
-  `}function D(){const t=V(i.activeGroupId);if(t.length===0)return`
+  `}function K(){const t=j(l.activeGroupId);if(t.length===0)return`
       <div class="py-20 text-center bg-white border border-slate-200 rounded-[2rem]">
         <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-300">
           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
@@ -87,52 +87,52 @@ import{S as i,p as u,g as m,c as v,m as I,u as z,A as H,o as j,q as B,r as k,v a
         <p class="text-slate-500 mb-6">Registra estudiantes para visualizar la matriz de evaluación.</p>
         <button onclick="go('estudiantes')" class="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-bold">Ir a Estudiantes</button>
       </div>
-    `;const a=v(i.activeGroupId),s={};p.forEach(e=>s[e]=a[e].activities);let o=`
+    `;const o=p(l.activeGroupId),a={};x.forEach(i=>a[i]=o[i].activities);let e=`
     <thead class="bg-slate-50 border-b border-slate-200">
       <tr>
         <th class="sticky left-0 z-20 bg-slate-50 p-6 text-left text-xs font-bold text-slate-500 uppercase tracking-widest border-r border-slate-200">Estudiante</th>
-  `;p.forEach(e=>{const n=s[e].length;n>0&&(o+=`
-        <th colspan="${n+1}" class="p-4 text-center border-r border-slate-200" style="background: ${h[e]}10; color: ${h[e]}">
+  `;x.forEach(i=>{const n=a[i].length;n>0&&(e+=`
+        <th colspan="${n+1}" class="p-4 text-center border-r border-slate-200" style="background: ${h[i]}10; color: ${h[i]}">
           <div class="flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest">
-            ${$[e]} ${y[e]}
+            ${$[i]} ${A[i]}
           </div>
         </th>
-      `)}),o+=`
+      `)}),e+=`
         <th class="p-6 text-center text-xs font-bold text-slate-900 border-l-2 border-slate-900 bg-slate-100">Total Final</th>
       </tr>
       <tr>
         <th class="sticky left-0 z-20 bg-slate-50 p-4 border-r border-slate-200"></th>
-  `,p.forEach(e=>{s[e].forEach((n,r)=>{o+=`
+  `,x.forEach(i=>{a[i].forEach((n,r)=>{e+=`
         <th class="p-3 text-center min-w-[100px] border-r border-slate-200/50">
           <div class="text-[10px] font-bold text-slate-400 uppercase truncate max-w-[80px] mx-auto" title="${n.name}">${n.name}</div>
           <div class="text-[9px] font-medium text-slate-400 mt-0.5">/${n.pts}</div>
         </th>
-      `}),s[e].length>0&&(o+='<th class="p-3 text-center bg-slate-100/50 border-r border-slate-200 font-bold text-xs">Nota</th>')}),o+='<th class="p-4 border-l-2 border-slate-900"></th></tr></thead>';let l='<tbody class="bg-white divide-y divide-slate-100">';return t.forEach(e=>{l+=`
+      `}),a[i].length>0&&(e+='<th class="p-3 text-center bg-slate-100/50 border-r border-slate-200 font-bold text-xs">Nota</th>')}),e+='<th class="p-4 border-l-2 border-slate-900"></th></tr></thead>';let s='<tbody class="bg-white divide-y divide-slate-100">';return t.forEach(i=>{s+=`
       <tr class="hover:bg-slate-50 transition-colors">
         <td class="sticky left-0 z-10 bg-white group-hover:bg-slate-50 p-4 font-bold text-slate-800 border-r border-slate-200 whitespace-nowrap">
-          ${e.nombre} ${e.apellido}
+          ${i.nombre} ${i.apellido}
         </td>
-    `,p.forEach(n=>{s[n].forEach(r=>{const c=(i.notas[e.id]||{})[r.id],x=c===0||!!c;l+=`
-          <td class="p-3 text-center cursor-pointer hover:bg-blue-50 transition-colors" onclick="window.openApplyInstrumentModal('${r.id}', '${e.id}')">
-            <span class="text-sm ${x?"font-bold text-slate-900":"text-slate-300"}">${x?c:"?"}</span>
+    `,x.forEach(n=>{a[n].forEach(r=>{const c=(l.notas[i.id]||{})[r.id],v=c===0||!!c;s+=`
+          <td class="p-3 text-center cursor-pointer hover:bg-blue-50 transition-colors" onclick="window.openApplyInstrumentModal('${r.id}', '${i.id}')">
+            <span class="text-sm ${v?"font-bold text-slate-900":"text-slate-300"}">${v?c:"?"}</span>
           </td>
-        `}),s[n].length>0&&(l+=`<td class="p-3 text-center bg-slate-50/30 font-bold text-slate-900 border-r border-slate-200">${N(e.id,n)}</td>`)}),l+=`<td class="p-4 text-center font-black text-blue-600 bg-blue-50/30 border-l-2 border-slate-900">${S(e.id,i.activeGroupId)??"---"}</td></tr>`}),l+="</tbody>",`
+        `}),a[n].length>0&&(s+=`<td class="p-3 text-center bg-slate-50/30 font-bold text-slate-900 border-r border-slate-200">${P(i.id,n)}</td>`)}),s+=`<td class="p-4 text-center font-black text-blue-600 bg-blue-50/30 border-l-2 border-slate-900">${V(i.id,l.activeGroupId)??"---"}</td></tr>`}),s+="</tbody>",`
     <div class="bg-white border border-slate-200 rounded-[2rem] overflow-hidden shadow-sm animate-in fade-in duration-500">
       <div class="p-6 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
         <h4 class="font-bold text-slate-800 flex items-center gap-2">
           <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2-2v8a2 2 0 002 2z"></path></svg>
-          Matriz Operativa ${P()}
+          Matriz Operativa ${H()}
         </h4>
-        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${R(i.activeGroupId)}</div>
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${R(l.activeGroupId)}</div>
       </div>
       <div class="overflow-x-auto overflow-y-hidden custom-scrollbar">
         <table class="w-full border-collapse">
-          ${o}
-          ${l}
+          ${e}
+          ${s}
         </table>
       </div>
     </div>
-  `}function q(){return`
+  `}function U(){return`
     <div class="max-w-[1600px] mx-auto animate-in slide-in-from-bottom-4 duration-500">
        <div class="p-8 bg-blue-600 rounded-[2.5rem] text-white shadow-xl shadow-blue-200 mb-10 overflow-hidden relative">
           <div class="relative z-10">
@@ -143,10 +143,10 @@ import{S as i,p as u,g as m,c as v,m as I,u as z,A as H,o as j,q as B,r as k,v a
        </div>
        
        <div id="cfg-blocks-container" class="space-y-8">
-         ${p.map(t=>_(t)).join("")}
+         ${x.map(t=>_(t)).join("")}
        </div>
     </div>
-  `}function _(t){const s=v(i.activeGroupId)[t].activities,o=j(t),l=B(t),e=E(o-l),n=h[t]||"var(--blue)",r=$[t]||"📄",c=y[t]||t,x=e===0?"text-emerald-500 bg-emerald-50":e>0?"text-rose-500 bg-rose-50":"text-amber-500 bg-amber-50",b=e===0?"Total coincide con la meta":e>0?`Sobran ${k(e)} pts`:`Faltan ${k(Math.abs(e))} pts`;return`
+  `}function _(t){const a=p(l.activeGroupId)[t].activities,e=M(t),s=S(t),i=q(e-s),n=h[t]||"var(--blue)",r=$[t]||"📄",c=A[t]||t,v=i===0?"text-emerald-500 bg-emerald-50":i>0?"text-rose-500 bg-rose-50":"text-amber-500 bg-amber-50",b=i===0?"Total coincide con la meta":i>0?`Sobran ${k(i)} pts`:`Faltan ${k(Math.abs(i))} pts`;return`
     <div class="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
       <div class="flex items-center justify-between mb-8">
         <div class="flex items-center gap-3">
@@ -157,7 +157,7 @@ import{S as i,p as u,g as m,c as v,m as I,u as z,A as H,o as j,q as B,r as k,v a
             <h4 class="font-bold text-slate-900">${c}</h4>
             <div class="flex items-center gap-2 mt-0.5">
                <span class="text-[10px] font-bold text-slate-400">PUNTOS META:</span>
-               <input type="number" value="${l}" onchange="window.updateBlockMeta('${t}', this.value)" class="w-12 text-[10px] font-black text-blue-600 bg-blue-50 border-none rounded-md px-1 py-0.5 text-center focus:ring-2 focus:ring-blue-500">
+               <input type="number" value="${s}" onchange="window.updateBlockMeta('${t}', this.value)" class="w-12 text-[10px] font-black text-blue-600 bg-blue-50 border-none rounded-md px-1 py-0.5 text-center focus:ring-2 focus:ring-blue-500">
             </div>
           </div>
         </div>
@@ -172,7 +172,7 @@ import{S as i,p as u,g as m,c as v,m as I,u as z,A as H,o as j,q as B,r as k,v a
       </div>
 
       <div class="space-y-4 mb-8">
-        ${s.map((d,g)=>`
+        ${a.map((d,g)=>`
           <div class="flex items-center gap-4 animate-in fade-in duration-300">
             <div class="w-6 text-[10px] font-black text-slate-300">${g+1}</div>
             <input type="text" value="${d.name}" oninput="window.handleActNameInput('${t}', '${d.id}', this)" placeholder="Nombre actividad..." class="flex-1 px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none">
@@ -190,26 +190,26 @@ import{S as i,p as u,g as m,c as v,m as I,u as z,A as H,o as j,q as B,r as k,v a
       <div class="pt-8 border-t border-slate-50">
         <div class="flex items-center justify-between mb-4">
            <span class="text-sm font-bold text-slate-800">Progreso del Bloque</span>
-           <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${x}">
+           <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${v}">
              ${b}
            </span>
         </div>
         <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden shadow-inner">
-           <div class="h-full transition-all duration-700" style="width: ${Math.min(o/l*100,100)}%; background: ${n}"></div>
+           <div class="h-full transition-all duration-700" style="width: ${Math.min(e/s*100,100)}%; background: ${n}"></div>
         </div>
         <div class="flex justify-between mt-3">
-           <span class="text-xs font-bold text-slate-400">${k(o)} registrados</span>
-           <span class="text-xs font-bold text-slate-900">${l} meta</span>
+           <span class="text-xs font-bold text-slate-400">${k(e)} registrados</span>
+           <span class="text-xs font-bold text-slate-900">${s} meta</span>
         </div>
       </div>
     </div>
-  `}function U(t){const a=C();t.innerHTML=`
+  `}function W(t){const o=G();t.innerHTML=`
     <div class="max-w-[1600px] mx-auto p-6 md:p-10 animate-in fade-in duration-500">
       ${F()}
       <div id="act-content-area">
-        ${a==="blocks"?O():""}
-        ${a==="matrix"?D():""}
-        ${a==="config"?q():""}
+        ${o==="blocks"?L():""}
+        ${o==="matrix"?K():""}
+        ${o==="config"?U():""}
       </div>
     </div>
-  `}function W(){T(),window.RENDERS||(window.RENDERS={}),window.RENDERS.actividades=U}export{C as getActViewMode,W as init,_ as renderActivitiesConfigBlock,U as renderActivitiesPanel};
+  `}function Q(){T(),window.RENDERS||(window.RENDERS={}),window.RENDERS.actividades=W}export{G as getActViewMode,Q as init,_ as renderActivitiesConfigBlock,W as renderActivitiesPanel};

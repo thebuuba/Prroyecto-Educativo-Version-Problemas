@@ -106,6 +106,15 @@ export function createInitialState() {
     studentDirectory: [],
     actividades: [],
     notas: {},
+    lessonPlans: [],
+    lessonPlanDraft: null,
+    lessonPlanUi: {
+      mode: 'home',
+      activeSectionId: '',
+      expandedClassIds: [],
+      activityDrafts: {},
+      autosaveTimer: 0,
+    },
     blockCfg: {
       B1: defaultBlockCfg(),
       B2: defaultBlockCfg(),

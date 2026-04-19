@@ -147,6 +147,11 @@ export function persist(options = {}) {
  * @param {Object} user - Usuario autenticado.
  */
 export async function hydrateCloudStateForUser(user) {
+  flushPersistQueue();
+  await DB.flushPendingSave();
+  if (typeof window.flushSqlStateBlockSyncs === 'function') {
+    await window.flushSqlStateBlockSyncs().catch(() => null);
+  }
   stopCloudStateSync();
   const localWorkspace = await loadLocalWorkspace(user.id);
   
@@ -184,6 +189,11 @@ export async function hydrateCloudStateForUser(user) {
  * @param {Object} user - Usuario autenticado.
  */
 export async function hydrateLocalWorkspaceForUser(user) {
+  flushPersistQueue();
+  await DB.flushPendingSave();
+  if (typeof window.flushSqlStateBlockSyncs === 'function') {
+    await window.flushSqlStateBlockSyncs().catch(() => null);
+  }
   stopCloudStateSync();
   const localWorkspace = await loadLocalWorkspace(user?.id);
   
@@ -240,6 +250,14 @@ export async function logoutAuth() {
     }
   } catch (error) {
     console.warn('[EduGest][auth] Error durante stop/cloud logout:', error);
+  }
+
+  // Antes de borrar la sesión, vaciamos cualquier guardado pendiente para no perder
+  // el último estado del usuario activo al cerrar o cambiar de cuenta.
+  flushPersistQueue();
+  await DB.flushPendingSave();
+  if (typeof window.flushSqlStateBlockSyncs === 'function') {
+    await window.flushSqlStateBlockSyncs().catch(() => null);
   }
 
   // Cierre de sesión local: Siempre ocurre

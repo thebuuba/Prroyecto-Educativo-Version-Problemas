@@ -49,6 +49,7 @@ export function openM(id, context = {}) {
   }
 
   const modal = document.getElementById(id);
+  const aiCopilot = document.getElementById('ai-copilot-container');
   if (!modal) return;
 
   if (id === 'm-setup') {
@@ -59,7 +60,13 @@ export function openM(id, context = {}) {
 
   modal.classList.add('open');
   
-  if (id === 'm-auth') document.body.classList.add('auth-screen-open');
+  if (id === 'm-auth') {
+    document.body.classList.add('auth-screen-open');
+    if (aiCopilot) {
+      aiCopilot.hidden = true;
+      aiCopilot.style.display = 'none';
+    }
+  }
   
   if (id === 'm-terms') {
     const checkbox = document.getElementById('terms-accept-check');
@@ -78,6 +85,7 @@ export function openM(id, context = {}) {
  */
 export function forceCloseM(id) {
   const modal = document.getElementById(id);
+  const aiCopilot = document.getElementById('ai-copilot-container');
   if (!modal) return;
 
   modal.classList.remove('open');
@@ -85,7 +93,13 @@ export function forceCloseM(id) {
     modal.classList.remove('auth-setup');
     modal.classList.remove('from-education');
   }
-  if (id === 'm-auth') document.body.classList.remove('auth-screen-open');
+  if (id === 'm-auth') {
+    document.body.classList.remove('auth-screen-open');
+    if (aiCopilot) {
+      aiCopilot.hidden = false;
+      aiCopilot.style.display = '';
+    }
+  }
   
   if (typeof window.onCloseModal === 'function') window.onCloseModal(id);
 }

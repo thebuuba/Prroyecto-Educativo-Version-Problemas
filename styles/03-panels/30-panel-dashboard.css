@@ -198,13 +198,7 @@ body.theme-dark .ov {
 
 /* Pantalla de arranque para cuando la aplicación aún está cargando. */
 body.theme-dark .app-boot {
-  background:
-    linear-gradient(rgba(106, 166, 241, .08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(106, 166, 241, .07) 1px, transparent 1px),
-    radial-gradient(circle at 50% 22%, rgba(106, 166, 241, .12) 0%, transparent 22%),
-    linear-gradient(180deg, #0a1220 0%, #111d30 100%);
-  background-size: 34px 34px, 34px 34px, auto, auto;
-  background-position: center center, center center, center top, center center;
+  background: linear-gradient(180deg, #0a1220 0%, #111d30 100%);
 }
 
 body.theme-dark .app-boot-brand {
@@ -242,33 +236,15 @@ body.theme-dark .rubric-matrix-table td:first-child {
 }
 
 body.theme-dark #m-auth {
-  background:
-    linear-gradient(rgba(106, 166, 241, .08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(106, 166, 241, .07) 1px, transparent 1px),
-    radial-gradient(circle at 50% 22%, rgba(106, 166, 241, .12) 0%, transparent 22%),
-    linear-gradient(180deg, #0a1220 0%, #111d30 100%);
-  background-size: 34px 34px, 34px 34px, auto, auto;
-  background-position: center center, center center, center top, center center;
+  background: linear-gradient(180deg, #0a1220 0%, #111d30 100%);
 }
 
 body.theme-dark #m-education-section {
-  background:
-    linear-gradient(rgba(106, 166, 241, .08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(106, 166, 241, .07) 1px, transparent 1px),
-    radial-gradient(circle at 50% 22%, rgba(106, 166, 241, .12) 0%, transparent 22%),
-    linear-gradient(180deg, #0a1220 0%, #111d30 100%);
-  background-size: 34px 34px, 34px 34px, auto, auto;
-  background-position: center center, center center, center top, center center;
+  background: linear-gradient(180deg, #0a1220 0%, #111d30 100%);
 }
 
 body.theme-dark #m-setup.auth-setup {
-  background:
-    linear-gradient(rgba(106, 166, 241, .08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(106, 166, 241, .07) 1px, transparent 1px),
-    radial-gradient(circle at 50% 22%, rgba(106, 166, 241, .12) 0%, transparent 22%),
-    linear-gradient(180deg, #0a1220 0%, #111d30 100%);
-  background-size: 34px 34px, 34px 34px, auto, auto;
-  background-position: center center, center center, center top, center center;
+  background: linear-gradient(180deg, #0a1220 0%, #111d30 100%);
 }
 
 .dashboard-hero .cp {

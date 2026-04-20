@@ -1,4 +1,4 @@
-import{S as e,p as a,g as r,t as i,e as o}from"./main-C6L_ZSjG.js";function l(t){if(e.usuarios||(e.usuarios=[]),e.usuarios.length===0){t.innerHTML=`
+import{S as e,p as a,g as r,t as i,e as o}from"./main-DGpyBctX.js";function l(t){if(e.usuarios||(e.usuarios=[]),e.usuarios.length===0){t.innerHTML=`
       <div class="px-6 md:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-500">
         <div class="bg-white border border-slate-100 rounded-[3rem] p-12 text-center shadow-sm">
            <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">

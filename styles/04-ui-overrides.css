@@ -2189,6 +2189,24 @@ body.miperfil-active {
   box-shadow: none !important;
 }
 
+/* Ocultar el Copilot mientras la pantalla de acceso está abierta. */
+body:has(#m-auth.open) #ai-copilot-container,
+body.auth-screen-open #ai-copilot-container {
+  display: none !important;
+}
+
+body:has(#m-auth.open) #ai-copilot-fab,
+body:has(#m-auth.open) #ai-chat-window,
+body.auth-screen-open #ai-copilot-fab,
+body.auth-screen-open #ai-chat-window,
+#m-auth.open ~ #ai-copilot-container,
+#m-auth.open ~ #ai-copilot-container #ai-copilot-fab,
+#m-auth.open ~ #ai-copilot-container #ai-chat-window {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 /* Conversión de Iconos (Scale + Opacity) */
 .ai-fab-icon {
   position: relative;

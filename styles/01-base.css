@@ -114,11 +114,12 @@ body {
    pero dejamos el layout listo para restaurarse al cerrar el modal. */
 body.auth-screen-open #sb,
 body.auth-screen-open #main {
-  visibility: hidden;
+  display: none;
 }
 
 body.auth-screen-open {
   background: linear-gradient(180deg, #edf1f5 0%, #d4dbe4 100%);
+  display: block;
 }
 
 /* Las variantes de educación cambian el acento visual sin tocar la lógica. */
@@ -1972,13 +1973,7 @@ body.theme-dark #s-inst-ghost-suffix {
   display: flex;
   align-items: center;
   justify-content: center;
-  background:
-    linear-gradient(rgba(71, 127, 192, .08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(71, 127, 192, .07) 1px, transparent 1px),
-    radial-gradient(circle at 50% 22%, rgba(71, 127, 192, .12) 0%, transparent 22%),
-    linear-gradient(180deg, #f8fbff 0%, #f1f6fc 100%);
-  background-size: 34px 34px, 34px 34px, auto, auto;
-  background-position: center center, center center, center top, center center;
+  background: linear-gradient(180deg, #f8fbff 0%, #f1f6fc 100%);
   transition: opacity .26s ease;
 }
 
@@ -2041,24 +2036,12 @@ body.theme-dark #s-inst-ghost-suffix {
 }
 
 #m-auth {
-  background:
-    linear-gradient(rgba(71, 127, 192, .08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(71, 127, 192, .07) 1px, transparent 1px),
-    radial-gradient(circle at 50% 22%, rgba(71, 127, 192, .12) 0%, transparent 22%),
-    linear-gradient(180deg, #f8fbff 0%, #f1f6fc 100%);
-  background-size: 34px 34px, 34px 34px, auto, auto;
-  background-position: center center, center center, center top, center center;
+  background: linear-gradient(180deg, #f8fbff 0%, #f1f6fc 100%);
   backdrop-filter: none;
 }
 
 #m-education-section {
-  background:
-    linear-gradient(rgba(71, 127, 192, .08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(71, 127, 192, .07) 1px, transparent 1px),
-    radial-gradient(circle at 50% 22%, rgba(71, 127, 192, .12) 0%, transparent 22%),
-    linear-gradient(180deg, #f8fbff 0%, #f1f6fc 100%);
-  background-size: 34px 34px, 34px 34px, auto, auto;
-  background-position: center center, center center, center top, center center;
+  background: linear-gradient(180deg, #f8fbff 0%, #f1f6fc 100%);
   backdrop-filter: none;
 }
 
@@ -2083,13 +2066,7 @@ body.theme-dark #s-inst-ghost-suffix {
 }
 
 #m-setup.auth-setup {
-  background:
-    linear-gradient(rgba(71, 127, 192, .08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(71, 127, 192, .07) 1px, transparent 1px),
-    radial-gradient(circle at 50% 22%, rgba(71, 127, 192, .12) 0%, transparent 22%),
-    linear-gradient(180deg, #f8fbff 0%, #f1f6fc 100%);
-  background-size: 34px 34px, 34px 34px, auto, auto;
-  background-position: center center, center center, center top, center center;
+  background: linear-gradient(180deg, #f8fbff 0%, #f1f6fc 100%);
   backdrop-filter: none;
 }
 

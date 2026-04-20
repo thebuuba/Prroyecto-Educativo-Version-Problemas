@@ -1,6 +1,3 @@
-<!-- AUTO-GENERADO: no editar directamente.
-     Fuente: sections/html/* + scripts/assemble-index-html.sh -->
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -135,6 +132,7 @@
     const openAuth = () => {
       const body = document.body;
       const modal = document.getElementById('m-auth');
+      const aiCopilot = document.getElementById('ai-copilot-container');
       if (!body || !modal || modal.classList.contains('open')) return;
       if (typeof window.openM === 'function') {
         window.openM('m-auth');
@@ -142,6 +140,10 @@
       }
       body.classList.add('auth-screen-open');
       modal.classList.add('open');
+      if (aiCopilot) {
+        aiCopilot.hidden = true;
+        aiCopilot.style.display = 'none';
+      }
     };
 
     if (document.readyState === 'loading') {
@@ -333,9 +335,15 @@
 <div class="ov" id="m-auth">
   <div class="auth-shell">
     <div class="auth-brand" aria-hidden="true">
-      <img class="auth-brand-logo" src="/assets/logo-aulabase.svg" alt="" width="72" height="72" decoding="async" fetchpriority="high">
-      <h1 class="auth-brand-name">AulaBase</h1>
-      <p class="auth-brand-kicker">EL LIENZO ESTRUCTURADO</p>
+      <div class="auth-brand-stage">
+        <div class="auth-brand-watermark">
+          <img class="auth-brand-logo" src="/assets/logo-aulabase.svg" alt="" width="72" height="72" decoding="async" fetchpriority="high">
+          <div class="auth-brand-copy">
+            <h1 class="auth-brand-name">AulaBase</h1>
+            <p class="auth-brand-kicker">EL LIENZO ESTRUCTURADO</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="modal modal-auth">
@@ -462,16 +470,17 @@
               </div>
             </div>
         </div>
-        <div class="auth-switch-row">
-          <span class="auth-switch-copy" id="auth-switch-copy">¿No tienes una cuenta?</span>
-          <button class="auth-inline-link auth-switch-link" id="auth-switch-link" type="button">Regístrate</button>
-        </div>
       </div>
+    </div>
+    <div class="auth-switch-row">
+      <span class="auth-switch-copy" id="auth-switch-copy">¿No tienes una cuenta?</span>
+      <button class="auth-inline-link auth-switch-link" id="auth-switch-link" type="button">Regístrate</button>
     </div>
     <div class="auth-footer-marks" aria-hidden="true">
       <span class="auth-footer-mark auth-footer-mark-muted">1</span>
       <span class="auth-footer-mark">2</span>
     </div>
+    <p class="auth-legal-copy">© 2026 AULABASE EDUCATIONAL SYSTEMS. TODOS LOS DERECHOS RESERVADOS.</p>
   </div>
 </div>
 <!-- Modales auxiliares del auth: recuperación de contraseña, términos y selección de nivel educativo. -->
@@ -1217,7 +1226,7 @@ Carlos D&iacute;az 0000034"></textarea>
 <script type="module" src="/js/page-entry/root.js"></script>
 
 <!-- EduGest AI Copilot Container -->
-<div id="ai-copilot-container" class="ai-closed">
+<div id="ai-copilot-container" class="ai-closed" hidden aria-hidden="true" style="display:none">
   <!-- Ventana de Chat Unificada (Todo en una pieza) -->
   <div id="ai-chat-window">
     <div class="ai-chat-header">

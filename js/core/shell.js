@@ -189,10 +189,40 @@ export function initAICopilot() {
   const aiFab = document.getElementById('ai-copilot-fab');
   const chatInput = document.getElementById('ai-chat-input');
   const chatMessages = document.getElementById('ai-chat-messages');
+  const authModal = document.getElementById('m-auth');
 
   if (!container || !aiFab) return;
 
+  const syncAICopilotVisibility = () => {
+    const authOpen = document.body.classList.contains('auth-screen-open')
+      || authModal?.classList.contains('open');
+
+    if (authOpen) {
+      container.classList.remove('ai-open');
+      container.classList.add('ai-closed');
+      container.hidden = true;
+      container.setAttribute('aria-hidden', 'true');
+      container.style.setProperty('display', 'none', 'important');
+      container.style.setProperty('visibility', 'hidden', 'important');
+      container.style.setProperty('opacity', '0', 'important');
+      container.style.setProperty('pointer-events', 'none', 'important');
+      return true;
+    }
+
+    container.hidden = false;
+    container.removeAttribute('aria-hidden');
+    container.style.removeProperty('display');
+    container.style.removeProperty('visibility');
+    container.style.removeProperty('opacity');
+    container.style.removeProperty('pointer-events');
+    return false;
+  };
+
+  syncAICopilotVisibility();
+
   const toggleAIChat = () => {
+    if (syncAICopilotVisibility()) return;
+
     const isOpen = container.classList.contains('ai-open');
     const hasText = chatInput.value.trim().length > 0;
 
@@ -285,4 +315,13 @@ export function initAICopilot() {
       }
     }
   });
+
+  const observer = new MutationObserver(() => {
+    syncAICopilotVisibility();
+  });
+
+  observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  if (authModal) {
+    observer.observe(authModal, { attributes: true, attributeFilter: ['class'] });
+  }
 }

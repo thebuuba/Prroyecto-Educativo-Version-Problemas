@@ -1,27 +1,14 @@
 <!-- Formulario de inicio de sesión: proveedores sociales, correo y acceso persistente. -->
         <div id="auth-login-box" class="auth-form-box">
-            <div class="auth-social">
-              <div class="auth-social-actions">
-                <button class="btn btn-outline auth-social-btn" type="button" onclick="authWithProvider('google')" aria-label="Google" title="Google">
-                  <span class="auth-social-mark auth-social-mark-google" aria-hidden="true">
-                    <img src="/assets/icons/google.png" alt="" width="18" height="18" decoding="async" loading="lazy">
-                  </span>
-                  <span>Google</span>
-                </button>
-                <button class="btn btn-outline auth-social-btn" type="button" onclick="authWithProvider('facebook')" aria-label="Facebook" title="Facebook">
-                  <span class="auth-social-mark auth-social-mark-facebook" aria-hidden="true">
-                    <img src="/assets/icons/facebook.png" alt="" width="18" height="18" decoding="async" loading="lazy">
-                  </span>
-                  <span>Facebook</span>
-                </button>
-              </div>
-              <div class="auth-social-divider" id="auth-social-divider">o usa tu email</div>
+            <div class="auth-login-register-line">
+              <span>¿No tienes una cuenta?</span>
+              <button class="auth-inline-link auth-login-register-link" type="button" onclick="setAuthMode('register')">Regístrate</button>
             </div>
             <div class="fg">
-              <label class="lbl">Email</label>
+              <label class="lbl">Correo electrónico</label>
               <div class="auth-input-wrap">
                 <span class="auth-input-icon material-symbols-outlined" aria-hidden="true">mail</span>
-                <input class="inp" id="al-email" type="email" placeholder="nombre@colegio.edu">
+                <input class="inp" id="al-email" type="email" placeholder="ejemplo@correo.com">
               </div>
             </div>
             <div class="fg">
@@ -42,4 +29,19 @@
               <label class="auth-remember-label" for="remember">Mantener sesión iniciada</label>
             </div>
             <button class="btn btn-primary btn-lg auth-submit-btn" type="button" onclick="loginAuth()">Iniciar sesión</button>
+            <div class="auth-social">
+              <div class="auth-social-divider" id="auth-social-divider">o continúa con</div>
+              <div class="auth-social-actions">
+                <button class="btn btn-outline auth-social-btn" type="button" onclick="authWithProvider('google')" aria-label="Google" title="Google">
+                  <span class="auth-social-mark auth-social-mark-google" aria-hidden="true">
+                    <img src="/assets/icons/google.png" alt="" width="18" height="18" decoding="async" loading="lazy">
+                  </span>
+                  <span>Google</span>
+                </button>
+                <button class="btn btn-outline auth-social-btn" type="button" onclick="toast('Facebook no está disponible todavía.', true)" aria-label="Facebook" title="Facebook">
+                  <span class="auth-social-mark auth-social-mark-facebook" aria-hidden="true"></span>
+                  <span>Facebook</span>
+                </button>
+              </div>
+            </div>
         </div>

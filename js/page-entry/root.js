@@ -14,6 +14,7 @@
 import { boot } from '../core/app.js';
 import { initShell } from '../core/shell.js';
 import { initDeleters } from '../core/deleters.js';
+import { mountAuthFragments } from '../../login-registro-auth/auth-loader.js';
 import {
   installPersistGuards,
   registerLegacyBridge,
@@ -32,6 +33,8 @@ registerPanelRenderer();
  * Gestiona el arranque de los subsistemas y la hidratación de datos.
  */
 function startEduGest() {
+  mountAuthFragments();
+
   // Inicializar componentes del shell (Sidebars, Modales, Tooltips)
   initShell();
   

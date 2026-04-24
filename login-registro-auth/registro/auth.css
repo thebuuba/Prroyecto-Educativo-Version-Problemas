@@ -1,1 +1,116 @@
-@import url('../shared/auth.css');
+/* Registro: estilos especificos del formulario de creacion de cuenta. */
+
+#m-auth #auth-register-box {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 18px;
+  border-left-color: var(--secondary);
+}
+
+#m-auth #auth-register-box>* {
+  width: 100%;
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+#m-auth #auth-register-box .fg {
+  margin-bottom: 0;
+}
+
+#m-auth #auth-register-box .lbl {
+  display: none;
+  color: #1877F2;
+}
+
+#m-auth #auth-register-box .inp,
+#m-auth #auth-register-box .password-input {
+  width: 100%;
+  min-height: 50px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 14px;
+  background: #f0f4f8;
+  color: #29343a;
+  box-shadow: none;
+  font-size: 14px;
+  transition: all .2s cubic-bezier(.4, 0, .2, 1);
+}
+
+#m-auth #auth-register-box .inp:focus,
+#m-auth #auth-register-box .password-input:focus {
+  outline: none;
+  background: #eaf0fb;
+  box-shadow: 0 0 0 2.5px rgba(24, 119, 242, .18);
+}
+
+#m-auth #auth-register-box .password-field {
+  position: relative;
+}
+
+#m-auth #auth-register-box .password-toggle {
+  right: 14px;
+  width: 20px;
+  height: 20px;
+}
+
+#m-auth #auth-register-box .password-toggle img {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+#m-auth #auth-register-box .auth-register-copy {
+  text-align: center;
+  color: #7f7d98;
+}
+
+#m-auth #auth-register-box .auth-register-social {
+  display: grid;
+  gap: 12px;
+  margin-top: 8px;
+  margin-bottom: 2px;
+  grid-column: 1 / -1;
+}
+
+#m-auth #auth-register-box .auth-register-social .auth-social-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#m-auth #auth-register-box .auth-register-social .auth-social-divider {
+  text-transform: uppercase;
+  letter-spacing: .11em;
+  text-align: center;
+  margin-bottom: 2px;
+}
+
+#m-auth #auth-register-box .auth-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+#m-auth #auth-register-box .auth-submit-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+@media (min-width: 641px) {
+  #m-auth #auth-register-box {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 16px;
+    align-items: start;
+  }
+
+  #m-auth #auth-register-box .auth-register-copy,
+  #m-auth #auth-register-box #auth-code-wrap,
+  #m-auth #auth-register-box #auth-register-submit,
+  #m-auth #auth-register-box .auth-register-social,
+  #m-auth #auth-register-box .auth-terms-check,
+  #m-auth #auth-register-box #ar-terms-error {
+    grid-column: 1 / -1;
+  }
+}

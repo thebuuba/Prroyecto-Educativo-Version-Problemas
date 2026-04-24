@@ -1,48 +1,31 @@
 /**
- * Punto de entrada específico para la ruta del Asistente IA.
- * --------------------------------------------------------------------------
- * Este script se encarga de:
- * 1. Definir la ruta activa y el panel a cargar (ai).
- * 2. Cargar secuencialmente los bundles necesarios (Núcleo, Panel, Shell).
- * 3. Inyectar el módulo raíz 'root.js' una vez que los assets están listos.
+ * Punto de entrada específico para la ruta /asistente-ia/.
+ * Define la ruta activa y delega el arranque al entrypoint modular raíz.
  */
 
 window.__AULABASE_PAGE_ENTRY = { route: 'asistente-ia', panel: 'ai' };
-window.__AULABASE_ASSET_VERSION = '20260405i';
-window.__AULABASE_LOADED_BUNDLES = window.__AULABASE_LOADED_BUNDLES || { core: false, shell: false };
+window.__AULABASE_ASSET_VERSION = window.__AULABASE_ASSET_VERSION || '20260405i';
 
-(function loadAulaBaseSplitBundles() {
-  if (window.__AULABASE_SPLIT_BOOT_REQUESTED) return;
-  window.__AULABASE_SPLIT_BOOT_REQUESTED = true;
+function startAulaBaseRoot() {
+  if (window.__AULABASE_ROOT_BOOT_REQUESTED) return;
+  window.__AULABASE_ROOT_BOOT_REQUESTED = true;
+  var rootScript = document.createElement('script');
+  rootScript.src = '/js/page-entry/root.js';
+  rootScript.type = 'module';
+  document.body.appendChild(rootScript);
+}
 
-  var bundleQueue = [
-    { key: 'core', src: '/js/bundles/app-core.js?v=20260405i' },
-    { key: 'actividades', src: '/js/bundles/panel-actividades.js?v=20260405i' },
-    { key: 'shell', src: '/js/bundles/app-shell.js?v=20260405i' }
-  ];
-
-  function loadNextBundle() {
-    if (!bundleQueue.length) {
-      // Disparar el punto de entrada modular raíz tras cargar los bundles.
-      var rootScript = document.createElement('script');
-      rootScript.src = '/js/page-entry/root.js';
-      rootScript.type = 'module';
-      document.body.appendChild(rootScript);
-      return;
-    }
-
-    var nextBundle = bundleQueue.shift();
-    var script = document.createElement('script');
-    script.src = nextBundle.src;
-    script.async = false;
-    script.dataset.aulabaseEntry = 'ai';
-    script.dataset.aulabaseBundle = nextBundle.key;
-    script.onload = function () {
-      window.__AULABASE_LOADED_BUNDLES[nextBundle.key] = true;
-      loadNextBundle();
-    };
-    document.body.appendChild(script);
+function waitForAulaBaseAuth(callback) {
+  if (document.getElementById('m-auth')) { callback(); return; }
+  if (window.__AULABASE_AUTH_READY && typeof window.__AULABASE_AUTH_READY.then === 'function') {
+    window.__AULABASE_AUTH_READY.then(callback);
+    return;
   }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { window.setTimeout(callback, 0); }, { once: true });
+    return;
+  }
+  window.setTimeout(callback, 0);
+}
 
-  loadNextBundle();
-})();
+waitForAulaBaseAuth(startAulaBaseRoot);

@@ -1,0 +1,10 @@
+/*
+  Indice de estilos de autenticacion.
+  Mantiene el orden correcto de cascada:
+  1. Base compartida del modal y utilidades.
+  2. Diseno especifico del login.
+  3. Diseno especifico del registro.
+*/
+@import url('./shared/auth-base.css');
+@import url('./login/auth.css');
+@import url('./registro/auth.css');

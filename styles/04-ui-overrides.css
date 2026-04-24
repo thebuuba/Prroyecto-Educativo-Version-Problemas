@@ -2189,19 +2189,14 @@ body.miperfil-active {
   box-shadow: none !important;
 }
 
-/* Ocultar el Copilot mientras la pantalla de acceso está abierta. */
+/* ─────────────────────────────────────────
+  HIDDEN STATE (On Auth Screen)
+  Garantiza que el asistente sea totalmente invisible durante el login.
+───────────────────────────────────────── */
+body.auth-screen-open #ai-copilot-container,
 body:has(#m-auth.open) #ai-copilot-container,
-body.auth-screen-open #ai-copilot-container {
+#m-auth.open ~ #ai-copilot-container {
   display: none !important;
-}
-
-body:has(#m-auth.open) #ai-copilot-fab,
-body:has(#m-auth.open) #ai-chat-window,
-body.auth-screen-open #ai-copilot-fab,
-body.auth-screen-open #ai-chat-window,
-#m-auth.open ~ #ai-copilot-container,
-#m-auth.open ~ #ai-copilot-container #ai-copilot-fab,
-#m-auth.open ~ #ai-copilot-container #ai-chat-window {
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
@@ -2230,22 +2225,4 @@ body.auth-screen-open #ai-chat-window,
   transform: scale(0.4);
 }
 
-/* Estilos de Contenido */
-.ai-chat-header {
-  padding: 1.5rem;
-  display: flex; align-items: center; gap: 12px;
-  font-weight: 700; color: #fff;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-.ai-header-dot { width: 10px; height: 10px; background: #10b981; border-radius: 50%; box-shadow: 0 0 15px #10b981; }
-
-.ai-chat-messages {
-  flex: 1; padding: 1.25rem; overflow-y: auto;
-  display: flex; flex-direction: column; gap: 12px;
-  scrollbar-width: none;
-}
-.ai-chat-messages::-webkit-scrollbar { display: none; }
-
-.ai-message { padding: 10px 16px; border-radius: 18px; max-width: 85%; font-size: 0.9375rem; line-height: 1.5; }
-.ai-bot { background: rgba(255, 255, 255, 0.08); color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
-.ai-user { background: linear-gradient(135deg, var(--premium-azure) 0%, var(--premium-berry) 100%); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+/* Fin de estilos AI */

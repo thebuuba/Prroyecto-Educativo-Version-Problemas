@@ -194,8 +194,10 @@ export function initAICopilot() {
   if (!container || !aiFab) return;
 
   const syncAICopilotVisibility = () => {
+    const authModal = document.getElementById('m-auth');
     const authOpen = document.body.classList.contains('auth-screen-open')
-      || authModal?.classList.contains('open');
+      || authModal?.classList.contains('open')
+      || !!document.querySelector('.auth-panel'); // Backup check for auth container
 
     if (authOpen) {
       container.classList.remove('ai-open');
@@ -209,6 +211,7 @@ export function initAICopilot() {
       return true;
     }
 
+    // Solo restaurar si NO estamos en una pantalla de auth
     container.hidden = false;
     container.removeAttribute('aria-hidden');
     container.style.removeProperty('display');

@@ -128,7 +128,7 @@ export function setAuthMode(mode) {
   
   transitionAuthPanels(login);
   if (panel) panel.dataset.mode = login ? 'login' : 'register';
-  if (tt) tt.textContent = login ? 'Iniciar sesión' : 'Crear cuenta';
+  if (tt) tt.textContent = login ? 'Bienvenido de nuevo' : 'Crear cuenta';
   if (subtitle) subtitle.textContent = login
     ? 'Ingresa tus credenciales para continuar.'
     : 'Únete a la excelencia académica estructurada.';

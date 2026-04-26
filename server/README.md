@@ -13,6 +13,8 @@ Backend inicial para migrar AulaBase desde almacenamiento local/Firestore hacia 
    - `npm run migrate`
 5. Arranca la API:
    - `npm run dev`
+6. Ejecuta smoke test de API + DB:
+   - `npm run smoke`
 
 ## Endpoints iniciales
 

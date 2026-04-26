@@ -248,6 +248,8 @@ function ensureIndividualLicenseModel() {
 }
 
 function shouldOpenSetupAfterAuth() {
+  const setupModalExists = !!document.getElementById('m-setup');
+  if (!setupModalExists) return false;
   const profile = S.profile || {};
   if (profile.setupCompleted) return false;
   return !isProfileSetupComplete();
@@ -402,26 +404,32 @@ export async function loginAuth() {
   if (canUseCloudAuth()) {
     try {
       const user = await window.EduGestCloud.login(email, pass);
-      await hydrateCloudStateForUser(user);
       rememberCurrentAuthAccessMode('email');
       ensureIndividualLicenseModel();
       finishAuthSession(user, { openSetup: shouldOpenSetupAfterAuth() });
       toast('Bienvenido');
+      hydrateCloudStateForUser(user).catch((hydrateError) => {
+        console.warn('[EduGest][auth] Fallo al hidratar estado cloud tras login.', hydrateError);
+      });
     } catch (error) {
       if (localUser) {
-        await hydrateLocalWorkspaceForUser(localUser);
         rememberCurrentAuthAccessMode('local');
         finishAuthSession(localUser, { openSetup: shouldOpenSetupAfterAuth() });
         toast('Entraste en modo local.', 'warning');
+        hydrateLocalWorkspaceForUser(localUser).catch((hydrateError) => {
+          console.warn('[EduGest][auth] Fallo al hidratar workspace local tras fallback de login.', hydrateError);
+        });
         return;
       }
       toast(window.EduGestCloud.friendlyError(error), true);
     }
   } else if (localUser) {
-    await hydrateLocalWorkspaceForUser(localUser);
     rememberCurrentAuthAccessMode('local');
     finishAuthSession(localUser, { openSetup: shouldOpenSetupAfterAuth() });
     toast('Bienvenido');
+    hydrateLocalWorkspaceForUser(localUser).catch((hydrateError) => {
+      console.warn('[EduGest][auth] Fallo al hidratar workspace local tras login.', hydrateError);
+    });
   } else {
     toast('Credenciales incorrectas.', true);
   }
@@ -435,11 +443,13 @@ export async function authWithProvider(provider) {
   try {
     const user = await window.EduGestCloud.loginWithProvider(provider);
     if (user?.redirected) return;
-    await hydrateCloudStateForUser(user);
     rememberCurrentAuthAccessMode(provider === 'facebook' ? 'facebook' : 'google');
     ensureIndividualLicenseModel();
     finishAuthSession(user, { openSetup: shouldOpenSetupAfterAuth(), isNewAccount: !!user?.isNewUser });
     toast('Bienvenido');
+    hydrateCloudStateForUser(user).catch((hydrateError) => {
+      console.warn('[EduGest][auth] Fallo al hidratar estado cloud tras login social.', hydrateError);
+    });
   } catch (error) {
     toast(window.EduGestCloud.friendlyError(error), true);
   }

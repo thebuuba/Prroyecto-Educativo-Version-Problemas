@@ -14,9 +14,9 @@
 /* Login rediseñado: panel visual izquierdo + formulario limpio derecho. */
 #m-auth {
   background:
-    linear-gradient(152deg, rgba(255, 255, 255, .7) 0 28%, transparent 28% 100%),
-    linear-gradient(334deg, rgba(255, 255, 255, .62) 0 20%, transparent 20% 100%),
-    #f0f2ff;
+    linear-gradient(152deg, rgba(255, 255, 255, .55) 0 30%, transparent 30% 100%),
+    linear-gradient(334deg, rgba(255, 255, 255, .42) 0 22%, transparent 22% 100%),
+    #eef2f8;
 }
 
 #m-auth .auth-card:has(.auth-panel[data-mode="login"]) {
@@ -196,8 +196,8 @@
 #m-auth .auth-panel[data-mode="login"] .auth-input-wrap {
   height: 52px;
   border: 1px solid #dde2ec;
-  border-radius: 7px;
-  background: #fff;
+  border-radius: 14px;
+  background: #fcfdff;
   box-shadow: 0 1px 0 rgba(16, 24, 40, .02);
 }
 
@@ -404,6 +404,9 @@
   min-height: 100vh;
   padding: 0;
   gap: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 #m-auth .auth-card:has(.auth-panel[data-mode="login"]) {
@@ -443,4 +446,38 @@
   #m-auth .auth-card:has(.auth-panel[data-mode="login"]) .modal-auth {
     min-height: 66vh;
   }
+}
+
+/* Login sin panel lateral: formulario centrado */
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand {
+  display: none !important;
+}
+
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .modal-auth {
+  width: min(560px, calc(100vw - 36px));
+  min-height: auto;
+  margin: 24px auto;
+  border-radius: 18px;
+  padding: clamp(28px, 5vw, 52px);
+  background: #f6f8fc;
+}
+
+#m-auth .auth-switch-row,
+#m-auth .auth-footer-marks,
+#m-auth .auth-legal-copy,
+#m-auth:has(.auth-panel[data-mode="login"]) .auth-switch-row,
+#m-auth:has(.auth-panel[data-mode="login"]) .auth-footer-marks,
+#m-auth:has(.auth-panel[data-mode="login"]) .auth-legal-copy {
+  display: none !important;
+}
+
+#m-auth .auth-panel[data-mode="login"] .auth-submit-btn,
+#m-auth .auth-panel[data-mode="login"] .auth-social-btn {
+  border-radius: 14px;
 }

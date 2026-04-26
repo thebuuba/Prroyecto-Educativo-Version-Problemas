@@ -167,10 +167,16 @@ export async function hydrateCloudStateForUser(user) {
   
   // Puentes para hidratar bloques SQL específicos (asistencia/evaluación)
   if (typeof window.hydrateSqlStateBlocksForActiveUser === 'function') {
-    await window.hydrateSqlStateBlocksForActiveUser();
+    await window.hydrateSqlStateBlocksForActiveUser().catch((error) => {
+      console.warn('[EduGest][sql] No se pudo hidratar bloques de estado durante login cloud.', error);
+      return null;
+    });
   }
   if (typeof window.hydrateSqlAcademicSnapshotForActiveUser === 'function') {
-    await window.hydrateSqlAcademicSnapshotForActiveUser();
+    await window.hydrateSqlAcademicSnapshotForActiveUser().catch((error) => {
+      console.warn('[EduGest][sql] No se pudo hidratar snapshot académico durante login cloud.', error);
+      return null;
+    });
   }
   
   persist({ immediate: true });
@@ -208,10 +214,16 @@ export async function hydrateLocalWorkspaceForUser(user) {
   applySessionUser(user);
   
   if (typeof window.hydrateSqlStateBlocksForActiveUser === 'function') {
-    await window.hydrateSqlStateBlocksForActiveUser();
+    await window.hydrateSqlStateBlocksForActiveUser().catch((error) => {
+      console.warn('[EduGest][sql] No se pudo hidratar bloques de estado durante login local.', error);
+      return null;
+    });
   }
   if (typeof window.hydrateSqlAcademicSnapshotForActiveUser === 'function') {
-    await window.hydrateSqlAcademicSnapshotForActiveUser();
+    await window.hydrateSqlAcademicSnapshotForActiveUser().catch((error) => {
+      console.warn('[EduGest][sql] No se pudo hidratar snapshot académico durante login local.', error);
+      return null;
+    });
   }
   
   persist({ immediate: true });

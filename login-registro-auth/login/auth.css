@@ -132,11 +132,12 @@
 }
 
 #m-auth .auth-card:has(.auth-panel[data-mode="login"]) #auth-title {
-  margin: 0 0 10px !important;
+  margin: 0 0 8px !important;
   color: #0f172a !important;
-  font-size: 30px !important;
+  font-size: 42px !important;
   font-weight: 800 !important;
-  letter-spacing: 0 !important;
+  line-height: 1.08 !important;
+  letter-spacing: -.02em !important;
 }
 
 #m-auth .auth-card:has(.auth-panel[data-mode="login"]) #auth-subtitle {
@@ -155,7 +156,7 @@
 #m-auth .auth-panel[data-mode="login"] #auth-login-box {
   display: flex;
   width: 100%;
-  gap: 26px;
+  gap: 20px;
   padding: 0;
   border: 0;
   border-radius: 0;
@@ -167,21 +168,24 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: -2px 0 22px;
+  margin: 0 0 24px;
   color: #6b7280;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
 }
 
 #m-auth .auth-login-register-link {
   padding: 0;
   color: #4f5dff;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
 }
 
 #m-auth .auth-panel[data-mode="login"] .fg {
-  gap: 10px;
+  gap: 8px;
 }
 
 #m-auth .auth-panel[data-mode="login"] .lbl {
@@ -234,16 +238,18 @@
 #m-auth .auth-panel[data-mode="login"] .auth-password-head .auth-inline-link {
   position: absolute;
   right: 0;
-  top: calc(100% + 14px);
+  top: calc(100% + 12px);
   padding: 0;
   color: #4f5dff;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
 }
 
 #m-auth .auth-panel[data-mode="login"] .fg:has(#al-pass) {
   position: relative;
-  margin-bottom: 34px;
+  margin-bottom: 30px;
 }
 
 #m-auth .auth-panel[data-mode="login"] .password-toggle {
@@ -259,12 +265,13 @@
   width: 100%;
   height: 52px;
   min-height: 52px;
-  margin: 8px 0 24px;
+  margin: 6px 0 22px;
   border-radius: 7px;
   background: #4f5dff;
   color: #fff;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 800;
+  letter-spacing: -.01em;
   box-shadow: 0 10px 22px rgba(79, 93, 255, .24);
 }
 
@@ -278,19 +285,19 @@
 #m-auth .auth-panel[data-mode="login"] .auth-social {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 18px;
 }
 
 #m-auth .auth-panel[data-mode="login"] .auth-social-divider {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 14px;
   margin: 0;
   padding: 0;
-  color: #a0a9bd;
-  font-size: 13px;
+  color: #9aa3b6;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0;
+  letter-spacing: .01em;
   text-transform: none;
 }
 
@@ -304,7 +311,7 @@
 #m-auth .auth-panel[data-mode="login"] .auth-social-actions {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
+  gap: 12px;
   margin: 0;
 }
 
@@ -314,7 +321,7 @@
   border-radius: 7px;
   background: #ffffff;
   color: #151a32;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 800;
   box-shadow: none;
 }
@@ -348,10 +355,11 @@
   content: "Términos de servicio  •  Política de privacidad";
   display: block;
   width: min(420px, 100%);
-  margin: 92px auto 0;
+  margin: 56px auto 0;
   color: #9ca3af;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
   text-align: center;
 }
 

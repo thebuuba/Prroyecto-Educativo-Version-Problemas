@@ -83,6 +83,7 @@
 <script>
   (function initBootFallback() {
     const BOOT_TIMEOUT_MS = 3500;
+    document.documentElement.classList.add('auth-session-checking');
 
     function hideBootSplash(reason) {
       const splash = document.getElementById('app-boot');
@@ -110,36 +111,6 @@
 
     window.hideBootSplash = hideBootSplash;
     window.setTimeout(() => hideBootSplash('timeout inicial'), BOOT_TIMEOUT_MS);
-  })();
-</script>
-<script>
-  (function initDefaultAuthFallback() {
-    const SESSION_KEY = 'eg_v3:session';
-    let hasStoredSession = false;
-
-    try {
-      hasStoredSession = !!(window.sessionStorage.getItem(SESSION_KEY) || window.localStorage.getItem(SESSION_KEY));
-    } catch (_) {}
-
-    if (hasStoredSession) return;
-
-    const openAuth = () => {
-      const body = document.body;
-      const modal = document.getElementById('m-auth');
-      if (!body || !modal || modal.classList.contains('open')) return;
-      if (typeof window.openM === 'function') {
-        window.openM('m-auth');
-        return;
-      }
-      body.classList.add('auth-screen-open');
-      modal.classList.add('open');
-    };
-
-    if (document.readyState === 'loading') {
-      window.addEventListener('DOMContentLoaded', openAuth, { once: true });
-    } else {
-      openAuth();
-    }
   })();
 </script>
 </head>

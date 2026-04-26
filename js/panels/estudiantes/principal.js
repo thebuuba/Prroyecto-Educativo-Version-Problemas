@@ -297,6 +297,6 @@ function renderizarSearchResult(res) {
  */
 export function inicializar() {
   if (!window.RENDERS) window.RENDERS = {};
-  window.RENDERS.estudiantes = registerStudentsPanel;
+  window.RENDERS.estudiantes = registrarStudentsPanel;
   registerStudentsActions();
 }

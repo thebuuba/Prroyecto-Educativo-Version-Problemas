@@ -1,4 +1,4 @@
-import{t as l,a as d,S as r}from"./main-AFE2lkXK.js";const t={gradeId:"",section:"A",area:"",subject:"",room:""};function n(a){const s=d();if(s.length===0){l("Crea un grado antes de agregar asignaturas",!0),setTimeout(()=>window.go("grade-setup"),500);return}t.gradeId||(t.gradeId=r.activeGradeId||s[0].id),a.innerHTML=`
+import{t as l,a as d,S as r}from"./main-CaBILF-9.js";const t={gradeId:"",section:"A",area:"",subject:"",room:""};function n(a){const s=d();if(s.length===0){l("Crea un grado antes de agregar asignaturas",!0),setTimeout(()=>window.go("grade-setup"),500);return}t.gradeId||(t.gradeId=r.activeGradeId||s[0].id),a.innerHTML=`
     <div class="max-w-[1400px] mx-auto p-6 md:p-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
       <!-- Header -->

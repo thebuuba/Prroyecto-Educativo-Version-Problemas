@@ -1,4 +1,4 @@
-import{t as o,R as w,S as h}from"./main-AFE2lkXK.js";function y({FormState:e,subjectsForArea:d,updateGradeGrid:i,updateAreaGrid:a,updateSubjectGrid:l,updateSectionGrid:c,updatePreviews:n}){window.updateGradeSetupField=(r,u)=>{if(e[r]=u,r==="level"&&(e.grade="",e.area="",e.subject="",document.querySelectorAll(".grade-setup-card-btn").forEach(t=>{var b,p,g,m,v,x;t.dataset.level===u?(t.classList.add("border-blue-600","bg-blue-50/50"),t.classList.remove("border-slate-100","bg-slate-50/50"),(b=t.querySelector(".grade-level-title"))==null||b.classList.add("text-blue-700"),(p=t.querySelector(".grade-level-title"))==null||p.classList.remove("text-slate-600"),(g=t.querySelector(".grade-level-check"))==null||g.classList.remove("hidden")):(t.classList.remove("border-blue-600","bg-blue-50/50"),t.classList.add("border-slate-100","bg-slate-50/50"),(m=t.querySelector(".grade-level-title"))==null||m.classList.remove("text-blue-700"),(v=t.querySelector(".grade-level-title"))==null||v.classList.add("text-slate-600"),(x=t.querySelector(".grade-level-check"))==null||x.classList.add("hidden"))}),i(),a()),r==="grade"&&i(),r==="area"){e.subject="",a();const t=d(e.level,e.area);t.length===1&&(e.subject=t[0],l())}r==="subject"&&l(),r==="section"&&c(),n()},window.confirmSaveGrade=async()=>{if(!e.grade){o("Debes seleccionar un grado",!0);return}if(!e.area){o("Selecciona el área curricular",!0);return}if(!e.subject){o("Selecciona la asignatura",!0);return}if(typeof window.saveGrade=="function")try{await window.saveGrade(e)}catch(r){console.error("[EduGest][setup] Fallo al guardar grado:",r),o("Error al guardar el grado",!0)}else o("Error: Motor de guardado no inicializado",!0)}}const s={level:"Primaria",grade:"",section:"A",area:"",subject:"",room:""},f={Inicial:[{area:"Desarrollo Personal y Social",subjects:["Identidad","Autonomía","Convivencia"]},{area:"Comunicación",subjects:["Lengua Oral y Escrita","Expresión Artística"]},{area:"Pensamiento Lógico",subjects:["Relación con el Entorno","Pensamiento Matemático"]}],Primaria:[{area:"Lengua Española",subjects:["Lengua Española"]},{area:"Matemática",subjects:["Matemática"]},{area:"Ciencias Sociales",subjects:["Ciencias Sociales"]},{area:"Ciencias de la Naturaleza",subjects:["Ciencias de la Naturaleza"]},{area:"Educación Artística",subjects:["Educación Artística"]},{area:"Educación Física",subjects:["Educación Física"]},{area:"Formación Integral Humana y Religiosa",subjects:["Formación Integral Humana y Religiosa"]},{area:"Lenguas Extranjeras",subjects:["Inglés","Francés"]}],Secundaria:[{area:"Lengua Española",subjects:["Lengua Española","Lengua y Literatura"]},{area:"Matemática",subjects:["Matemática"]},{area:"Ciencias Sociales",subjects:["Ciencias Sociales","Historia","Geografía","Educación Moral y Cívica","Historia y Geografía"]},{area:"Ciencias de la Naturaleza",subjects:["Ciencias de la Naturaleza","Biología","Química","Física"]},{area:"Educación Artística",subjects:["Educación Artística"]},{area:"Educación Física",subjects:["Educación Física"]},{area:"Formación Integral Humana y Religiosa",subjects:["Formación Integral Humana y Religiosa"]},{area:"Lenguas Extranjeras",subjects:["Inglés","Francés"]},{area:"Informática",subjects:["Informática"]}]};function j(e){return f[e]||f.Primaria}function E(e,d){const i=j(e).find(a=>a.area===d);return i?i.subjects:[]}function k(e){s.level="Primaria",s.grade="",s.section="A",s.area="",s.subject="",s.room="";const d=["Inicial","Primaria","Secundaria"],i=w(h);e.innerHTML=`
+import{t as d,a1 as y,S as j}from"./main-BFkCmjLr.js";function E({FormState:t,subjectsForArea:s,updateGradeGrid:a,updateAreaGrid:i,updateSubjectGrid:r,updateSectionGrid:o,updatePreviews:c}){window.updateGradeSetupField=(n,u)=>{if(t[n]=u,n==="level"&&(t.grade="",t.area="",t.subject="",document.querySelectorAll(".grade-setup-card-btn").forEach(l=>{var b,g,p,m,v,x;l.dataset.level===u?(l.classList.add("border-blue-600","bg-blue-50/50"),l.classList.remove("border-slate-100","bg-slate-50/50"),(b=l.querySelector(".grade-level-title"))==null||b.classList.add("text-blue-700"),(g=l.querySelector(".grade-level-title"))==null||g.classList.remove("text-slate-600"),(p=l.querySelector(".grade-level-check"))==null||p.classList.remove("hidden")):(l.classList.remove("border-blue-600","bg-blue-50/50"),l.classList.add("border-slate-100","bg-slate-50/50"),(m=l.querySelector(".grade-level-title"))==null||m.classList.remove("text-blue-700"),(v=l.querySelector(".grade-level-title"))==null||v.classList.add("text-slate-600"),(x=l.querySelector(".grade-level-check"))==null||x.classList.add("hidden"))}),a(),i()),n==="grade"&&a(),n==="area"){t.subject="",i();const l=s(t.level,t.area);l.length===1&&(t.subject=l[0],r())}n==="subject"&&r(),n==="section"&&o(),c()},window.confirmSaveGrade=async()=>{if(!t.grade){d("Debes seleccionar un grado",!0);return}if(!t.area){d("Selecciona el área curricular",!0);return}if(!t.subject){d("Selecciona la asignatura",!0);return}if(typeof window.saveGrade=="function")try{await window.saveGrade(t)}catch(n){console.error("[EduGest][setup] Fallo al guardar grado:",n),d("Error al guardar el grado",!0)}else d("Error: Motor de guardado no inicializado",!0)}}const e={level:"Primaria",grade:"",section:"A",area:"",subject:"",room:""},f={Inicial:[{area:"Desarrollo Personal y Social",subjects:["Identidad","Autonomía","Convivencia"]},{area:"Comunicación",subjects:["Lengua Oral y Escrita","Expresión Artística"]},{area:"Pensamiento Lógico",subjects:["Relación con el Entorno","Pensamiento Matemático"]}],Primaria:[{area:"Lengua Española",subjects:["Lengua Española"]},{area:"Matemática",subjects:["Matemática"]},{area:"Ciencias Sociales",subjects:["Ciencias Sociales"]},{area:"Ciencias de la Naturaleza",subjects:["Ciencias de la Naturaleza"]},{area:"Educación Artística",subjects:["Educación Artística"]},{area:"Educación Física",subjects:["Educación Física"]},{area:"Formación Integral Humana y Religiosa",subjects:["Formación Integral Humana y Religiosa"]},{area:"Lenguas Extranjeras",subjects:["Inglés","Francés"]}],Secundaria:[{area:"Lengua Española",subjects:["Lengua Española","Lengua y Literatura"]},{area:"Matemática",subjects:["Matemática"]},{area:"Ciencias Sociales",subjects:["Ciencias Sociales","Historia","Geografía","Educación Moral y Cívica","Historia y Geografía"]},{area:"Ciencias de la Naturaleza",subjects:["Ciencias de la Naturaleza","Biología","Química","Física"]},{area:"Educación Artística",subjects:["Educación Artística"]},{area:"Educación Física",subjects:["Educación Física"]},{area:"Formación Integral Humana y Religiosa",subjects:["Formación Integral Humana y Religiosa"]},{area:"Lenguas Extranjeras",subjects:["Inglés","Francés"]},{area:"Informática",subjects:["Informática"]}]};function w(t){return f[t]||f.Primaria}function h(t,s){const a=w(t).find(i=>i.area===s);return a?a.subjects:[]}function S(t){e.level="Primaria",e.grade="",e.section="A",e.area="",e.subject="",e.room="";const s=["Inicial","Primaria","Secundaria"],a=y(j);t.innerHTML=`
     <div class="max-w-[1400px] mx-auto p-6 md:p-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
       <!-- Header -->
@@ -27,16 +27,16 @@ import{t as o,R as w,S as h}from"./main-AFE2lkXK.js";function y({FormState:e,sub
               Nivel Educativo
             </h3>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              ${d.map(a=>{const l=s.level===a,c=i.length>0&&!i.some(n=>n.toLowerCase()===a.toLowerCase());return`
+              ${s.map(i=>{const r=e.level===i,o=a.length>0&&!a.some(c=>c.toLowerCase()===i.toLowerCase());return`
                   <button 
-                    onclick="window.updateGradeSetupField('level', '${a}')"
-                    data-level="${a}"
-                    ${c?"disabled":""}
-                    class="grade-setup-card-btn group relative p-6 rounded-3xl border-2 transition-all text-left overflow-hidden ${l?"border-blue-600 bg-blue-50/50":"border-slate-100 bg-slate-50/50 hover:border-slate-200"} ${c?"opacity-40 cursor-not-allowed grayscale":""}"
+                    onclick="window.updateGradeSetupField('level', '${i}')"
+                    data-level="${i}"
+                    ${o?"disabled":""}
+                    class="grade-setup-card-btn group relative p-6 rounded-3xl border-2 transition-all text-left overflow-hidden ${r?"border-blue-600 bg-blue-50/50":"border-slate-100 bg-slate-50/50 hover:border-slate-200"} ${o?"opacity-40 cursor-not-allowed grayscale":""}"
                   >
-                    <div class="grade-level-title font-bold text-lg ${l?"text-blue-700":"text-slate-600"}">${a}</div>
-                    <div class="text-xs ${l?"text-blue-500":"text-slate-400"} mt-1">${c?"No activo en perfil":"Currículo oficial"}</div>
-                    <div class="grade-level-check absolute top-4 right-4 text-blue-600 ${l?"":"hidden"}">
+                    <div class="grade-level-title font-bold text-lg ${r?"text-blue-700":"text-slate-600"}">${i}</div>
+                    <div class="text-xs ${r?"text-blue-500":"text-slate-400"} mt-1">${o?"No activo en perfil":"Currículo oficial"}</div>
+                    <div class="grade-level-check absolute top-4 right-4 text-blue-600 ${r?"":"hidden"}">
                       <span class="material-symbols-outlined text-sm">check_circle</span>
                     </div>
                   </button>
@@ -82,10 +82,10 @@ import{t as o,R as w,S as h}from"./main-AFE2lkXK.js";function y({FormState:e,sub
              <section class="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">Sección</h3>
                <div id="section-selector-grid" class="grid grid-cols-4 gap-2">
-                 ${["A","B","C","D"].map(a=>`
-                   <button onclick="window.updateGradeSetupField('section', '${a}')" 
-                           class="py-3 rounded-2xl font-bold transition-all ${s.section===a?"bg-slate-900 text-white shadow-lg":"bg-slate-50 text-slate-500 hover:bg-slate-100"}">
-                     ${a}
+                 ${["A","B","C","D"].map(i=>`
+                   <button onclick="window.updateGradeSetupField('section', '${i}')" 
+                           class="py-3 rounded-2xl font-bold transition-all ${e.section===i?"bg-slate-900 text-white shadow-lg":"bg-slate-50 text-slate-500 hover:bg-slate-100"}">
+                     ${i}
                    </button>
                  `).join("")}
                </div>
@@ -140,7 +140,7 @@ import{t as o,R as w,S as h}from"./main-AFE2lkXK.js";function y({FormState:e,sub
                       </div>
                       <div>
                         <div class="text-[10px] text-premium-muted font-bold uppercase">Sección</div>
-                        <div class="text-lg font-black" id="preview-section-label">Sección ${s.section}</div>
+                        <div class="text-lg font-black" id="preview-section-label">Sección ${e.section}</div>
                       </div>
                     </div>
                  </div>
@@ -167,7 +167,7 @@ import{t as o,R as w,S as h}from"./main-AFE2lkXK.js";function y({FormState:e,sub
                 <span class="material-symbols-outlined">info</span>
               </div>
               <p class="text-xs text-amber-900/60 leading-relaxed font-medium">
-                Al crear el grado, se configurarán automáticamente las áreas y asignaturas según el diseño curricular de la República Dominicana para el nivel <span id="gs-tip-level" class="text-amber-700 font-bold">${s.level}</span>.
+                Al crear el grado, se configurarán automáticamente las áreas y asignaturas según el diseño curricular de la República Dominicana para el nivel <span id="gs-tip-level" class="text-amber-700 font-bold">${e.level}</span>.
               </p>
             </div>
 
@@ -176,4 +176,32 @@ import{t as o,R as w,S as h}from"./main-AFE2lkXK.js";function y({FormState:e,sub
 
       </div>
     </div>
-  `,updateGradeGrid(),updateAreaGrid(),updateSectionGrid(),updatePreviews()}function G(){y({FormState:s,subjectsForArea:E,updateGradeGrid,updateAreaGrid,updateSubjectGrid,updateSectionGrid,updatePreviews}),window.RENDERS||(window.RENDERS={}),window.RENDERS["grade-setup"]=renderGradeSetupPanel}export{G as inicializar,k as renderizarGradeSetupPanel};
+  `,L(),k(),A(),C()}function L(){const t=document.getElementById("grade-selector-grid");if(!t)return;let s=[];e.level==="Inicial"?s=["Parvulario","Pre-Kínder","Kínder","Pre-Primario"]:e.level==="Primaria"?s=["1ero","2do","3ero","4to","5to","6to"]:e.level==="Secundaria"&&(s=["1ero","2do","3ero","4to","5to","6to"]),t.innerHTML=s.map(a=>`
+    <button 
+      onclick="window.updateGradeSetupField('grade', '${a}')"
+      class="py-4 rounded-2xl font-black text-sm transition-all border-2 ${e.grade===a?"bg-blue-600 border-blue-600 text-white shadow-lg":"bg-slate-50 border-transparent text-slate-400 hover:bg-slate-100"}"
+    >
+      ${a}
+    </button>
+  `).join("")}function k(){const t=document.getElementById("area-selector-grid");if(!t)return;const s=w(e.level);t.innerHTML=s.map(a=>`
+    <button 
+      onclick="window.updateGradeSetupField('area', '${a.area}')"
+      class="px-4 py-2.5 rounded-2xl text-sm font-bold transition-all border-2 ${e.area===a.area?"bg-violet-600 border-violet-600 text-white shadow-lg":"bg-slate-50 border-transparent text-slate-500 hover:bg-slate-100"}"
+    >
+      ${a.area}
+    </button>
+  `).join(""),$()}function $(){const t=document.getElementById("subject-selector-grid");if(!t)return;if(!e.area){t.innerHTML='<span class="text-sm text-slate-400 italic py-2">Selecciona un área primero</span>';return}const s=h(e.level,e.area);if(!s.length){t.innerHTML='<span class="text-sm text-slate-400 italic py-2">No hay asignaturas para esta área</span>';return}s.length===1&&!e.subject&&(e.subject=s[0]),t.innerHTML=s.map(a=>`
+    <button 
+      onclick="window.updateGradeSetupField('subject', '${a}')"
+      class="px-4 py-2.5 rounded-2xl text-sm font-bold transition-all border-2 ${e.subject===a?"bg-emerald-600 border-emerald-600 text-white shadow-lg":"bg-slate-50 border-transparent text-slate-500 hover:bg-slate-100"}"
+    >
+      ${a}
+    </button>
+  `).join("")}function A(){const t=document.getElementById("section-selector-grid");if(!t)return;const s=["A","B","C","D"];t.innerHTML=s.map(i=>`
+    <button
+      onclick="window.updateGradeSetupField('section', '${i}')"
+      class="py-3 rounded-2xl font-bold transition-all ${e.section===i?"bg-slate-900 text-white shadow-lg":"bg-slate-50 text-slate-500 hover:bg-slate-100"}"
+    >
+      ${i}
+    </button>
+  `).join("");const a=document.getElementById("custom-section");a&&(a.value=s.includes(e.section)?"":e.section)}function C(){const t=document.getElementById("preview-grade-label"),s=document.getElementById("preview-section-label"),a=document.getElementById("preview-subject-label"),i=document.getElementById("gs-tip-level"),r=document.getElementById("gs-save-btn");t&&(t.textContent=e.grade?`${e.grade} - ${e.level}`:"Pendiente..."),s&&(s.textContent=`Sección ${e.section}`),a&&(e.subject&&e.area?a.textContent=`${e.subject}`:e.area?a.textContent=`${e.area}`:a.textContent="Pendiente..."),i&&(i.textContent=e.level);const o=e.grade&&e.area&&e.subject&&e.section;r&&(r.disabled=!o)}function R(){E({FormState:e,subjectsForArea:h}),window.RENDERS||(window.RENDERS={}),window.RENDERS["grade-setup"]=S}export{R as inicializar,S as renderizarGradeSetupPanel};

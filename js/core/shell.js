@@ -112,16 +112,29 @@ export function closeProfileMenu() {
  * fijación de paneles y clics fuera de menús.
  */
 export function initShell() {
-  // Listeners para Elementos de Navegación
-  if (STATIC_DOM.navLinks) {
-    STATIC_DOM.navLinks.filter(el => el.dataset.p).forEach(el => {
-      el.addEventListener('click', () => {
-        const requestedPage = el.dataset.p;
-        collapseSidebarIfAllowed();
-        go(requestedPage, { animatePanelTransition: true });
-      });
-    });
-  }
+  if (window.__AULABASE_SHELL_BOUND) return;
+  window.__AULABASE_SHELL_BOUND = true;
+
+  document.addEventListener('click', (event) => {
+    const navButton = event.target?.closest?.('.sb-link[data-p]');
+    if (navButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      const requestedPage = navButton.dataset.p;
+      collapseSidebarIfAllowed();
+      go(requestedPage, { animatePanelTransition: true, force: true });
+      return;
+    }
+
+    const logoutButton = event.target?.closest?.('.sb-logout-btn, #sb-logout, button[onclick="logoutAuth()"]');
+    if (logoutButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (typeof window.logoutAuth === 'function') {
+        window.logoutAuth();
+      }
+    }
+  });
 
   // Interacción de la Barra Lateral (Hover y Auto-cierre)
   const sidebarEl = document.getElementById('sb');

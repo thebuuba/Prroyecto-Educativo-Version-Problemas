@@ -1,5 +1,6 @@
 const express = require('express');
 const { query, withTransaction } = require('../db/pool');
+const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -55,10 +56,10 @@ async function resolveSchoolForUser(client, input = {}, userId) {
   return schoolResult.rows[0];
 }
 
-router.post('/profile', async (req, res, next) => {
+router.post('/profile', requireAuth, async (req, res, next) => {
   try {
-    const email = String(req.body?.email || '').trim().toLowerCase();
-    const displayName = String(req.body?.displayName || '').trim();
+    const email = String(req.auth?.user?.email || req.body?.email || '').trim().toLowerCase();
+    const displayName = String(req.body?.displayName || req.auth?.user?.display_name || '').trim();
     const phone = String(req.body?.phone || '').trim() || null;
     const firebaseUid = String(req.body?.firebaseUid || '').trim() || null;
     const role = String(req.body?.role || '').trim() || 'teacher';
@@ -67,7 +68,9 @@ router.post('/profile', async (req, res, next) => {
     if (!displayName) throw badRequest('El nombre es obligatorio.');
 
     const result = await withTransaction(async (client) => {
-      const userLookup = firebaseUid
+      const userLookup = req.auth?.userId
+        ? { rows: [{ id: req.auth.userId }] }
+        : firebaseUid
         ? await client.query(
             `SELECT id FROM users WHERE firebase_uid = $1 OR email = $2 LIMIT 1`,
             [firebaseUid, email]
@@ -102,6 +105,27 @@ router.post('/profile', async (req, res, next) => {
       }
 
       const school = await resolveSchoolForUser(client, req.body || {}, user.id);
+
+      await client.query(
+        `INSERT INTO user_profiles (user_id, full_name, institution_name, teacher_role, academic_year, phone)
+         VALUES ($1, $2, $3, $4, $5, $6)
+         ON CONFLICT (user_id) DO UPDATE
+         SET full_name = EXCLUDED.full_name,
+             institution_name = COALESCE(EXCLUDED.institution_name, user_profiles.institution_name),
+             teacher_role = EXCLUDED.teacher_role,
+             academic_year = COALESCE(EXCLUDED.academic_year, user_profiles.academic_year),
+             phone = COALESCE(EXCLUDED.phone, user_profiles.phone),
+             updated_at = NOW()`,
+        [user.id, displayName, school.name, role, String(req.body?.academicYear || '').trim() || null, phone]
+      );
+      await client.query(
+        `INSERT INTO user_settings (user_id, timezone)
+         VALUES ($1, $2)
+         ON CONFLICT (user_id) DO UPDATE
+         SET timezone = EXCLUDED.timezone,
+             updated_at = NOW()`,
+        [user.id, String(req.body?.timezone || '').trim() || 'America/Santo_Domingo']
+      );
 
       await client.query(
         `INSERT INTO school_memberships (school_id, user_id, role)

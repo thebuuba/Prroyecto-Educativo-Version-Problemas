@@ -1,5 +1,6 @@
 const express = require('express');
 const { query, withTransaction } = require('../db/pool');
+const { requireSchoolAccess } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -30,10 +31,9 @@ router.get('/', async (req, res, next) => {
     const params = [];
     const where = [];
 
-    if (schoolId) {
-      params.push(schoolId);
-      where.push(`school_id = $${params.length}`);
-    }
+    await requireSchoolAccess(req, schoolId);
+    params.push(schoolId);
+    where.push(`school_id = $${params.length}`);
     if (sectionId) {
       params.push(sectionId);
       where.push(`section_id = $${params.length}`);
@@ -53,9 +53,9 @@ router.get('/', async (req, res, next) => {
     const result = await query(
       `SELECT id, school_id, section_id, student_id, attendance_date, status, reason, created_at, updated_at
        FROM attendance_records
-       ${clause}
+       ${clause} AND (owner_user_id = $${params.length + 1} OR owner_user_id IS NULL)
        ORDER BY attendance_date ASC, student_id ASC`,
-      params
+      [...params, req.auth.userId]
     );
 
     res.json(result.rows);
@@ -73,6 +73,7 @@ router.post('/', async (req, res, next) => {
     const bounds = monthBounds(monthKey);
 
     if (!schoolId) throw badRequest('schoolId es obligatorio.');
+    await requireSchoolAccess(req, schoolId);
     if (!sectionId) throw badRequest('sectionId es obligatorio.');
     if (!bounds) throw badRequest('monthKey debe tener el formato YYYY-MM.');
 
@@ -93,24 +94,26 @@ router.post('/', async (req, res, next) => {
         `DELETE FROM attendance_records
          WHERE school_id = $1
            AND section_id = $2
+           AND (owner_user_id = $5 OR owner_user_id IS NULL)
            AND attendance_date >= $3::date
            AND attendance_date < $4::date`,
-        [schoolId, sectionId, bounds.start, bounds.end]
+        [schoolId, sectionId, bounds.start, bounds.end, req.auth.userId]
       );
 
       let inserted = 0;
       for (const row of cleanedRows) {
         await client.query(
-          `INSERT INTO attendance_records (school_id, section_id, student_id, attendance_date, status, reason)
-           VALUES ($1, $2, $3, $4::date, $5, $6)
+          `INSERT INTO attendance_records (school_id, section_id, student_id, attendance_date, status, reason, owner_user_id)
+           VALUES ($1, $2, $3, $4::date, $5, $6, $7)
            ON CONFLICT (student_id, attendance_date)
            DO UPDATE SET
              school_id = EXCLUDED.school_id,
              section_id = EXCLUDED.section_id,
+             owner_user_id = EXCLUDED.owner_user_id,
              status = EXCLUDED.status,
              reason = EXCLUDED.reason,
              updated_at = NOW()`,
-          [schoolId, sectionId, row.studentId, row.attendanceDate, row.status, row.reason]
+          [schoolId, sectionId, row.studentId, row.attendanceDate, row.status, row.reason, req.auth.userId]
         );
         inserted += 1;
       }
@@ -141,6 +144,7 @@ router.delete('/', async (req, res, next) => {
     const bounds = monthBounds(monthKey);
 
     if (!schoolId) throw badRequest('schoolId es obligatorio.');
+    await requireSchoolAccess(req, schoolId);
     if (!sectionId) throw badRequest('sectionId es obligatorio.');
     if (!bounds) throw badRequest('monthKey debe tener el formato YYYY-MM.');
 
@@ -148,9 +152,10 @@ router.delete('/', async (req, res, next) => {
       `DELETE FROM attendance_records
        WHERE school_id = $1
          AND section_id = $2
+         AND (owner_user_id = $5 OR owner_user_id IS NULL)
          AND attendance_date >= $3::date
          AND attendance_date < $4::date`,
-      [schoolId, sectionId, bounds.start, bounds.end]
+      [schoolId, sectionId, bounds.start, bounds.end, req.auth.userId]
     );
 
     res.json({

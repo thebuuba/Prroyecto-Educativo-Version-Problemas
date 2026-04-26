@@ -9,12 +9,16 @@ function badRequest(message) {
   return error;
 }
 
-router.get('/', async (_req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     const result = await query(
-      `SELECT id, name, code, academic_year, timezone, created_at, updated_at
-       FROM schools
-       ORDER BY created_at DESC`
+      `SELECT s.id, s.name, s.code, s.academic_year, s.timezone, s.created_at, s.updated_at
+       FROM schools s
+       INNER JOIN school_memberships sm ON sm.school_id = s.id
+       WHERE sm.user_id = $1
+         AND sm.status = 'active'
+       ORDER BY s.created_at DESC`,
+      [req.auth.userId]
     );
     res.json(result.rows);
   } catch (error) {
@@ -34,8 +38,20 @@ router.post('/', async (req, res, next) => {
     const result = await query(
       `INSERT INTO schools (name, code, academic_year, timezone)
        VALUES ($1, $2, $3, $4)
+       ON CONFLICT (name) DO UPDATE
+       SET academic_year = COALESCE(EXCLUDED.academic_year, schools.academic_year),
+           timezone = EXCLUDED.timezone,
+           updated_at = NOW()
        RETURNING id, name, code, academic_year, timezone, created_at, updated_at`,
       [name, code, academicYear, timezone]
+    );
+
+    await query(
+      `INSERT INTO school_memberships (school_id, user_id, role)
+       VALUES ($1, $2, 'teacher')
+       ON CONFLICT (school_id, user_id) DO UPDATE
+       SET status = 'active'`,
+      [result.rows[0].id, req.auth.userId]
     );
 
     res.status(201).json(result.rows[0]);

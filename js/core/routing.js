@@ -95,6 +95,7 @@ export const PANEL_BUNDLES = {
   'student-create': 'estudiantes-nuevo',
   'section-create': 'secciones-nuevo',
   'student-edit': 'estudiantes-edicion',
+  'configuracion-academica': 'grados',
 };
 
 /**
@@ -208,6 +209,9 @@ export function ensurePanelBundleLoaded(pageKey, RENDERS) {
   if (!bundleKey) {
     return Promise.resolve(Boolean(RENDERS[pageKey]));
   }
+  if (pendingPanelBundleLoads[bundleKey]) {
+    return pendingPanelBundleLoads[bundleKey];
+  }
   if (loadedPanelBundles[bundleKey]) {
     return Promise.resolve(true);
   }
@@ -228,9 +232,8 @@ export function ensurePanelBundleLoaded(pageKey, RENDERS) {
         .then((mod) => {
           loadedPanelBundles[bundleKey] = true;
           delete pendingPanelBundleLoads[bundleKey];
-          if (typeof mod.init === 'function') {
-            mod.init();
-          }
+          const initializer = typeof mod.inicializar === 'function' ? mod.inicializar : mod.init;
+          if (typeof initializer === 'function') initializer();
           return true;
         })
         .catch((err) => {
@@ -244,9 +247,8 @@ export function ensurePanelBundleLoaded(pageKey, RENDERS) {
         .then((mod) => {
           loadedPanelBundles[bundleKey] = true;
           delete pendingPanelBundleLoads[bundleKey];
-          if (typeof mod.init === 'function') {
-            mod.init();
-          }
+          const initializer = typeof mod.inicializar === 'function' ? mod.inicializar : mod.init;
+          if (typeof initializer === 'function') initializer();
           return true;
         })
         .catch((err) => {
@@ -333,7 +335,11 @@ export function go(requestedPage = 'dashboard', options = {}) {
   console.log('[Routing][go] Navegando a:', requestedPage);
   
   // Normalizar 'tablero' a 'dashboard' para evitar duplicados
-  const normalizedPage = requestedPage === 'tablero' ? 'dashboard' : requestedPage;
+  const normalizedPage = requestedPage === 'tablero'
+    ? 'dashboard'
+    : requestedPage === 'configuracion-academica'
+      ? 'grade-setup'
+      : requestedPage;
   
   // Prevenir navegación duplicada al mismo panel
   if (S.currentPage === normalizedPage && !options?.force) {

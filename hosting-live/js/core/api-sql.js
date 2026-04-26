@@ -95,42 +95,78 @@ export async function syncProfile(payload) {
  * Carga la lista de grados asociados al perfil.
  */
 export async function loadGrades(params = {}) {
-  return request(`/api/grades${buildQuery(params)}`);
+  const context = getSqlStateContext();
+  const enrichedParams = {
+    ...params,
+    ...(context?.firebaseUid ? { firebaseUid: context.firebaseUid } : {}),
+    ...(context?.userId ? { userId: context.userId } : {}),
+  };
+  return request(`/api/grades${buildQuery(enrichedParams)}`);
 }
 
 /**
  * Carga la lista de secciones (cursos) asociadas al perfil.
  */
 export async function loadSections(params = {}) {
-  return request(`/api/sections${buildQuery(params)}`);
+  const context = getSqlStateContext();
+  const enrichedParams = {
+    ...params,
+    ...(context?.firebaseUid ? { firebaseUid: context.firebaseUid } : {}),
+    ...(context?.userId ? { userId: context.userId } : {}),
+  };
+  return request(`/api/sections${buildQuery(enrichedParams)}`);
 }
 
 /**
  * Carga la lista de estudiantes.
  */
 export async function loadStudents(params = {}) {
-  return request(`/api/students${buildQuery(params)}`);
+  const context = getSqlStateContext();
+  const enrichedParams = {
+    ...params,
+    ...(context?.firebaseUid ? { firebaseUid: context.firebaseUid } : {}),
+    ...(context?.userId ? { userId: context.userId } : {}),
+  };
+  return request(`/api/students${buildQuery(enrichedParams)}`);
 }
 
 /**
  * Carga los registros de asistencia históricos.
  */
 export async function loadAttendance(params = {}) {
-  return request(`/api/attendance${buildQuery(params)}`);
+  const context = getSqlStateContext();
+  const enrichedParams = {
+    ...params,
+    ...(context?.firebaseUid ? { firebaseUid: context.firebaseUid } : {}),
+    ...(context?.userId ? { userId: context.userId } : {}),
+  };
+  return request(`/api/attendance${buildQuery(enrichedParams)}`);
 }
 
 /**
  * Carga la lista de actividades evaluativas.
  */
 export async function loadActivities(params = {}) {
-  return request(`/api/activities${buildQuery(params)}`);
+  const context = getSqlStateContext();
+  const enrichedParams = {
+    ...params,
+    ...(context?.firebaseUid ? { firebaseUid: context.firebaseUid } : {}),
+    ...(context?.userId ? { userId: context.userId } : {}),
+  };
+  return request(`/api/activities${buildQuery(enrichedParams)}`);
 }
 
 /**
  * Carga los resultados de evaluaciones para estudiantes y actividades.
  */
 export async function loadEvaluations(params = {}) {
-  return request(`/api/evaluations${buildQuery(params)}`);
+  const context = getSqlStateContext();
+  const enrichedParams = {
+    ...params,
+    ...(context?.firebaseUid ? { firebaseUid: context.firebaseUid } : {}),
+    ...(context?.userId ? { userId: context.userId } : {}),
+  };
+  return request(`/api/evaluations${buildQuery(enrichedParams)}`);
 }
 
 /**
@@ -157,9 +193,15 @@ export async function clearAttendanceMonth(payload = {}) {
  * Crea un nuevo grado en el servidor SQL.
  */
 export async function createGrade(payload = {}) {
+  const context = getSqlStateContext();
+  const enrichedPayload = {
+    ...payload,
+    ...(context?.firebaseUid ? { firebaseUid: context.firebaseUid } : {}),
+    ...(context?.userId ? { userId: context.userId } : {}),
+  };
   return request('/api/grades', {
     method: 'POST',
-    body: JSON.stringify(payload || {}),
+    body: JSON.stringify(enrichedPayload || {}),
   });
 }
 
@@ -177,9 +219,15 @@ export async function updateGrade(gradeId, payload = {}) {
  * Crea una nueva sección (curso) en el servidor SQL.
  */
 export async function createSection(payload = {}) {
+  const context = getSqlStateContext();
+  const enrichedPayload = {
+    ...payload,
+    ...(context?.firebaseUid ? { firebaseUid: context.firebaseUid } : {}),
+    ...(context?.userId ? { userId: context.userId } : {}),
+  };
   return request('/api/sections', {
     method: 'POST',
-    body: JSON.stringify(payload || {}),
+    body: JSON.stringify(enrichedPayload || {}),
   });
 }
 
@@ -197,9 +245,15 @@ export async function updateSection(sectionId, payload = {}) {
  * Crea un nuevo estudiante en el servidor SQL.
  */
 export async function createStudent(payload = {}) {
+  const context = getSqlStateContext();
+  const enrichedPayload = {
+    ...payload,
+    ...(context?.firebaseUid ? { firebaseUid: context.firebaseUid } : {}),
+    ...(context?.userId ? { userId: context.userId } : {}),
+  };
   return request('/api/students', {
     method: 'POST',
-    body: JSON.stringify(payload || {}),
+    body: JSON.stringify(enrichedPayload || {}),
   });
 }
 
@@ -247,9 +301,15 @@ export async function deleteStudent(studentId, payload = {}) {
  * Crea una nueva actividad evaluativa en el servidor SQL.
  */
 export async function createActivity(payload = {}) {
+  const context = getSqlStateContext();
+  const enrichedPayload = {
+    ...payload,
+    ...(context?.firebaseUid ? { firebaseUid: context.firebaseUid } : {}),
+    ...(context?.userId ? { userId: context.userId } : {}),
+  };
   return request('/api/activities', {
     method: 'POST',
-    body: JSON.stringify(payload || {}),
+    body: JSON.stringify(enrichedPayload || {}),
   });
 }
 

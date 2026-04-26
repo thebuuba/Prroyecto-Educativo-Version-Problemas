@@ -83,8 +83,8 @@ export function renderizarMatrixPanel(container) {
   if (ests.length === 0 || totalActs() === 0) {
     container.innerHTML = `
       <div class="max-w-[1240px] mx-auto p-6 md:p-10">
-        ${renderHeader()}
-        ${renderEmptyState(ests)}
+        ${renderizarHeader()}
+        ${renderizarEmptyState(ests)}
       </div>
     `;
     return;
@@ -194,7 +194,7 @@ export function renderizarMatrixPanel(container) {
 
   container.innerHTML = `
     <div class="max-w-full mx-auto p-6 md:p-10 animate-in fade-in duration-700">
-      ${renderHeader()}
+      ${renderizarHeader()}
       
       <div class="bg-white border-2 border-slate-100 rounded-[3rem] overflow-hidden shadow-2xl shadow-slate-200/50 relative">
         <div class="p-6 border-b border-slate-50 bg-slate-50/30 flex items-center justify-between">
@@ -227,5 +227,5 @@ export function renderizarMatrixPanel(container) {
 
 export function inicializar() {
   if (!window.RENDERS) window.RENDERS = {};
-  window.RENDERS.matriz = renderMatrixPanel;
+  window.RENDERS.matriz = renderizarMatrixPanel;
 }

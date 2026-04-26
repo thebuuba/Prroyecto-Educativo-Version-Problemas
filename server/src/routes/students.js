@@ -1,5 +1,6 @@
 const express = require('express');
 const { query, withTransaction } = require('../db/pool');
+const { requireSchoolAccess } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -16,21 +17,21 @@ router.get('/', async (req, res, next) => {
     const params = [];
     const where = [];
 
-    if (schoolId) {
-      params.push(schoolId);
-      where.push(`school_id = $${params.length}`);
-    }
+    await requireSchoolAccess(req, schoolId);
+    params.push(schoolId);
+    where.push(`school_id = $${params.length}`);
     if (sectionId) {
       params.push(sectionId);
       where.push(`section_id = $${params.length}`);
     }
 
     const clause = where.length ? `WHERE ${where.join(' AND ')}` : '';
+    params.push(req.auth.userId);
 
     const result = await query(
       `SELECT id, school_id, grade_id, section_id, enrollment_code, first_name, last_name, middle_name, birth_date, status, created_at, updated_at
        FROM students
-       ${clause}
+       ${clause} AND (owner_user_id = $${params.length} OR owner_user_id IS NULL)
        ORDER BY last_name ASC, first_name ASC`,
       params
     );
@@ -53,16 +54,17 @@ router.post('/', async (req, res, next) => {
     const birthDate = String(req.body?.birthDate || '').trim() || null;
 
     if (!schoolId) throw badRequest('schoolId es obligatorio.');
+    await requireSchoolAccess(req, schoolId);
     if (!gradeId) throw badRequest('gradeId es obligatorio.');
     if (!sectionId) throw badRequest('sectionId es obligatorio.');
     if (!firstName) throw badRequest('El nombre del estudiante es obligatorio.');
     if (!lastName) throw badRequest('El apellido del estudiante es obligatorio.');
 
     const result = await query(
-      `INSERT INTO students (school_id, grade_id, section_id, enrollment_code, first_name, last_name, middle_name, birth_date)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `INSERT INTO students (school_id, grade_id, section_id, enrollment_code, first_name, last_name, middle_name, birth_date, owner_user_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING id, school_id, grade_id, section_id, enrollment_code, first_name, last_name, middle_name, birth_date, status, created_at, updated_at`,
-      [schoolId, gradeId, sectionId, enrollmentCode, firstName, lastName, middleName, birthDate]
+      [schoolId, gradeId, sectionId, enrollmentCode, firstName, lastName, middleName, birthDate, req.auth.userId]
     );
 
     res.status(201).json(result.rows[0]);
@@ -86,6 +88,7 @@ router.patch('/:id', async (req, res, next) => {
 
     if (!studentId) throw badRequest('El id del estudiante es obligatorio.');
     if (!schoolId) throw badRequest('schoolId es obligatorio.');
+    await requireSchoolAccess(req, schoolId);
     if (!gradeId) throw badRequest('gradeId es obligatorio.');
     if (!sectionId) throw badRequest('sectionId es obligatorio.');
     if (!firstName) throw badRequest('El nombre del estudiante es obligatorio.');
@@ -102,9 +105,9 @@ router.patch('/:id', async (req, res, next) => {
            birth_date = $7,
            status = $8,
            updated_at = NOW()
-       WHERE id = $9 AND school_id = $10
+       WHERE id = $9 AND school_id = $10 AND (owner_user_id = $11 OR owner_user_id IS NULL)
        RETURNING id, school_id, grade_id, section_id, enrollment_code, first_name, last_name, middle_name, birth_date, status, created_at, updated_at`,
-      [gradeId, sectionId, enrollmentCode, firstName, lastName, middleName, birthDate, status, studentId, schoolId]
+      [gradeId, sectionId, enrollmentCode, firstName, lastName, middleName, birthDate, status, studentId, schoolId, req.auth.userId]
     );
 
     if (!result.rows[0]) throw badRequest('No se encontró el estudiante a actualizar.');
@@ -121,23 +124,24 @@ router.delete('/:id', async (req, res, next) => {
 
     if (!studentId) throw badRequest('El id del estudiante es obligatorio.');
     if (!schoolId) throw badRequest('schoolId es obligatorio.');
+    await requireSchoolAccess(req, schoolId);
 
     const deleted = await withTransaction(async (client) => {
       await client.query(
         `DELETE FROM attendance_records
-         WHERE student_id = $1 AND school_id = $2`,
-        [studentId, schoolId]
+         WHERE student_id = $1 AND school_id = $2 AND (owner_user_id = $3 OR owner_user_id IS NULL)`,
+        [studentId, schoolId, req.auth.userId]
       );
       await client.query(
         `DELETE FROM evaluations
-         WHERE student_id = $1 AND school_id = $2`,
-        [studentId, schoolId]
+         WHERE student_id = $1 AND school_id = $2 AND (owner_user_id = $3 OR owner_user_id IS NULL)`,
+        [studentId, schoolId, req.auth.userId]
       );
       const result = await client.query(
         `DELETE FROM students
-         WHERE id = $1 AND school_id = $2
+         WHERE id = $1 AND school_id = $2 AND (owner_user_id = $3 OR owner_user_id IS NULL)
          RETURNING id, school_id, grade_id, section_id, enrollment_code, first_name, last_name, middle_name, birth_date, status, created_at, updated_at`,
-        [studentId, schoolId]
+        [studentId, schoolId, req.auth.userId]
       );
       return result.rows[0] || null;
     });

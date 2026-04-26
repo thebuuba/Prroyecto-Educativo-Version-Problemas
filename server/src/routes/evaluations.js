@@ -1,5 +1,6 @@
 const express = require('express');
 const { query, withTransaction } = require('../db/pool');
+const { requireSchoolAccess } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -28,10 +29,9 @@ router.get('/', async (req, res, next) => {
     const params = [];
     const where = [];
 
-    if (schoolId) {
-      params.push(schoolId);
-      where.push(`school_id = $${params.length}`);
-    }
+    await requireSchoolAccess(req, schoolId);
+    params.push(schoolId);
+    where.push(`school_id = $${params.length}`);
     if (sectionId) {
       params.push(sectionId);
       where.push(`section_id = $${params.length}`);
@@ -50,11 +50,12 @@ router.get('/', async (req, res, next) => {
     }
 
     const clause = where.length ? `WHERE ${where.join(' AND ')}` : '';
+    params.push(req.auth.userId);
 
     const result = await query(
       `SELECT id, school_id, section_id, activity_id, student_id, period_id, score, score_percent, notes, payload, evaluated_at, created_at, updated_at
        FROM evaluations
-       ${clause}
+       ${clause} AND (owner_user_id = $${params.length} OR owner_user_id IS NULL)
        ORDER BY evaluated_at ASC, created_at ASC`,
       params
     );
@@ -87,6 +88,7 @@ router.post('/', async (req, res, next) => {
         const evaluatedAt = String(row?.evaluatedAt || row?.timestamp || '').trim() || null;
 
         if (!schoolId) throw badRequest('schoolId es obligatorio.');
+        await requireSchoolAccess(req, schoolId);
         if (!sectionId) throw badRequest('sectionId es obligatorio.');
         if (!activityId) throw badRequest('activityId es obligatorio.');
         if (!studentId) throw badRequest('studentId es obligatorio.');
@@ -94,13 +96,14 @@ router.post('/', async (req, res, next) => {
         await client.query(
           `INSERT INTO evaluations (
              school_id, section_id, activity_id, student_id, period_id,
-             score, score_percent, notes, payload, evaluated_at
+             score, score_percent, notes, payload, evaluated_at, owner_user_id
            )
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, COALESCE($10::timestamptz, NOW()))
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, COALESCE($10::timestamptz, NOW()), $11)
            ON CONFLICT (activity_id, student_id, period_id)
            DO UPDATE SET
              school_id = EXCLUDED.school_id,
              section_id = EXCLUDED.section_id,
+             owner_user_id = EXCLUDED.owner_user_id,
              score = EXCLUDED.score,
              score_percent = EXCLUDED.score_percent,
              notes = EXCLUDED.notes,
@@ -108,7 +111,7 @@ router.post('/', async (req, res, next) => {
              evaluated_at = EXCLUDED.evaluated_at,
              updated_at = NOW()
            RETURNING id, school_id, section_id, activity_id, student_id, period_id, score, score_percent, notes, payload, evaluated_at, created_at, updated_at`,
-          [schoolId, sectionId, activityId, studentId, periodId, score, scorePercent, notes, payload, evaluatedAt]
+          [schoolId, sectionId, activityId, studentId, periodId, score, scorePercent, notes, payload, evaluatedAt, req.auth.userId]
         ).then((queryResult) => {
           if (queryResult.rows[0]) upserted.push(queryResult.rows[0]);
         });
@@ -133,9 +136,12 @@ router.delete('/', async (req, res, next) => {
     const where = [];
 
     if (!schoolId) throw badRequest('schoolId es obligatorio.');
+    await requireSchoolAccess(req, schoolId);
 
     params.push(schoolId);
     where.push(`school_id = $${params.length}`);
+    params.push(req.auth.userId);
+    where.push(`(owner_user_id = $${params.length} OR owner_user_id IS NULL)`);
 
     if (sectionId) {
       params.push(sectionId);

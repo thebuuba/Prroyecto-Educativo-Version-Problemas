@@ -23,14 +23,23 @@ import {
   debugAuthFlow
 } from '../../core/utils.js';
 import { v, toast, openM, closeM, forceCloseM } from '../../core/ui.js';
-import { 
+import {
   persist, 
   persistLocalAuthUsers, 
   applySessionUser, 
   hydrateCloudStateForUser, 
-  hydrateLocalWorkspaceForUser 
+  hydrateLocalWorkspaceForUser,
+  persistBrowserSession,
+  readBrowserSession,
 } from '../../core/hydration.js';
 import { go } from '../../core/routing.js';
+import {
+  getSqlAuthSession,
+  isEnabled as canUseSqlAuth,
+  loginSqlAuth,
+  registerSqlAuth,
+  sendSqlPasswordReset,
+} from '../../core/api-sql.js';
 import { isProfileSetupComplete } from '../configuracion-inicial/principal.js';
 import {
   clearRegisterFieldErrors,
@@ -220,16 +229,19 @@ export async function submitForgotPassword() {
     toast('Escribe un correo válido.', true);
     return;
   }
-  if (!canUseCloudAuth()) {
-    toast('Modo local: no se puede recuperar contraseña.', true);
-    return;
-  }
   try {
-    await window.EduGestCloud.sendPasswordReset(email);
+    if (canUseSqlAuth()) {
+      await sendSqlPasswordReset(email);
+    } else if (canUseCloudAuth()) {
+      await window.EduGestCloud.sendPasswordReset(email);
+    } else {
+      toast('Modo local: no se puede recuperar contraseña.', true);
+      return;
+    }
     toast('Enlace de recuperación enviado');
     forceCloseM('m-auth-forgot');
   } catch (error) {
-    toast(window.EduGestCloud.friendlyError(error), true);
+    toast(window.EduGestCloud?.friendlyError?.(error) || error?.message || 'No se pudo iniciar la recuperación.', true);
   }
 }
 
@@ -354,6 +366,22 @@ export async function registrarUsuario() {
     }
     return;
   }
+
+  if (canUseSqlAuth()) {
+    try {
+      const user = await registerSqlAuth(email, pass, name);
+      rememberCurrentAuthAccessMode('sql');
+      ensureIndividualLicenseModel();
+      finalizarSesionAutenticacion(user, { openSetup: true, isNewAccount: true });
+      recordRegisterAttempt(true);
+      toast('Cuenta creada');
+      hydrateCloudStateForUser(user).catch(console.error);
+      return;
+    } catch (error) {
+      showAuthCornerToast(error?.message || 'No se pudo crear la cuenta.', 'Registro no completado', 'error');
+      return;
+    }
+  }
   
   if (canUseCloudAuth()) {
     try {
@@ -436,6 +464,26 @@ export async function autenticarUsuario() {
   const localUser = localAuth.user;
   if (localAuth.migrated) persistLocalAuthUsers();
 
+  if (canUseSqlAuth()) {
+    try {
+      const user = await loginSqlAuth(email, pass);
+      rememberCurrentAuthAccessMode('sql');
+      ensureIndividualLicenseModel();
+      const isNewUser = !!user?.isNewUser;
+      finalizarSesionAutenticacion(user, { openSetup: isNewUser, isNewAccount: isNewUser });
+      toast('Bienvenido');
+      hydrateCloudStateForUser(user).catch((hydrateError) => {
+        console.warn('[EduGest][auth] Fallo al hidratar estado SQL tras login.', hydrateError);
+      });
+      return;
+    } catch (error) {
+      if (!localUser) {
+        showAuthCornerToast(error?.message || 'Credenciales incorrectas.', 'No pudimos iniciar sesión', 'error');
+        return;
+      }
+    }
+  }
+
   if (canUseCloudAuth()) {
     try {
       const user = await window.EduGestCloud.login(email, pass);
@@ -496,6 +544,7 @@ export async function autenticarConProveedor(provider) {
     
     try {
       await hydrateCloudStateForUser(user);
+      mostrarTableroAutenticado();
     } catch (hydrateError) {
       console.warn('[EduGest][auth] Fallo al hidratar estado cloud tras login social.', hydrateError);
     }
@@ -523,6 +572,7 @@ export async function autenticarConProveedor(provider) {
  */
 export function inicializar() {
   console.log('[AuthPanel] Inicializando panel de auth');
+  restoreSqlSessionIfAvailable();
   
   // NO sobrescribir _renderPanel para evitar conflictos con el sistema de routing principal
   // El sistema de routing ya maneja el renderizado de paneles correctamente
@@ -553,6 +603,29 @@ export function inicializar() {
   });
   
   console.log('[AuthPanel] Panel de auth inicializado');
+}
+
+async function restoreSqlSessionIfAvailable() {
+  if (!canUseSqlAuth() || S.sessionUserId) return;
+  try {
+    const payload = await getSqlAuthSession();
+    const user = payload?.user;
+    if (!user?.id) return;
+    const normalizedUser = {
+      ...user,
+      id: user.id,
+      uid: user.uid || user.id,
+      name: user.name || user.displayName || '',
+      email: user.email || '',
+      authMode: 'sql',
+    };
+    await hydrateCloudStateForUser(normalizedUser);
+    if (document.getElementById('m-auth')?.classList.contains('open')) {
+      mostrarTableroAutenticado();
+    }
+  } catch (_) {
+    // Sin cookie vigente: el flujo normal de login se mantiene.
+  }
 }
 
 function setupAuthButtonListeners() {
@@ -639,11 +712,8 @@ function setupAuthButtonListeners() {
         await applySessionUser(user);
         console.log('[AuthPanel] Usuario aplicado al estado local, sessionUserId:', S.sessionUserId);
         
-        // Guardar en localStorage para persistencia
-        if (typeof window.persistBrowserSession === 'function') {
-          window.persistBrowserSession();
-          console.log('[AuthPanel] Sesión guardada en localStorage');
-        }
+        persistBrowserSession();
+        console.log('[AuthPanel] Sesión guardada en localStorage');
         
         // Persistir el estado completo
         if (typeof window.persist === 'function') {
@@ -658,27 +728,29 @@ function setupAuthButtonListeners() {
           forceCloseM('m-auth');
         }
         
-        // Navegar al dashboard solo si no estamos ya en el dashboard
-        if (S.currentPage !== 'dashboard') {
-          console.log('[AuthPanel] Navegando al dashboard');
-          go('dashboard');
-          window.toast('¡Sesión restaurada correctamente!');
-        }
+        mostrarTableroAutenticado();
       } catch (error) {
         console.error('[AuthPanel] Error restaurando sesión:', error);
       }
     } else if (user && S.sessionUserId) {
       console.log('[AuthPanel] Sesión ya activa localmente, no se requiere acción');
-      // Asegurar que la sesión esté guardada en localStorage
-      if (typeof window.persistBrowserSession === 'function') {
-        window.persistBrowserSession();
+      persistBrowserSession();
+      if (document.getElementById('m-auth')?.classList.contains('open')) {
+        mostrarTableroAutenticado();
       }
     } else if (!user && S.sessionUserId) {
-      console.log('[AuthPanel] Firebase indica que no hay sesión, limpiando estado local');
-      // Limpiar estado local si Firebase indica que no hay sesión
-      if (typeof window.clearBrowserSession === 'function') {
-        window.clearBrowserSession();
+      const browserSession = readBrowserSession();
+      if (browserSession?.uid === S.sessionUserId) {
+        console.log('[AuthPanel] Firebase aún no restauró usuario, conservando sesión local:', browserSession.uid);
+        persistBrowserSession();
+        if (document.getElementById('m-auth')?.classList.contains('open')) {
+          mostrarTableroAutenticado();
+        }
+        return;
       }
+
+      console.log('[AuthPanel] Firebase indica que no hay sesión persistida, limpiando estado local');
+      if (typeof window.clearBrowserSession === 'function') window.clearBrowserSession();
       S.sessionUserId = null;
       S.sessionUserName = null;
       if (typeof window.persist === 'function') {

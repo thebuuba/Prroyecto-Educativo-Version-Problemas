@@ -118,5 +118,5 @@ export function renderizarSettingsPanel(container) {
 // Global Registration
 export function inicializar() {
   if (!window.RENDERS) window.RENDERS = {};
-  window.RENDERS.settings = renderSettingsPanel;
+  window.RENDERS.settings = renderizarSettingsPanel;
 }

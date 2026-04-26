@@ -116,7 +116,7 @@ export function renderizarSchedulePanel(container) {
         ${renderizarScheduleContent({
           S,
           UI,
-          getPlannerEvents,
+          obtenerPlannerEvents,
           attendanceMonthStart,
           escapeHtml,
         })}
@@ -127,16 +127,16 @@ export function renderizarSchedulePanel(container) {
 export function inicializar() {
   registerScheduleActions({
     UI,
-    renderSchedulePanel,
+    renderSchedulePanel: renderizarSchedulePanel,
     attendanceMonthStart,
     attendanceMonthKey,
     toast,
   });
 
   if (!window.RENDERS) window.RENDERS = {};
-  window.RENDERS.horario = (container) => renderSchedulePanel(container);
+  window.RENDERS.horario = (container) => renderizarSchedulePanel(container);
   window.RENDERS.calendario = (container) => {
     UI.activeTab = 'calendar';
-    renderSchedulePanel(container);
+    renderizarSchedulePanel(container);
   };
 }

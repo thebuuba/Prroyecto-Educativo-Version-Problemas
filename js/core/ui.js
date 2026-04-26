@@ -61,6 +61,10 @@ export function openM(id, context = {}) {
   modal.classList.add('open');
   
   if (id === 'm-auth') {
+    modal.style.removeProperty('display');
+    modal.style.removeProperty('visibility');
+    modal.style.removeProperty('opacity');
+    modal.style.removeProperty('pointer-events');
     document.body.classList.add('auth-screen-open');
     if (aiCopilot) {
       aiCopilot.hidden = true;
@@ -101,6 +105,8 @@ export function forceCloseM(id) {
   if (id === 'm-auth') {
     console.log('[UI][forceCloseM] Removiendo auth-screen-open del body');
     document.body.classList.remove('auth-screen-open');
+    modal.style.setProperty('display', 'none', 'important');
+    modal.style.setProperty('pointer-events', 'none', 'important');
     if (aiCopilot) {
       console.log('[UI][forceCloseM] Mostrando AI copilot');
       aiCopilot.hidden = false;

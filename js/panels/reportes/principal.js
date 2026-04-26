@@ -247,10 +247,10 @@ export function renderizarReportsPanel(container) {
   
   container.innerHTML = `
     <div class="max-w-[1600px] mx-auto p-6 md:p-10 animate-in fade-in duration-700">
-      ${renderReportHeader()}
-      ${renderExportCards()}
-      ${renderBlockAverages()}
-      ${renderGradesAndAnnual(ests)}
+      ${renderizarReportHeader()}
+      ${renderizarExportCards()}
+      ${renderizarBlockAverages()}
+      ${renderizarGradesAndAnnual(ests)}
     </div>
   `;
 }
@@ -258,5 +258,5 @@ export function renderizarReportsPanel(container) {
 export function inicializar() {
   registerReportsActions();
   if (!window.RENDERS) window.RENDERS = {};
-  window.RENDERS.reportes = renderReportsPanel;
+  window.RENDERS.reportes = renderizarReportsPanel;
 }

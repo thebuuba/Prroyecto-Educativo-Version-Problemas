@@ -70,7 +70,7 @@ export function renderizarInstrumentsPanel(container) {
 
       <!-- Accesos Directos de Creación (Bento) -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-        ${BASIC_INSTRUMENT_TYPES.map(type => renderTypeShortCard(type)).join('')}
+        ${BASIC_INSTRUMENT_TYPES.map(type => renderizarTypeShortCard(type)).join('')}
       </div>
 
       <!-- Sección de Biblioteca -->
@@ -90,7 +90,7 @@ export function renderizarInstrumentsPanel(container) {
            </div>
         </div>
 
-        ${filtered.length === 0 ? renderEmptyLibrary() : renderInstrumentTable(filtered)}
+        ${filtered.length === 0 ? renderizarEmptyLibrary() : renderizarInstrumentTable(filtered)}
       </div>
     </div>
   `;
@@ -148,7 +148,7 @@ function renderizarInstrumentTable(instruments) {
           </tr>
         </thead>
         <tbody>
-          ${instruments.map(inst => renderInstrumentRow(inst)).join('')}
+          ${instruments.map(inst => renderizarInstrumentRow(inst)).join('')}
         </tbody>
       </table>
     </div>
@@ -235,7 +235,7 @@ function calcPoints(inst) {
 /** Establece un filtro y re-renderiza el panel. */
 window.setInstFilter = (key, val) => {
   UI.filters[key] = val;
-  renderInstrumentsPanel(document.getElementById('p-content'));
+  renderizarInstrumentsPanel(document.getElementById('p-content'));
 };
 
 /** Lanza el proceso de creación de un nuevo instrumento. */
@@ -254,13 +254,13 @@ window.deleteInstrument = (id) => {
   if (!confirm('¿Estás seguro de que deseas eliminar este instrumento?')) return;
   S.instruments = S.instruments.filter(i => i.id !== id);
   persist();
-  renderInstrumentsPanel(document.getElementById('p-content'));
+  renderizarInstrumentsPanel(document.getElementById('p-content'));
   toast('Instrumento eliminado');
 };
 
 export function inicializar() {
   if (!window.RENDERS) window.RENDERS = {};
-  window.RENDERS.instrumentos = (c) => renderInstrumentsPanel(c);
+  window.RENDERS.instrumentos = (c) => renderizarInstrumentsPanel(c);
 }
 
 /** Abre el seleccionador de tipo de instrumento. */

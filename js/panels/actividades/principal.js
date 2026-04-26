@@ -47,7 +47,7 @@ export function obtenerActViewMode() {
  * @returns {string} HTML de la cabecera.
  */
 function renderizarHeader() {
-  const mode = getActViewMode();
+  const mode = obtenerActViewMode();
   return `
     <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
       <div>
@@ -171,7 +171,7 @@ function renderizarBlocksView() {
 
   return `
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      ${BLOCKS.map(b => renderBlockCard(b, cfg[b].activities, cfg[b], ests)).join('')}
+      ${BLOCKS.map(b => renderizarBlockCard(b, cfg[b].activities, cfg[b], ests)).join('')}
     </div>
   `;
 }
@@ -307,7 +307,7 @@ function renderizarConfigView() {
        </div>
        
        <div id="cfg-blocks-container" class="space-y-8">
-         ${BLOCKS.map(b => renderActivitiesConfigBlock(b)).join('')}
+         ${BLOCKS.map(b => renderizarActivitiesConfigBlock(b)).join('')}
        </div>
     </div>
   `;
@@ -398,14 +398,14 @@ export function renderizarActivitiesConfigBlock(b) {
  * @param {HTMLElement} container - Contenedor donde se inyectará el panel.
  */
 export function renderizarActivitiesPanel(container) {
-  const mode = getActViewMode();
+  const mode = obtenerActViewMode();
   container.innerHTML = `
     <div class="max-w-[1600px] mx-auto p-6 md:p-10 animate-in fade-in duration-500">
-      ${renderHeader()}
+      ${renderizarHeader()}
       <div id="act-content-area">
-        ${mode === 'blocks' ? renderBlocksView() : ''}
-        ${mode === 'matrix' ? renderMatrixView() : ''}
-        ${mode === 'config' ? renderConfigView() : ''}
+        ${mode === 'blocks' ? renderizarBlocksView() : ''}
+        ${mode === 'matrix' ? renderizarMatrixView() : ''}
+        ${mode === 'config' ? renderizarConfigView() : ''}
       </div>
     </div>
   `;
@@ -414,5 +414,5 @@ export function renderizarActivitiesPanel(container) {
 export function inicializar() {
   registerActivitiesActions();
   if (!window.RENDERS) window.RENDERS = {};
-  window.RENDERS.actividades = renderActivitiesPanel;
+  window.RENDERS.actividades = renderizarActivitiesPanel;
 }

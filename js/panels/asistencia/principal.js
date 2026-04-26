@@ -59,7 +59,7 @@ export function registrarAttendancePanel(container) {
     return;
   }
 
-  renderizarAttendancePanel(container, activeGroup, monthKey, {
+  renderAttendancePanelView(container, activeGroup, monthKey, {
     isAcademicMonthActive,
     getMonthLongLabel,
     getMonthRecord,
@@ -91,7 +91,7 @@ export function inicializar() {
   });
   if (!window.RENDERS) window.RENDERS = {};
   window.RENDERS.asistencia = (container) => {
-    registerAttendancePanel(container);
+    registrarAttendancePanel(container);
   };
 }
 
@@ -99,6 +99,6 @@ export function inicializar() {
 if (S.currentPage === 'asistencia') {
   scheduleNonCriticalTask(() => {
     const c = document.getElementById('panel-content');
-    if (c) registerAttendancePanel(c);
+    if (c) registrarAttendancePanel(c);
   }, 50);
 }

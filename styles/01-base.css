@@ -2035,6 +2035,13 @@ body.theme-dark #s-inst-ghost-suffix {
   display: flex;
 }
 
+html.auth-session-checking #m-auth {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 #m-auth {
   background: linear-gradient(180deg, #f8fbff 0%, #f1f6fc 100%);
   backdrop-filter: none;

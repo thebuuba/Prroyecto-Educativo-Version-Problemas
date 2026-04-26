@@ -5,7 +5,7 @@
  */
 
 import { S } from './state.js';
-import { hydrate, clearBrowserSession, applySessionUser, hydrateLocalWorkspaceForUser } from './hydration.js';
+import { hydrate, clearBrowserSession, applySessionUser, hydrateLocalWorkspaceForUser, readBrowserSession } from './hydration.js';
 import { go, readPanelLocation } from './routing.js';
 
 /**
@@ -16,6 +16,7 @@ import { go, readPanelLocation } from './routing.js';
  */
 export async function boot() {
   console.log('[EduGest] Iniciando aplicación modular...');
+  document.documentElement?.classList.add('auth-session-checking');
   
   // 1. Verificar si hay sesión de Firebase activa antes de hidratar
   let firebaseUser = null;
@@ -37,6 +38,34 @@ export async function boot() {
     currentPage: S.currentPage,
     firebaseUser: firebaseUser?.uid
   });
+
+  const browserSession = readBrowserSession();
+  const browserSessionIdentity = browserSession?.uid
+    ? {
+        id: browserSession.uid,
+        uid: browserSession.uid,
+        name: browserSession.name || '',
+        email: '',
+      }
+    : null;
+
+  console.log('[EduGest][boot] Sesión del navegador:', {
+    hasBrowserSession: !!browserSession,
+    browserSessionUid: browserSession?.uid,
+    browserSessionIdentity: !!browserSessionIdentity
+  });
+
+  if (!S.sessionUserId && browserSessionIdentity) {
+    console.log('[EduGest][boot] Restaurando sesión desde navegador antes de pintar UI');
+    const localSessionUser = Array.isArray(S.authUsers)
+      ? S.authUsers.find((entry) => entry.id === browserSessionIdentity.uid)
+      : null;
+    if (localSessionUser) {
+      await hydrateLocalWorkspaceForUser(localSessionUser);
+    } else {
+      applySessionUser(browserSessionIdentity);
+    }
+  }
   
   // 3. Si hay usuario de Firebase pero no sesión en S, restaurar sesión
   if (firebaseUser && !S.sessionUserId) {
@@ -80,6 +109,7 @@ export async function boot() {
     }
     
     go(page, { replace: true });
+    document.documentElement?.classList.remove('auth-session-checking');
   } else {
     console.log('[EduGest][boot] Sin sesión detectada, mostrando modal de autenticación');
     showAuthModal();
@@ -93,36 +123,6 @@ export async function boot() {
   // 7. Verificación post-boot: Resiliencia de sesión
   //    Si no hay sesión en S pero SÍ hay un token en el navegador, evitamos borrarlo
   //    para permitir recuperación en el siguiente ciclo o via Cloud.
-  const browserSession = typeof window.readBrowserSession === 'function' 
-    ? window.readBrowserSession() 
-    : null;
-  const browserSessionIdentity = browserSession?.uid
-    ? {
-        id: browserSession.uid,
-        uid: browserSession.uid,
-        name: browserSession.name || '',
-        email: '',
-      }
-    : null;
-
-  console.log('[EduGest][boot] Sesión del navegador:', {
-    hasBrowserSession: !!browserSession,
-    browserSessionUid: browserSession?.uid,
-    browserSessionIdentity: !!browserSessionIdentity
-  });
-
-  if (!S.sessionUserId && browserSessionIdentity) {
-    console.log('[EduGest][boot] Restaurando sesión desde navegador');
-    const localSessionUser = Array.isArray(S.authUsers)
-      ? S.authUsers.find((entry) => entry.id === browserSessionIdentity.uid)
-      : null;
-    if (localSessionUser) {
-      await hydrateLocalWorkspaceForUser(localSessionUser);
-    } else {
-      applySessionUser(browserSessionIdentity);
-    }
-  }
-
   if (!S.sessionUserId && !browserSession?.uid && !firebaseUser) {
     console.warn('[EduGest][boot] Sin sesión detectada en ningún lugar, limpiando rastro local.');
     clearBrowserSession(); 
@@ -152,6 +152,7 @@ async function checkFirebaseSession() {
 
 function showAuthModal() {
   window.setTimeout(() => {
+    document.documentElement?.classList.remove('auth-session-checking');
     const modal = document.getElementById('m-auth');
     if (modal && !modal.classList.contains('open')) {
       if (typeof window.openM === 'function') {

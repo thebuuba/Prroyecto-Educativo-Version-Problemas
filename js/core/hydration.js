@@ -261,6 +261,8 @@ export async function logoutAuth() {
         new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000))
       ]).catch(err => console.warn('[EduGest][auth] Logout en nube omitido o fallido:', err));
     }
+    const sqlApi = await import('./api-sql.js').catch(() => null);
+    await sqlApi?.logoutSqlAuth?.().catch((err) => console.warn('[EduGest][auth] Logout SQL omitido o fallido:', err));
   } catch (error) {
     console.warn('[EduGest][auth] Error durante stop/cloud logout:', error);
   }

@@ -9,14 +9,16 @@ function badRequest(message) {
   return error;
 }
 
-router.get('/', async (_req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     const result = await query(
       `SELECT id, email, display_name, phone, firebase_uid, status, created_at, updated_at
        FROM users
-       ORDER BY created_at DESC`
+       WHERE id = $1
+       LIMIT 1`,
+      [req.auth.userId]
     );
-    res.json(result.rows);
+    res.json(result.rows[0] || null);
   } catch (error) {
     next(error);
   }
@@ -24,7 +26,7 @@ router.get('/', async (_req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   try {
-    const email = String(req.body?.email || '').trim().toLowerCase();
+    const email = String(req.auth?.user?.email || req.body?.email || '').trim().toLowerCase();
     const displayName = String(req.body?.displayName || '').trim();
     const phone = String(req.body?.phone || '').trim() || null;
     const firebaseUid = String(req.body?.firebaseUid || '').trim() || null;
@@ -33,13 +35,18 @@ router.post('/', async (req, res, next) => {
     if (!displayName) throw badRequest('El nombre es obligatorio.');
 
     const result = await query(
-      `INSERT INTO users (email, display_name, phone, firebase_uid)
-       VALUES ($1, $2, $3, $4)
+      `UPDATE users
+       SET email = $1,
+           display_name = $2,
+           phone = $3,
+           firebase_uid = COALESCE($4, firebase_uid),
+           updated_at = NOW()
+       WHERE id = $5
        RETURNING id, email, display_name, phone, firebase_uid, status, created_at, updated_at`,
-      [email, displayName, phone, firebaseUid]
+      [email, displayName, phone, firebaseUid, req.auth.userId]
     );
 
-    res.status(201).json(result.rows[0]);
+    res.status(200).json(result.rows[0]);
   } catch (error) {
     next(error);
   }

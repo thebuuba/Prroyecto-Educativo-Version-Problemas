@@ -1,5 +1,6 @@
 const express = require('express');
 const { query, withTransaction } = require('../db/pool');
+const { requireSchoolAccess } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -17,10 +18,9 @@ router.get('/', async (req, res, next) => {
     const params = [];
     const where = [];
 
-    if (schoolId) {
-      params.push(schoolId);
-      where.push(`school_id = $${params.length}`);
-    }
+    await requireSchoolAccess(req, schoolId);
+    params.push(schoolId);
+    where.push(`school_id = $${params.length}`);
     if (sectionId) {
       params.push(sectionId);
       where.push(`section_id = $${params.length}`);
@@ -31,11 +31,12 @@ router.get('/', async (req, res, next) => {
     }
 
     const clause = where.length ? `WHERE ${where.join(' AND ')}` : '';
+    params.push(req.auth.userId);
 
     const result = await query(
       `SELECT id, school_id, section_id, teacher_user_id, period_id, block_key, name, description, points, activity_type, scheduled_date, created_at, updated_at
        FROM activities
-       ${clause}
+       ${clause} AND (teacher_user_id = $${params.length} OR teacher_user_id IS NULL)
        ORDER BY created_at ASC`,
       params
     );
@@ -50,7 +51,7 @@ router.post('/', async (req, res, next) => {
   try {
     const schoolId = String(req.body?.schoolId || '').trim();
     const sectionId = String(req.body?.sectionId || '').trim();
-    const teacherUserId = String(req.body?.teacherUserId || '').trim() || null;
+    const teacherUserId = req.auth.userId;
     const periodId = String(req.body?.periodId || 'P1').trim() || 'P1';
     const blockKey = String(req.body?.blockKey || '').trim() || null;
     const name = String(req.body?.name || '').trim();
@@ -60,6 +61,7 @@ router.post('/', async (req, res, next) => {
     const scheduledDate = String(req.body?.scheduledDate || '').trim() || null;
 
     if (!schoolId) throw badRequest('schoolId es obligatorio.');
+    await requireSchoolAccess(req, schoolId);
     if (!sectionId) throw badRequest('sectionId es obligatorio.');
     if (!name) throw badRequest('El nombre de la actividad es obligatorio.');
 
@@ -81,7 +83,7 @@ router.patch('/:id', async (req, res, next) => {
     const activityId = String(req.params?.id || '').trim();
     const schoolId = String(req.body?.schoolId || '').trim();
     const sectionId = String(req.body?.sectionId || '').trim();
-    const teacherUserId = String(req.body?.teacherUserId || '').trim() || null;
+    const teacherUserId = req.auth.userId;
     const periodId = String(req.body?.periodId || 'P1').trim() || 'P1';
     const blockKey = String(req.body?.blockKey || '').trim() || null;
     const name = String(req.body?.name || '').trim();
@@ -92,6 +94,7 @@ router.patch('/:id', async (req, res, next) => {
 
     if (!activityId) throw badRequest('El id de la actividad es obligatorio.');
     if (!schoolId) throw badRequest('schoolId es obligatorio.');
+    await requireSchoolAccess(req, schoolId);
     if (!sectionId) throw badRequest('sectionId es obligatorio.');
     if (!name) throw badRequest('El nombre de la actividad es obligatorio.');
 
@@ -107,9 +110,9 @@ router.patch('/:id', async (req, res, next) => {
            activity_type = $8,
            scheduled_date = $9,
            updated_at = NOW()
-       WHERE id = $10 AND school_id = $11
+       WHERE id = $10 AND school_id = $11 AND (teacher_user_id = $12 OR teacher_user_id IS NULL)
        RETURNING id, school_id, section_id, teacher_user_id, period_id, block_key, name, description, points, activity_type, scheduled_date, created_at, updated_at`,
-      [sectionId, teacherUserId, periodId, blockKey, name, description, points, activityType, scheduledDate, activityId, schoolId]
+      [sectionId, teacherUserId, periodId, blockKey, name, description, points, activityType, scheduledDate, activityId, schoolId, req.auth.userId]
     );
 
     if (!result.rows[0]) throw badRequest('No se encontró la actividad a actualizar.');
@@ -126,18 +129,19 @@ router.delete('/:id', async (req, res, next) => {
 
     if (!activityId) throw badRequest('El id de la actividad es obligatorio.');
     if (!schoolId) throw badRequest('schoolId es obligatorio.');
+    await requireSchoolAccess(req, schoolId);
 
     const deleted = await withTransaction(async (client) => {
       await client.query(
         `DELETE FROM evaluations
-         WHERE activity_id = $1 AND school_id = $2`,
-        [activityId, schoolId]
+         WHERE activity_id = $1 AND school_id = $2 AND (owner_user_id = $3 OR owner_user_id IS NULL)`,
+        [activityId, schoolId, req.auth.userId]
       );
       const result = await client.query(
         `DELETE FROM activities
-         WHERE id = $1 AND school_id = $2
+         WHERE id = $1 AND school_id = $2 AND (teacher_user_id = $3 OR teacher_user_id IS NULL)
          RETURNING id, school_id, section_id, teacher_user_id, period_id, block_key, name, description, points, activity_type, scheduled_date, created_at, updated_at`,
-        [activityId, schoolId]
+        [activityId, schoolId, req.auth.userId]
       );
       return result.rows[0] || null;
     });

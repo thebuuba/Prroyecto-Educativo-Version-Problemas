@@ -264,10 +264,10 @@ export function renderizarGradeSetupPanel(container) {
     </div>
   `;
 
-  updateGradeGrid();
-  updateAreaGrid();
-  updateSectionGrid();
-  updatePreviews();
+  actualizarGradeGrid();
+  actualizarAreaGrid();
+  actualizarSectionGrid();
+  actualizarPreviews();
 }
 
 /**
@@ -309,7 +309,7 @@ function actualizarAreaGrid() {
     </button>
   `).join('');
 
-  updateSubjectGrid();
+  actualizarSubjectGrid();
 }
 
 /**
@@ -396,12 +396,12 @@ export function inicializar() {
   registerGradeSetupActions({
     FormState,
     subjectsForArea,
-    updateGradeGrid,
-    updateAreaGrid,
-    updateSubjectGrid,
-    updateSectionGrid,
-    updatePreviews,
+    actualizarGradeGrid,
+    actualizarAreaGrid,
+    actualizarSubjectGrid,
+    actualizarSectionGrid,
+    actualizarPreviews,
   });
   if (!window.RENDERS) window.RENDERS = {};
-  window.RENDERS['grade-setup'] = renderGradeSetupPanel;
+  window.RENDERS['grade-setup'] = renderizarGradeSetupPanel;
 }

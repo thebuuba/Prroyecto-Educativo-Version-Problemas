@@ -427,19 +427,19 @@ export function renderizarPlanningPanel(container) {
   if (mode === 'home') {
     container.innerHTML = `
       <div class="max-w-[1600px] mx-auto p-6 md:p-10 animate-in fade-in duration-500">
-        ${renderHeader(drafts.length, totalCount)}
+        ${renderizarHeader(drafts.length, totalCount)}
         
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div class="lg:col-span-8 flex flex-col gap-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-              ${renderCtaCard()}
+              ${renderizarCtaCard()}
               
               <div class="bg-white border border-slate-200 rounded-[2rem] p-8 shadow-sm">
                 <div class="flex items-center justify-between mb-6">
                   <h3 class="text-xl font-bold text-slate-800">Recientes</h3>
                   <span class="px-2.5 py-1 bg-amber-50 text-amber-600 rounded-lg text-xs font-bold uppercase tracking-wider">Borradores</span>
                 </div>
-                ${renderDraftList(drafts)}
+                ${renderizarDraftList(drafts)}
               </div>
             </div>
             
@@ -511,14 +511,14 @@ export function renderizarPlanningPanel(container) {
         </div>
       </div>
 
-      ${renderStepRail(activeSectionId)}
+      ${renderizarStepRail(activeSectionId)}
 
       <div class="bg-white border border-slate-200 rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-slate-200/50">
-        ${activeSectionId === 'general' ? renderEditorGeneral(draft) : ''}
-        ${activeSectionId === 'curriculum' ? renderEditorCurriculum(draft) : ''}
-        ${activeSectionId === 'design' ? renderEditorDesign(draft) : ''}
-        ${activeSectionId === 'evaluation' ? renderEditorEvaluation(draft) : ''}
-        ${activeSectionId === 'preview' ? renderEditorPreview(draft) : ''}
+        ${activeSectionId === 'general' ? renderizarEditorGeneral(draft) : ''}
+        ${activeSectionId === 'curriculum' ? renderizarEditorCurriculum(draft) : ''}
+        ${activeSectionId === 'design' ? renderizarEditorDesign(draft) : ''}
+        ${activeSectionId === 'evaluation' ? renderizarEditorEvaluation(draft) : ''}
+        ${activeSectionId === 'preview' ? renderizarEditorPreview(draft) : ''}
       </div>
     </div>
   `;

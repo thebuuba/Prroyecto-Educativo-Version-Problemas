@@ -67,7 +67,9 @@ async function ensureWorkspaceContext(client, input = {}) {
 
   if (!email) throw badRequest('El correo es obligatorio.');
 
-  const userLookup = firebaseUid
+  const userLookup = input.authUserId
+    ? { rows: [{ id: input.authUserId }] }
+    : firebaseUid
     ? await client.query(
         `SELECT id
          FROM users
@@ -126,7 +128,12 @@ router.get('/:blockKey', async (req, res, next) => {
     const blockKey = String(req.params?.blockKey || '').trim();
     if (!VALID_BLOCKS.has(blockKey)) throw badRequest('Bloque de estado inválido.');
 
-    const context = await withTransaction((client) => ensureWorkspaceContext(client, req.query || {}));
+    const context = await withTransaction((client) => ensureWorkspaceContext(client, {
+      ...(req.query || {}),
+      authUserId: req.auth.userId,
+      email: req.auth.user.email,
+      displayName: req.auth.user.display_name,
+    }));
     const result = await withTransaction(async (client) => {
       const rowResult = await client.query(
         `SELECT payload, payload_hash, updated_at
@@ -166,7 +173,12 @@ router.post('/:blockKey', async (req, res, next) => {
     }
 
     const result = await withTransaction(async (client) => {
-      const context = await ensureWorkspaceContext(client, req.body || {});
+      const context = await ensureWorkspaceContext(client, {
+        ...(req.body || {}),
+        authUserId: req.auth.userId,
+        email: req.auth.user.email,
+        displayName: req.auth.user.display_name,
+      });
       const rowResult = await client.query(
         `INSERT INTO workspace_state_blocks (school_id, user_id, block_key, payload, payload_hash)
          VALUES ($1, $2, $3, $4::jsonb, $5)

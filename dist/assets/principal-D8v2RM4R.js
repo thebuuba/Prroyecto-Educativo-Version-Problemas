@@ -1,4 +1,4 @@
-import{S as e,y as n}from"./main-AFE2lkXK.js";function p(r){var t,l,s,o,a,i,d;r.innerHTML=`
+import{S as e,w as n}from"./main-BFkCmjLr.js";function c(r){var t,l,s,o,a,i,d;r.innerHTML=`
     <div class="max-w-[1600px] mx-auto p-6 md:p-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       
       <!-- Header -->
@@ -98,4 +98,4 @@ import{S as e,y as n}from"./main-AFE2lkXK.js";function p(r){var t,l,s,o,a,i,d;r.
       </div>
 
     </div>
-  `}function b(){window.RENDERS||(window.RENDERS={}),window.RENDERS.settings=renderSettingsPanel}export{b as inicializar,p as renderizarSettingsPanel};
+  `}function b(){window.RENDERS||(window.RENDERS={}),window.RENDERS.settings=c}export{b as inicializar,c as renderizarSettingsPanel};

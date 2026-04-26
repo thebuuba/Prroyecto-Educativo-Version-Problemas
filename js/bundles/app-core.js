@@ -357,7 +357,7 @@ async function hydrate(options = {}) {
       if (!('sessionUserName' in S)) S.sessionUserName = null;
       if (!('sessionStartedAt' in S)) S.sessionStartedAt = null;
       if (!('sessionExpiresAt' in S)) S.sessionExpiresAt = null;
-      if (!('currentPage' in S)) S.currentPage = 'dashboard';
+      if (!('currentPage' in S)) S.currentPage = 'tablero';
       if (!('activityViewMode' in S)) S.activityViewMode = 'blocks';
       if (S.profile && typeof S.profile === 'object') {
         const normalizedSections = normalizeEducationSections(S.profile.educationSections || S.profile.educationSection || '');
@@ -514,7 +514,7 @@ async function hydrate(options = {}) {
 /* -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    ROUTING
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
-let currentPage = 'dashboard';
+let currentPage = 'tablero';
 let navHistoryInitialized = false;
 const APP_HISTORY_ROOT = 'edugest-root';
 const PANEL_ROUTES = {
@@ -535,7 +535,7 @@ const PANEL_ROUTES = {
 };
 const MODAL_ROUTES = {};
 const PANEL_BUNDLES = {
-  dashboard: 'dashboard',
+  dashboard: 'tablero',
   estudiantes: 'estudiantes',
   actividades: 'actividades',
   config: 'actividades',
@@ -639,14 +639,14 @@ function buildPanelUrl(requestedPage, activityViewMode = ACT_VIEW_MODE) {
   // Traduce el panel solicitado a una URL estable que luego se comparte entre render, refresh e historial.
   const pageKey = requestedPage === 'config' || (requestedPage === 'actividades' && activityViewMode === 'config')
     ? 'config'
-    : (requestedPage || 'dashboard');
+    : (requestedPage || 'tablero');
   return PANEL_ROUTES[pageKey] || '/inicio';
 }
 
 // Resuelve la URL publica de un modal; si no existe ruta dedicada, cae al panel activo.
 function buildModalUrl(id) {
   // Resuelve la URL pública de un modal; si no existe ruta dedicada, cae al panel activo.
-  return MODAL_ROUTES[id] || buildPanelUrl(S.currentPage || currentPage || 'dashboard', ACT_VIEW_MODE);
+  return MODAL_ROUTES[id] || buildPanelUrl(S.currentPage || currentPage || 'tablero', ACT_VIEW_MODE);
 }
 
 // Resuelve qué bundle necesita un panel para poder pintarse cuando la app se carga por páginas separadas.
@@ -694,7 +694,7 @@ function ensurePanelBundleLoaded(pageKey) {
 
 // Construye una tarjeta de error más explícita para que el usuario y el depurador sepan qué panel falló y por qué.
 function renderPanelErrorCard(pageKey, error, extra = {}) {
-  const requestedPage = extra.requestedPage || S.currentPage || currentPage || 'dashboard';
+  const requestedPage = extra.requestedPage || S.currentPage || currentPage || 'tablero';
   const route = PANEL_ROUTES[requestedPage] || window.location.pathname || '/inicio';
   const detail = error?.message || String(error || 'Error desconocido');
   const stack = String(error?.stack || '').trim();
@@ -747,7 +747,7 @@ function readPanelLocation() {
   const modalEntry = Object.entries(MODAL_ROUTES).find(([, route]) => route === path);
   if (modalEntry) {
     return {
-      requestedPage: S.currentPage || currentPage || 'dashboard',
+      requestedPage: S.currentPage || currentPage || 'tablero',
       activityViewMode: ['blocks','matrix','config'].includes(S.activityViewMode) ? S.activityViewMode : ACT_VIEW_MODE,
       modalId: modalEntry[0],
     };
@@ -5928,7 +5928,7 @@ async function logoutAuth() {
   openM('m-auth');
   setAuthMode('login');
   applyEducationSectionTheme('');
-  go('dashboard');
+  go('tablero');
   toast('Sesión cerrada');
 }
 // Cancela el flujo de configuración inicial y vuelve al registro o al acceso según corresponda.
@@ -5940,7 +5940,7 @@ function cancelSetup() {
     return;
   }
   closeM('m-setup');
-  go('dashboard');
+  go('tablero');
 }
 // Devuelve el flujo de setup al estado de registro para que el usuario no pierda contexto.
 function returnSetupToRegister() {
@@ -6207,7 +6207,7 @@ async function confirmTermsAcceptance() {
     openEducationSectionSetup({ fromAuth: true });
     return;
   }
-  go('dashboard');
+  go('tablero');
   updateSBUser();
   toast('Términos aceptados');
 }
@@ -6249,7 +6249,7 @@ function cancelEducationSectionSetup() {
     setAuthMode('register');
     return;
   }
-  go('dashboard');
+  go('tablero');
 }
 // Guarda la sección educativa elegida para que el acceso quede coherente en el siguiente arranque.
 function persistEducationSectionSelection(section) {
@@ -6813,7 +6813,7 @@ function confirmSetupEducationSection() {
         openM('m-setup', { fromAuth: EDUCATION_SECTION_MODAL_CONTEXT.fromAuth, fromEducation: true });
       } else {
         closeM('m-setup');
-        go('dashboard');
+        go('tablero');
         updateSBUser();
       }
     }, 190);
@@ -6824,7 +6824,7 @@ function confirmSetupEducationSection() {
     openM('m-setup', { fromAuth: EDUCATION_SECTION_MODAL_CONTEXT.fromAuth, fromEducation: true });
   } else {
     closeM('m-setup');
-    go('dashboard');
+    go('tablero');
     updateSBUser();
   }
 }
@@ -8944,7 +8944,7 @@ async function saveSetup() {
     return;
   }
   updateSBUser();
-  go('dashboard');
+  go('tablero');
   toast('¡Perfil guardado!');
 }
 // Gestiona matricula exists.
@@ -10877,7 +10877,7 @@ function persistPanelSessionState() {
     window.localStorage.removeItem(key);
     window.sessionStorage.setItem(key, JSON.stringify({
       uid,
-      currentPage: S.currentPage || currentPage || 'dashboard',
+      currentPage: S.currentPage || currentPage || 'tablero',
       activityViewMode: S.activityViewMode || ACT_VIEW_MODE || 'blocks',
       activeGroupId: S.activeGroupId || null,
       activeGradeId: S.activeGradeId || null,
@@ -11849,7 +11849,7 @@ function canLeaveSettingsPage(nextPage) {
 function buildQuickCommandEntries() {
   const isDark = document.body.classList.contains('theme-dark');
   return [
-    { id: 'page-dashboard', label: 'Ir a Inicio', description: 'Panel general y métricas', keywords: 'inicio panel dashboard', run: () => go('dashboard', { animatePanelTransition: true }) },
+    { id: 'page-dashboard', label: 'Ir a Inicio', description: 'Panel general y métricas', keywords: 'inicio panel dashboard', run: () => go('tablero', { animatePanelTransition: true }) },
     { id: 'page-estudiantes', label: 'Ir a Estudiantes', description: 'Listado y gestión de estudiantes', keywords: 'estudiantes lista grupo', run: () => go('estudiantes', { animatePanelTransition: true }) },
     { id: 'page-actividades', label: 'Ir a Actividades', description: 'Planifica y organiza actividades', keywords: 'actividades bloques', run: () => go('actividades', { animatePanelTransition: true }) },
     { id: 'page-matriz', label: 'Ir a Matriz General', description: 'Calificaciones por bloque y curso', keywords: 'matriz notas calificaciones', run: () => go('matriz', { animatePanelTransition: true }) },
@@ -12074,7 +12074,7 @@ function applyMotionProfile() {
 }
 // Expone el panel activo como atributo de datos para CSS, motion y depuración contextual.
 function setActivePanelContext(page) {
-  const panelKey = String(page || 'dashboard').trim().toLowerCase();
+  const panelKey = String(page || 'tablero').trim().toLowerCase();
   document.body.setAttribute('data-panel', panelKey);
   STATIC_DOM.view?.setAttribute('data-panel', panelKey);
 }
@@ -14978,7 +14978,7 @@ function finishAuthSession(user, options = {}) {
     } else if (requiresEducationSectionSelection()) {
       openEducationSectionSetup({ fromAuth: true });
     } else {
-      go('dashboard');
+      go('tablero');
       updateSBUser();
     }
   } else {
@@ -14987,7 +14987,7 @@ function finishAuthSession(user, options = {}) {
     closeM('m-auth');
     closeM('m-education-section');
     closeM('m-setup');
-    go('dashboard');
+    go('tablero');
     updateSBUser();
   }
 }

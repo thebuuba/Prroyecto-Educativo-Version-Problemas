@@ -22,6 +22,7 @@
   // Gestiona friendly error.
   function friendlyError(error) {
     const code = String(error?.code || '');
+    const currentDomain = global.location?.hostname || 'desconocido';
     const mapped = {
       'auth/email-already-in-use': 'Ese correo ya esta registrado.',
       'auth/invalid-email': 'El correo no es valido.',
@@ -30,7 +31,7 @@
 'auth/user-disabled': 'Tu cuenta esta deshabilitada temporalmente.',
       'auth/configuration-not-found': 'Firebase Auth no esta configurado. Activa Email/Password en Authentication.',
       'auth/operation-not-allowed': 'El acceso con Email/Password no esta habilitado en Firebase.',
-      'auth/unauthorized-domain': 'Este dominio no esta autorizado en Firebase Authentication.',
+      'auth/unauthorized-domain': `Este dominio (${currentDomain}) no esta autorizado en Firebase Authentication. Agregalo en Firebase Console.`,
       'auth/invalid-api-key': 'La API key de Firebase no es valida.',
       'auth/user-not-found': 'No existe una cuenta con ese correo.',
       'auth/wrong-password': 'Credenciales incorrectas.',
@@ -157,24 +158,45 @@
 
   // Asegura asegurar firebase.
   async function ensureFirebase() {
-    if (!isConfigured()) return null;
-    if (firebasePromise) return firebasePromise;
+    console.log('[EduGest][cloud] ensureFirebase llamado');
+    
+    if (!isConfigured()) {
+      console.error('[EduGest][cloud] Firebase no configurado');
+      return null;
+    }
+    
+    if (firebasePromise) {
+      console.log('[EduGest][cloud] Firebase promise ya existe, retornando');
+      return firebasePromise;
+    }
 
+    console.log('[EduGest][cloud] Inicializando Firebase...');
+    
     firebasePromise = (async () => {
+      console.log('[EduGest][cloud] Cargando módulos de Firebase...');
       const [appMod, authMod] = await Promise.all([
         import(/* @vite-ignore */ `https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-app.js`),
         import(/* @vite-ignore */ `https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-auth.js`),
       ]);
 
+      console.log('[EduGest][cloud] Módulos cargados, inicializando app...');
       const app = appMod.initializeApp(getConfig());
       const auth = authMod.getAuth(app);
       auth.languageCode = 'es';
+      
+      console.log('[EduGest][cloud] Configurando persistencia...');
       try {
         await authMod.setPersistence(auth, authMod.browserSessionPersistence);
-      } catch (_) {
+        console.log('[EduGest][cloud] Persistencia de sesión configurada');
+      } catch (persistenceError) {
+        console.warn('[EduGest][cloud] Falló persistencia de sesión, usando memoria:', persistenceError);
         await authMod.setPersistence(auth, authMod.inMemoryPersistence);
       }
+      
+      console.log('[EduGest][cloud] Verificando redirect result...');
       void authMod.getRedirectResult(auth).catch(() => null);
+      
+      console.log('[EduGest][cloud] Firebase inicializado correctamente');
       return { appMod, authMod, app, auth };
     })().catch((error) => {
       console.error('[EduGest][cloud] No se pudo inicializar Firebase', error);
@@ -325,35 +347,58 @@
 
   // Gestiona login with provider.
   async function loginWithProvider(providerName) {
+    console.log('[EduGest][cloud] Iniciando loginWithProvider:', providerName);
+    
     const services = await ensureFirebase();
-    if (!services) throw new Error('Firebase no esta configurado.');
+    if (!services) {
+      console.error('[EduGest][cloud] Firebase no configurado');
+      throw new Error('Firebase no esta configurado.');
+    }
 
+    console.log('[EduGest][cloud] Firebase services obtenidos');
+    
     const { authMod, auth } = services;
     const normalized = String(providerName || '').trim().toLowerCase();
+    console.log('[EduGest][cloud] Provider normalizado:', normalized);
+    
     let provider = null;
     if (normalized === 'google') {
       provider = new authMod.GoogleAuthProvider();
       provider.setCustomParameters({ prompt: 'select_account' });
+      console.log('[EduGest][cloud] Google provider configurado');
     } else if (normalized === 'facebook') {
       provider = new authMod.FacebookAuthProvider();
+      console.log('[EduGest][cloud] Facebook provider configurado');
     } else {
+      console.error('[EduGest][cloud] Proveedor no soportado:', providerName);
       throw new Error(`Proveedor no soportado: ${providerName}`);
     }
 
     try {
+      console.log('[EduGest][cloud] Intentando signInWithPopup...');
       const cred = await authMod.signInWithPopup(auth, provider);
+      console.log('[EduGest][cloud] signInWithPopup exitoso:', cred);
+      
       const user = auth.currentUser || cred.user;
       saveUserProfile(user, { name: user?.displayName || '' });
       return normalizeUser(user, { isNewUser: !!cred?.additionalUserInfo?.isNewUser });
     } catch (error) {
+      console.error('[EduGest][cloud] Error en signInWithPopup:', error);
       const code = String(error?.code || '').trim();
+      console.log('[EduGest][cloud] Error code:', code);
+      
       const shouldRedirect = new Set([
         'auth/popup-blocked',
         'auth/popup-closed-by-user',
         'auth/cancelled-popup-request',
         'auth/operation-not-supported-in-this-environment',
       ]).has(code);
+      
+      console.log('[EduGest][cloud] shouldRedirect:', shouldRedirect);
+      
       if (!shouldRedirect) throw error;
+      
+      console.log('[EduGest][cloud] Intentando signInWithRedirect...');
       await authMod.signInWithRedirect(auth, provider);
       return { redirected: true, provider: normalized };
     }

@@ -299,7 +299,7 @@ export async function logoutAuth() {
   }
   
   console.log('[EduGest][auth] Sesión cerrada localmente. Redirigiendo...');
-  go('dashboard', { replace: true });
+  go('tablero', { replace: true });
 }
 
 // --- Hidratación e Inicialización del Sistema ---
@@ -358,7 +358,7 @@ export async function hydrate(options = {}) {
       if (!Array.isArray(S.studentDirectory)) S.studentDirectory = [];
       
       if (!('sessionUserId' in S)) S.sessionUserId = null;
-      if (!('currentPage' in S)) S.currentPage = 'dashboard';
+      if (!('currentPage' in S)) S.currentPage = 'tablero';
       if (!('activityViewMode' in S)) S.activityViewMode = ACT_VIEW_MODE_DEFAULT;
 
       ensurePeriodBuckets(S.activePeriodId);

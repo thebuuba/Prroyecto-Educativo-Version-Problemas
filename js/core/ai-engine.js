@@ -21,7 +21,7 @@ const TOOLS = [
           properties: {
             page: {
               type: 'STRING',
-              enum: ['dashboard', 'estudiantes', 'grados', 'materias', 'configuracion', 'asistencia', 'reportes'],
+              enum: ['tablero', 'estudiantes', 'grados', 'materias', 'configuracion', 'asistencia', 'reportes'],
               description: 'El nombre de la página a la que se desea viajar.'
             }
           },

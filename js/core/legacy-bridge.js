@@ -109,21 +109,40 @@ export function registerLegacyBridge() {
 }
 
 export function registerPanelRenderer() {
+  console.log('[LegacyBridge] Registrando panel renderer');
   window._renderPanel = async () => {
+    console.log('[LegacyBridge][_renderPanel] Renderizando panel para página:', S.currentPage);
     const container = document.getElementById('view');
-    if (!container) return;
+    if (!container) {
+      console.log('[LegacyBridge][_renderPanel] Contenedor #view no encontrado');
+      console.log('[LegacyBridge][_renderPanel] Elementos con id view:', document.querySelectorAll('[id*="view"]'));
+      return;
+    }
+    console.log('[LegacyBridge][_renderPanel] Contenedor #view encontrado');
+    console.log('[LegacyBridge][_renderPanel] Contenedor innerHTML antes:', container.innerHTML.substring(0, 100));
 
-    const page = S.currentPage || 'dashboard';
+    const page = S.currentPage || 'tablero';
+    console.log('[LegacyBridge][_renderPanel] Página a renderizar:', page);
 
     if (window.RENDERS && typeof window.RENDERS[page] === 'function') {
+      console.log('[LegacyBridge][_renderPanel] Usando renderizador existente para:', page);
+      console.log('[LegacyBridge][_renderPanel] Llamando a RENDERS[' + page + ']');
       window.RENDERS[page](container);
-      window.refreshTop();
+      console.log('[LegacyBridge][_renderPanel] Contenedor innerHTML después:', container.innerHTML.substring(0, 100));
+      console.log('[LegacyBridge][_renderPanel] Renderizador ejecutado, llamando a refreshTop');
+      console.log('[LegacyBridge][_renderPanel] refreshTop existe:', typeof window.refreshTop);
+      if (typeof window.refreshTop === 'function') {
+        window.refreshTop();
+        console.log('[LegacyBridge][_renderPanel] refreshTop ejecutado');
+      }
       return;
     }
 
     try {
+      console.log('[LegacyBridge][_renderPanel] Cargando bundle para:', page);
       const loaded = await ensurePanelBundleLoaded(page, window.RENDERS || {});
       if (loaded && window.RENDERS[page]) {
+        console.log('[LegacyBridge][_renderPanel] Bundle cargado, renderizando:', page);
         window.RENDERS[page](container);
         window.refreshTop();
       } else {
@@ -133,4 +152,5 @@ export function registerPanelRenderer() {
       console.error(`[EduGest][render] Error cargando bundle para ${page}:`, err);
     }
   };
+  console.log('[LegacyBridge] Panel renderer registrado');
 }

@@ -7,7 +7,7 @@
 import { S } from './state.js';
 import { hydrate, clearBrowserSession, applySessionUser, hydrateLocalWorkspaceForUser } from './hydration.js';
 import { go, readPanelLocation } from './routing.js';
-import '../panels/auth.js';
+import '../panels/autenticacion/principal.js';
 
 /**
  * Función de arranque principal de la aplicación.
@@ -29,7 +29,7 @@ export async function boot() {
   const urlLocation = readPanelLocation(S.currentPage, S.activityViewMode);
   const urlParams = new URLSearchParams(window.location.search);
   
-  const page = urlLocation?.requestedPage || urlParams.get('p') || S.currentPage || 'dashboard';
+  const page = urlLocation?.requestedPage || urlParams.get('p') || S.currentPage || 'tablero';
   
   console.debug(`[EduGest][boot] Página resuelta para arranque: ${page}`);
   

@@ -20,7 +20,7 @@ import {
   registerLegacyBridge,
   registerPanelRenderer,
 } from '../core/legacy-bridge.js';
-import '../panels/setup.js';
+import '../panels/configuracion-inicial/principal.js';
 
 console.log('[EduGest] Cargando punto de entrada raíz modular...');
 

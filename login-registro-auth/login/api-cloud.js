@@ -47,6 +47,7 @@ export function isConfigured() {
  */
 export function friendlyError(error) {
   const code = String(error?.code || '');
+  const currentDomain = typeof window !== 'undefined' ? (window.location?.hostname || 'desconocido') : 'desconocido';
   const mapped = {
     'auth/email-already-in-use': 'Ese correo ya está registrado.',
     'auth/invalid-email': 'El correo no es válido.',
@@ -55,7 +56,7 @@ export function friendlyError(error) {
     'auth/user-disabled': 'Tu cuenta está deshabilitada temporalmente.',
     'auth/configuration-not-found': 'Firebase Auth no está configurado. Activa Email/Password en Authentication.',
     'auth/operation-not-allowed': 'El acceso con Email/Password no está habilitado en Firebase.',
-    'auth/unauthorized-domain': 'Este dominio no está autorizado en Firebase Authentication.',
+    'auth/unauthorized-domain': `Este dominio (${currentDomain}) no está autorizado en Firebase Authentication. Agregalo en Firebase Console.`,
     'auth/invalid-api-key': 'La API key de Firebase no es válida.',
     'auth/user-not-found': 'No existe una cuenta con ese correo.',
     'auth/wrong-password': 'Credenciales incorrectas.',

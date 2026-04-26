@@ -119,7 +119,7 @@
       },
       activeGroupId: null,
       activeCourseId: null,
-      currentPage: 'dashboard',
+      currentPage: 'tablero',
       activityViewMode: 'blocks',
       aiChatHistory: [],
     };

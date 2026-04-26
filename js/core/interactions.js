@@ -256,7 +256,7 @@ export function openSettingsPanel() {
 export function refreshTop() {
   applyEducationSectionTheme();
   const PAGE = window.EduGestConfig?.PAGE || {}; // Fallback para compatibilidad legacy
-  const currentPage = S.currentPage || 'dashboard';
+  const currentPage = S.currentPage || 'tablero';
   const cfg = PAGE[currentPage];
   if (!cfg) return;
 

@@ -81,7 +81,7 @@ export function updateSBUser() {
 /**
  * Sincroniza el estado visual de la navegación lateral con la página activa.
  */
-export function syncSidebarNavState(activePage = S.currentPage || 'dashboard') {
+export function syncSidebarNavState(activePage = S.currentPage || 'tablero') {
   STATIC_DOM.navLinks.forEach((el) => {
     const isActive = el.dataset.p === activePage;
     el.classList.toggle('on', isActive);
@@ -169,7 +169,7 @@ export function initShell() {
 
   // Sincronización Inicial
   updateSBUser();
-  syncSidebarNavState(S.currentPage || 'dashboard');
+  syncSidebarNavState(S.currentPage || 'tablero');
   applyUserPreferences();
   
   // Registro en el objeto window para compatibilidad legacy

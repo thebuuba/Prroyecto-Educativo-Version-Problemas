@@ -3,7 +3,7 @@
  * Define la ruta activa y delega el arranque al entrypoint modular raíz.
  */
 
-window.__AULABASE_PAGE_ENTRY = { route: 'inicio', panel: 'dashboard' };
+window.__AULABASE_PAGE_ENTRY = { route: 'inicio', panel: 'tablero' };
 window.__AULABASE_ASSET_VERSION = window.__AULABASE_ASSET_VERSION || '20260405i';
 
 function startAulaBaseRoot() {

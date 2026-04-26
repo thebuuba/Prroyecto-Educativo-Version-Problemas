@@ -8,28 +8,28 @@ import { S } from './state.js';
 
 /** Diccionario de módulos que sí participan en la carga diferida vía Vite. */
 const PANEL_MODULES = {
-  '/js/panels/users.js': () => import('../panels/users.js'),
-  '/js/panels/dashboard.js': () => import('../panels/dashboard.js'),
-  '/js/panels/students.js': () => import('../panels/students.js'),
-  '/js/panels/activities.js': () => import('../panels/activities.js'),
-  '/js/panels/matrix.js': () => import('../panels/matrix.js'),
-  '/js/panels/reports.js': () => import('../panels/reports.js'),
-  '/js/panels/schedule.js': () => import('../panels/schedule.js'),
-  '/js/panels/instruments.js': () => import('../panels/instruments.js'),
-  '/js/panels/planning.js': () => import('../panels/planning.js'),
-  '/js/panels/attendance.js': () => import('../panels/attendance.js'),
-  '/js/panels/settings.js': () => import('../panels/settings.js'),
-  '/js/panels/grade-setup.js': () => import('../panels/grade-setup.js'),
-  '/js/panels/student-create.js': () => import('../panels/student-create.js'),
-  '/js/panels/section-create.js': () => import('../panels/section-create.js'),
-  '/js/panels/student-edit.js': () => import('../panels/student-edit.js'),
+  '/js/panels/usuarios/principal.js': () => import('../panels/usuarios/principal.js'),
+  '/js/panels/tablero/principal.js': () => import('../panels/tablero/principal.js'),
+  '/js/panels/estudiantes/principal.js': () => import('../panels/estudiantes/principal.js'),
+  '/js/panels/actividades/principal.js': () => import('../panels/actividades/principal.js'),
+  '/js/panels/matriz/principal.js': () => import('../panels/matriz/principal.js'),
+  '/js/panels/reportes/principal.js': () => import('../panels/reportes/principal.js'),
+  '/js/panels/horario/principal.js': () => import('../panels/horario/principal.js'),
+  '/js/panels/instrumentos/principal.js': () => import('../panels/instrumentos/principal.js'),
+  '/js/panels/planificaciones/principal.js': () => import('../panels/planificaciones/principal.js'),
+  '/js/panels/asistencia/principal.js': () => import('../panels/asistencia/principal.js'),
+  '/js/panels/configuracion/principal.js': () => import('../panels/configuracion/principal.js'),
+  '/js/panels/configuracion-academica/principal.js': () => import('../panels/configuracion-academica/principal.js'),
+  '/js/panels/crear-estudiante/principal.js': () => import('../panels/crear-estudiante/principal.js'),
+  '/js/panels/crear-seccion/principal.js': () => import('../panels/crear-seccion/principal.js'),
+  '/js/panels/editar-estudiante/principal.js': () => import('../panels/editar-estudiante/principal.js'),
 };
 
 /**
  * ID del panel actualmente renderizado.
  * @type {string}
  */
-export let currentPage = 'dashboard';
+export let currentPage = 'tablero';
 export function setCurrentPage(val) { currentPage = val; }
 
 /**
@@ -100,21 +100,21 @@ export const PANEL_BUNDLES = {
  * @type {Object<string, string>}
  */
 export const PANEL_BUNDLE_URLS = {
-  usuarios: '/js/panels/users.js',
-  dashboard: '/js/panels/dashboard.js',
-  estudiantes: '/js/panels/students.js',
-  actividades: '/js/panels/activities.js',
-  matriz: '/js/panels/matrix.js',
-  reportes: '/js/panels/reports.js',
-  horario: '/js/panels/schedule.js',
-  instrumentos: '/js/panels/instruments.js',
-  planificaciones: '/js/panels/planning.js',
-  asistencia: '/js/panels/attendance.js',
-  ajustes: '/js/panels/settings.js',
-  grados: '/js/panels/grade-setup.js',
-  'estudiantes-nuevo': '/js/panels/student-create.js',
-  'secciones-nuevo': '/js/panels/section-create.js',
-  'estudiantes-edicion': '/js/panels/student-edit.js',
+  usuarios: '/js/panels/usuarios/principal.js',
+  dashboard: '/js/panels/tablero/principal.js',
+  estudiantes: '/js/panels/estudiantes/principal.js',
+  actividades: '/js/panels/actividades/principal.js',
+  matriz: '/js/panels/matriz/principal.js',
+  reportes: '/js/panels/reportes/principal.js',
+  horario: '/js/panels/horario/principal.js',
+  instrumentos: '/js/panels/instrumentos/principal.js',
+  planificaciones: '/js/panels/planificaciones/principal.js',
+  asistencia: '/js/panels/asistencia/principal.js',
+  ajustes: '/js/panels/configuracion/principal.js',
+  grados: '/js/panels/configuracion-academica/principal.js',
+  'estudiantes-nuevo': '/js/panels/crear-estudiante/principal.js',
+  'secciones-nuevo': '/js/panels/crear-seccion/principal.js',
+  'estudiantes-edicion': '/js/panels/editar-estudiante/principal.js',
 };
 
 /** Registro de bundles ya cargados en la sesión actual. */
@@ -135,7 +135,7 @@ export const PAGE = {};
 export function buildPanelUrl(requestedPage, activityViewMode) {
   const pageKey = requestedPage === 'config' || (requestedPage === 'actividades' && activityViewMode === 'config')
     ? 'config'
-    : (requestedPage || 'dashboard');
+    : (requestedPage || 'tablero');
   return PANEL_ROUTES[pageKey] || '/inicio';
 }
 
@@ -143,7 +143,7 @@ export function buildPanelUrl(requestedPage, activityViewMode) {
  * Construye la URL para un modal, manteniendo el contexto de la página actual.
  */
 export function buildModalUrl(id, currentP, activityViewM) {
-  return MODAL_ROUTES[id] || buildPanelUrl(currentP || 'dashboard', activityViewM);
+  return MODAL_ROUTES[id] || buildPanelUrl(currentP || 'tablero', activityViewM);
 }
 
 /**
@@ -203,10 +203,16 @@ export function buildPanelBundleUrl(bundleKey) {
  */
 export function ensurePanelBundleLoaded(pageKey, RENDERS) {
   const bundleKey = resolvePanelBundleKey(pageKey);
-  if (!bundleKey) return Promise.resolve(Boolean(RENDERS[pageKey]));
-  if (loadedPanelBundles[bundleKey]) return Promise.resolve(true);
+  if (!bundleKey) {
+    return Promise.resolve(Boolean(RENDERS[pageKey]));
+  }
+  if (loadedPanelBundles[bundleKey]) {
+    return Promise.resolve(true);
+  }
   const bundleUrl = buildPanelBundleUrl(bundleKey);
-  if (!bundleUrl) return Promise.resolve(Boolean(RENDERS[pageKey]));
+  if (!bundleUrl) {
+    return Promise.resolve(Boolean(RENDERS[pageKey]));
+  }
 
   // Determinar si es un módulo ES nativo o un script global
   const isModule = bundleUrl.includes('/js/panels/') || bundleUrl.includes('/js/core/');
@@ -220,7 +226,9 @@ export function ensurePanelBundleLoaded(pageKey, RENDERS) {
         .then((mod) => {
           loadedPanelBundles[bundleKey] = true;
           delete pendingPanelBundleLoads[bundleKey];
-          if (typeof mod.init === 'function') mod.init();
+          if (typeof mod.init === 'function') {
+            mod.init();
+          }
           return true;
         })
         .catch((err) => {
@@ -234,7 +242,9 @@ export function ensurePanelBundleLoaded(pageKey, RENDERS) {
         .then((mod) => {
           loadedPanelBundles[bundleKey] = true;
           delete pendingPanelBundleLoads[bundleKey];
-          if (typeof mod.init === 'function') mod.init();
+          if (typeof mod.init === 'function') {
+            mod.init();
+          }
           return true;
         })
         .catch((err) => {
@@ -257,6 +267,7 @@ export function ensurePanelBundleLoaded(pageKey, RENDERS) {
       };
       script.onerror = () => {
         delete pendingPanelBundleLoads[bundleKey];
+        console.error('[Routing][ensurePanelBundleLoaded] Error cargando script legacy:', bundleKey);
         reject(new Error(`No se pudo cargar el bundle del panel ${bundleKey}`));
       };
       document.body.appendChild(script);
@@ -284,7 +295,7 @@ export function readPanelLocation(activeP, activeActViewM) {
   const modalEntry = Object.entries(MODAL_ROUTES).find(([, route]) => route === path);
   if (modalEntry) {
     return {
-      requestedPage: activeP || 'dashboard',
+      requestedPage: activeP || 'tablero',
       activityViewMode: ['blocks','matrix','config'].includes(activeActViewM) ? activeActViewM : 'blocks',
       modalId: modalEntry[0],
     };

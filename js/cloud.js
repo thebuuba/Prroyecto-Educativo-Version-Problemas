@@ -186,15 +186,32 @@
       
       console.log('[EduGest][cloud] Configurando persistencia...');
       try {
-        await authMod.setPersistence(auth, authMod.browserSessionPersistence);
-        console.log('[EduGest][cloud] Persistencia de sesión configurada');
+        await authMod.setPersistence(auth, authMod.browserLocalPersistence);
+        console.log('[EduGest][cloud] Persistencia local configurada (sesión persiste al recargar)');
       } catch (persistenceError) {
-        console.warn('[EduGest][cloud] Falló persistencia de sesión, usando memoria:', persistenceError);
-        await authMod.setPersistence(auth, authMod.inMemoryPersistence);
+        console.warn('[EduGest][cloud] Falló persistencia local, usando sesión:', persistenceError);
+        await authMod.setPersistence(auth, authMod.browserSessionPersistence);
       }
       
       console.log('[EduGest][cloud] Verificando redirect result...');
       void authMod.getRedirectResult(auth).catch(() => null);
+      
+      // Configurar listener para cambios de estado de autenticación
+      authMod.onAuthStateChanged(auth, (user) => {
+        console.log('[EduGest][cloud] Estado de autenticación cambiado:', user ? 'Usuario autenticado' : 'No hay usuario');
+        if (user) {
+          console.log('[EduGest][cloud] Usuario autenticado:', user.email);
+          // Notificar a la aplicación que hay un usuario autenticado
+          window.dispatchEvent(new CustomEvent('firebase:auth-state-changed', { 
+            detail: { user: normalizeUser(user) } 
+          }));
+        } else {
+          console.log('[EduGest][cloud] Sesión cerrada o no hay usuario');
+          window.dispatchEvent(new CustomEvent('firebase:auth-state-changed', { 
+            detail: { user: null } 
+          }));
+        }
+      });
       
       console.log('[EduGest][cloud] Firebase inicializado correctamente');
       return { appMod, authMod, app, auth };
@@ -426,19 +443,38 @@
   async function getCurrentUser() {
     const services = await ensureFirebase();
     if (!services) return null;
-    if (services.auth.currentUser) return normalizeUser(services.auth.currentUser);
+    
+    console.log('[EduGest][cloud][getCurrentUser] Verificando usuario actual...');
+    
+    // Primero verificar si ya hay un usuario (sesión persistente)
+    if (services.auth.currentUser) {
+      console.log('[EduGest][cloud][getCurrentUser] Usuario encontrado en currentUser:', services.auth.currentUser.email);
+      return normalizeUser(services.auth.currentUser);
+    }
+    
+    // Si no hay usuario inmediatamente, esperar el evento de cambio de estado
+    console.log('[EduGest][cloud][getCurrentUser] No hay usuario inmediato, esperando onAuthStateChanged...');
     return new Promise((resolve) => {
       const unsubscribe = services.authMod.onAuthStateChanged(
         services.auth,
         (user) => {
+          console.log('[EduGest][cloud][getCurrentUser] onAuthStateChanged disparado:', user ? user.email : 'null');
           unsubscribe();
           resolve(normalizeUser(user));
         },
-        () => {
+        (error) => {
+          console.error('[EduGest][cloud][getCurrentUser] Error en onAuthStateChanged:', error);
           unsubscribe();
           resolve(normalizeUser(services.auth.currentUser));
         }
       );
+      
+      // Timeout para no esperar indefinidamente
+      setTimeout(() => {
+        console.log('[EduGest][cloud][getCurrentUser] Timeout, verificando currentUser nuevamente');
+        unsubscribe();
+        resolve(normalizeUser(services.auth.currentUser));
+      }, 3000);
     });
   }
 

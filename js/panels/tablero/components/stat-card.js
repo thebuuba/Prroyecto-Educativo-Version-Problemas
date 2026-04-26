@@ -28,3 +28,6 @@ export function renderStatCard(label, value, icon, iconClass) {
     </div>
   `;
 }
+
+// Export de compatibilidad para nombres en español
+export const renderizarTarjetaEstadistica = renderStatCard;

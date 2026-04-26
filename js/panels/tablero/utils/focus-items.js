@@ -82,3 +82,6 @@ export function buildFocusItems({ courses, totalStudents, totalActivities, pendi
   
   return items;
 }
+
+// Export de compatibilidad para nombres en español
+export const construirElementosEnfoque = buildFocusItems;

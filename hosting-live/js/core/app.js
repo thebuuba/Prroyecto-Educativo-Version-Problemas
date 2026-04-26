@@ -7,7 +7,6 @@
 import { S } from './state.js';
 import { hydrate, clearBrowserSession, applySessionUser, hydrateLocalWorkspaceForUser } from './hydration.js';
 import { go, readPanelLocation } from './routing.js';
-import '../panels/auth.js';
 
 /**
  * Función de arranque principal de la aplicación.
@@ -18,14 +17,40 @@ import '../panels/auth.js';
 export async function boot() {
   console.log('[EduGest] Iniciando aplicación modular...');
   
-  // 1. Hidratación inicial del estado desde LocalStorage/DB
+  // 1. Verificar si hay sesión de Firebase activa antes de hidratar
+  let firebaseUser = null;
+  if (typeof window.EduGestCloud?.getCurrentUser === 'function') {
+    try {
+      firebaseUser = await window.EduGestCloud.getCurrentUser();
+      console.log('[EduGest][boot] Usuario Firebase detectado:', firebaseUser?.uid);
+    } catch (error) {
+      console.warn('[EduGest][boot] Error al verificar usuario Firebase:', error);
+    }
+  }
+  
+  // 2. Hidratación inicial del estado desde LocalStorage/DB
   await hydrate();
+  
+  console.log('[EduGest][boot] Estado después de hidratación:', {
+    sessionUserId: S.sessionUserId,
+    hasAuthUsers: Array.isArray(S.authUsers) && S.authUsers.length > 0,
+    currentPage: S.currentPage,
+    firebaseUser: firebaseUser?.uid
+  });
+  
+  // 3. Si hay usuario de Firebase pero no sesión en S, restaurar sesión
+  if (firebaseUser && !S.sessionUserId) {
+    console.log('[EduGest][boot] Restaurando sesión desde Firebase...');
+    const { hydrateCloudStateForUser } = await import('./hydration.js');
+    await hydrateCloudStateForUser(firebaseUser);
+    console.log('[EduGest][boot] Sesión restaurada desde Firebase:', S.sessionUserId);
+  }
   
   // Sincronizar UI tras carga de datos
   if (typeof window.updateSBUser === 'function') window.updateSBUser();
   if (typeof window.refreshTop === 'function') window.refreshTop();
   
-  // 2. Determinación de la página inicial (URL > Estado > Default)
+  // 4. Determinación de la página inicial (URL > Estado > Default)
   const urlLocation = readPanelLocation(S.currentPage, S.activityViewMode);
   const urlParams = new URLSearchParams(window.location.search);
   
@@ -33,15 +58,22 @@ export async function boot() {
   
   console.debug(`[EduGest][boot] Página resuelta para arranque: ${page}`);
   
-  // 3. Inicio de la navegación al panel correspondiente
-  go(page, { replace: true });
+  // 5. Solo navegar si hay sesión, si no, mostrar login
+  const hasSession = S.sessionUserId || firebaseUser;
+  if (hasSession) {
+    console.log('[EduGest][boot] Hay sesión activa, navegando a página:', page);
+    go(page, { replace: true });
+  } else {
+    console.log('[EduGest][boot] Sin sesión detectada, mostrando modal de autenticación');
+    showAuthModal();
+  }
   
-  // 4. Ocultar pantalla de bienvenida (Splash Screen) una vez listo
+  // 6. Ocultar pantalla de bienvenida (Splash Screen) una vez listo
   if (typeof window.hideBootSplash === 'function') {
     window.hideBootSplash('boot_complete');
   }
 
-  // 5. Verificación post-boot: Resiliencia de sesión
+  // 7. Verificación post-boot: Resiliencia de sesión
   //    Si no hay sesión en S pero SÍ hay un token en el navegador, evitamos borrarlo
   //    para permitir recuperación en el siguiente ciclo o via Cloud.
   const browserSession = typeof window.readBrowserSession === 'function' 
@@ -56,7 +88,14 @@ export async function boot() {
       }
     : null;
 
+  console.log('[EduGest][boot] Sesión del navegador:', {
+    hasBrowserSession: !!browserSession,
+    browserSessionUid: browserSession?.uid,
+    browserSessionIdentity: !!browserSessionIdentity
+  });
+
   if (!S.sessionUserId && browserSessionIdentity) {
+    console.log('[EduGest][boot] Restaurando sesión desde navegador');
     const localSessionUser = Array.isArray(S.authUsers)
       ? S.authUsers.find((entry) => entry.id === browserSessionIdentity.uid)
       : null;
@@ -67,24 +106,45 @@ export async function boot() {
     }
   }
 
-  if (!S.sessionUserId && !browserSession?.uid) {
-    console.warn('[EduGest][boot] Sin sesión detectada, limpiando rastro local.');
+  if (!S.sessionUserId && !browserSession?.uid && !firebaseUser) {
+    console.warn('[EduGest][boot] Sin sesión detectada en ningún lugar, limpiando rastro local.');
     clearBrowserSession(); 
-    
-    window.setTimeout(() => {
-      const modal = document.getElementById('m-auth');
-      if (modal && !modal.classList.contains('open')) {
-        if (typeof window.openM === 'function') {
-          window.openM('m-auth');
-        } else {
-          modal.classList.add('open');
-          document.body?.classList.add('auth-screen-open');
-        }
-      }
-    }, 150);
+    showAuthModal();
   } else if (!S.sessionUserId && browserSession?.uid) {
     console.debug('[EduGest][boot] Sesión latente detectada en storage pero no hidratada en S.');
+  } else if (firebaseUser && !S.sessionUserId) {
+    console.log('[EduGest][boot] Firebase tiene sesión pero estado local no, intentando restauración...');
+    // Intentar restaurar sesión de Firebase nuevamente
+    const { hydrateCloudStateForUser } = await import('./hydration.js');
+    await hydrateCloudStateForUser(firebaseUser);
   }
+}
+
+async function checkFirebaseSession() {
+  try {
+    if (typeof window.EduGestCloud?.getCurrentUser === 'function') {
+      const user = await window.EduGestCloud.getCurrentUser();
+      return !!user;
+    }
+    return false;
+  } catch (error) {
+    console.error('[EduGest][boot] Error verificando sesión de Firebase:', error);
+    return false;
+  }
+}
+
+function showAuthModal() {
+  window.setTimeout(() => {
+    const modal = document.getElementById('m-auth');
+    if (modal && !modal.classList.contains('open')) {
+      if (typeof window.openM === 'function') {
+        window.openM('m-auth');
+      } else {
+        modal.classList.add('open');
+        document.body?.classList.add('auth-screen-open');
+      }
+    }
+  }, 150);
 }
 
 // Globalización para permitir el arranque desde index.html

@@ -71,6 +71,7 @@ export {
   loadLocalWorkspace,
   persistActiveUserWorkspace,
   persistLocalAuthUsers,
+  persistBrowserSession,
   readBrowserSession,
   replaceState,
   stopCloudStateSync,
@@ -299,7 +300,7 @@ export async function logoutAuth() {
   }
   
   console.log('[EduGest][auth] Sesión cerrada localmente. Redirigiendo...');
-  go('tablero', { replace: true });
+  go('dashboard', { replace: true });
 }
 
 // --- Hidratación e Inicialización del Sistema ---
@@ -373,6 +374,7 @@ export async function hydrate(options = {}) {
     // --- SESIÓN Y WORKSPACE: Siempre intentar restaurar si hay sesión en el browser ---
     const browserSession = readBrowserSession();
     if (browserSession?.uid) {
+      // Primero establecer la sesión desde el navegador
       S.sessionUserId = browserSession.uid;
       S.sessionUserName = browserSession.name || S.sessionUserName;
       S.sessionStartedAt = browserSession.startedAt || S.sessionStartedAt;
@@ -389,14 +391,26 @@ export async function hydrate(options = {}) {
       if (hasWorkspaceData) {
         console.debug('[EduGest][load:workspace] Success - Data restored');
         Object.assign(S, localWorkspace);
+        // IMPORTANTE: Restaurar sessionUserId después de Object.assign
+        S.sessionUserId = browserSession.uid;
+        S.sessionUserName = browserSession.name || S.sessionUserName;
+        S.sessionStartedAt = browserSession.startedAt || S.sessionStartedAt;
         // Re-sincronizar ayudantes con los datos del workspace
         ensureCurriculumCatalogState();
         rebuildAcademicHelpers();
         ensurePeriodBuckets(S.activePeriodId);
       } else if (localWorkspace) {
         console.debug('[EduGest][load:workspace] Workspace exists but is empty, keeping current data');
+        // Asegurar que sessionUserId se mantiene aunque el workspace esté vacío
+        S.sessionUserId = browserSession.uid;
+        S.sessionUserName = browserSession.name || S.sessionUserName;
+        S.sessionStartedAt = browserSession.startedAt || S.sessionStartedAt;
       } else {
         console.warn('[EduGest][load:workspace] No local workspace found for user', browserSession.uid);
+        // Asegurar que sessionUserId se mantiene aunque no haya workspace
+        S.sessionUserId = browserSession.uid;
+        S.sessionUserName = browserSession.name || S.sessionUserName;
+        S.sessionStartedAt = browserSession.startedAt || S.sessionStartedAt;
       }
     }
     

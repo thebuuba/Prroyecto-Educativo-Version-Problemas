@@ -5,7 +5,7 @@
 #m-auth #auth-login-box .inp,
 #m-auth #auth-login-box .password-input {
   min-height: 54px;
-  border-radius: 14px;
+  border-radius: 22px;
   border-color: #d0d3da;
   background: transparent;
   box-shadow: none;
@@ -21,7 +21,7 @@
 #m-auth .auth-card:has(.auth-panel[data-mode="login"]) {
   width: min(1120px, calc(100vw - 56px));
   min-height: min(720px, calc(100vh - 72px));
-  border-radius: 18px;
+  border-radius: 32px;
   overflow: hidden;
   background: transparent;
   box-shadow: 0 26px 70px rgba(70, 78, 138, .16);
@@ -119,7 +119,7 @@
   flex: 1;
   justify-content: center;
   padding: 70px 84px;
-  border-radius: 16px;
+  border-radius: 28px;
   border: 1px solid #e6eaf2;
   background: #ffffff;
   box-shadow: 0 14px 40px rgba(15, 23, 42, .06);
@@ -201,7 +201,7 @@
 #m-auth .auth-panel[data-mode="login"] .auth-input-wrap {
   height: 52px;
   border: 1px solid #dde2ec;
-  border-radius: 14px;
+  border-radius: 22px;
   background: #fcfdff;
   box-shadow: 0 1px 0 rgba(16, 24, 40, .02);
 }
@@ -266,7 +266,7 @@
   height: 52px;
   min-height: 52px;
   margin: 6px 0 22px;
-  border-radius: 7px;
+  border-radius: 999px;
   background: #4f5dff;
   color: #fff;
   font-size: 18px;
@@ -318,7 +318,7 @@
 #m-auth .auth-panel[data-mode="login"] .auth-social-btn {
   height: 52px;
   border: 1px solid #e5e7eb;
-  border-radius: 7px;
+  border-radius: 999px;
   background: #ffffff;
   color: #151a32;
   font-size: 15px;
@@ -472,7 +472,7 @@
   width: min(560px, calc(100vw - 36px));
   min-height: auto;
   margin: 24px auto;
-  border-radius: 18px;
+  border-radius: 32px;
   padding: clamp(28px, 5vw, 52px);
   background: #ffffff;
 }
@@ -488,5 +488,5 @@
 
 #m-auth .auth-panel[data-mode="login"] .auth-submit-btn,
 #m-auth .auth-panel[data-mode="login"] .auth-social-btn {
-  border-radius: 14px;
+  border-radius: 999px;
 }

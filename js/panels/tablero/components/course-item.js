@@ -43,3 +43,6 @@ export function renderCourseItem(sec) {
     </div>
   `;
 }
+
+// Export de compatibilidad para nombres en español
+export const renderizarCourseItem = renderCourseItem;

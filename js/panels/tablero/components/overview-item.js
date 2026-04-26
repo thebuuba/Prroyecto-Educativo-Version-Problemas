@@ -27,3 +27,6 @@ export function renderOverviewItem(label, value, icon, textClass = 'text-slate-9
     </div>
   `;
 }
+
+// Export de compatibilidad para nombres en español
+export const renderizarOverviewItem = renderOverviewItem;

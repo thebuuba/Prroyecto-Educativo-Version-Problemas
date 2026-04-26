@@ -14,32 +14,47 @@ import {
   getScopedStudents, 
   getGroupCfg, 
   periodName, 
-  normalizeCourseSearchText 
+  normalizeCourseSearchText,
+  studentsInGroup
 } from '../../core/domain-utils.js';
 import { BLOCKS } from '../../core/constants.js';
 import { escapeHtml } from '../../core/utils.js';
 
 // Componentes
-import { renderStatCard } from './components/stat-card.js';
-import { renderCourseItem } from './components/course-item.js';
-import { renderOverviewItem } from './components/overview-item.js';
+import { renderStatCard, renderizarTarjetaEstadistica } from './components/stat-card.js';
+import { renderCourseItem, renderizarCourseItem } from './components/course-item.js';
+import { renderOverviewItem, renderizarOverviewItem } from './components/overview-item.js';
 
 // Utilidades
-import { buildFocusItems } from './utils/focus-items.js';
+import { buildFocusItems, construirElementosEnfoque } from './utils/focus-items.js';
+
+// Alias de funciones para compatibilidad con nombres en español
+const renderTarjetaEstadistica = renderStatCard;
+const renderElementoCurso = renderCourseItem;
+const renderElementoResumen = renderOverviewItem;
 
 /**
  * Renderiza el tablero Bento moderno con estadísticas y accesos directos.
  * @param {HTMLElement} c - Contenedor del panel.
  */
 export function registerDashboardPanel(c) {
+  console.log('[DashboardPanel] Iniciando renderizado del dashboard');
+  console.log('[DashboardPanel] Contenedor:', c);
+  console.log('[DashboardPanel] Estado S:', S);
+  
   const teacherName = S.profile?.name || S.sessionUserName || 'Docente';
   const hours = new Date().getHours();
   const greet = hours < 12 ? 'Buen día' : hours < 19 ? 'Buenas tardes' : 'Buenas noches';
+  
+  console.log('[DashboardPanel] Nombre del docente:', teacherName);
   
   const courses = getScopedSections();
   const scopedStudents = getScopedStudents();
   const scopedCourseIds = new Set(courses.map(course => course.id));
   const totalStudents = scopedStudents.length;
+  
+  console.log('[DashboardPanel] Cursos:', courses);
+  console.log('[DashboardPanel] Total estudiantes:', totalStudents);
 
   // Cálculo de estadísticas globales
   const allActsList = courses.flatMap(course => {
@@ -59,7 +74,7 @@ export function registerDashboardPanel(c) {
   const todayDate = new Date().toLocaleDateString('es-DO', { weekday: 'long', day: '2-digit', month: 'long' });
 
   // Lógica de elementos de enfoque (Focus Items) para guiar al usuario
-  const focusItems = construirElementosEnfoque({
+  const focusItems = buildFocusItems({
     courses, totalStudents, totalActivities, pendingInstruments, hasPlanning: (S.lessonPlans?.length > 0)
   });
 
@@ -172,7 +187,9 @@ export function registerDashboardPanel(c) {
     </div>
   `;
   
+  console.log('[DashboardPanel] HTML generado, asignando al contenedor');
   c.innerHTML = htmlContent;
+  console.log('[DashboardPanel] Renderizado completado');
 }
 
 /**
@@ -180,8 +197,11 @@ export function registerDashboardPanel(c) {
  * Expone puentes de compatibilidad para eventos de UI.
  */
 export function init() {
+  console.log('[DashboardPanel] Inicializando panel de tablero');
   if (!window.RENDERS) window.RENDERS = {};
   window.RENDERS.dashboard = registerDashboardPanel;
+  window.RENDERS.tablero = registerDashboardPanel; // Compatibilidad: nombre español
+  console.log('[DashboardPanel] Renderizadores registrados:', Object.keys(window.RENDERS));
   
   /** Abre un curso específico desde el tablero y navega a actividades. */
   window.openDashboardCourse = (id) => {
@@ -192,4 +212,8 @@ export function init() {
     persist();
     go('actividades');
   };
+  console.log('[DashboardPanel] Inicialización completada');
 }
+
+// Export de compatibilidad para nombres en español
+export const inicializar = init;

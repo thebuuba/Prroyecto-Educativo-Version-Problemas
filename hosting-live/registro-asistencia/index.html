@@ -122,6 +122,7 @@
   })();
 </script>
 <script>
+<script>
   (function initDefaultAuthFallback() {
     const SESSION_KEY = 'eg_v3:session';
     let hasStoredSession = false;
@@ -132,25 +133,47 @@
 
     if (hasStoredSession) return;
 
-    const openAuth = () => {
-      const body = document.body;
-      const modal = document.getElementById('m-auth');
-      if (!body || !modal || modal.classList.contains('open')) return;
-      if (typeof window.openM === 'function') {
-        window.openM('m-auth');
-        return;
+    // Esperar un momento para verificar si Firebase tiene sesión activa
+    setTimeout(async () => {
+      try {
+        // Verificar si hay sesión de Firebase antes de abrir el modal
+        if (typeof window.EduGestCloud?.getCurrentUser === 'function') {
+          const firebaseUser = await window.EduGestCloud.getCurrentUser();
+          if (firebaseUser) {
+            console.log('[AuthFallback] Sesión de Firebase detectada, no abriendo modal');
+            return;
+          }
+        }
+      } catch (error) {
+        console.warn('[AuthFallback] Error verificando Firebase:', error);
       }
-      body.classList.add('auth-screen-open');
-      modal.classList.add('open');
-    };
 
-    if (document.readyState === 'loading') {
-      window.addEventListener('DOMContentLoaded', openAuth, { once: true });
-    } else {
-      openAuth();
-    }
+      // Si no hay sesión en ningún lugar, abrir modal
+      const openAuth = () => {
+        const body = document.body;
+        const modal = document.getElementById('m-auth');
+        const aiCopilot = document.getElementById('ai-copilot-container');
+        if (!body || !modal || modal.classList.contains('open')) return;
+        if (typeof window.openM === 'function') {
+          window.openM('m-auth');
+          return;
+        }
+        body.classList.add('auth-screen-open');
+        modal.classList.add('open');
+        if (aiCopilot) {
+          aiCopilot.hidden = true;
+          aiCopilot.style.display = 'none';
+        }
+      };
+
+      if (document.readyState === 'loading') {
+        window.addEventListener('DOMContentLoaded', openAuth, { once: true });
+      } else {
+        openAuth();
+      }
+    }, 500); // Esperar 500ms para que Firebase inicialice
   })();
-</script>
+</script></script>
 </head>
 <body>
 <div id="app-boot" class="app-boot" aria-live="polite" aria-busy="true">
@@ -1212,7 +1235,7 @@ Carlos D&iacute;az 0000034"></textarea>
 <script type="module" src="/js/config.js?v=20260405i"></script>
 <script type="module" src="/js/db.js?v=20260405i"></script>
 <script type="module" src="/js/firebase-config.js?v=20260405i"></script>
-<script type="module" src="/js/cloud.js?v=20260405i"></script>
+<script type="module" src="/js/cloud.js?v=20260426j"></script>
 <script type="module" src="/js/sql-api.js?v=20260405i"></script>
 <script type="module" src="/js/page-entry/registro-asistencia.js?v=20260405i"></script>
 

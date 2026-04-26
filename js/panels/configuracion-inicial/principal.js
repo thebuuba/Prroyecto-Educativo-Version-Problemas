@@ -20,6 +20,27 @@ import {
 } from '../../core/utils.js';
 
 /**
+ * Inicializa el panel de configuración inicial.
+ * Registra las funciones globales necesarias para el HTML.
+ */
+export function inicializar() {
+  console.log('[SetupPanel] Inicializando panel de configuración inicial');
+  
+  // Exportar funciones globales para compatibilidad con HTML
+  window.saveSetup = guardarSetup;
+  window.cancelSetup = cancelSetup;
+  window.populateSetupForm = populateSetupForm;
+  window.enforceMandatorySetup = enforceMandatorySetup;
+  window.handlePhoneInput = manejarPhoneInput;
+  window.handleInstitutionInput = manejarInstitutionInput;
+  window.handleInstitutionKeydown = manejarInstitutionKeydown;
+  window.updateInstitutionInlineHint = actualizarInstitutionInlineHint;
+  window.clearInstitutionInlineHint = clearInstitutionInlineHint;
+  
+  console.log('[SetupPanel] Funciones exportadas a window');
+}
+
+/**
  * Rellena el formulario con datos actuales del perfil (S.profile).
  * Se invoca automáticamente al abrir el modal m-setup desde ui.js.
  */
@@ -114,7 +135,7 @@ export async function guardarSetup() {
 
     // Actualizar UI y navegar
     if (typeof window.updateSBUser === 'function') window.updateSBUser();
-    go('tablero');
+    go('dashboard'); // Usar 'dashboard' en lugar de 'tablero' para consistencia
     window.toast('¡Perfil configurado correctamente!');
   } catch (error) {
     console.error('[EduGest][setup] Error al guardar:', error);
@@ -134,7 +155,7 @@ export function cancelSetup() {
     return;
   }
   closeM('m-setup');
-  go('tablero');
+  go('dashboard');
 }
 
 /**
@@ -235,16 +256,23 @@ export function manejarInstitutionKeydown(event) {
   clearInstitutionInlineHint();
 }
 
-// Inyección en window para compatibilidad con HTMLonclick e inline scripts
-window.saveSetup = saveSetup;
+// Inyección en window para compatibilidad con HTML onclick e inline scripts
+window.saveSetup = guardarSetup;
 window.cancelSetup = cancelSetup;
 window.populateSetupForm = populateSetupForm;
 window.enforceMandatorySetup = enforceMandatorySetup;
-window.handlePhoneInput = handlePhoneInput;
-window.handleInstitutionInput = handleInstitutionInput;
-window.handleInstitutionKeydown = handleInstitutionKeydown;
-window.updateInstitutionInlineHint = updateInstitutionInlineHint;
+window.handlePhoneInput = manejarPhoneInput;
+window.handleInstitutionInput = manejarInstitutionInput;
+window.handleInstitutionKeydown = manejarInstitutionKeydown;
+window.updateInstitutionInlineHint = actualizarInstitutionInlineHint;
 window.clearInstitutionInlineHint = clearInstitutionInlineHint;
+
+// Export de compatibilidad para nombres en inglés
+export const saveSetup = guardarSetup;
+export const handlePhoneInput = manejarPhoneInput;
+export const handleInstitutionInput = manejarInstitutionInput;
+export const handleInstitutionKeydown = manejarInstitutionKeydown;
+export const updateInstitutionInlineHint = actualizarInstitutionInlineHint;
 
 // Auxiliar para volver al registro (cierra sesión)
 window.returnSetupToRegister = () => {

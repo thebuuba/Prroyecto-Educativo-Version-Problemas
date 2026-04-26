@@ -58,7 +58,7 @@ function currentAuthMode() {
 
 export function manejarAuthLoginTab() {
   if (currentAuthMode() === 'register') {
-    setAuthMode('login');
+    establecerAuthMode('login');
     return;
   }
   autenticarUsuario();
@@ -66,7 +66,7 @@ export function manejarAuthLoginTab() {
 
 export function manejarAuthRegisterTab() {
   if (currentAuthMode() !== 'register') {
-    setAuthMode('register');
+    establecerAuthMode('register');
     return;
   }
   registrarUsuario();
@@ -139,7 +139,7 @@ export function establecerAuthMode(mode) {
     switchLink.dataset.bound = '1';
     switchLink.addEventListener('click', () => {
       const isCurrentlyLogin = document.querySelector('.auth-panel')?.dataset.mode === 'login';
-      setAuthMode(isCurrentlyLogin ? 'register' : 'login');
+      establecerAuthMode(isCurrentlyLogin ? 'register' : 'login');
     });
   }
   if (switchLink) {
@@ -159,7 +159,7 @@ export function establecerAuthMode(mode) {
       registerSubmit.innerHTML = 'Registrarse <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>';
     }
   }
-  establecerAuthNote('');
+  setAuthNote('');
   setupRegisterFieldUX();
   resetRegisterStrengthState();
   if (login) {
@@ -173,7 +173,7 @@ export function establecerAuthMode(mode) {
 export function manejarForgotPassword() {
   const input = document.getElementById('auth-forgot-email');
   if (input) input.value = authEmailKey(v('al-email'));
-  establecerAuthNote(''); // Clear any existing auth note
+  setAuthNote(''); // Clear any existing auth note
   openM('m-auth-forgot');
   window.setTimeout(() => input?.focus(), 30);
 }
@@ -276,7 +276,7 @@ function mostrarTableroAutenticado() {
     setTimeout(() => splash.remove(), 280);
   }
 
-  go('tablero');
+  go('dashboard');
   
   // Forzar actualización de la UI después de la navegación
   setTimeout(() => {
@@ -527,23 +527,185 @@ export function inicializar() {
   // NO sobrescribir _renderPanel para evitar conflictos con el sistema de routing principal
   // El sistema de routing ya maneja el renderizado de paneles correctamente
   
-  // Register handlers
-  setupRegisterFieldUX();
+  // Register handlers - intentar inmediatamente y también en DOMContentLoaded
+  const setupHandlers = () => {
+    if (document.getElementById('ar-pass') || document.getElementById('al-email')) {
+      setupRegisterFieldUX();
+    }
+    
+    // Conectar botones directamente con event listeners
+    setupAuthButtonListeners();
+  };
+  
+  setupHandlers();
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupHandlers, { once: true });
+  }
+  
+  // IMPORTANTE: Conectar botones también cuando el HTML de auth se monte dinámicamente
+  window.addEventListener('aulabase:auth-mounted', () => {
+    console.log('[AuthPanel] HTML de auth montado, reconectando botones...');
+    setTimeout(() => {
+      setupRegisterFieldUX();
+      setupAuthButtonListeners();
+    }, 100);
+  });
+  
   console.log('[AuthPanel] Panel de auth inicializado');
 }
 
-// compatibility exports 
-window.setAuthMode = setAuthMode;
-window.handleAuthLoginTab = handleAuthLoginTab;
-window.handleAuthRegisterTab = handleAuthRegisterTab;
-window.loginAuth = loginAuth;
-window.registerAuth = registerAuth;
+function setupAuthButtonListeners() {
+  console.log('[AuthPanel] Intentando conectar botones de auth...');
+  console.log('[AuthPanel] Elementos auth presentes:', {
+    'auth-login-box': !!document.getElementById('auth-login-box'),
+    'auth-register-box': !!document.getElementById('auth-register-box'),
+    'ar-pass': !!document.getElementById('ar-pass'),
+    'al-email': !!document.getElementById('al-email'),
+    'm-auth': !!document.getElementById('m-auth')
+  });
+  
+  // Botón de login
+  const loginBtn = document.querySelector('button[onclick="loginAuth()"]');
+  console.log('[AuthPanel] Botón login encontrado:', !!loginBtn);
+  if (loginBtn) {
+    loginBtn.removeAttribute('onclick');
+    loginBtn.addEventListener('click', autenticarUsuario);
+    console.log('[AuthPanel] Botón de login conectado');
+  }
+  
+  // Botón de registro
+  const registerBtn = document.querySelector('button[onclick="registerAuth()"]');
+  console.log('[AuthPanel] Botón registro encontrado:', !!registerBtn);
+  if (registerBtn) {
+    registerBtn.removeAttribute('onclick');
+    registerBtn.addEventListener('click', registrarUsuario);
+    console.log('[AuthPanel] Botón de registro conectado');
+  }
+  
+  // Botones de Google
+  const googleBtns = document.querySelectorAll('button[onclick="authWithProvider(\'google\')"]');
+  console.log('[AuthPanel] Botones Google encontrados:', googleBtns.length);
+  googleBtns.forEach(btn => {
+    btn.removeAttribute('onclick');
+    btn.addEventListener('click', () => autenticarConProveedor('google'));
+  });
+  if (googleBtns.length > 0) {
+    console.log('[AuthPanel] Botones de Google conectados:', googleBtns.length);
+  }
+  
+  // Botones de Facebook
+  const facebookBtns = document.querySelectorAll('button[onclick="authWithProvider(\'facebook\')"]');
+  console.log('[AuthPanel] Botones Facebook encontrados:', facebookBtns.length);
+  facebookBtns.forEach(btn => {
+    btn.removeAttribute('onclick');
+    btn.addEventListener('click', () => autenticarConProveedor('facebook'));
+  });
+  if (facebookBtns.length > 0) {
+    console.log('[AuthPanel] Botones de Facebook conectados:', facebookBtns.length);
+  }
+  
+  // Botón de forgot password
+  const forgotBtn = document.querySelector('button[onclick="handleForgotPassword()"]');
+  console.log('[AuthPanel] Botón forgot password encontrado:', !!forgotBtn);
+  if (forgotBtn) {
+    forgotBtn.removeAttribute('onclick');
+    forgotBtn.addEventListener('click', manejarForgotPassword);
+    console.log('[AuthPanel] Botón de forgot password conectado');
+  }
+  
+  // Botón de toggle auth mode
+  const switchLink = document.getElementById('auth-switch-link');
+  console.log('[AuthPanel] Link switch encontrado:', !!switchLink);
+  if (switchLink && !switchLink.dataset.bound) {
+    switchLink.dataset.bound = '1';
+    switchLink.addEventListener('click', () => {
+      const isCurrentlyLogin = document.querySelector('.auth-panel')?.dataset.mode === 'login';
+      establecerAuthMode(isCurrentlyLogin ? 'register' : 'login');
+    });
+    console.log('[AuthPanel] Link de switch conectado');
+  }
+  
+  // Listener para restaurar sesión automáticamente si Firebase tiene un usuario
+  window.addEventListener('firebase:auth-state-changed', async (event) => {
+    const user = event.detail.user;
+    console.log('[AuthPanel] Cambio de estado de Firebase detectado:', user ? 'Usuario autenticado' : 'Sin usuario');
+    console.log('[AuthPanel] Estado local sessionUserId:', S.sessionUserId);
+    
+    if (user && !S.sessionUserId) {
+      console.log('[AuthPanel] Restaurando sesión desde Firebase para:', user.email);
+      try {
+        // Aplicar el usuario de Firebase al estado local
+        await applySessionUser(user);
+        console.log('[AuthPanel] Usuario aplicado al estado local, sessionUserId:', S.sessionUserId);
+        
+        // Guardar en localStorage para persistencia
+        if (typeof window.persistBrowserSession === 'function') {
+          window.persistBrowserSession();
+          console.log('[AuthPanel] Sesión guardada en localStorage');
+        }
+        
+        // Persistir el estado completo
+        if (typeof window.persist === 'function') {
+          await window.persist({ immediate: true });
+          console.log('[AuthPanel] Estado persistido completamente');
+        }
+        
+        // Cerrar el modal de autenticación si está abierto
+        const authModal = document.getElementById('m-auth');
+        if (authModal && authModal.classList.contains('open')) {
+          console.log('[AuthPanel] Cerrando modal de autenticación');
+          forceCloseM('m-auth');
+        }
+        
+        // Navegar al dashboard solo si no estamos ya en el dashboard
+        if (S.currentPage !== 'dashboard') {
+          console.log('[AuthPanel] Navegando al dashboard');
+          go('dashboard');
+          window.toast('¡Sesión restaurada correctamente!');
+        }
+      } catch (error) {
+        console.error('[AuthPanel] Error restaurando sesión:', error);
+      }
+    } else if (user && S.sessionUserId) {
+      console.log('[AuthPanel] Sesión ya activa localmente, no se requiere acción');
+      // Asegurar que la sesión esté guardada en localStorage
+      if (typeof window.persistBrowserSession === 'function') {
+        window.persistBrowserSession();
+      }
+    } else if (!user && S.sessionUserId) {
+      console.log('[AuthPanel] Firebase indica que no hay sesión, limpiando estado local');
+      // Limpiar estado local si Firebase indica que no hay sesión
+      if (typeof window.clearBrowserSession === 'function') {
+        window.clearBrowserSession();
+      }
+      S.sessionUserId = null;
+      S.sessionUserName = null;
+      if (typeof window.persist === 'function') {
+        await window.persist({ immediate: true });
+      }
+    }
+  });
+}
+
+// compatibility exports - asignar al final del archivo cuando todas las funciones estén definidas
+window.setAuthMode = establecerAuthMode;
+window.establecerAuthMode = establecerAuthMode;
+window.handleAuthLoginTab = manejarAuthLoginTab;
+window.handleAuthRegisterTab = manejarAuthRegisterTab;
+window.loginAuth = autenticarUsuario;
+window.registerAuth = registrarUsuario;
 window.autenticarConProveedor = autenticarConProveedor;
-window.handleForgotPassword = handleForgotPassword;
+window.authWithProvider = autenticarConProveedor;
+window.handleForgotPassword = manejarForgotPassword;
 window.submitForgotPassword = submitForgotPassword;
 window.togglePasswordVisibility = togglePasswordVisibility;
 
-// Auto-init if we are currently on the auth page
-if (S.currentPage === 'auth') {
-  init();
-}
+console.log('[AuthPanel] Funciones exportadas a window:', {
+  loginAuth: typeof window.loginAuth,
+  registerAuth: typeof window.registerAuth,
+  authWithProvider: typeof window.authWithProvider,
+  setAuthMode: typeof window.setAuthMode,
+  handleForgotPassword: typeof window.handleForgotPassword,
+  togglePasswordVisibility: typeof window.togglePasswordVisibility
+});

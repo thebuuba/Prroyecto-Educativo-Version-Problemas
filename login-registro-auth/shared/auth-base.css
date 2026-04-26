@@ -1495,7 +1495,7 @@
   position: relative;
   height: 52px;
   background: #f1f5f9;
-  border-radius: 14px;
+  border-radius: 22px;
   border: 1px solid transparent;
   transition: all 0.2s ease;
 }
@@ -1548,7 +1548,7 @@
 
 #m-auth .auth-social-btn {
   height: 48px;
-  border-radius: 12px;
+  border-radius: 999px;
   border: 1px solid #e2e8f0;
   background: #ffffff;
   display: flex;
@@ -1595,7 +1595,7 @@
 /* ── Botón Principal ── */
 #m-auth .auth-submit-btn {
   height: 56px;
-  border-radius: 14px;
+  border-radius: 999px;
   background: #1877f2;
   color: #ffffff;
   font-size: 16px;

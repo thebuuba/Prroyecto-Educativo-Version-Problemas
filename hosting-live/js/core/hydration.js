@@ -71,6 +71,7 @@ export {
   loadLocalWorkspace,
   persistActiveUserWorkspace,
   persistLocalAuthUsers,
+  persistBrowserSession,
   readBrowserSession,
   replaceState,
   stopCloudStateSync,
@@ -167,10 +168,16 @@ export async function hydrateCloudStateForUser(user) {
   
   // Puentes para hidratar bloques SQL específicos (asistencia/evaluación)
   if (typeof window.hydrateSqlStateBlocksForActiveUser === 'function') {
-    await window.hydrateSqlStateBlocksForActiveUser();
+    await window.hydrateSqlStateBlocksForActiveUser().catch((error) => {
+      console.warn('[EduGest][sql] No se pudo hidratar bloques de estado durante login cloud.', error);
+      return null;
+    });
   }
   if (typeof window.hydrateSqlAcademicSnapshotForActiveUser === 'function') {
-    await window.hydrateSqlAcademicSnapshotForActiveUser();
+    await window.hydrateSqlAcademicSnapshotForActiveUser().catch((error) => {
+      console.warn('[EduGest][sql] No se pudo hidratar snapshot académico durante login cloud.', error);
+      return null;
+    });
   }
   
   persist({ immediate: true });
@@ -208,10 +215,16 @@ export async function hydrateLocalWorkspaceForUser(user) {
   applySessionUser(user);
   
   if (typeof window.hydrateSqlStateBlocksForActiveUser === 'function') {
-    await window.hydrateSqlStateBlocksForActiveUser();
+    await window.hydrateSqlStateBlocksForActiveUser().catch((error) => {
+      console.warn('[EduGest][sql] No se pudo hidratar bloques de estado durante login local.', error);
+      return null;
+    });
   }
   if (typeof window.hydrateSqlAcademicSnapshotForActiveUser === 'function') {
-    await window.hydrateSqlAcademicSnapshotForActiveUser();
+    await window.hydrateSqlAcademicSnapshotForActiveUser().catch((error) => {
+      console.warn('[EduGest][sql] No se pudo hidratar snapshot académico durante login local.', error);
+      return null;
+    });
   }
   
   persist({ immediate: true });
@@ -346,7 +359,7 @@ export async function hydrate(options = {}) {
       if (!Array.isArray(S.studentDirectory)) S.studentDirectory = [];
       
       if (!('sessionUserId' in S)) S.sessionUserId = null;
-      if (!('currentPage' in S)) S.currentPage = 'dashboard';
+      if (!('currentPage' in S)) S.currentPage = 'tablero';
       if (!('activityViewMode' in S)) S.activityViewMode = ACT_VIEW_MODE_DEFAULT;
 
       ensurePeriodBuckets(S.activePeriodId);
@@ -361,6 +374,7 @@ export async function hydrate(options = {}) {
     // --- SESIÓN Y WORKSPACE: Siempre intentar restaurar si hay sesión en el browser ---
     const browserSession = readBrowserSession();
     if (browserSession?.uid) {
+      // Primero establecer la sesión desde el navegador
       S.sessionUserId = browserSession.uid;
       S.sessionUserName = browserSession.name || S.sessionUserName;
       S.sessionStartedAt = browserSession.startedAt || S.sessionStartedAt;
@@ -377,14 +391,26 @@ export async function hydrate(options = {}) {
       if (hasWorkspaceData) {
         console.debug('[EduGest][load:workspace] Success - Data restored');
         Object.assign(S, localWorkspace);
+        // IMPORTANTE: Restaurar sessionUserId después de Object.assign
+        S.sessionUserId = browserSession.uid;
+        S.sessionUserName = browserSession.name || S.sessionUserName;
+        S.sessionStartedAt = browserSession.startedAt || S.sessionStartedAt;
         // Re-sincronizar ayudantes con los datos del workspace
         ensureCurriculumCatalogState();
         rebuildAcademicHelpers();
         ensurePeriodBuckets(S.activePeriodId);
       } else if (localWorkspace) {
         console.debug('[EduGest][load:workspace] Workspace exists but is empty, keeping current data');
+        // Asegurar que sessionUserId se mantiene aunque el workspace esté vacío
+        S.sessionUserId = browserSession.uid;
+        S.sessionUserName = browserSession.name || S.sessionUserName;
+        S.sessionStartedAt = browserSession.startedAt || S.sessionStartedAt;
       } else {
         console.warn('[EduGest][load:workspace] No local workspace found for user', browserSession.uid);
+        // Asegurar que sessionUserId se mantiene aunque no haya workspace
+        S.sessionUserId = browserSession.uid;
+        S.sessionUserName = browserSession.name || S.sessionUserName;
+        S.sessionStartedAt = browserSession.startedAt || S.sessionStartedAt;
       }
     }
     

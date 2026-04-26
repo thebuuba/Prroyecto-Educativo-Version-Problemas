@@ -48,6 +48,7 @@ export const APP_HISTORY_ROOT = 'edugest-root';
  */
 export const PANEL_ROUTES = {
   dashboard: '/inicio',
+  tablero: '/inicio', // Compatibilidad: nombre español
   estudiantes: '/estudiantes',
   actividades: '/actividades',
   config: '/configuracion-actividades',
@@ -76,6 +77,7 @@ export const MODAL_ROUTES = {};
  */
 export const PANEL_BUNDLES = {
   dashboard: 'dashboard',
+  tablero: 'dashboard', // Compatibilidad: nombre español
   estudiantes: 'estudiantes',
   actividades: 'actividades',
   config: 'actividades',
@@ -328,23 +330,37 @@ export function readPanelLocation(activeP, activeActViewM) {
  * @param {Object} [options={}] - Opciones de navegación (replace, skipHistory).
  */
 export function go(requestedPage = 'dashboard', options = {}) {
+  console.log('[Routing][go] Navegando a:', requestedPage);
+  
+  // Normalizar 'tablero' a 'dashboard' para evitar duplicados
+  const normalizedPage = requestedPage === 'tablero' ? 'dashboard' : requestedPage;
+  
+  // Prevenir navegación duplicada al mismo panel
+  if (S.currentPage === normalizedPage && !options?.force) {
+    console.log('[Routing][go] Ya estamos en la página solicitada, ignorando navegación duplicada');
+    return;
+  }
+  
   const replace = options && (options.replace === true || options.replace === 'replace');
   const skipHistory = options && options.skipHistory === true;
-  const activityViewMode = (requestedPage === 'config' || S.activityViewMode === 'config') ? 'config' : (requestedPage === 'actividades' ? S.activityViewMode : 'blocks');
+  const activityViewMode = (normalizedPage === 'config' || S.activityViewMode === 'config') ? 'config' : (normalizedPage === 'actividades' ? S.activityViewMode : 'blocks');
   
-  S.currentPage = requestedPage;
+  S.currentPage = normalizedPage;
   if (activityViewMode) S.activityViewMode = activityViewMode;
+  
+  console.log('[Routing][go] Página actual establecida:', S.currentPage);
 
   if (typeof window.syncSidebarNavState === 'function') {
-    window.syncSidebarNavState(requestedPage);
+    window.syncSidebarNavState(normalizedPage);
   }
 
   if (!skipHistory) {
-     syncNavHistory(requestedPage, requestedPage, replace ? 'replace' : 'push', activityViewMode);
+     syncNavHistory(normalizedPage, normalizedPage, replace ? 'replace' : 'push', activityViewMode);
   }
 
   // Activar el renderizado a través del Shell (si está disponible vía global)
   if (typeof window._renderPanel === 'function') {
+    console.log('[Routing][go] Llamando a _renderPanel');
     window._renderPanel();
   } else {
     console.debug('[EduGest][routing] _renderPanel no encontrado. Se llamará cuando el shell esté disponible.');

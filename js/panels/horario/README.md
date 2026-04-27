@@ -11,7 +11,7 @@ Panel de gestión de horarios y calendario docente.
 ## 📁 Estructura
 ```
 schedule/
-├── index.js              # Panel principal
+├── principal.js              # Panel principal
 ├── components/
 │   └── render.js        # Componentes de renderizado
 ├── utils/

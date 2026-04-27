@@ -12,7 +12,7 @@ Panel de registro y gestión de asistencia de estudiantes.
 ## 📁 Estructura
 ```
 attendance/
-├── index.js              # Panel principal
+├── principal.js              # Panel principal
 ├── components/
 │   └── render.js        # Componentes de renderizado
 ├── utils/

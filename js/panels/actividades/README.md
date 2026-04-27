@@ -12,12 +12,11 @@ Panel de gestión de actividades evaluativas para cursos y secciones. Permite cr
 
 ## 📁 Estructura de Archivos
 ```
-activities/
-├── index.js              # Archivo principal del panel
+actividades/
+├── principal.js              # Archivo principal del panel
 ├── utils/
 │   └── actions.js       # Acciones y lógica de negocio
 ├── components/           # Componentes UI reutilizables
-├── types/               # Definiciones de tipos (si se usa TypeScript)
 └── README.md            # Esta documentación
 ```
 
@@ -29,7 +28,7 @@ activities/
 - Constantes desde `js/core/constants.js`
 
 ## 🚀 Flujo de Datos
-1. El panel se registra en `window.RENDERS.activities`
+1. El panel se registra en `window.RENDERS.actividades`
 2. Al navegar a '/actividades', el sistema llama a la función principal
 3. Se cargan las actividades del curso/sección activo
 4. Se renderiza la vista según el modo (blocks, matrix, config)

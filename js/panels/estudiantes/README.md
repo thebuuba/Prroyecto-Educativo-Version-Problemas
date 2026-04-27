@@ -13,11 +13,10 @@ Panel de gestión de estudiantes. Permite ver, buscar y gestionar la informació
 ## 📁 Estructura de Archivos
 ```
 students/
-├── index.js              # Archivo principal del panel
+├── principal.js              # Archivo principal del panel
 ├── utils/
 │   └── actions.js       # Acciones y lógica de negocio
 ├── components/           # Componentes UI reutilizables
-├── types/               # Definiciones de tipos (si se usa TypeScript)
 └── README.md            # Esta documentación
 ```
 

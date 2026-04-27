@@ -30,16 +30,18 @@ edugest-main/
 │   │   ├── instrumentos/      # Panel de instrumentos
 │   │   ├── configuracion/     # Panel de configuración
 │   │   └── ...                # Otros paneles
-│   ├── page-entry/            # Puntos de entrada
+│   ├── page-entry/            # Punto de entrada raíz
 │   └── cloud.js               # Integración con nube
-├── styles/                     # Estilos CSS
+├── styles/                     # Entradas globales de CSS
 │   ├── 01-base.css            # Estilos base
 │   ├── 02-auth.css            # Estilos de autenticación
 │   ├── 03-app-panels.css      # Estilos de paneles
-│   ├── 04-ui-overrides.css    # Overrides de UI
-│   └── 03-panels/             # Estilos específicos por panel
-├── sections/                   # Fragmentos HTML
-│   └── html/                  # Componentes HTML
+│   └── 04-ui-overrides.css    # Overrides de UI
+├── sections/                   # Fragmentos HTML del shell y modales compartidos
+│   ├── shell/
+│   ├── auth/
+│   └── panels/
+├── login-registro-auth/        # HTML/CSS/JS de login y registro
 ├── server/                     # Backend (si existe)
 ├── scripts/                    # Scripts de utilidad
 └── index.html                  # Página principal
@@ -54,11 +56,12 @@ panel-name/
 ├── components/           # Componentes UI reutilizables
 │   ├── component1.js
 │   └── component2.js
+├── html/                 # Fragmentos HTML propios, si el panel los necesita
+├── styles/               # CSS propio del panel, si el panel lo necesita
 ├── utils/               # Utilidades específicas del panel (archivos en inglés)
 │   ├── actions.js       # Acciones y lógica de negocio
 │   ├── model.js         # Modelos de datos
 │   └── support.js       # Funciones de soporte
-├── types/               # Definiciones de tipos (TypeScript opcional)
 └── README.md            # Documentación del panel
 ```
 
@@ -145,7 +148,7 @@ Los paneles son las principales unidades de la aplicación:
 ## 📚 Guía de Aprendizaje
 
 ### Para Principiantes
-1. **Comprender la estructura**: Lee esta documentación y `PROJECT_STRUCTURE.md`
+1. **Comprender la estructura**: Lee esta documentación y `docs/PROJECT_STRUCTURE.md`
 2. **Estudiar un panel simple**: Comienza con `tablero/` o `configuracion/`
 3. **Entender el estado global**: Revisa `js/core/state.js`
 4. **Aprender el routing**: Estudia `js/core/routing.js`
@@ -175,29 +178,29 @@ npm run dev
 # Build para producción
 npm run build
 
-# Verificar código
-npm run lint
+# Verificar frontend y backend
+npm run check
 ```
 
 ### Scripts Personalizados
 ```bash
 # Ensamblar HTML
-./scripts/assemble-all.sh
+npm run assemble
 
-# Migrar paneles (ya ejecutado)
-./scripts/migrate-panels.sh
+# Deploy completo
+npm run deploy
 
-# Fix de importaciones (ya ejecutado)
-./scripts/fix-imports.sh
+# Validar backend solamente
+npm run backend:check
 ```
 
 ## 📖 Recursos de Aprendizaje
 
 ### Documentación Interna
-- `PROJECT_STRUCTURE.md` - Estructura detallada del proyecto
-- `FIREBASE_AUTH_SETUP.md` - Configuración de Firebase Auth
-- `FIREBASE_SETUP.md` - Configuración de Firebase
-- `DEPLOY_AUTOMATICO.md` - Guía de despliegue
+- `docs/PROJECT_STRUCTURE.md` - Estructura detallada del proyecto
+- `docs/FIREBASE_AUTH_SETUP.md` - Configuración de Firebase Auth
+- `docs/FIREBASE_SETUP.md` - Configuración de Firebase
+- `docs/DEPLOY_AUTOMATICO.md` - Guía de despliegue
 - `AGENTS.md` - Guía para agentes de desarrollo
 
 ### Documentación por Panel
@@ -243,7 +246,7 @@ Cada panel tiene su propio `README.md` con:
 
 Para preguntas o problemas:
 - Revisa la documentación del panel específico
-- Consulta `PROJECT_STRUCTURE.md`
+- Consulta `docs/PROJECT_STRUCTURE.md`
 - Verifica los logs de la consola
 - Contacta al equipo de desarrollo
 

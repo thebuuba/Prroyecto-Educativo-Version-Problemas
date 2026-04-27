@@ -20,7 +20,6 @@ tablero/
 │   └── elemento-resumen.js
 ├── utils/                # Utilidades específicas del tablero
 │   └── elementos-enfoque.js
-├── types/                # Definiciones de tipos (si se usa TypeScript)
 └── README.md             # Esta documentación
 ```
 

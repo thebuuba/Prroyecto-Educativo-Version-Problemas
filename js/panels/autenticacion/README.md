@@ -14,11 +14,10 @@ Panel de autenticación que gestiona el login, registro, recuperación de contra
 ## 📁 Estructura de Archivos
 ```
 auth/
-├── index.js              # Panel principal y lógica de autenticación
+├── principal.js              # Panel principal y lógica de autenticación
 ├── utils/
 │   └── auth-support.js   # Utilidades de soporte para formularios
 ├── components/           # Componentes UI de autenticación
-├── types/               # Definiciones de tipos (si se usa TypeScript)
 └── README.md            # Esta documentación
 ```
 

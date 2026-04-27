@@ -11,7 +11,7 @@ Panel de gestión de planificaciones curriculares y competencias.
 ## 📁 Estructura
 ```
 planning/
-├── index.js              # Panel principal
+├── principal.js              # Panel principal
 ├── components/
 │   └── render.js        # Componentes de renderizado
 ├── utils/

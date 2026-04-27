@@ -41,10 +41,4 @@ En `index.html` solo debe existir el contenedor:
 
 El HTML real de login/registro se monta desde esta carpeta antes del arranque de la app.
 
-Archivos legacy conservados como referencia:
-
-- `sections/html/02-auth-access-shell.html`
-- `sections/html/03-auth-login-box.html`
-- `sections/html/04-auth-register-box.html`
-
-Estos archivos de `sections/html` ya no contienen el formulario real; apuntan a esta carpeta.
+Los placeholders legacy de `sections/auth` fueron eliminados. El HTML real de autenticación vive únicamente en esta carpeta.

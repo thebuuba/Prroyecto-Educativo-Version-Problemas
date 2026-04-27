@@ -11,7 +11,7 @@ Panel de generación y exportación de reportes académicos.
 ## 📁 Estructura
 ```
 reports/
-├── index.js              # Panel principal
+├── principal.js              # Panel principal
 ├── utils/
 │   └── actions.js       # Acciones de exportación
 └── README.md

@@ -1,9 +1,9 @@
 .DS_Store
+.env
 .firebase/
 firebase-debug.log
 node_modules/
-web-legacy/public/legacy/dist/
-web-legacy/public/dist/
+dist/
 .npm-cache/
 .stfolder/
 *.sync-conflict-*
@@ -18,5 +18,3 @@ server/.npm-cache/
 __pycache__/
 *.pyc
 .venv/
-web-legacy/.vite/
-web-legacy/.npm-cache/

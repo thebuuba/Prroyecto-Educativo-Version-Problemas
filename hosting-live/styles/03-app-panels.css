@@ -1,8 +1,0 @@
-/* Manifest de estilos de paneles.
-   Este archivo solo ensambla las hojas de cada módulo para mantener una sola entrada CSS. */
-@import url('./03-panels/00-shared-table-and-rubrica.css');
-@import url('./03-panels/20-shared-pills.css');
-@import url('./03-panels/21-shared-stats.css');
-@import url('./03-panels/30-panel-dashboard.css');
-@import url('./03-panels/31-panel-dashboard-stitch.css');
-@import url('./03-panels/40-panel-ai.css');

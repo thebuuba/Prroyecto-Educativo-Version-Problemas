@@ -8,7 +8,7 @@
 /** Clave raíz para el almacenamiento local persistente (IndexedDB/LocalStorage). */
 export const STORAGE_KEY = 'eg_v3';
 
-/** Tiempo máximo de espera (ms) para la inicialización de Firebase Auth. */
+/** Tiempo máximo de espera (ms) para la inicialización de Supabase Auth. */
 export const AUTH_BOOT_TIMEOUT_MS = 5000;
 
 /** Símbolo interno para identificar el error de tiempo de espera en el arranque. */

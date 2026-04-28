@@ -14,6 +14,7 @@
 import { boot } from '../core/app.js';
 import { initShell } from '../core/shell.js';
 import { initDeleters } from '../core/deleters.js';
+import { loadedPanelBundles } from '../core/routing.js';
 import { mountAuthFragments } from '../../login-registro-auth/auth-loader.js';
 import {
   installPersistGuards,
@@ -39,6 +40,8 @@ try {
 
 try {
   inicializarTablero();
+  loadedPanelBundles.dashboard = true;
+  loadedPanelBundles.tablero = true;
 } catch (error) {
   console.error('[EduGest] Error inicializando panel de tablero:', error);
 }

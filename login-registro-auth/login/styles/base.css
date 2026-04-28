@@ -1,0 +1,41 @@
+/* Login inspirado en la maqueta Aula Base: panel educativo + acceso limpio. */
+#m-auth {
+  --login-blue: #135dff;
+  --login-blue-2: #2872ff;
+  --login-ink: #071846;
+  --login-muted: #607199;
+  --login-line: #d8e0ee;
+  --login-soft: #f4f8ff;
+  --login-left: #f3f7ff;
+  padding: 0;
+  background: #ffffff;
+  backdrop-filter: none;
+}
+
+#m-auth.open {
+  padding: 0;
+}
+
+#m-auth .auth-shell {
+  width: 100vw;
+  max-width: none;
+  min-height: 100vh;
+  padding: 0;
+  gap: 0;
+  align-items: stretch;
+  justify-content: stretch;
+  overflow: hidden;
+}
+
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(420px, 46vw) minmax(520px, 1fr);
+  width: 100vw;
+  min-height: 100vh;
+  border-radius: 0;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: none;
+}
+

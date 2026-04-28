@@ -3,11 +3,11 @@ import { toast } from '../../../core/domain-utils.js';
 export function registerGradeSetupActions({
   FormState,
   subjectsForArea,
-  updateGradeGrid,
-  updateAreaGrid,
-  updateSubjectGrid,
-  updateSectionGrid,
-  updatePreviews,
+  actualizarGradeGrid,
+  actualizarAreaGrid,
+  actualizarSubjectGrid,
+  actualizarSectionGrid,
+  actualizarPreviews,
 }) {
   window.updateGradeSetupField = (field, value) => {
     FormState[field] = value;
@@ -35,26 +35,26 @@ export function registerGradeSetupActions({
         }
       });
 
-      updateGradeGrid();
-      updateAreaGrid();
+      actualizarGradeGrid();
+      actualizarAreaGrid();
     }
 
-    if (field === 'grade') updateGradeGrid();
+    if (field === 'grade') actualizarGradeGrid();
 
     if (field === 'area') {
       FormState.subject = '';
-      updateAreaGrid();
+      actualizarAreaGrid();
       const subjects = subjectsForArea(FormState.level, FormState.area);
       if (subjects.length === 1) {
         FormState.subject = subjects[0];
-        updateSubjectGrid();
+        actualizarSubjectGrid();
       }
     }
 
-    if (field === 'subject') updateSubjectGrid();
-    if (field === 'section') updateSectionGrid();
+    if (field === 'subject') actualizarSubjectGrid();
+    if (field === 'section') actualizarSectionGrid();
 
-    updatePreviews();
+    actualizarPreviews();
   };
 
   window.confirmSaveGrade = async () => {

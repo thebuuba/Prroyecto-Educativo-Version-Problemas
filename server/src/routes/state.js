@@ -58,7 +58,7 @@ async function resolveSchoolForUser(client, input = {}, userId) {
 
 async function ensureWorkspaceContext(client, input = {}) {
   const email = String(input.email || '').trim().toLowerCase();
-  const firebaseUid = String(input.firebaseUid || '').trim() || null;
+  const authProviderUid = String(input.authProviderUid || '').trim() || null;
   const displayNameInput = String(input.displayName || '').trim();
   const displayName = displayNameInput || email.split('@')[0] || 'Usuario AulaBase';
   const phoneInput = String(input.phone || '').trim();
@@ -69,13 +69,13 @@ async function ensureWorkspaceContext(client, input = {}) {
 
   const userLookup = input.authUserId
     ? { rows: [{ id: input.authUserId }] }
-    : firebaseUid
+    : authProviderUid
     ? await client.query(
         `SELECT id
          FROM users
-         WHERE firebase_uid = $1 OR email = $2
+         WHERE auth_provider_uid = $1 OR email = $2
          LIMIT 1`,
-        [firebaseUid, email]
+        [authProviderUid, email]
       )
     : await client.query(
         `SELECT id
@@ -92,19 +92,19 @@ async function ensureWorkspaceContext(client, input = {}) {
        SET email = $1,
            display_name = COALESCE(NULLIF($2, ''), display_name),
            phone = COALESCE($3, phone),
-           firebase_uid = COALESCE($4, firebase_uid),
+           auth_provider_uid = COALESCE($4, auth_provider_uid),
            updated_at = NOW()
        WHERE id = $5
-       RETURNING id, email, display_name, phone, firebase_uid, status`,
-      [email, displayNameInput, phone, firebaseUid, userLookup.rows[0].id]
+       RETURNING id, email, display_name, phone, auth_provider_uid, status`,
+      [email, displayNameInput, phone, authProviderUid, userLookup.rows[0].id]
     );
     user = updated.rows[0];
   } else {
     const inserted = await client.query(
-      `INSERT INTO users (email, display_name, phone, firebase_uid)
+      `INSERT INTO users (email, display_name, phone, auth_provider_uid)
        VALUES ($1, $2, $3, $4)
-       RETURNING id, email, display_name, phone, firebase_uid, status`,
-      [email, displayName, phone, firebaseUid]
+       RETURNING id, email, display_name, phone, auth_provider_uid, status`,
+      [email, displayName, phone, authProviderUid]
     );
     user = inserted.rows[0];
   }

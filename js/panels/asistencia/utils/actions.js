@@ -77,9 +77,6 @@ export function registerAttendanceActions(deps) {
   };
 
   window.applyWeeklySchedule = () => {
-    const sectionId = S.activeGroupId;
-    const monthKey = S.attendance.monthKey;
-    console.log('Applying weekly schedule for', sectionId, monthKey);
     go('asistencia');
   };
 }

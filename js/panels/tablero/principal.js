@@ -38,23 +38,14 @@ const renderElementoResumen = renderOverviewItem;
  * @param {HTMLElement} c - Contenedor del panel.
  */
 export function registerDashboardPanel(c) {
-  console.log('[DashboardPanel] Iniciando renderizado del dashboard');
-  console.log('[DashboardPanel] Contenedor:', c);
-  console.log('[DashboardPanel] Estado S:', S);
-  
   const teacherName = S.profile?.name || S.sessionUserName || 'Docente';
   const hours = new Date().getHours();
   const greet = hours < 12 ? 'Buen día' : hours < 19 ? 'Buenas tardes' : 'Buenas noches';
-  
-  console.log('[DashboardPanel] Nombre del docente:', teacherName);
   
   const courses = getScopedSections();
   const scopedStudents = getScopedStudents();
   const scopedCourseIds = new Set(courses.map(course => course.id));
   const totalStudents = scopedStudents.length;
-  
-  console.log('[DashboardPanel] Cursos:', courses);
-  console.log('[DashboardPanel] Total estudiantes:', totalStudents);
 
   // Cálculo de estadísticas globales
   const allActsList = courses.flatMap(course => {
@@ -187,9 +178,7 @@ export function registerDashboardPanel(c) {
     </div>
   `;
   
-  console.log('[DashboardPanel] HTML generado, asignando al contenedor');
   c.innerHTML = htmlContent;
-  console.log('[DashboardPanel] Renderizado completado');
 }
 
 /**
@@ -197,11 +186,9 @@ export function registerDashboardPanel(c) {
  * Expone puentes de compatibilidad para eventos de UI.
  */
 export function init() {
-  console.log('[DashboardPanel] Inicializando panel de tablero');
   if (!window.RENDERS) window.RENDERS = {};
   window.RENDERS.dashboard = registerDashboardPanel;
   window.RENDERS.tablero = registerDashboardPanel; // Compatibilidad: nombre español
-  console.log('[DashboardPanel] Renderizadores registrados:', Object.keys(window.RENDERS));
   
   /** Abre un curso específico desde el tablero y navega a actividades. */
   window.openDashboardCourse = (id) => {
@@ -212,7 +199,6 @@ export function init() {
     persist();
     go('actividades');
   };
-  console.log('[DashboardPanel] Inicialización completada');
 }
 
 // Export de compatibilidad para nombres en español

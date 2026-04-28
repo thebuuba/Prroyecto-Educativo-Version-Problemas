@@ -1349,6 +1349,20 @@
   overflow-y: auto;
 }
 
+#m-auth:not(.open) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+#m-auth.open {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
 #m-auth .auth-shell {
   width: 100%;
   max-width: 1040px;

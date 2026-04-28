@@ -12,9 +12,13 @@ edugest-main/
 │   ├── core/                   # Módulos core del sistema
 │   │   ├── state.js           # Estado global
 │   │   ├── routing.js         # Sistema de navegación
-│   │   ├── hydration.js       # Sistema de persistencia
+│   │   ├── hydration.js       # Facade de hidratación y restauración
+│   │   ├── hydration/         # Persistencia, flujo de sesión y estado académico
 │   │   ├── ui.js              # Utilidades de UI
-│   │   ├── utils.js           # Funciones utilitarias
+│   │   ├── utils.js           # Barrel de utilidades
+│   │   ├── utils/             # Utilidades por dominio
+│   │   ├── api-sql.js         # Facade/orquestador SQL académico
+│   │   ├── api-sql/           # Cliente, auth, contexto, endpoints y sync SQL
 │   │   ├── constants.js       # Constantes del sistema
 │   │   ├── domain-utils.js    # Utilidades de dominio
 │   │   └── ...                # Otros módulos core
@@ -33,15 +37,16 @@ edugest-main/
 │   ├── page-entry/            # Punto de entrada raíz
 │   └── cloud.js               # Integración con nube
 ├── styles/                     # Entradas globales de CSS
-│   ├── 01-base.css            # Estilos base
+│   ├── 01-base.css            # Manifest de estilos base
 │   ├── 02-auth.css            # Estilos de autenticación
 │   ├── 03-app-panels.css      # Estilos de paneles
-│   └── 04-ui-overrides.css    # Overrides de UI
+│   ├── 04-ui-overrides.css    # Manifest de overrides de UI
+│   ├── base/                  # Parciales base por responsabilidad
+│   └── overrides/             # Parciales de ajustes visuales
 ├── sections/                   # Fragmentos HTML del shell y modales compartidos
 │   ├── shell/
-│   ├── auth/
 │   └── panels/
-├── login-registro-auth/        # HTML/CSS/JS de login y registro
+├── login-registro-auth/        # HTML/CSS de login y registro
 ├── server/                     # Backend (si existe)
 ├── scripts/                    # Scripts de utilidad
 └── index.html                  # Página principal
@@ -82,11 +87,11 @@ El sistema de routing en `js/core/routing.js` gestiona:
 - URLs amigables
 
 ### 3. Sistema de Persistencia
-El sistema de hidratación en `js/core/hydration.js` maneja:
-- Guardado de estado local
-- Sincronización con la nube
-- Recuperación de datos
-- Gestión de sesiones
+El sistema de hidratación en `js/core/hydration.js` coordina:
+- Guardado de estado local mediante `js/core/hydration/persistence.js`
+- Recuperación de datos y workspace activo
+- Gestión de sesión/logout mediante `js/core/hydration/session-flow.js`
+- Normalización académica mediante `js/core/hydration/academic-state.js`
 
 ### 4. Paneles
 Los paneles son las principales unidades de la aplicación:
@@ -136,7 +141,7 @@ Los paneles son las principales unidades de la aplicación:
 
 ### Backend (Opcional)
 - **Node.js**: Runtime del servidor
-- **Firebase**: Autenticación y base de datos
+- **Supabase**: Autenticación y PostgreSQL
 - **Firestore**: Base de datos en la nube
 
 ### Herramientas de Desarrollo
@@ -198,8 +203,8 @@ npm run backend:check
 
 ### Documentación Interna
 - `docs/PROJECT_STRUCTURE.md` - Estructura detallada del proyecto
-- `docs/FIREBASE_AUTH_SETUP.md` - Configuración de Firebase Auth
-- `docs/FIREBASE_SETUP.md` - Configuración de Firebase
+- `server/.env.example` - Variables para conectar PostgreSQL/Supabase
+- `.env.example` - Variables públicas de Vite y Supabase Auth
 - `docs/DEPLOY_AUTOMATICO.md` - Guía de despliegue
 - `AGENTS.md` - Guía para agentes de desarrollo
 

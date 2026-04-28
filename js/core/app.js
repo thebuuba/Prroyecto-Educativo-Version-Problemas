@@ -5,7 +5,15 @@
  */
 
 import { S } from './state.js';
-import { hydrate, clearBrowserSession, applySessionUser, hydrateLocalWorkspaceForUser, readBrowserSession } from './hydration.js';
+import * as CloudAuth from './api-cloud.js';
+import {
+  hydrate,
+  clearBrowserSession,
+  applySessionUser,
+  hydrateCloudStateForUser,
+  hydrateLocalWorkspaceForUser,
+  readBrowserSession,
+} from './hydration.js';
 import { go, readPanelLocation } from './routing.js';
 
 /**
@@ -15,30 +23,25 @@ import { go, readPanelLocation } from './routing.js';
  * @returns {Promise<void>}
  */
 export async function boot() {
-  console.log('[EduGest] Iniciando aplicación modular...');
   document.documentElement?.classList.add('auth-session-checking');
   
-  // 1. Verificar si hay sesión de Firebase activa antes de hidratar
-  let firebaseUser = null;
-  if (typeof window.EduGestCloud?.getCurrentUser === 'function') {
+  // 1. Verificar si hay sesión de Supabase activa antes de hidratar
+  let cloudUser = null;
+  const getCloudUser = typeof window.EduGestCloud?.getCurrentUser === 'function'
+    ? window.EduGestCloud.getCurrentUser
+    : CloudAuth.getCurrentUser;
+
+  if (typeof getCloudUser === 'function') {
     try {
-      firebaseUser = await window.EduGestCloud.getCurrentUser();
-      console.log('[EduGest][boot] Usuario Firebase detectado:', firebaseUser?.uid);
+      cloudUser = await getCloudUser();
     } catch (error) {
-      console.warn('[EduGest][boot] Error al verificar usuario Firebase:', error);
+      console.warn('[EduGest][boot] Error al verificar usuario Supabase:', error);
     }
   }
   
   // 2. Hidratación inicial del estado desde LocalStorage/DB
   await hydrate();
   
-  console.log('[EduGest][boot] Estado después de hidratación:', {
-    sessionUserId: S.sessionUserId,
-    hasAuthUsers: Array.isArray(S.authUsers) && S.authUsers.length > 0,
-    currentPage: S.currentPage,
-    firebaseUser: firebaseUser?.uid
-  });
-
   const browserSession = readBrowserSession();
   const browserSessionIdentity = browserSession?.uid
     ? {
@@ -49,14 +52,7 @@ export async function boot() {
       }
     : null;
 
-  console.log('[EduGest][boot] Sesión del navegador:', {
-    hasBrowserSession: !!browserSession,
-    browserSessionUid: browserSession?.uid,
-    browserSessionIdentity: !!browserSessionIdentity
-  });
-
   if (!S.sessionUserId && browserSessionIdentity) {
-    console.log('[EduGest][boot] Restaurando sesión desde navegador antes de pintar UI');
     const localSessionUser = Array.isArray(S.authUsers)
       ? S.authUsers.find((entry) => entry.id === browserSessionIdentity.uid)
       : null;
@@ -67,12 +63,9 @@ export async function boot() {
     }
   }
   
-  // 3. Si hay usuario de Firebase pero no sesión en S, restaurar sesión
-  if (firebaseUser && !S.sessionUserId) {
-    console.log('[EduGest][boot] Restaurando sesión desde Firebase...');
-    const { hydrateCloudStateForUser } = await import('./hydration.js');
-    await hydrateCloudStateForUser(firebaseUser);
-    console.log('[EduGest][boot] Sesión restaurada desde Firebase:', S.sessionUserId);
+  // 3. Si hay usuario de Supabase, restaurar/sincronizar sesión local
+  if (cloudUser && S.sessionUserId !== cloudUser.id) {
+    await hydrateCloudStateForUser(cloudUser);
     
     // Sincronizar UI después de restaurar sesión
     if (typeof window.updateSBUser === 'function') window.updateSBUser();
@@ -89,29 +82,25 @@ export async function boot() {
   
   const page = urlLocation?.requestedPage || urlParams.get('p') || S.currentPage || 'dashboard';
   
-  console.debug(`[EduGest][boot] Página resuelta para arranque: ${page}`);
-  
   // 5. Solo navegar si hay sesión, si no, mostrar login
-  const hasSession = S.sessionUserId || firebaseUser;
+  const hasSession = S.sessionUserId || cloudUser;
   if (hasSession) {
-    console.log('[EduGest][boot] Hay sesión activa, navegando a página:', page);
-    
     // Cerrar modal de autenticación si está abierto
     const authModal = document.getElementById('m-auth');
-    if (authModal && authModal.classList.contains('open')) {
-      console.log('[EduGest][boot] Cerrando modal de autenticación');
+    if (authModal) {
       if (typeof window.forceCloseM === 'function') {
         window.forceCloseM('m-auth');
       } else {
         authModal.classList.remove('open');
+        authModal.style.setProperty('display', 'none', 'important');
+        authModal.style.setProperty('pointer-events', 'none', 'important');
         document.body?.classList.remove('auth-screen-open');
       }
     }
     
-    go(page, { replace: true });
+    go(page, { replace: true, force: true });
     document.documentElement?.classList.remove('auth-session-checking');
   } else {
-    console.log('[EduGest][boot] Sin sesión detectada, mostrando modal de autenticación');
     showAuthModal();
   }
   
@@ -123,30 +112,12 @@ export async function boot() {
   // 7. Verificación post-boot: Resiliencia de sesión
   //    Si no hay sesión en S pero SÍ hay un token en el navegador, evitamos borrarlo
   //    para permitir recuperación en el siguiente ciclo o via Cloud.
-  if (!S.sessionUserId && !browserSession?.uid && !firebaseUser) {
+  if (!S.sessionUserId && !browserSession?.uid && !cloudUser) {
     console.warn('[EduGest][boot] Sin sesión detectada en ningún lugar, limpiando rastro local.');
     clearBrowserSession(); 
     showAuthModal();
-  } else if (!S.sessionUserId && browserSession?.uid) {
-    console.debug('[EduGest][boot] Sesión latente detectada en storage pero no hidratada en S.');
-  } else if (firebaseUser && !S.sessionUserId) {
-    console.log('[EduGest][boot] Firebase tiene sesión pero estado local no, intentando restauración...');
-    // Intentar restaurar sesión de Firebase nuevamente
-    const { hydrateCloudStateForUser } = await import('./hydration.js');
-    await hydrateCloudStateForUser(firebaseUser);
-  }
-}
-
-async function checkFirebaseSession() {
-  try {
-    if (typeof window.EduGestCloud?.getCurrentUser === 'function') {
-      const user = await window.EduGestCloud.getCurrentUser();
-      return !!user;
-    }
-    return false;
-  } catch (error) {
-    console.error('[EduGest][boot] Error verificando sesión de Firebase:', error);
-    return false;
+  } else if (cloudUser && S.sessionUserId !== cloudUser.id) {
+    await hydrateCloudStateForUser(cloudUser);
   }
 }
 

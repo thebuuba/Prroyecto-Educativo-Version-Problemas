@@ -12,7 +12,7 @@ function badRequest(message) {
 router.get('/', async (req, res, next) => {
   try {
     const result = await query(
-      `SELECT id, email, display_name, phone, firebase_uid, status, created_at, updated_at
+      `SELECT id, email, display_name, phone, auth_provider_uid, status, created_at, updated_at
        FROM users
        WHERE id = $1
        LIMIT 1`,
@@ -29,7 +29,7 @@ router.post('/', async (req, res, next) => {
     const email = String(req.auth?.user?.email || req.body?.email || '').trim().toLowerCase();
     const displayName = String(req.body?.displayName || '').trim();
     const phone = String(req.body?.phone || '').trim() || null;
-    const firebaseUid = String(req.body?.firebaseUid || '').trim() || null;
+    const authProviderUid = String(req.body?.authProviderUid || '').trim() || null;
 
     if (!email) throw badRequest('El correo es obligatorio.');
     if (!displayName) throw badRequest('El nombre es obligatorio.');
@@ -39,11 +39,11 @@ router.post('/', async (req, res, next) => {
        SET email = $1,
            display_name = $2,
            phone = $3,
-           firebase_uid = COALESCE($4, firebase_uid),
+           auth_provider_uid = COALESCE($4, auth_provider_uid),
            updated_at = NOW()
        WHERE id = $5
-       RETURNING id, email, display_name, phone, firebase_uid, status, created_at, updated_at`,
-      [email, displayName, phone, firebaseUid, req.auth.userId]
+       RETURNING id, email, display_name, phone, auth_provider_uid, status, created_at, updated_at`,
+      [email, displayName, phone, authProviderUid, req.auth.userId]
     );
 
     res.status(200).json(result.rows[0]);

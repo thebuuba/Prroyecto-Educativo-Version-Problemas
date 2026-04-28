@@ -10,23 +10,25 @@ export function getStudentsViewMode() {
 export function registerStudentsActions() {
   window.setStudentsGradeView = (id) => {
     S.activeGradeId = id;
-    go('estudiantes');
+    S.activeGroupId = null;
+    S.activeCourseId = null;
+    go('estudiantes', { force: true, replace: true });
   };
 
   window.setActiveSection = (id) => {
     S.activeGroupId = id;
     S.activeCourseId = id;
-    go('estudiantes');
+    go('estudiantes', { force: true, replace: true });
   };
 
   window.setStudentsViewMode = (mode) => {
     studentsViewMode = mode === 'table' ? 'table' : 'grid';
-    go('estudiantes');
+    go('estudiantes', { force: true, replace: true });
   };
 
   window.setStudentsGlobalSearch = (q) => {
     window.STUDENTS_GLOBAL_QUERY = q;
-    go('estudiantes');
+    go('estudiantes', { force: true, replace: true });
   };
 
   window.openStudentSearchResult = (id) => {

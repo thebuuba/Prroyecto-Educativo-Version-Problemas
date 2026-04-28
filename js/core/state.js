@@ -13,7 +13,7 @@ import { createInitialState } from './config.js';
  * @property {Array} estudiantes - Lista de estudiantes cargados.
  * @property {Array} secciones - Lista de materias/secciones.
  * @property {Object} profile - Perfil del usuario actual.
- * @property {string} sessionUserId - ID del usuario en Firebase Auth.
+ * @property {string} sessionUserId - ID del usuario autenticado.
  * @property {Object} preferences - Preferencias de usuario (modo oscuro, densidad, etc.).
  */
 
@@ -153,5 +153,4 @@ export const DEVICE_VERIFICATION_FLOW = {
   pendingMaskedEmail: '',
   pendingSource: 'login',
 };
-
 

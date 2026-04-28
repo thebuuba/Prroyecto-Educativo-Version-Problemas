@@ -21,9 +21,12 @@ Archivos especificos:
 - `login/auth.css`: estilos especificos del login.
 - `registro/registro.html`: formulario de registro.
 - `registro/auth.css`: estilos especificos del registro.
-- `login/auth.js`: copia de referencia de la logica de auth.
-- `registro/auth.js`: copia de referencia de la logica de auth.
-- `*/api-cloud.js`: funciones que conectan el acceso con Firebase.
+
+Logica:
+
+- `js/panels/autenticacion/principal.js`: acciones publicas del panel de auth.
+- `js/panels/autenticacion/utils/`: helpers de modo visual, sesion, validaciones y UI.
+- `js/core/api-cloud.js`: integracion oficial con Supabase Auth.
 
 Estilos:
 

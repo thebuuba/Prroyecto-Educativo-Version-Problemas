@@ -182,7 +182,7 @@ export function registrarStudentsPanel(c) {
  * Renderiza una mini tarjeta lateral para una sección/asignatura.
  * @private
  */
-function renderizarSectionMiniCard(sec, selectedId) {
+function renderSectionMiniCard(sec, selectedId) {
   const isActive = sec.id === selectedId;
   const count = studentsInGroup(sec.id).length;
   return `
@@ -201,7 +201,7 @@ function renderizarSectionMiniCard(sec, selectedId) {
  * Renderiza una tarjeta de estudiante (modo Grid).
  * @private
  */
-function renderizarStudentCard(st, sectionId) {
+function renderStudentCard(st, sectionId) {
   const final = studentFinal(st.id, sectionId);
   const { l, c } = final !== null ? getGrade(final) : { l: '?', c: 'bg-slate-100 dark:bg-slate-800 text-slate-400' };
   
@@ -241,7 +241,7 @@ function renderizarStudentCard(st, sectionId) {
  * Renderiza una fila de estudiante en la tabla (modo Table).
  * @private
  */
-function renderizarStudentTableRow(st, sectionId) {
+function renderStudentTableRow(st, sectionId) {
   const final = studentFinal(st.id, sectionId);
   const statusLabel = final === null ? 'Pendiente' : final >= 75 ? 'Aprobado' : final >= 60 ? 'En riesgo' : 'Reprobado';
   const statusColor = final === null ? 'bg-slate-100 text-slate-500' : final >= 75 ? 'bg-emerald-100 text-emerald-700' : final >= 60 ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700';
@@ -270,7 +270,7 @@ function renderizarStudentTableRow(st, sectionId) {
  * Renderiza un resultado individual de búsqueda enriquecido.
  * @private
  */
-function renderizarSearchResult(res) {
+function renderSearchResult(res) {
   return `
     <button onclick="window.openStudentSearchResult('${res.id}')" 
             class="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition-colors">

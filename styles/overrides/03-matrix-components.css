@@ -1,0 +1,551 @@
+/* ─────────────────────────────────────────
+   MATRIX
+   Tabla tipo Excel para la matriz de calificaciones.
+───────────────────────────────────────── */
+.mtx-wrap {
+  overflow-x: auto;
+}
+
+.mtx {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.mtx th {
+  padding: 8px 6px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mtx th.st {
+  text-align: left;
+  padding-left: 14px;
+  background: var(--ink);
+  color: #fff;
+  position: sticky;
+  left: 0;
+  z-index: 15;
+  min-width: 160px;
+}
+
+.mtx .bh {
+  color: #fff;
+}
+
+.mtx .bh.B1 {
+  background: var(--com);
+}
+
+.mtx .bh.B2 {
+  background: var(--res);
+  color: var(--ink);
+}
+
+.mtx .bh.B3 {
+  background: var(--eth);
+}
+
+.mtx .bh.B4 {
+  background: var(--cyt);
+}
+
+.mtx .bh.tot {
+  background: var(--ink2);
+}
+
+.mtx .ah {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.mtx .ah.B1 {
+  background: rgba(51, 149, 255, .08);
+  color: var(--com);
+}
+
+.mtx .ah.B2 {
+  background: rgba(245, 158, 11, .08);
+  color: #92400e;
+}
+
+.mtx .ah.B3 {
+  background: rgba(16, 185, 129, .08);
+  color: #065f46;
+}
+
+.mtx .ah.B4 {
+  background: rgba(124, 58, 237, .08);
+  color: var(--cyt);
+}
+
+.mtx .ah.tot {
+  background: var(--off2);
+  color: var(--ink2);
+}
+
+.mtx .ah.norm {
+  background: rgba(124, 58, 237, .12);
+  color: var(--violet);
+  font-style: italic;
+}
+
+.mtx tbody tr {
+  border-bottom: 1px solid var(--line);
+}
+
+.mtx tbody tr:hover td {
+  background: var(--off);
+}
+
+.mtx td.sc {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  background: #fff;
+  padding: 8px 14px;
+  font-weight: 700;
+  color: var(--ink);
+  border-right: 2px solid var(--line);
+  min-width: 160px;
+}
+
+.mtx tbody tr:hover td.sc {
+  background: var(--off);
+}
+
+.si {
+  width: 40px;
+  padding: 4px 3px;
+  text-align: center;
+  border: 1.5px solid var(--line2);
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: var(--t);
+  background: #fff;
+}
+
+.si:focus {
+  outline: none;
+  border-color: var(--aqua);
+  box-shadow: 0 0 0 2px rgba(51, 149, 255, .16);
+}
+
+.si.h {
+  color: #065f46;
+  background: rgba(16, 185, 129, .05);
+  border-color: rgba(16, 185, 129, .3);
+}
+
+.si.o {
+  color: #1e40af;
+}
+
+.si.w {
+  color: #92400e;
+}
+
+.si.d {
+  color: #9f1239;
+  background: rgba(244, 63, 94, .04);
+  border-color: rgba(244, 63, 94, .3);
+}
+
+.mtx td.bt {
+  text-align: center;
+  font-weight: 800;
+  padding: 6px;
+  font-size: 13px;
+}
+
+.mtx td.ft {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 900;
+  padding: 6px 10px;
+}
+
+.gb {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.gA {
+  background: rgba(16, 185, 129, .12);
+  color: #065f46;
+}
+
+.gB {
+  background: rgba(14, 165, 233, .12);
+  color: #0c4a6e;
+}
+
+.gC {
+  background: rgba(245, 158, 11, .12);
+  color: #92400e;
+}
+
+.gD {
+  background: rgba(244, 63, 94, .12);
+  color: #9f1239;
+}
+
+/* Matriz de actividades estilo Excel para la vista de calificaciones. */
+.act-view-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.act-view-toggle .btn.on {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+
+/* Switch visual de vistas en actividades. */
+body.theme-dark .act-view-toggle .btn-outline {
+  background: #152234;
+  color: #d9e7fb;
+  border-color: #29405f;
+}
+
+body.theme-dark .act-view-toggle .btn-outline:hover {
+  background: #1a2a40;
+  color: #ffffff;
+  border-color: #6aa6f1;
+}
+
+body.theme-dark .act-view-toggle .btn.on,
+body.theme-dark .act-view-toggle .btn-outline.on {
+  background: #6aa6f1;
+  color: #08111f;
+  border-color: #6aa6f1;
+}
+
+.ax-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--r2);
+  background: #fff;
+}
+
+.ax {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 12px;
+}
+
+.ax th,
+.ax td {
+  border-right: 1px solid #e9eef7;
+  border-bottom: 1px solid #e9eef7;
+  padding: 7px 8px;
+  white-space: nowrap;
+}
+
+.ax thead th {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+}
+
+.ax .ax-st {
+  position: sticky;
+  left: 0;
+  z-index: 9;
+  background: var(--ink);
+  color: #fff;
+  min-width: 170px;
+  text-align: left;
+}
+
+.ax .ax-name {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  background: #fff;
+  font-weight: 700;
+  min-width: 170px;
+}
+
+.ax tbody tr:nth-child(even) td {
+  background: #fbfdff;
+}
+
+.ax tbody tr:hover td {
+  background: #f4f8ff;
+}
+
+.ax tbody tr:hover .ax-name {
+  background: #f4f8ff;
+}
+
+.ax .ax-bh {
+  color: #fff;
+  text-align: center;
+  font-weight: 800;
+}
+
+.ax .ax-bh.B1 {
+  background: var(--com);
+}
+
+.ax .ax-bh.B2 {
+  background: var(--res);
+  color: var(--ink);
+}
+
+.ax .ax-bh.B3 {
+  background: var(--eth);
+}
+
+.ax .ax-bh.B4 {
+  background: var(--cyt);
+}
+
+.ax .ax-ah {
+  font-size: 10px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.ax .ax-ah.B1 {
+  background: rgba(51, 149, 255, .1);
+  color: var(--com);
+}
+
+.ax .ax-ah.B2 {
+  background: rgba(245, 158, 11, .12);
+  color: #92400e;
+}
+
+.ax .ax-ah.B3 {
+  background: rgba(16, 185, 129, .12);
+  color: #065f46;
+}
+
+.ax .ax-ah.B4 {
+  background: rgba(124, 58, 237, .12);
+  color: #5b21b6;
+}
+
+.ax .ax-sumh,
+.ax .ax-sum {
+  background: #edf4ff;
+  font-weight: 800;
+  text-align: center;
+}
+
+.ax .ax-finalh,
+.ax .ax-final {
+  background: #e8eef8;
+  font-weight: 900;
+  text-align: center;
+}
+
+.ax .ax-cell {
+  text-align: center;
+  cursor: pointer;
+  transition: var(--t);
+}
+
+.ax .ax-cell:hover {
+  background: #eaf4ff !important;
+}
+
+.ax .sep-r {
+  box-shadow: inset -2px 0 0 #d6e2f5;
+}
+
+/* ─────────────────────────────────────────
+   TEMPLATES
+───────────────────────────────────────── */
+.tpl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.tpl-card {
+  background: rgba(255, 255, 255, .04);
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: var(--r2);
+  padding: 16px;
+  cursor: pointer;
+  transition: var(--t);
+}
+
+.tpl-card:hover {
+  background: rgba(255, 255, 255, .08);
+  border-color: var(--aqua);
+  transform: translateY(-2px);
+}
+
+.tpl-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.tpl-desc {
+  font-size: 11px;
+  color: rgba(255, 255, 255, .4);
+}
+
+.tpl-apply {
+  margin-top: 10px;
+}
+
+/* ─────────────────────────────────────────
+   REPORT CHART
+───────────────────────────────────────── */
+.chart-bars {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: end;
+  gap: 18px;
+  min-height: 280px;
+  padding: 0 8px;
+}
+
+.bar-col {
+  display: grid;
+  grid-template-rows: 28px minmax(150px, 1fr) 78px;
+  align-items: end;
+  gap: 10px;
+  min-width: 0;
+}
+
+.bar-rect {
+  width: 100%;
+  border-radius: 10px 10px 0 0;
+  min-height: 8px;
+  align-self: end;
+  transition: height .6s cubic-bezier(.34, 1.56, .64, 1);
+}
+
+.bar-val {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.bar-lbl {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--mute);
+  line-height: 1.25;
+  text-align: left;
+  width: 100%;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+.reportes-stack {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+/* ─────────────────────────────────────────
+   PROGRESS BAR (light)
+   Barra de avance simple para resúmenes y progreso rápido.
+───────────────────────────────────────── */
+.pb {
+  height: 6px;
+  background: var(--off2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.pbf {
+  height: 100%;
+  border-radius: 3px;
+  transition: width .5s ease;
+}
+
+/* ─────────────────────────────────────────
+   SLIDER
+   Estilo base de inputs range para controles interactivos.
+───────────────────────────────────────── */
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, .12);
+  outline: none;
+  cursor: pointer;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--aqua);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(51, 149, 255, .35);
+}
+
+input[type=range]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--aqua);
+  cursor: pointer;
+  border: none;
+}
+
+/* ─────────────────────────────────────────
+   MISC
+   Utilidades visuales pequeñas compartidas en varios módulos.
+───────────────────────────────────────── */
+.av {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 11px;
+  color: #fff;
+  flex-shrink: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.row-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border-radius: 8px;
+  transition: var(--t);
+  cursor: pointer;
+}
+
+.row-item:hover {
+  background: var(--off);
+}
+
+.sep {
+  height: 1px;
+  background: var(--line);
+  margin: 16px 0;
+}
+

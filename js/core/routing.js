@@ -9,7 +9,6 @@ import { S } from './state.js';
 /** Diccionario de módulos que sí participan en la carga diferida vía Vite. */
 const PANEL_MODULES = {
   '/js/panels/usuarios/principal.js': () => import('../panels/usuarios/principal.js'),
-  '/js/panels/tablero/principal.js': () => import('../panels/tablero/principal.js'),
   '/js/panels/estudiantes/principal.js': () => import('../panels/estudiantes/principal.js'),
   '/js/panels/actividades/principal.js': () => import('../panels/actividades/principal.js'),
   '/js/panels/matriz/principal.js': () => import('../panels/matriz/principal.js'),
@@ -294,8 +293,6 @@ export function readPanelLocation(activeP, activeActViewM) {
   if (path.length > 1) path = path.replace(/\/+$/, '');
   if (!path || path === '/') path = '/';
 
-  console.debug(`[EduGest][routing] Detectando panel para ruta: "${path}"`);
-  
   const modalEntry = Object.entries(MODAL_ROUTES).find(([, route]) => route === path);
   if (modalEntry) {
     return {
@@ -332,8 +329,6 @@ export function readPanelLocation(activeP, activeActViewM) {
  * @param {Object} [options={}] - Opciones de navegación (replace, skipHistory).
  */
 export function go(requestedPage = 'dashboard', options = {}) {
-  console.log('[Routing][go] Navegando a:', requestedPage);
-  
   // Normalizar 'tablero' a 'dashboard' para evitar duplicados
   const normalizedPage = requestedPage === 'tablero'
     ? 'dashboard'
@@ -343,7 +338,6 @@ export function go(requestedPage = 'dashboard', options = {}) {
   
   // Prevenir navegación duplicada al mismo panel
   if (S.currentPage === normalizedPage && !options?.force) {
-    console.log('[Routing][go] Ya estamos en la página solicitada, ignorando navegación duplicada');
     return;
   }
   
@@ -353,8 +347,6 @@ export function go(requestedPage = 'dashboard', options = {}) {
   
   S.currentPage = normalizedPage;
   if (activityViewMode) S.activityViewMode = activityViewMode;
-  
-  console.log('[Routing][go] Página actual establecida:', S.currentPage);
 
   if (typeof window.syncSidebarNavState === 'function') {
     window.syncSidebarNavState(normalizedPage);
@@ -366,10 +358,7 @@ export function go(requestedPage = 'dashboard', options = {}) {
 
   // Activar el renderizado a través del Shell (si está disponible vía global)
   if (typeof window._renderPanel === 'function') {
-    console.log('[Routing][go] Llamando a _renderPanel');
     window._renderPanel();
-  } else {
-    console.debug('[EduGest][routing] _renderPanel no encontrado. Se llamará cuando el shell esté disponible.');
   }
 
   // Notificar cambio de página a listeners personalizados

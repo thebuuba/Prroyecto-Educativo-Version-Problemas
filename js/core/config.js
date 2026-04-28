@@ -5,7 +5,13 @@
  * pedagógicos y la factoría para crear el estado inicial del sistema (Redux-like store).
  */
 
-import { STORAGE_KEY, BLOCKS, DEFAULT_PERIODS, DEFAULT_SCHOOLS } from './constants.js';
+import {
+  DEFAULT_ACADEMIC_CALENDAR,
+  DEFAULT_PERIODS,
+  DEFAULT_SCHOOLS,
+  STORAGE_KEY,
+  BLOCKS,
+} from './constants.js';
 
 /**
  * Genera un identificador único alfanumérico corto.
@@ -40,17 +46,7 @@ export const BASIC_INSTRUMENT_META = {
   escala_estimativa: { title: 'Escala estimativa', desc: 'Nunca, A veces, Casi siempre, Siempre.', icon: '📊' },
 };
 
-/** Calendario académico predeterminado con periodos y meses activos */
-export const DEFAULT_ACADEMIC_CALENDAR = {
-  country: 'DO',
-  activeMonths: [8, 9, 10, 11, 12, 1, 2, 3, 4, 5],
-  periods: [
-    { id: 'P1', name: 'Periodo 1', order: 1, months: [8, 9, 10] },
-    { id: 'P2', name: 'Periodo 2', order: 2, months: [11, 12, 1] },
-    { id: 'P3', name: 'Periodo 3', order: 3, months: [2, 3] },
-    { id: 'P4', name: 'Periodo 4', order: 4, months: [4, 5] },
-  ],
-};
+export { DEFAULT_ACADEMIC_CALENDAR };
 
 /** Paleta de colores para avatares y elementos visuales dinámicos */
 export const AVPAL = ['#00c2b8', '#7c3aed', '#10b981', '#f59e0b', '#3b82f6', '#f43f5e', '#8b5cf6', '#06b6d4'];

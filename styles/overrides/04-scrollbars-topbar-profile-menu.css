@@ -1,0 +1,689 @@
+:root {
+  --app-scroll-size: 8px;
+  --app-scroll-size-hover: 14px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line2) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: var(--app-scroll-size);
+  height: var(--app-scroll-size);
+  transition: width .24s ease, height .24s ease;
+}
+
+*:hover::-webkit-scrollbar,
+*::-webkit-scrollbar:hover {
+  width: var(--app-scroll-size-hover);
+  height: var(--app-scroll-size-hover);
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--line2) 88%, #fff 12%);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background-color .24s ease, border-width .24s ease, min-height .24s ease;
+  min-height: 28px;
+}
+
+*:hover::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb:hover {
+  border-width: 1px;
+  background: color-mix(in srgb, var(--line2) 68%, var(--pri) 32%);
+}
+
+#toast {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  background: var(--ink);
+  color: #fff;
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: var(--sh3);
+  transform: translate(-50%, 70px);
+  opacity: 0;
+  transition: all .28s cubic-bezier(.34, 1.56, .64, 1);
+  z-index: 999;
+  pointer-events: none;
+  max-width: min(520px, calc(100vw - 32px));
+  text-align: center;
+}
+
+/* Toast general de la app en modo oscuro. */
+body.theme-dark #toast {
+  background: rgba(10, 20, 34, .94);
+  color: #edf4ff;
+  border: 1px solid rgba(120, 157, 207, .28);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, .42);
+}
+
+@media (max-width: 1024px) {
+  /* Ajustes de layout para pantallas medianas: settings y módulos de apoyo. */
+  .settings-page-card {
+    min-height: auto;
+  }
+
+  .settings-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-nav-panel {
+    position: static;
+  }
+
+  .settings-section-card {
+    min-height: 360px;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Ajustes móviles para sidebar, modales y grids principales. */
+  #sb {
+    --sb-collapsed-width: 64px;
+    --sb-expanded-width: 192px;
+    width: var(--sb-collapsed-width);
+    min-width: var(--sb-collapsed-width);
+    margin-right: 0;
+  }
+
+  #sb.sb-expanded,
+  #sb:focus-within,
+  #sb.sb-pinned {
+    width: var(--sb-expanded-width);
+  }
+
+  #main {
+    width: calc(100% - 64px);
+    margin-left: 64px;
+  }
+
+  .sb-shell {
+    border-radius: 0;
+  }
+
+  #sb.sb-expanded .sb-shell,
+  #sb:focus-within .sb-shell,
+  #sb.sb-pinned .sb-shell {
+    border-radius: 0 12px 12px 0;
+  }
+
+  .settings-grid,
+  .settings-grid-profile,
+  .fr,
+  .fr3 {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-nav-list {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-status-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .settings-status-steps {
+    justify-content: flex-start;
+  }
+
+  .settings-section-nav {
+    flex-direction: column;
+  }
+
+  .settings-section-nav .btn {
+    width: 100%;
+  }
+
+  .settings-page-actions {
+    justify-content: stretch;
+  }
+
+  .settings-page-actions .btn {
+    width: 100%;
+  }
+
+  .dashboard-course-actions {
+    flex-direction: column;
+  }
+
+  .dashboard-course-actions .btn {
+    width: 100%;
+  }
+
+  .students-page-top {
+    align-items: stretch;
+  }
+
+  .students-global-search {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .students-global-search-shell {
+    width: 100%;
+  }
+
+  .students-global-search-input {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .students-search-result-head {
+    flex-direction: column;
+  }
+
+  .students-search-result-score {
+    align-self: flex-start;
+  }
+
+  .students-search-result-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .students-search-result-subjects-full {
+    grid-column: auto;
+  }
+
+  .section-card-actions .btn {
+    flex: 1 1 calc(50% - 6px);
+  }
+
+  .section-workspace-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .students-workspace-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .empty-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .empty-actions .btn {
+    width: 100%;
+  }
+
+  .rubric-matrix-scroll {
+    max-height: min(48vh, 360px);
+  }
+
+  .modal-bulk-est {
+    max-width: 96vw;
+  }
+
+  .modal-bulk-est .mh {
+    padding: 20px 20px 0;
+  }
+
+  .modal-bulk-est .mb {
+    padding: 14px 20px 20px;
+  }
+
+  .modal-bulk-est #be-list {
+    min-height: 140px;
+  }
+
+  .bulk-options {
+    grid-template-columns: 1fr;
+  }
+
+  .bulk-preview-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .modal-est {
+    max-width: 96vw;
+  }
+
+  .modal-est .mh {
+    padding: 20px 20px 0;
+  }
+
+  .modal-est .mb {
+    padding: 14px 20px 20px;
+  }
+
+  .modal-est-view {
+    max-width: 96vw;
+  }
+
+  .modal-est-view .mh {
+    padding: 20px 20px 0;
+  }
+
+  .modal-est-view .mb {
+    padding: 14px 20px 20px;
+  }
+
+  .student-photo-editor {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .student-view-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .student-view-avatar-wrap {
+    width: 144px;
+    height: 144px;
+  }
+}
+
+@media (max-width: 560px) {
+  .course-mini-grid .course-mini-card {
+    width: 100%;
+  }
+
+  .section-card-actions .btn {
+    flex: 1 1 100%;
+  }
+}
+
+/* STITCH TOPBAR REDESIGN
+   Rediseño de barra superior inspirado en Stitch con efectos de cristal. */
+.stitch-topbar {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 24px !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+  min-height: 64px !important;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.tb-stitch-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  max-width: 400px;
+}
+
+.tb-stitch-search {
+  display: flex;
+  align-items: center;
+  background-color: #f1f4f9;
+  border-radius: 99px;
+  padding: 8px 16px;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.tb-stitch-search:focus-within {
+  background-color: #e5edf5;
+  box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
+}
+
+.stitch-search-icon {
+  font-size: 20px;
+  color: #64748b;
+  margin-right: 8px;
+}
+
+.tb-stitch-search input {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  width: 100%;
+}
+
+.tb-stitch-search input::placeholder {
+  color: #94a3b8;
+}
+
+.tb-stitch-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tb-icon-btn {
+  background: transparent;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.tb-icon-btn:hover {
+  background-color: #f1f5f9;
+  color: var(--ink);
+}
+
+.tb-icon-btn .material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-size: 24px;
+}
+
+.stitch-profile-group {
+  margin-left: 8px;
+  position: relative;
+}
+
+.stitch-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.stitch-profile:hover {
+  background-color: #f8fafc;
+}
+
+.stitch-profile-text {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.stitch-profile-name {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.stitch-profile-role {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+.stitch-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Dark theme overrides for Topbar
+   Variantes oscuras para la barra superior inspirada en Stitch. */
+body.theme-dark .stitch-topbar {
+  background: linear-gradient(180deg, rgba(14, 24, 39, .96) 0%, rgba(16, 28, 46, .96) 100%) !important;
+}
+
+body.theme-dark .tb-stitch-search {
+  background-color: #1e293b;
+}
+
+body.theme-dark .tb-stitch-search input {
+  color: #f8fafc;
+}
+
+body.theme-dark .tb-icon-btn,
+body.theme-dark .stitch-search-icon {
+  color: #94a3b8;
+}
+
+body.theme-dark .tb-icon-btn:hover {
+  background-color: #334155;
+  color: #f1f5f9;
+}
+
+body.theme-dark .stitch-profile-name {
+  color: #f8fafc;
+}
+
+body.theme-dark .stitch-profile:hover {
+  background-color: #1e293b;
+}
+
+body.theme-dark .stitch-profile-role {
+  color: #94a3b8;
+}
+
+/* STITCH PROFILE PILL & DROPDOWN
+   Píldora y desplegable del perfil de usuario. */
+.stitch-profile-pill {
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+  background-color: #f8f9fa !important;
+  border: none;
+  padding: 6px 6px 6px 16px !important;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: opacity 0.2s, background-color 0.2s;
+}
+
+.stitch-profile-pill:hover {
+  background-color: #f1f5f9 !important;
+}
+
+/* Píldora de perfil del usuario en la esquina superior derecha. */
+body.theme-dark .stitch-profile-pill {
+  background-color: #1e293b !important;
+}
+
+body.theme-dark .stitch-profile-pill:hover {
+  background-color: #334155 !important;
+}
+
+.stitch-profile-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 280px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+  z-index: 100;
+  transform-origin: top right;
+  animation: profileMenuIn .2s ease;
+}
+
+.stitch-profile-dropdown[hidden] {
+  display: none;
+}
+
+/* Desplegable del perfil con estado, accesos y cierre de sesión. */
+body.theme-dark .stitch-profile-dropdown {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.stitch-pd-header {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stitch-pd-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.stitch-pd-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.stitch-pd-name {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: #1e293b;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 1.3;
+}
+
+body.theme-dark .stitch-pd-name {
+  color: #f8fafc;
+}
+
+.stitch-pd-email {
+  font-family: 'Manrope', sans-serif;
+  font-size: 13px;
+  color: #64748b;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+body.theme-dark .stitch-pd-email {
+  color: #94a3b8;
+}
+
+.stitch-pd-divider {
+  height: 1px;
+  background-color: #f1f5f9;
+  margin: 0;
+}
+
+body.theme-dark .stitch-pd-divider {
+  background-color: #334155;
+}
+
+.stitch-pd-actions,
+.stitch-pd-footer {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stitch-pd-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #334155;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.stitch-pd-item:hover {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+body.theme-dark .stitch-pd-item {
+  color: #cbd5e1;
+}
+
+body.theme-dark .stitch-pd-item:hover {
+  background-color: #334155;
+  color: #fff;
+}
+
+.stitch-pd-item .material-symbols-outlined {
+  color: #64748b;
+  font-size: 20px;
+  transition: color 0.15s;
+}
+
+.stitch-pd-item:hover .material-symbols-outlined {
+  color: #0f172a;
+}
+
+body.theme-dark .stitch-pd-item .material-symbols-outlined {
+  color: #94a3b8;
+}
+
+/* Active State matching screenshot highlight
+   Variante activa que replica el resaltado del mock. */
+.stitch-pd-active {
+  color: #1e293b;
+  background-color: #f8fafc;
+}
+.stitch-pd-active .material-symbols-outlined {
+  color: #1e293b;
+}
+
+body.theme-dark .stitch-pd-active {
+  background-color: #334155;
+  color: #fff;
+}
+
+.stitch-pd-danger {
+  color: #9f1239;
+  font-weight: 600;
+}
+
+.stitch-pd-danger .material-symbols-outlined {
+  color: #9f1239;
+}
+
+.stitch-pd-danger:hover {
+  background-color: #fff1f2;
+  color: #e11d48;
+}
+
+.stitch-pd-danger:hover .material-symbols-outlined {
+  color: #e11d48;
+}
+
+body.theme-dark .stitch-pd-danger {
+  color: #f43f5e;
+}
+
+body.theme-dark .stitch-pd-danger .material-symbols-outlined {
+  color: #f43f5e;
+}
+
+body.theme-dark .stitch-pd-danger:hover {
+  background-color: rgba(244, 63, 94, 0.1);
+  color: #fb7185;
+}
+

@@ -6,11 +6,15 @@ CREATE TABLE IF NOT EXISTS users (
   display_name TEXT NOT NULL,
   phone TEXT,
   password_hash TEXT,
-  firebase_uid TEXT UNIQUE,
+  auth_provider_uid TEXT,
   status TEXT NOT NULL DEFAULT 'active',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_auth_provider_uid_unique
+  ON users(auth_provider_uid)
+  WHERE auth_provider_uid IS NOT NULL;
 
 CREATE TABLE IF NOT EXISTS schools (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

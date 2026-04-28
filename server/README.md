@@ -1,6 +1,6 @@
 # AulaBase SQL API
 
-Backend inicial para migrar AulaBase desde almacenamiento local/Firestore hacia PostgreSQL.
+Backend inicial para usar AulaBase/EduGest con PostgreSQL, compatible con Supabase.
 
 ## Inicio rapido
 
@@ -32,5 +32,5 @@ Backend inicial para migrar AulaBase desde almacenamiento local/Firestore hacia 
 
 ## Notas
 
-- Esta primera version no reemplaza todavia Firebase del frontend.
-- El objetivo es crear la base relacional y una API lista para migracion gradual.
+- El frontend usa Supabase Auth como proveedor cloud.
+- Para conectar Supabase Postgres, configura `DATABASE_URL` con el connection string del proyecto y `DATABASE_SSL=true`.

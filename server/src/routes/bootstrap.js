@@ -61,7 +61,7 @@ router.post('/profile', requireAuth, async (req, res, next) => {
     const email = String(req.auth?.user?.email || req.body?.email || '').trim().toLowerCase();
     const displayName = String(req.body?.displayName || req.auth?.user?.display_name || '').trim();
     const phone = String(req.body?.phone || '').trim() || null;
-    const firebaseUid = String(req.body?.firebaseUid || '').trim() || null;
+    const authProviderUid = String(req.body?.authProviderUid || '').trim() || null;
     const role = String(req.body?.role || '').trim() || 'teacher';
 
     if (!email) throw badRequest('El correo es obligatorio.');
@@ -70,10 +70,10 @@ router.post('/profile', requireAuth, async (req, res, next) => {
     const result = await withTransaction(async (client) => {
       const userLookup = req.auth?.userId
         ? { rows: [{ id: req.auth.userId }] }
-        : firebaseUid
+        : authProviderUid
         ? await client.query(
-            `SELECT id FROM users WHERE firebase_uid = $1 OR email = $2 LIMIT 1`,
-            [firebaseUid, email]
+            `SELECT id FROM users WHERE auth_provider_uid = $1 OR email = $2 LIMIT 1`,
+            [authProviderUid, email]
           )
         : await client.query(
             `SELECT id FROM users WHERE email = $1 LIMIT 1`,
@@ -87,19 +87,19 @@ router.post('/profile', requireAuth, async (req, res, next) => {
            SET email = $1,
                display_name = $2,
                phone = $3,
-               firebase_uid = COALESCE($4, firebase_uid),
+               auth_provider_uid = COALESCE($4, auth_provider_uid),
                updated_at = NOW()
            WHERE id = $5
-           RETURNING id, email, display_name, phone, firebase_uid, status`,
-          [email, displayName, phone, firebaseUid, userLookup.rows[0].id]
+           RETURNING id, email, display_name, phone, auth_provider_uid, status`,
+          [email, displayName, phone, authProviderUid, userLookup.rows[0].id]
         );
         user = updated.rows[0];
       } else {
         const inserted = await client.query(
-          `INSERT INTO users (email, display_name, phone, firebase_uid)
+          `INSERT INTO users (email, display_name, phone, auth_provider_uid)
            VALUES ($1, $2, $3, $4)
-           RETURNING id, email, display_name, phone, firebase_uid, status`,
-          [email, displayName, phone, firebaseUid]
+           RETURNING id, email, display_name, phone, auth_provider_uid, status`,
+          [email, displayName, phone, authProviderUid]
         );
         user = inserted.rows[0];
       }

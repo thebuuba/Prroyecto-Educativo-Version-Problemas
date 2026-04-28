@@ -9,9 +9,6 @@ import { S, setS } from './state.js';
 import { 
   STORAGE_KEY, 
   SESSION_PANEL_STATE_KEY,
-  PERSIST_DEBOUNCE_MS,
-  DEFAULT_PERIODS,
-  DEFAULT_SCHOOLS as CONST_DEFAULT_SCHOOLS,
   ACCOUNT_MAX_TRUSTED_DEVICES,
   ACCOUNT_MAX_ACTIVE_SESSIONS,
   LICENSE_MODEL_VERSION,
@@ -29,14 +26,11 @@ import {
   fixMojibakeText, 
   repairUtf8State,
   sortCourses,
-  debugSessionFlow
 } from './utils.js';
 import { 
   defaultBlockCfg, 
   emptyGroupCfg,
-  createInitialState
 } from './config.js';
-import { go } from './routing.js';
 import { 
   ensureCurriculumCatalogState, 
   rebuildAcademicHelpers, 
@@ -50,7 +44,6 @@ import {
   applySessionUser,
   buildLocalRootSnapshot,
   clearBrowserSession,
-  clearSessionWindow,
   getDisplayUserName,
   loadLocalAuthUsers,
   loadLocalWorkspace,
@@ -60,6 +53,25 @@ import {
   replaceState,
   stopCloudStateSync,
 } from './hydration-session.js';
+import {
+  flushPersistQueue,
+  persist,
+  persistNow,
+  setSuppressSqlStateSave,
+} from './hydration/persistence.js';
+import {
+  hydrateCloudStateForUser,
+  hydrateLocalWorkspaceForUser,
+  logoutAuth,
+  resetToSignedOutState,
+} from './hydration/session-flow.js';
+import {
+  ensureAcademicCalendar,
+  ensurePeriodsAndYear,
+  ensureSchoolCatalog,
+  ensureStudentDirectory,
+  mergeSchoolsIntoCatalog,
+} from './hydration/academic-state.js';
 
 export {
   applySessionUser,
@@ -77,233 +89,27 @@ export {
   stopCloudStateSync,
 } from './hydration-session.js';
 
-// --- Persistencia y Sesión ---
+export {
+  flushPersistQueue,
+  persist,
+  persistNow,
+  setSuppressSqlStateSave,
+} from './hydration/persistence.js';
 
-let persistDebounceTimer = null;
-let persistPending = false;
-let suppressSqlStateSave = false;
+export {
+  hydrateCloudStateForUser,
+  hydrateLocalWorkspaceForUser,
+  logoutAuth,
+  resetToSignedOutState,
+} from './hydration/session-flow.js';
 
-/**
- * Ejecuta el guardado físico del estado en los diferentes almacenamientos.
- */
-export function persistNow() {
-  try {
-    const localSnapshotRaw = JSON.stringify(buildLocalRootSnapshot());
-    persistLocalAuthUsers();
-    if (S.sessionUserId) {
-      // Si hay sesión, guardamos un estado inicial limpio en la raíz global
-      DB.scheduleRawStateSave(STORAGE_KEY, JSON.stringify(createInitialState()));
-    } else {
-      DB.scheduleRawStateSave(STORAGE_KEY, localSnapshotRaw);
-    }
-    persistActiveUserWorkspace(localSnapshotRaw);
-    if (!suppressSqlStateSave && typeof window.scheduleSqlStateBlockSyncs === 'function') {
-      window.scheduleSqlStateBlockSyncs();
-    }
-  } catch(e){}
-}
-
-/**
- * Fuerza la ejecución de cualquier persistencia pendiente de forma inmediata.
- */
-export function flushPersistQueue() {
-  if (persistDebounceTimer) {
-    window.clearTimeout(persistDebounceTimer);
-    persistDebounceTimer = null;
-  }
-  if (!persistPending) return;
-  persistPending = false;
-  persistNow();
-}
-
-/**
- * Programa una operación de persistencia con debounce.
- * @param {Object} options - Opciones de persistencia.
- * @param {boolean} options.immediate - Si es true, guarda inmediatamente sin esperar al temporizador.
- */
-export function persist(options = {}) {
-  const immediate = options && options.immediate === true;
-  if (immediate) {
-    persistPending = false;
-    if (persistDebounceTimer) {
-      window.clearTimeout(persistDebounceTimer);
-      persistDebounceTimer = null;
-    }
-    persistNow();
-    return;
-  }
-  persistPending = true;
-  if (persistDebounceTimer) window.clearTimeout(persistDebounceTimer);
-  persistDebounceTimer = window.setTimeout(() => {
-    persistDebounceTimer = null;
-    if (!persistPending) return;
-    persistPending = false;
-    persistNow();
-  }, PERSIST_DEBOUNCE_MS);
-}
-
-
-/**
- * Hidrata el workspace completo de un usuario desde la nube y/o almacenamiento local.
- * @param {Object} user - Usuario autenticado.
- */
-export async function hydrateCloudStateForUser(user) {
-  flushPersistQueue();
-  await DB.flushPendingSave();
-  if (typeof window.flushSqlStateBlockSyncs === 'function') {
-    await window.flushSqlStateBlockSyncs().catch(() => null);
-  }
-  stopCloudStateSync();
-  const localWorkspace = await loadLocalWorkspace(user.id);
-  
-  debugSessionFlow('hydrateCloudStateForUser:start', {
-    uid: user?.id || null,
-    hasLocalWorkspace: !!localWorkspace,
-  });
-
-  if (localWorkspace) replaceState(localWorkspace);
-  else replaceState();
-
-  applySessionUser(user);
-  
-  // Puentes para hidratar bloques SQL específicos (asistencia/evaluación)
-  if (typeof window.hydrateSqlStateBlocksForActiveUser === 'function') {
-    await window.hydrateSqlStateBlocksForActiveUser().catch((error) => {
-      console.warn('[EduGest][sql] No se pudo hidratar bloques de estado durante login cloud.', error);
-      return null;
-    });
-  }
-  if (typeof window.hydrateSqlAcademicSnapshotForActiveUser === 'function') {
-    await window.hydrateSqlAcademicSnapshotForActiveUser().catch((error) => {
-      console.warn('[EduGest][sql] No se pudo hidratar snapshot académico durante login cloud.', error);
-      return null;
-    });
-  }
-  
-  persist({ immediate: true });
-  
-  if (typeof window.updateSBUser === 'function') window.updateSBUser();
-  if (typeof window.refreshTop === 'function') window.refreshTop();
-
-  debugSessionFlow('hydrateCloudStateForUser:done', {
-    uid: S.sessionUserId,
-    students: Array.isArray(S.estudiantes) ? S.estudiantes.length : null,
-  });
-}
-
-/**
- * Hidrata el workspace localmente para un usuario sin conexión a la nube obligatoria.
- * @param {Object} user - Usuario autenticado.
- */
-export async function hydrateLocalWorkspaceForUser(user) {
-  flushPersistQueue();
-  await DB.flushPendingSave();
-  if (typeof window.flushSqlStateBlockSyncs === 'function') {
-    await window.flushSqlStateBlockSyncs().catch(() => null);
-  }
-  stopCloudStateSync();
-  const localWorkspace = await loadLocalWorkspace(user?.id);
-  
-  debugSessionFlow('hydrateLocalWorkspaceForUser:start', {
-    uid: user?.id || null,
-    hasLocalWorkspace: !!localWorkspace,
-  });
-  
-  if (localWorkspace) replaceState(localWorkspace);
-  else replaceState();
-  
-  applySessionUser(user);
-  
-  if (typeof window.hydrateSqlStateBlocksForActiveUser === 'function') {
-    await window.hydrateSqlStateBlocksForActiveUser().catch((error) => {
-      console.warn('[EduGest][sql] No se pudo hidratar bloques de estado durante login local.', error);
-      return null;
-    });
-  }
-  if (typeof window.hydrateSqlAcademicSnapshotForActiveUser === 'function') {
-    await window.hydrateSqlAcademicSnapshotForActiveUser().catch((error) => {
-      console.warn('[EduGest][sql] No se pudo hidratar snapshot académico durante login local.', error);
-      return null;
-    });
-  }
-  
-  persist({ immediate: true });
-  
-  if (typeof window.updateSBUser === 'function') window.updateSBUser();
-  if (typeof window.refreshTop === 'function') window.refreshTop();
-
-  debugSessionFlow('hydrateLocalWorkspaceForUser:done', {
-    uid: S.sessionUserId,
-  });
-}
-
-/**
- * Reinicia la aplicación al estado predeterminado de 'sin sesión'.
- */
-export function resetToSignedOutState() {
-  replaceState();
-  clearSessionWindow();
-  persist({ immediate: true });
-  debugSessionFlow('resetToSignedOutState', {});
-}
-
-/**
- * Cierra la sesión activa del usuario, limpia el estado y persiste los cambios.
- */
-export async function logoutAuth() {
-  console.log('[EduGest][auth] Iniciando proceso de cierre de sesión...');
-  try {
-    stopCloudStateSync();
-    if (typeof window.EduGestCloud?.logout === 'function') {
-      // Intentamos cerrar sesión en la nube, pero no bloqueamos el cierre local si falla o tarda
-      await Promise.race([
-        window.EduGestCloud.logout(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000))
-      ]).catch(err => console.warn('[EduGest][auth] Logout en nube omitido o fallido:', err));
-    }
-    const sqlApi = await import('./api-sql.js').catch(() => null);
-    await sqlApi?.logoutSqlAuth?.().catch((err) => console.warn('[EduGest][auth] Logout SQL omitido o fallido:', err));
-  } catch (error) {
-    console.warn('[EduGest][auth] Error durante stop/cloud logout:', error);
-  }
-
-  // Antes de borrar la sesión, vaciamos cualquier guardado pendiente para no perder
-  // el último estado del usuario activo al cerrar o cambiar de cuenta.
-  flushPersistQueue();
-  await DB.flushPendingSave();
-  if (typeof window.flushSqlStateBlockSyncs === 'function') {
-    await window.flushSqlStateBlockSyncs().catch(() => null);
-  }
-
-  // Cierre de sesión local: Siempre ocurre
-  replaceState();
-  clearSessionWindow();
-  persist({ immediate: true });
-  
-  if (typeof window.resetSidebarUser === 'function') {
-    window.resetSidebarUser();
-  }
-  if (typeof window.updateSBUser === 'function') {
-    window.updateSBUser();
-  }
-  if (typeof window.refreshTop === 'function') {
-    window.refreshTop();
-  }
-  if (typeof window.forceCloseM === 'function') {
-    window.forceCloseM('m-terms');
-    window.forceCloseM('m-education-section');
-    window.forceCloseM('m-setup');
-  }
-  if (typeof window.openM === 'function') {
-    window.openM('m-auth');
-  }
-  if (typeof window.setAuthMode === 'function') {
-    window.setAuthMode('login');
-  }
-  
-  console.log('[EduGest][auth] Sesión cerrada localmente. Redirigiendo...');
-  go('dashboard', { replace: true });
-}
+export {
+  ensureAcademicCalendar,
+  ensurePeriodsAndYear,
+  ensureSchoolCatalog,
+  ensureStudentDirectory,
+  mergeSchoolsIntoCatalog,
+} from './hydration/academic-state.js';
 
 // --- Hidratación e Inicialización del Sistema ---
 
@@ -445,85 +251,3 @@ function migrateLegacyState(S, changed) {
     changed = true;
   }
 }
-
-/**
- * Garantiza que los periodos y el año escolar estén definidos.
- */
-export function ensurePeriodsAndYear() {
-  if (!S.schoolYear || typeof S.schoolYear !== 'object') S.schoolYear = {id:'2025-2026', name:'2025-2026'};
-  ensureAcademicCalendar();
-  if (!Array.isArray(S.periods) || S.periods.length===0) S.periods = JSON.parse(JSON.stringify(DEFAULT_PERIODS));
-  S.periods.sort((a,b)=>(a.order||99)-(b.order||99));
-  if (!S.activePeriodId || !S.periods.find(p=>p.id===S.activePeriodId)) S.activePeriodId = S.periods[0]?.id || 'P1';
-}
-
-/**
- * Inicializa el catálogo de centros educativos.
- */
-export function ensureSchoolCatalog() {
-  mergeSchoolsIntoCatalog([]);
-  if (typeof window.syncSchoolCatalogFromSql === 'function') window.syncSchoolCatalogFromSql();
-}
-
-/**
- * Fusiona nuevos centros educativos en el catálogo global garantizando unicidad.
- * @param {Array} items - Nuevos centros a añadir.
- */
-export function mergeSchoolsIntoCatalog(items = []) {
-  if (!Array.isArray(S.schools)) S.schools = [];
-  const merged = [...S.schools, ...items, ...CONST_DEFAULT_SCHOOLS].map(n => String(n || '').trim()).filter(Boolean);
-  const uniq = [];
-  const seen = new Set();
-  merged.forEach((n) => {
-    const key = n.toLowerCase();
-    if (seen.has(key)) return;
-    seen.add(key);
-    uniq.push(n);
-  });
-  S.schools = uniq.sort((a, b) => a.localeCompare(b, 'es'));
-}
-
-/**
- * Sincroniza el directorio rápido de estudiantes para búsquedas offline.
- */
-export function ensureStudentDirectory() {
-  if (!Array.isArray(S.studentDirectory)) S.studentDirectory = [];
-  const before = S.studentDirectory.length;
-  // Sincronización profunda desvinculada
-  S.studentDirectory = JSON.parse(JSON.stringify(S.estudiantes || []));
-  return S.studentDirectory.length !== before;
-}
-
-/**
- * Garantiza que el calendario académico y sus periodos asociados estén normalizados.
- */
-export function ensureAcademicCalendar() {
-  const calendar = normalizeAcademicCalendar(S.academicCalendar);
-  S.academicCalendar = calendar;
-  const nextPeriods = calendar.periods.map((period) => ({ id: period.id, name: period.name, order: period.order }));
-  S.periods = JSON.parse(JSON.stringify(nextPeriods.length ? nextPeriods : DEFAULT_PERIODS));
-  if (!S.activePeriodId || !S.periods.find((period) => period.id === S.activePeriodId)) {
-    S.activePeriodId = S.periods[0]?.id || 'P1';
-  }
-  return calendar;
-}
-
-/**
- * Normaliza internamente la estructura de un calendario académico.
- */
-function normalizeAcademicCalendar(calendar) {
-  if (!calendar || typeof calendar !== 'object') return JSON.parse(JSON.stringify(DEFAULT_ACADEMIC_CALENDAR));
-  return calendar;
-}
-
-/** @type {Object} Calendario por defecto para la República Dominicana */
-const DEFAULT_ACADEMIC_CALENDAR = {
-  country: 'DO',
-  activeMonths: [8, 9, 10, 11, 12, 1, 2, 3, 4, 5],
-  periods: [
-    { id: 'P1', name: 'Periodo 1', order: 1, months: [8, 9, 10] },
-    { id: 'P2', name: 'Periodo 2', order: 2, months: [11, 12, 1] },
-    { id: 'P3', name: 'Periodo 3', order: 3, months: [2, 3] },
-    { id: 'P4', name: 'Periodo 4', order: 4, months: [4, 5] },
-  ],
-};

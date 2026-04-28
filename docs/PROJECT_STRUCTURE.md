@@ -24,10 +24,16 @@ Este proyecto se mantiene por secciones para localizar errores rápido por panel
   - `js/page-entry/root.js`: punto de entrada raíz para Vite.
 - Arquitectura real del runtime:
   - `js/page-entry/root.js`: puente principal entre módulos ES y el legado basado en `window`.
+  - `js/page-entry/root.js` es el único inicializador de auth/setup dentro del runtime moderno.
   - `js/core/app.js`: arranque de la aplicación.
   - `js/core/legacy-bridge.js`: encapsula la compatibilidad legacy y la exposición controlada a `window`.
-  - `js/core/hydration.js` + `js/core/hydration-session.js`: separan la orquestación de hidratación de la persistencia/sesión local.
+  - `js/core/hydration.js`: facade de hidratación y restauración inicial.
+  - `js/core/hydration/*.js`: persistencia con debounce, flujo de sesión/logout y normalización académica.
+  - `js/core/hydration-session.js`: storage local, workspace privado y helpers de sesión.
   - `js/core/routing.js`: navegación y carga diferida de paneles.
+  - `js/core/utils.js`: barrel de utilidades; la implementación vive en `js/core/utils/*.js`.
+  - `js/core/api-sql.js`: facade y orquestador de SQL académico.
+  - `js/core/api-sql/*.js`: cliente HTTP, auth, contexto académico, endpoints, bloques de estado, asistencia y sync de actividades.
 - Estructura de paneles (NUEVA - Carpetas en español, archivos internos en inglés):
   - Cada panel tiene su propia carpeta con estructura estándar:
     ```
@@ -67,7 +73,8 @@ Este proyecto se mantiene por secciones para localizar errores rápido por panel
   - `configuracion-inicial/principal.js` se carga de forma explícita en el arranque porque expone guardas y utilidades usadas fuera del flujo de navegación.
 - Compatibilidad heredada:
   - El proyecto todavía expone funciones a `window` para mantener compatibilidad con HTML inline y flujos legacy.
-  - Esa capa de compatibilidad se registra desde `js/core/legacy-bridge.js` y se activa en `js/page-entry/root.js`.
+  - Esa capa de compatibilidad se registra desde `js/core/legacy-bridge.js`, agrupada por dominio, y se activa en `js/page-entry/root.js`.
+  - El HTML no carga wrappers legacy de config/db/cloud/sql; el bridge publica `EduGestConfig`, `EduGestDB`, `EduGestCloud` y `AulaBaseSqlApi`.
 - Artefactos generados:
   - `dist/**`
 - Scripts auxiliares:
@@ -78,14 +85,18 @@ Este proyecto se mantiene por secciones para localizar errores rápido por panel
 ## CSS
 - Entrada: `styles.css`
 - Capas:
-  - `styles/01-base.css`
+  - `styles/01-base.css` como manifest de `styles/base/*.css`
   - `styles/02-auth.css`
   - `styles/03-app-panels.css`
-  - `styles/04-ui-overrides.css`
+  - `styles/04-ui-overrides.css` como manifest de `styles/overrides/*.css`
 - Estilos de paneles:
   - Compartidos: `js/panels/shared/styles/*.css`
   - Por panel: `js/panels/<panel>/styles/*.css`
 - Manifest global de paneles: `styles/03-app-panels.css`
+- Autenticación:
+  - `login-registro-auth/auth.css` es el manifest de auth.
+  - `login-registro-auth/login/styles/*.css` divide la pantalla de inicio por base, marca, formulario, footer y responsive.
+  - La lógica vive en `js/panels/autenticacion/principal.js` y `js/panels/autenticacion/utils/*.js`.
 
 ## Documentación
 - `README.md` - Documentación general del sistema

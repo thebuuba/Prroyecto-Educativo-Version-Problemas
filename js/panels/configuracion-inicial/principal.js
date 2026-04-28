@@ -24,8 +24,6 @@ import {
  * Registra las funciones globales necesarias para el HTML.
  */
 export function inicializar() {
-  console.log('[SetupPanel] Inicializando panel de configuración inicial');
-  
   // Exportar funciones globales para compatibilidad con HTML
   window.saveSetup = guardarSetup;
   window.cancelSetup = cancelSetup;
@@ -36,8 +34,6 @@ export function inicializar() {
   window.handleInstitutionKeydown = manejarInstitutionKeydown;
   window.updateInstitutionInlineHint = actualizarInstitutionInlineHint;
   window.clearInstitutionInlineHint = clearInstitutionInlineHint;
-  
-  console.log('[SetupPanel] Funciones exportadas a window');
 }
 
 /**

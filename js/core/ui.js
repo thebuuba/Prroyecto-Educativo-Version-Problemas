@@ -88,33 +88,25 @@ export function openM(id, context = {}) {
  * @param {string} id - ID del modal.
  */
 export function forceCloseM(id) {
-  console.log('[UI][forceCloseM] Cerrando modal:', id);
   const modal = document.getElementById(id);
   const aiCopilot = document.getElementById('ai-copilot-container');
-  if (!modal) {
-    console.log('[UI][forceCloseM] Modal no encontrado:', id);
-    return;
-  }
+  if (!modal) return;
 
-  console.log('[UI][forceCloseM] Modal encontrado, removiendo clase open');
   modal.classList.remove('open');
   if (id === 'm-setup') {
     modal.classList.remove('auth-setup');
     modal.classList.remove('from-education');
   }
   if (id === 'm-auth') {
-    console.log('[UI][forceCloseM] Removiendo auth-screen-open del body');
     document.body.classList.remove('auth-screen-open');
     modal.style.setProperty('display', 'none', 'important');
     modal.style.setProperty('pointer-events', 'none', 'important');
     if (aiCopilot) {
-      console.log('[UI][forceCloseM] Mostrando AI copilot');
       aiCopilot.hidden = false;
       aiCopilot.style.display = '';
     }
   }
   
-  console.log('[UI][forceCloseM] Modal cerrado exitosamente');
   if (typeof window.onCloseModal === 'function') window.onCloseModal(id);
 }
 

@@ -349,16 +349,16 @@
   object-fit: contain !important;
 }
 
-#m-auth .auth-panel[data-mode="login"] .auth-social-mark-github {
+#m-auth .auth-panel[data-mode="login"] .auth-social-mark-apple {
   color: #333333;
   background: transparent;
 }
 
-#m-auth .auth-panel[data-mode="login"] .auth-social-mark-github::before {
+#m-auth .auth-panel[data-mode="login"] .auth-social-mark-apple::before {
   content: none;
 }
 
-#m-auth .auth-panel[data-mode="login"] .auth-social-mark-github svg {
+#m-auth .auth-panel[data-mode="login"] .auth-social-mark-apple svg {
   width: 20px;
   height: 20px;
   display: block;

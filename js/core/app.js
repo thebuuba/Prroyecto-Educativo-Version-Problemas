@@ -16,6 +16,24 @@ import {
 } from './hydration.js';
 import { go, readPanelLocation } from './routing.js';
 
+const OAUTH_RETURN_STORAGE_KEY = 'eg_v3:oauth-return';
+
+function readOAuthReturnMarker() {
+  try {
+    return String(window.sessionStorage?.getItem?.(OAUTH_RETURN_STORAGE_KEY) || '').trim();
+  } catch (_) {
+    return '';
+  }
+}
+
+function clearOAuthReturnMarker() {
+  try {
+    window.sessionStorage?.removeItem?.(OAUTH_RETURN_STORAGE_KEY);
+  } catch (_) {
+    // Ignorar navegadores con storage restringido.
+  }
+}
+
 /**
  * Función de arranque principal de la aplicación.
  * Realiza la carga de datos desde almacenamiento local, resuelve la página de inicio
@@ -24,6 +42,7 @@ import { go, readPanelLocation } from './routing.js';
  */
 export async function boot() {
   document.documentElement?.classList.add('auth-session-checking');
+  const oauthReturnProvider = readOAuthReturnMarker();
   
   // 1. Verificar si hay sesión de Supabase activa antes de hidratar
   let cloudUser = null;
@@ -80,11 +99,15 @@ export async function boot() {
   const urlLocation = readPanelLocation(S.currentPage, S.activityViewMode);
   const urlParams = new URLSearchParams(window.location.search);
   
-  const page = urlLocation?.requestedPage || urlParams.get('p') || S.currentPage || 'dashboard';
+  const page = oauthReturnProvider
+    ? 'dashboard'
+    : (urlLocation?.requestedPage || urlParams.get('p') || S.currentPage || 'dashboard');
   
   // 5. Solo navegar si hay sesión, si no, mostrar login
   const hasSession = S.sessionUserId || cloudUser;
   if (hasSession) {
+    if (oauthReturnProvider) clearOAuthReturnMarker();
+
     // Cerrar modal de autenticación si está abierto
     const authModal = document.getElementById('m-auth');
     if (authModal) {

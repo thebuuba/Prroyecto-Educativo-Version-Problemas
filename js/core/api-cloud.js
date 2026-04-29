@@ -13,6 +13,7 @@ let supabaseClientPromise = null;
 
 const DEVICE_ID_STORAGE_KEY = 'eg_v3:device-id';
 const DEVICE_SESSION_STORAGE_KEY = 'eg_v3:device-session-id';
+const OAUTH_RETURN_STORAGE_KEY = 'eg_v3:oauth-return';
 
 export function getConfig() {
   return EDUGEST_SUPABASE_CONFIG || null;
@@ -284,8 +285,14 @@ export async function loginWithProvider(providerName) {
   if (!supabase) throw new Error('Supabase no esta configurado.');
 
   const provider = String(providerName || '').trim().toLowerCase();
-  if (!['google', 'facebook', 'github'].includes(provider)) {
+  if (!['google', 'facebook'].includes(provider)) {
     throw new Error(`Proveedor no soportado: ${providerName}`);
+  }
+
+  try {
+    window.sessionStorage?.setItem?.(OAUTH_RETURN_STORAGE_KEY, provider);
+  } catch (_) {
+    // El marcador solo mejora la navegacion post-OAuth; el login sigue funcionando sin storage.
   }
 
   const { error } = await supabase.auth.signInWithOAuth({

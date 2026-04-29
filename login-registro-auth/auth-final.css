@@ -474,16 +474,16 @@
   background-size: 20px 20px !important;
 }
 
-#m-auth:has(.auth-panel[data-mode="login"]) .auth-social-mark-github {
+#m-auth:has(.auth-panel[data-mode="login"]) .auth-social-mark-apple {
   color: #333333 !important;
   background: transparent !important;
 }
 
-#m-auth:has(.auth-panel[data-mode="login"]) .auth-social-mark-github::before {
+#m-auth:has(.auth-panel[data-mode="login"]) .auth-social-mark-apple::before {
   content: none !important;
 }
 
-#m-auth:has(.auth-panel[data-mode="login"]) .auth-social-mark-github svg {
+#m-auth:has(.auth-panel[data-mode="login"]) .auth-social-mark-apple svg {
   width: 20px !important;
   height: 20px !important;
 }
@@ -1767,19 +1767,23 @@
   object-fit: contain !important;
 }
 
-#m-auth:has(.auth-panel[data-mode="login"]) .auth-social-mark-github {
+#m-auth:has(.auth-panel[data-mode="login"]) .auth-social-mark-apple {
   color: #333333 !important;
   background: transparent !important;
 }
 
-#m-auth:has(.auth-panel[data-mode="login"]) .auth-social-mark-github::before {
+#m-auth:has(.auth-panel[data-mode="login"]) .auth-social-mark-apple::before {
   content: none !important;
 }
 
-#m-auth:has(.auth-panel[data-mode="login"]) .auth-social-mark-github svg {
+#m-auth:has(.auth-panel[data-mode="login"]) .auth-social-mark-apple svg {
   width: 20px !important;
   height: 20px !important;
   display: block !important;
+}
+
+#m-auth .auth-social-btn-disabled {
+  cursor: default !important;
 }
 
 #m-auth:has(.auth-panel[data-mode="login"]) .auth-login-legal {

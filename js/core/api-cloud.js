@@ -260,7 +260,11 @@ export async function register(email, password, name) {
     },
   });
   if (error) throw error;
-  return normalizeUser(data.user, { isNewUser: true });
+  return {
+    ...normalizeUser(data.user, { isNewUser: true }),
+    hasSession: !!data?.session,
+    requiresEmailConfirmation: !data?.session,
+  };
 }
 
 export async function login(email, password) {

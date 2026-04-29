@@ -183,6 +183,14 @@ export async function registrarUsuario() {
   if (canUseCloudAuth()) {
     try {
       const user = await window.EduGestCloud.register(email, pass, name);
+      const accessToken = await window.EduGestCloud.getAccessToken?.().catch(() => '');
+      if (user?.requiresEmailConfirmation || !String(accessToken || '').trim()) {
+        recordRegisterAttempt(true);
+        establecerAuthMode('login');
+        setAuthNote('Cuenta creada. Revisa tu correo y confirma la cuenta antes de iniciar sesión.');
+        toast('Cuenta creada. Confirma tu correo para continuar.');
+        return;
+      }
       rememberCurrentAuthAccessMode('supabase');
       ensureIndividualLicenseModel();
       await hydrateCloudStateForUser(user).catch((hydrateError) => {

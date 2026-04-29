@@ -17,6 +17,12 @@ import {
 import { go, readPanelLocation } from './routing.js';
 
 const OAUTH_RETURN_STORAGE_KEY = 'eg_v3:oauth-return';
+const PRODUCTION_APP_ORIGIN = 'https://aula-base.vercel.app';
+
+function isLocalAppHost(hostname = '') {
+  const clean = String(hostname || '').trim().toLowerCase();
+  return clean === 'localhost' || clean === '127.0.0.1' || clean === '::1';
+}
 
 function readOAuthReturnMarker() {
   try {
@@ -46,6 +52,20 @@ function isOAuthCallbackUrl() {
   }
 }
 
+function redirectLocalOAuthCallbackToProduction() {
+  if (!isOAuthCallbackUrl() || !isLocalAppHost(window.location.hostname)) return false;
+  try {
+    const target = new URL('/inicio', PRODUCTION_APP_ORIGIN);
+    target.search = window.location.search || '';
+    target.hash = window.location.hash || '';
+    console.warn('[AulaBase][auth] OAuth callback llego a localhost; reenviando a produccion.', target.href);
+    window.location.replace(target.href);
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
 function cleanOAuthCallbackUrl() {
   if (!isOAuthCallbackUrl()) return;
   try {
@@ -62,6 +82,8 @@ function cleanOAuthCallbackUrl() {
  * @returns {Promise<void>}
  */
 export async function boot() {
+  if (redirectLocalOAuthCallbackToProduction()) return;
+
   document.documentElement?.classList.add('auth-session-checking');
   const isReturningFromOAuth = Boolean(readOAuthReturnMarker()) || isOAuthCallbackUrl();
   

@@ -18,6 +18,7 @@ import { go, readPanelLocation } from './routing.js';
 
 const OAUTH_RETURN_STORAGE_KEY = 'eg_v3:oauth-return';
 const PRODUCTION_APP_ORIGIN = 'https://aula-base.vercel.app';
+const APP_HOME_PATH = '/inicio';
 
 function isLocalAppHost(hostname = '') {
   const clean = String(hostname || '').trim().toLowerCase();
@@ -55,7 +56,7 @@ function isOAuthCallbackUrl() {
 function redirectLocalOAuthCallbackToProduction() {
   if (!isOAuthCallbackUrl() || !isLocalAppHost(window.location.hostname)) return false;
   try {
-    const target = new URL('/inicio', PRODUCTION_APP_ORIGIN);
+    const target = new URL(APP_HOME_PATH, PRODUCTION_APP_ORIGIN);
     target.search = window.location.search || '';
     target.hash = window.location.hash || '';
     console.warn('[AulaBase][auth] OAuth callback llego a localhost; reenviando a produccion.', target.href);
@@ -69,7 +70,7 @@ function redirectLocalOAuthCallbackToProduction() {
 function cleanOAuthCallbackUrl() {
   if (!isOAuthCallbackUrl()) return;
   try {
-    window.history.replaceState(window.history.state || {}, '', `${window.location.origin}/inicio`);
+    window.history.replaceState(window.history.state || {}, '', `${window.location.origin}${APP_HOME_PATH}`);
   } catch (_) {
     // Si history no esta disponible, la navegacion normal se encarga de reemplazar la URL.
   }

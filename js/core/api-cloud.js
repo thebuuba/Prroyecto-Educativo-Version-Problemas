@@ -15,6 +15,7 @@ const DEVICE_ID_STORAGE_KEY = 'eg_v3:device-id';
 const DEVICE_SESSION_STORAGE_KEY = 'eg_v3:device-session-id';
 const OAUTH_RETURN_STORAGE_KEY = 'eg_v3:oauth-return';
 const PRODUCTION_APP_ORIGIN = 'https://aula-base.vercel.app';
+const OAUTH_CALLBACK_PATH = '/auth/callback';
 
 function isLocalAppHost(hostname = '') {
   const clean = String(hostname || '').trim().toLowerCase();
@@ -25,7 +26,7 @@ function getOAuthRedirectTo() {
   const explicitUrl = String(import.meta.env?.VITE_APP_URL || window.EDUGEST_APP_URL || '').trim();
   if (explicitUrl) {
     try {
-      return `${new URL(explicitUrl).origin}/inicio`;
+      return `${new URL(explicitUrl).origin}${OAUTH_CALLBACK_PATH}`;
     } catch (_) {
       // Si la variable viene mal formada, usamos el origen seguro de abajo.
     }
@@ -33,14 +34,14 @@ function getOAuthRedirectTo() {
 
   const hostname = String(window.location.hostname || '').trim();
   if (isLocalAppHost(hostname)) {
-    return `${window.location.origin}/inicio`;
+    return `${window.location.origin}${OAUTH_CALLBACK_PATH}`;
   }
 
   if (hostname === 'aula-base.vercel.app') {
-    return `${PRODUCTION_APP_ORIGIN}/inicio`;
+    return `${PRODUCTION_APP_ORIGIN}${OAUTH_CALLBACK_PATH}`;
   }
 
-  return `${window.location.origin}/inicio`;
+  return `${window.location.origin}${OAUTH_CALLBACK_PATH}`;
 }
 
 export function getConfig() {

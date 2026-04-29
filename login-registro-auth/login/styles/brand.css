@@ -1,338 +1,288 @@
+/* Panel de marca izquierdo – Azul Marino Premium.
+   Coincide con el diseño de Figma "Interfaz de inicio de sesión" (Versión 8). */
+
 #m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand {
   position: relative;
-  display: grid;
-  align-content: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   min-height: 100vh;
-  padding: 0;
+  padding: clamp(32px, 4vw, 48px);
+  overflow: hidden;
+  color: #ffffff;
   background:
-    radial-gradient(680px 520px at 86% -14%, rgba(221, 232, 255, .78) 0%, rgba(221, 232, 255, .34) 52%, transparent 53%),
-    radial-gradient(560px 380px at 66% 102%, rgba(221, 232, 255, .72) 0%, rgba(221, 232, 255, .28) 54%, transparent 55%),
-    linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
-  border-right: 1px solid rgba(218, 226, 240, .72);
-  color: var(--login-ink);
+    radial-gradient(circle at 100% 0%, rgba(58, 92, 182, .46) 0 0, rgba(58, 92, 182, .46) 21%, transparent 21.2%),
+    radial-gradient(circle at 0% 100%, rgba(104, 150, 255, .18) 0 0, rgba(104, 150, 255, .18) 18%, transparent 18.2%),
+    linear-gradient(135deg, #243f91 0%, #1f3a87 100%);
+  border-right: 0;
 }
 
-#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand::before,
-#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand::after,
+/* Forma decorativa: cuadrado redondeado rotado */
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand::before {
+  content: "";
+  position: absolute;
+  left: 48px;
+  top: 25%;
+  width: 80px;
+  height: 80px;
+  border: 3px solid rgba(147, 197, 253, .22);
+  border-radius: 16px;
+  transform: rotate(12deg);
+  background: transparent;
+  pointer-events: none;
+}
+
+/* Forma decorativa: círculo */
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand::after {
+  content: "";
+  position: absolute;
+  right: 64px;
+  bottom: 24%;
+  width: 64px;
+  height: 64px;
+  border: 3px solid rgba(147, 197, 253, .22);
+  border-radius: 999px;
+  background: transparent;
+  pointer-events: none;
+}
+
+/* Ocultar pseudo-elementos decorativos del kicker (herencia del auth-base) */
 #m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand-kicker::before,
 #m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand-kicker::after {
   content: none;
   display: none;
 }
 
+/* Contenedor interior del contenido de marca */
 #m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand-stage {
   position: relative;
   z-index: 1;
+  width: min(100%, 512px);
+  min-height: auto;
   display: grid;
-  grid-template-rows: auto auto auto 1fr;
-  justify-items: start;
-  gap: clamp(24px, 3.1vh, 34px);
-  min-height: calc(100vh - 66px);
-  padding: clamp(42px, 5.3vw, 74px) clamp(42px, 6vw, 88px) 0;
+  grid-template-rows: auto auto auto auto;
+  align-content: center;
+  justify-items: stretch;
+  gap: 32px;
   text-align: left;
 }
 
-#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand-topline {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  width: max-content;
-  color: var(--login-ink);
-}
-
-#m-auth .auth-book-mark {
-  position: relative;
-  display: inline-block;
-  width: 34px;
-  height: 31px;
-  flex: 0 0 auto;
-}
-
-#m-auth .auth-book-mark::before,
-#m-auth .auth-book-mark::after {
+/* Orbes decorativos dentro del stage */
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand-stage::before,
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand-stage::after {
   content: "";
   position: absolute;
-  top: 3px;
-  width: 15px;
-  height: 24px;
-  border-radius: 4px 4px 6px 3px;
-  background: linear-gradient(135deg, #0d55f4, #2778ff);
-  box-shadow: inset 0 -6px 10px rgba(3, 39, 145, .16);
+  pointer-events: none;
+  border-radius: 999px;
+  background: #3b82f6;
+  opacity: .1;
 }
 
-#m-auth .auth-book-mark::before {
-  left: 1px;
-  transform: skewY(7deg);
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand-stage::before {
+  top: -240px;
+  right: -240px;
+  width: 384px;
+  height: 384px;
 }
 
-#m-auth .auth-book-mark::after {
-  right: 1px;
-  transform: skewY(-7deg);
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand-stage::after {
+  left: -176px;
+  bottom: -176px;
+  width: 256px;
+  height: 256px;
+  background: #7dd3fc;
 }
 
-#m-auth .auth-brand-word {
-  font-size: 27px;
-  font-weight: 850;
-  line-height: 1;
-  letter-spacing: 0;
-}
-
-#m-auth .auth-brand-dot-grid {
-  position: absolute;
-  top: 100px;
-  right: 68px;
-  width: 88px;
-  height: 72px;
-  opacity: .72;
-  background-image: radial-gradient(circle, rgba(92, 118, 170, .55) 2px, transparent 2.5px);
-  background-size: 18px 18px;
-}
-
-#m-auth .auth-brand-copy {
-  display: grid;
-  gap: 22px;
-  max-width: 470px;
-  margin-top: clamp(16px, 3vh, 40px);
-  text-align: left;
-}
-
-#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand-name {
-  margin: 0;
-  color: var(--login-ink);
-  font-size: clamp(32px, 3vw, 46px);
-  font-weight: 850;
-  line-height: 1.22;
-  letter-spacing: 0;
-  text-align: left;
-  text-transform: none;
-}
-
-#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand-name span {
-  display: block;
-  color: var(--login-blue);
-}
-
-#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand-kicker {
-  max-width: 430px;
-  margin: 0;
-  color: #435377;
-  font-size: 17px;
-  font-weight: 500;
-  line-height: 1.62;
-  letter-spacing: 0;
-  text-align: left;
-  text-transform: none;
-}
-
-#m-auth .auth-feature-list {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  gap: 24px;
-  max-width: 440px;
-}
-
-#m-auth .auth-feature-item {
-  display: grid;
-  grid-template-columns: 70px minmax(0, 1fr);
-  gap: 20px;
+/* Logo + nombre de marca */
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand-topline {
+  display: flex;
   align-items: center;
-  text-align: left;
+  gap: 12px;
+  margin-bottom: 16px;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
 }
 
-#m-auth .auth-feature-item>.material-symbols-outlined {
+/* Ícono de libro (marca) */
+#m-auth .auth-book-mark {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, .2);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 70px;
-  height: 70px;
-  border-radius: 16px;
-  font-size: 34px;
-  font-variation-settings: "FILL" 0, "wght" 500;
 }
 
-#m-auth .auth-feature-blue>.material-symbols-outlined {
-  color: #1165ff;
-  background: #dce8ff;
-}
-
-#m-auth .auth-feature-green>.material-symbols-outlined {
-  color: #09a76d;
-  background: #d9f5e8;
-}
-
-#m-auth .auth-feature-rose>.material-symbols-outlined {
-  color: #ff365c;
-  background: #ffe2eb;
-}
-
-#m-auth .auth-feature-item strong {
-  display: block;
-  margin-bottom: 6px;
-  color: var(--login-ink);
-  font-size: 16px;
-  font-weight: 850;
-  line-height: 1.2;
-}
-
-#m-auth .auth-feature-item p {
-  margin: 0;
-  color: #425274;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 1.46;
-}
-
-#m-auth .auth-desk-scene {
+#m-auth .auth-book-mark::before {
+  content: "A";
   position: absolute;
-  left: 0;
-  bottom: 66px;
-  width: min(520px, 76%);
-  height: 210px;
-  z-index: 0;
-  pointer-events: none;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #243f91;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
 }
 
-#m-auth .auth-plant {
-  position: absolute;
-  left: -10px;
-  bottom: 20px;
-  width: 96px;
-  height: 120px;
+#m-auth .auth-book-mark::after {
+  content: none;
 }
 
-#m-auth .auth-plant::after {
-  content: "";
-  position: absolute;
-  left: 26px;
-  bottom: 0;
-  width: 58px;
-  height: 42px;
-  border-radius: 0 0 20px 20px;
-  background: linear-gradient(180deg, #fff, #e7edf8);
-  box-shadow: 0 14px 26px rgba(67, 88, 130, .16);
+/* Nombre de la marca en el topline */
+#m-auth .auth-brand-word {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #ffffff;
 }
 
-#m-auth .auth-plant i {
-  position: absolute;
-  bottom: 40px;
-  width: 28px;
-  height: 72px;
-  border-radius: 28px 4px 28px 4px;
-  background: linear-gradient(160deg, #b5dd56, #327d31);
-  transform-origin: bottom center;
-}
-
-#m-auth .auth-plant i:nth-child(1) {
-  left: 18px;
-  transform: rotate(-36deg);
-}
-
-#m-auth .auth-plant i:nth-child(2) {
-  left: 38px;
-  height: 94px;
-  transform: rotate(-10deg);
-}
-
-#m-auth .auth-plant i:nth-child(3) {
-  left: 56px;
-  height: 82px;
-  transform: rotate(24deg);
-}
-
-#m-auth .auth-plant i:nth-child(4) {
-  left: 42px;
-  height: 66px;
-  transform: rotate(50deg);
-}
-
-#m-auth .auth-mug {
-  position: absolute;
-  left: 92px;
-  bottom: 18px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 152px;
-  height: 112px;
-  padding: 28px 20px 24px 24px;
-  border-radius: 0 0 34px 34px;
-  background: linear-gradient(180deg, #ffffff, #eef3fb);
-  color: var(--login-ink);
-  box-shadow: 0 20px 38px rgba(69, 91, 132, .18);
-}
-
-#m-auth .auth-mug::before {
-  content: "";
-  position: absolute;
-  left: 10px;
-  top: -13px;
-  width: 118px;
-  height: 30px;
-  border-radius: 50%;
-  background: linear-gradient(180deg, #e9edf6, #ffffff);
-  box-shadow: inset 0 8px 12px rgba(59, 68, 94, .12);
-}
-
-#m-auth .auth-mug::after {
-  content: "";
-  position: absolute;
-  right: -36px;
-  top: 28px;
-  width: 48px;
-  height: 52px;
-  border: 11px solid #f4f7fc;
-  border-left: 0;
-  border-radius: 0 26px 26px 0;
-}
-
-#m-auth .auth-mug .auth-book-mark {
-  width: 32px;
-  height: 30px;
-}
-
-#m-auth .auth-mug strong {
-  font-size: 19px;
-  font-weight: 850;
-  line-height: .92;
-}
-
-#m-auth .auth-books {
-  position: absolute;
-  left: 238px;
-  bottom: 8px;
-  width: 250px;
-  height: 104px;
-  transform: rotate(-3deg);
-}
-
-#m-auth .auth-books span {
-  position: absolute;
-  left: 0;
-  width: 245px;
-  height: 44px;
-  border-radius: 5px 12px 12px 5px;
-  box-shadow: 0 12px 24px rgba(42, 71, 130, .16);
-}
-
-#m-auth .auth-books span:first-child {
-  bottom: 50px;
-  background: linear-gradient(180deg, #5c8ef1 0 70%, #fff 71% 100%);
-}
-
-#m-auth .auth-books span:last-child {
-  bottom: 10px;
-  width: 230px;
-  background: linear-gradient(180deg, #1e8f6a 0 68%, #f8fff8 69% 100%);
-}
-
-#m-auth .auth-left-copy {
+/* Ocultar elementos que no se usan en la vista de login */
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand-dot-grid,
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-dashboard-preview,
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-feature-list,
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-desk-scene,
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-left-copy {
   display: none;
-  align-self: end;
-  margin: 0;
-  padding: 0 clamp(42px, 6vw, 88px) 28px;
-  color: #647393;
-  font-size: 13px;
-  font-weight: 500;
 }
 
+/* Bloque de copy: título y descripción */
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand-copy {
+  display: grid;
+  gap: 24px;
+}
+
+/* Título principal grande */
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand-name {
+  max-width: 512px;
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(48px, 4.4vw, 60px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: 0;
+  text-align: left;
+  text-transform: none;
+}
+
+/* Texto destacado "siempre organizada" en azul claro */
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand-name span {
+  display: block;
+  color: #7dd3fc;
+  white-space: normal;
+}
+
+/* Descripción / kicker */
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-brand-kicker {
+  max-width: 512px;
+  margin: 0;
+  color: #dbeafe;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.625;
+  letter-spacing: 0;
+  text-align: left;
+  text-transform: none;
+}
+
+/* ── Sección de estadísticas ── */
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-login-stats {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  max-width: 512px;
+  margin-top: 0;
+  padding: 32px 0;
+}
+
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-login-stats div {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 0;
+  border-right: 0;
+  text-align: center;
+}
+
+/* Divisores verticales en la columna central */
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-login-stats div:nth-child(2) {
+  border-left: 1px solid #1d4ed8;
+  border-right: 1px solid #1d4ed8;
+}
+
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-login-stats strong {
+  color: #7dd3fc;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-login-stats span {
+  color: #bfdbfe;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* ── Tarjeta de testimonio ── */
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-login-quote {
+  align-self: start;
+  display: grid !important;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 16px;
+  width: min(100%, 512px);
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .1);
+  box-shadow: 0 28px 70px rgba(8, 22, 70, .14);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-quote-mark {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #60a5fa;
+  color: #ffffff;
+  font-size: 42px;
+  font-weight: 700;
+  line-height: .9;
+}
+
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-login-quote p {
+  margin: 0 0 12px;
+  color: #eff6ff;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-login-quote strong,
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-login-quote span:not(.auth-quote-mark) {
+  display: block;
+}
+
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-login-quote strong {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) .auth-login-quote span:not(.auth-quote-mark) {
+  margin-top: 4px;
+  color: #7dd3fc;
+  font-size: 14px;
+  font-weight: 400;
+}

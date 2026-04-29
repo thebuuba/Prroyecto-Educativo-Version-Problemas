@@ -284,7 +284,7 @@ export async function loginWithProvider(providerName) {
   if (!supabase) throw new Error('Supabase no esta configurado.');
 
   const provider = String(providerName || '').trim().toLowerCase();
-  if (!['google', 'facebook'].includes(provider)) {
+  if (!['google', 'facebook', 'github'].includes(provider)) {
     throw new Error(`Proveedor no soportado: ${providerName}`);
   }
 

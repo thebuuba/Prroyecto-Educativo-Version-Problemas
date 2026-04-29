@@ -103,6 +103,7 @@ export function setupAuthButtonListeners({
   bindInlineButton('button[onclick="registerAuth()"]', registrarUsuario);
   bindInlineButton('button[onclick="authWithProvider(\'google\')"]', () => autenticarConProveedor('google'));
   bindInlineButton('button[onclick="authWithProvider(\'facebook\')"]', () => autenticarConProveedor('facebook'));
+  bindInlineButton('button[onclick="authWithProvider(\'github\')"]', () => autenticarConProveedor('github'));
   bindInlineButton('button[onclick="handleForgotPassword()"]', manejarForgotPassword);
   bindAuthModeSwitch();
   bindCloudAuthState();

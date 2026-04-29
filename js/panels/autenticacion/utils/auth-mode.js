@@ -77,14 +77,14 @@ function updateAuthBrand(login) {
   const title = document.querySelector('#m-auth .auth-brand-name');
   if (title) {
     title.innerHTML = login
-      ? 'Gestiona tu aula <span>sin perder el ritmo.</span>'
+      ? 'Tu aula, <span>siempre organizada</span>'
       : 'Crea tu cuenta y comienza a <span>gestionar tu aula.</span>';
   }
 
   setTextContent(
     '#m-auth .auth-brand-kicker',
     login
-      ? 'Planifica, registra y consulta la información de tus estudiantes desde un panel claro, rápido y conectado.'
+      ? 'La plataforma diseñada para educadores que valoran su tiempo y la eficiencia.'
       : 'Empieza con un espacio organizado para tus estudiantes, evaluaciones y clases, listo para sincronizarse en la nube.',
   );
 
@@ -122,11 +122,11 @@ export function establecerAuthMode(mode) {
   if (title) title.textContent = login ? 'Iniciar sesión' : 'Crear cuenta';
   if (subtitle) {
     subtitle.textContent = login
-      ? 'Ingresa tus credenciales para continuar.'
+      ? 'Ingresa tus credenciales para continuar'
       : 'Regístrate en Aula Base';
   }
   if (loginSocial) loginSocial.style.display = login ? '' : 'none';
-  if (socialDivider) socialDivider.textContent = 'o usa tu email';
+  if (socialDivider) socialDivider.textContent = 'O continúa con';
   if (switchCopy) switchCopy.textContent = login ? '¿No tienes una cuenta?' : '¿Ya tienes una cuenta?';
   if (switchLink && switchLink.dataset.bound !== '1') {
     switchLink.dataset.bound = '1';

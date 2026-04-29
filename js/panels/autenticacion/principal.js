@@ -355,7 +355,7 @@ export async function autenticarConProveedor(provider) {
       return;
     }
     
-    rememberCurrentAuthAccessMode(provider === 'facebook' ? 'facebook' : 'google');
+    rememberCurrentAuthAccessMode(['facebook', 'github'].includes(provider) ? provider : 'google');
     ensureIndividualLicenseModel();
     
     const isNewUser = !!user?.isNewUser;

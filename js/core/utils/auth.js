@@ -28,7 +28,7 @@ export function formatMsToMinSec(ms = 0) {
  */
 export function normalizeAuthAccessMode(mode) {
   const value = String(mode || '').trim().toLowerCase();
-  const valid = ['google', 'facebook', 'local', 'email', 'supabase'];
+  const valid = ['google', 'facebook', 'github', 'local', 'email', 'supabase'];
   return valid.includes(value) ? value : '';
 }
 

@@ -1,52 +1,18 @@
-#m-auth .auth-login-footer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 3;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 24px;
-  min-height: 68px;
-  padding: 0 clamp(30px, 3vw, 54px);
-  border-top: 1px solid #dce4f0;
-  color: #687897;
-  font-size: 13px;
-  font-weight: 500;
-  pointer-events: auto;
-}
+/* Footer y elementos de navegación del login.
+   Oculta elementos legacy como switch row, footer marks, etc. */
 
-#m-auth .auth-login-footer nav {
-  display: inline-flex;
-  align-items: center;
-  gap: 28px;
-}
-
-#m-auth .auth-login-footer a {
-  color: #687897;
-  text-decoration: none;
-}
-
-#m-auth .auth-login-footer a:hover,
-#m-auth .auth-login-footer a:focus-visible {
-  color: var(--login-blue);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
-#m-auth .auth-card:has(.auth-panel[data-mode="login"])>.auth-switch-row,
-#m-auth .auth-card:has(.auth-panel[data-mode="login"])>.auth-footer-marks,
-#m-auth .auth-card:has(.auth-panel[data-mode="login"])>.auth-legal-copy,
-#m-auth:has(.auth-panel[data-mode="login"])>.auth-switch-row,
-#m-auth:has(.auth-panel[data-mode="login"]) .auth-shell>.auth-switch-row,
-#m-auth:has(.auth-panel[data-mode="login"]) .auth-shell>.auth-footer-marks,
-#m-auth:has(.auth-panel[data-mode="login"]) .auth-shell>.auth-legal-copy {
+/* Ocultar footer obsoleto, switch row y legal copy en modo login */
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) > .auth-switch-row,
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) > .auth-footer-marks,
+#m-auth .auth-card:has(.auth-panel[data-mode="login"]) > .auth-legal-copy,
+#m-auth:has(.auth-panel[data-mode="login"]) > .auth-switch-row,
+#m-auth:has(.auth-panel[data-mode="login"]) .auth-shell > .auth-switch-row,
+#m-auth:has(.auth-panel[data-mode="login"]) .auth-shell > .auth-footer-marks,
+#m-auth:has(.auth-panel[data-mode="login"]) .auth-shell > .auth-legal-copy,
+#m-auth .auth-login-footer,
+#m-auth .auth-form-logo,
+#m-auth .auth-switch-row,
+#m-auth .auth-footer-marks,
+#m-auth .auth-legal-copy {
   display: none !important;
 }
-
-#m-auth .auth-card:not(:has(.auth-panel[data-mode="login"])) .auth-login-footer,
-#m-auth .auth-card:not(:has(.auth-panel[data-mode="login"])) .auth-left-copy {
-  display: none;
-}
-

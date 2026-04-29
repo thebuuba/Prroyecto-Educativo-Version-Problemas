@@ -49,7 +49,7 @@ function isOAuthCallbackUrl() {
 function cleanOAuthCallbackUrl() {
   if (!isOAuthCallbackUrl()) return;
   try {
-    window.history.replaceState(window.history.state || {}, '', '/inicio');
+    window.history.replaceState(window.history.state || {}, '', `${window.location.origin}/inicio`);
   } catch (_) {
     // Si history no esta disponible, la navegacion normal se encarga de reemplazar la URL.
   }

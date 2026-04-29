@@ -14,6 +14,34 @@ let supabaseClientPromise = null;
 const DEVICE_ID_STORAGE_KEY = 'eg_v3:device-id';
 const DEVICE_SESSION_STORAGE_KEY = 'eg_v3:device-session-id';
 const OAUTH_RETURN_STORAGE_KEY = 'eg_v3:oauth-return';
+const PRODUCTION_APP_ORIGIN = 'https://aula-base.vercel.app';
+
+function isLocalAppHost(hostname = '') {
+  const clean = String(hostname || '').trim().toLowerCase();
+  return clean === 'localhost' || clean === '127.0.0.1' || clean === '::1';
+}
+
+function getOAuthRedirectTo() {
+  const explicitUrl = String(import.meta.env?.VITE_APP_URL || window.EDUGEST_APP_URL || '').trim();
+  if (explicitUrl) {
+    try {
+      return `${new URL(explicitUrl).origin}/inicio`;
+    } catch (_) {
+      // Si la variable viene mal formada, usamos el origen seguro de abajo.
+    }
+  }
+
+  const hostname = String(window.location.hostname || '').trim();
+  if (isLocalAppHost(hostname)) {
+    return `${window.location.origin}/inicio`;
+  }
+
+  if (hostname === 'aula-base.vercel.app') {
+    return `${PRODUCTION_APP_ORIGIN}/inicio`;
+  }
+
+  return `${window.location.origin}/inicio`;
+}
 
 export function getConfig() {
   return EDUGEST_SUPABASE_CONFIG || null;
@@ -298,7 +326,7 @@ export async function loginWithProvider(providerName) {
   const { error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${window.location.origin}/inicio`,
+      redirectTo: getOAuthRedirectTo(),
       queryParams: provider === 'google' ? { prompt: 'select_account' } : undefined,
     },
   });

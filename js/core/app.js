@@ -34,6 +34,27 @@ function clearOAuthReturnMarker() {
   }
 }
 
+function isOAuthCallbackUrl() {
+  try {
+    const params = new URLSearchParams(window.location.search || '');
+    return params.has('code')
+      || params.has('state')
+      || params.has('error')
+      || params.has('error_description');
+  } catch (_) {
+    return false;
+  }
+}
+
+function cleanOAuthCallbackUrl() {
+  if (!isOAuthCallbackUrl()) return;
+  try {
+    window.history.replaceState(window.history.state || {}, '', '/inicio');
+  } catch (_) {
+    // Si history no esta disponible, la navegacion normal se encarga de reemplazar la URL.
+  }
+}
+
 /**
  * Función de arranque principal de la aplicación.
  * Realiza la carga de datos desde almacenamiento local, resuelve la página de inicio
@@ -42,7 +63,7 @@ function clearOAuthReturnMarker() {
  */
 export async function boot() {
   document.documentElement?.classList.add('auth-session-checking');
-  const oauthReturnProvider = readOAuthReturnMarker();
+  const isReturningFromOAuth = Boolean(readOAuthReturnMarker()) || isOAuthCallbackUrl();
   
   // 1. Verificar si hay sesión de Supabase activa antes de hidratar
   let cloudUser = null;
@@ -99,14 +120,17 @@ export async function boot() {
   const urlLocation = readPanelLocation(S.currentPage, S.activityViewMode);
   const urlParams = new URLSearchParams(window.location.search);
   
-  const page = oauthReturnProvider
+  const page = isReturningFromOAuth
     ? 'dashboard'
     : (urlLocation?.requestedPage || urlParams.get('p') || S.currentPage || 'dashboard');
   
   // 5. Solo navegar si hay sesión, si no, mostrar login
   const hasSession = S.sessionUserId || cloudUser;
   if (hasSession) {
-    if (oauthReturnProvider) clearOAuthReturnMarker();
+    if (isReturningFromOAuth) {
+      clearOAuthReturnMarker();
+      cleanOAuthCallbackUrl();
+    }
 
     // Cerrar modal de autenticación si está abierto
     const authModal = document.getElementById('m-auth');

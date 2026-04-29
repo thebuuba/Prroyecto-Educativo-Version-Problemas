@@ -298,7 +298,7 @@ export async function loginWithProvider(providerName) {
   const { error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${window.location.origin}/`,
+      redirectTo: `${window.location.origin}/inicio`,
       queryParams: provider === 'google' ? { prompt: 'select_account' } : undefined,
     },
   });

@@ -1,12 +1,16 @@
 <!-- Formulario de registro: datos de cuenta, validaciones y acceso social alterno. -->
         <div id="auth-register-box" class="auth-form-box" style="display:none;">
+            <div class="auth-register-login-line">
+              <span>¿Ya tienes una cuenta?</span>
+              <button class="auth-inline-link auth-register-login-link" type="button" onclick="setAuthMode('login')">Inicia sesión</button>
+            </div>
             <div class="fg">
               <label class="lbl">Nombre completo</label>
               <input class="inp" id="ar-name" placeholder="Ej. Alexauris D&iacute;az">
               <div class="auth-field-error" id="ar-name-error" hidden></div>
             </div>
             <div class="fg">
-              <label class="lbl">Correo</label>
+              <label class="lbl">Correo electrónico</label>
               <input class="inp" id="ar-email" type="email" placeholder="correo@centro.edu">
               <div class="auth-field-error" id="ar-email-error" hidden></div>
             </div>
@@ -41,10 +45,10 @@
             </div>
             <label class="auth-terms-check" for="ar-terms-check">
               <input id="ar-terms-check" type="checkbox">
-              <span>Acepto los <a href="/terminos.html" target="_blank" rel="noopener noreferrer">T&eacute;rminos</a> y la <a href="/privacidad.html" target="_blank" rel="noopener noreferrer">Pol&iacute;tica de Privacidad</a>.</span>
+              <span>Acepto los <a href="/terminos.html" target="_blank" rel="noopener noreferrer">t&eacute;rminos y condiciones</a>.</span>
             </label>
             <div class="auth-field-error" id="ar-terms-error" hidden></div>
-            <button class="btn btn-primary btn-lg auth-submit-btn" id="auth-register-submit" type="button" onclick="registerAuth()">Registrarse <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></button>
+            <button class="btn btn-primary btn-lg auth-submit-btn" id="auth-register-submit" type="button" onclick="registerAuth()">Crear cuenta <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></button>
             <div class="auth-register-social">
               <div class="auth-social-divider">o regístrate con</div>
               <div class="auth-social-actions">

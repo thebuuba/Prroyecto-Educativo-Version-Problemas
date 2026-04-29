@@ -57,6 +57,52 @@ function transitionAuthPanels(showLogin) {
   animateAuthChrome(showLogin ? 'left' : 'right');
 }
 
+function setTextContent(selector, text) {
+  const node = document.querySelector(selector);
+  if (node) node.textContent = text;
+}
+
+function updateFeatureCard(index, { icon, title, text }) {
+  const card = document.querySelectorAll('#m-auth .auth-feature-item')[index];
+  if (!card) return;
+  const iconNode = card.querySelector('.material-symbols-outlined');
+  const titleNode = card.querySelector('strong');
+  const textNode = card.querySelector('p');
+  if (iconNode) iconNode.textContent = icon;
+  if (titleNode) titleNode.textContent = title;
+  if (textNode) textNode.textContent = text;
+}
+
+function updateAuthBrand(login) {
+  const title = document.querySelector('#m-auth .auth-brand-name');
+  if (title) {
+    title.innerHTML = login
+      ? 'Gestiona tu aula <span>sin perder el ritmo.</span>'
+      : 'Crea tu cuenta y comienza a <span>gestionar tu aula.</span>';
+  }
+
+  setTextContent(
+    '#m-auth .auth-brand-kicker',
+    login
+      ? 'Planifica, registra y consulta la información de tus estudiantes desde un panel claro, rápido y conectado.'
+      : 'Empieza con un espacio organizado para tus estudiantes, evaluaciones y clases, listo para sincronizarse en la nube.',
+  );
+
+  const features = login
+    ? [
+        { icon: 'groups', title: 'Grupos y estudiantes', text: 'Todo organizado por curso, sección y periodo.' },
+        { icon: 'fact_check', title: 'Evaluaciones al día', text: 'Registros guardados y sincronizados en la nube.' },
+        { icon: 'monitoring', title: 'Trabajo más ligero', text: 'Menos pasos para llegar a lo importante.' },
+      ]
+    : [
+        { icon: 'groups', title: 'Organización de estudiantes', text: 'Crea tu aula y mantén cada grupo bien estructurado.' },
+        { icon: 'bolt', title: 'Evaluaciones rápidas', text: 'Registra el progreso sin complicar tu flujo de trabajo.' },
+        { icon: 'cloud_done', title: 'Acceso desde cualquier lugar', text: 'Tu información permanece disponible y sincronizada.' },
+      ];
+
+  features.forEach((feature, index) => updateFeatureCard(index, feature));
+}
+
 export function establecerAuthMode(mode) {
   const login = mode !== 'register';
   const panel = document.querySelector('.auth-panel');
@@ -72,11 +118,12 @@ export function establecerAuthMode(mode) {
 
   transitionAuthPanels(login);
   if (panel) panel.dataset.mode = login ? 'login' : 'register';
+  updateAuthBrand(login);
   if (title) title.textContent = login ? 'Iniciar sesión' : 'Crear cuenta';
   if (subtitle) {
     subtitle.textContent = login
       ? 'Ingresa tus credenciales para continuar.'
-      : 'Únete a la excelencia académica estructurada.';
+      : 'Regístrate en Aula Base';
   }
   if (loginSocial) loginSocial.style.display = login ? '' : 'none';
   if (socialDivider) socialDivider.textContent = 'o usa tu email';
@@ -102,7 +149,7 @@ export function establecerAuthMode(mode) {
     resetRegisterCodeFlow();
     clearRegisterFieldErrors();
   } else if (registerSubmit) {
-    registerSubmit.innerHTML = 'Registrarse <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>';
+    registerSubmit.innerHTML = 'Crear cuenta <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>';
   }
 
   setAuthNote('');

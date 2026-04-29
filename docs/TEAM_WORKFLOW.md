@@ -20,7 +20,7 @@ Formato recomendado:
 - `feat: mejora panel IA con respuestas rapidas`
 - `fix: sidebar permanece expandida en hover`
 - `ui: alinea textos del menu lateral`
-- `chore: ajusta workflow de deploy`
+- `chore: ajusta workflow de ci`
 
 ## 3) Pull Request
 Regla: nada directo a `main` (excepto emergencias).
@@ -29,17 +29,15 @@ Pasos:
 1. Subes tu rama.
 2. Abres PR contra `main`.
 3. Tu amigo revisa (funcional + visual).
-4. Verifican el preview deploy.
+4. Verifican el build.
 5. Merge.
 
-## 4) Deploy
-Automatizado por GitHub Actions:
-- Push a rama feature/fix/ui -> preview deploy.
-- Merge/push a `main` -> deploy a produccion.
+## 4) CI y publicación
+GitHub Actions valida el build y el backend en PR y ramas principales.
+La publicación se hace con `npm run prepare:dist` y subiendo `dist/` al hosting elegido.
 
 Archivo de referencia:
-- `.github/workflows/firebase-hosting-deploy.yml`
-- `scripts/deploy.sh`
+- `.github/workflows/ci.yml`
 
 ## 5) Regla corta de sincronizacion diaria
 Antes de empezar:
@@ -53,16 +51,16 @@ Durante el dia:
 
 Al cerrar tarea:
 1. Abrir PR.
-2. Revisar preview.
+2. Revisar build/QA.
 3. Merge a `main`.
 
 ## 6) Emergencias
 Si produccion se rompe:
 1. Crear rama `hotfix/...`
 2. Corregir y PR rapido.
-3. Merge a `main` para redeploy inmediato.
+3. Merge a `main` y publicar `dist/` nuevamente.
 
 ## 7) Reglas practicas
 - Antes de editar, ejecuta el flujo de ensamblado o build que corresponda.
 - Para cambios frontend modernos, valida `npm run check`.
-- Si tocas Functions, valida `node --check functions/index.js` y el despliegue de Firebase Functions.
+- Todo backend persistente debe pasar por `server/` y Supabase SQL.

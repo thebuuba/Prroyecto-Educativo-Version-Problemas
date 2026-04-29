@@ -3,19 +3,24 @@ services:
     name: aulabase-sql-api
     runtime: node
     buildCommand: "cd server && npm install"
-    # Execute migrations before starting application
+    # Ejecuta migraciones idempotentes contra Supabase PostgreSQL antes de iniciar.
     startCommand: "cd server && npm run migrate && npm run start"
     envVars:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
-        fromDatabase:
-          name: aulabase-postgres-db
-          property: connectionString
+        sync: false
       - key: DATABASE_SSL
         value: "true"
-
-databases:
-  - name: aulabase-postgres-db
-    databaseName: aulabase
-    user: aulabase
+      - key: SUPABASE_URL
+        value: https://zxuscgenmwseruvcaafm.supabase.co
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+      - key: AUTH_COOKIE_SECURE
+        value: "true"
+      - key: AUTH_COOKIE_SAMESITE
+        value: none

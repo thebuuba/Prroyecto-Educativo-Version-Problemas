@@ -185,10 +185,12 @@ export async function registrarUsuario() {
       const user = await window.EduGestCloud.register(email, pass, name);
       rememberCurrentAuthAccessMode('supabase');
       ensureIndividualLicenseModel();
+      await hydrateCloudStateForUser(user).catch((hydrateError) => {
+        console.warn('[EduGest][auth] Fallo al hidratar estado cloud tras registro.', hydrateError);
+      });
       finalizarSesionAutenticacion(user, { openSetup: true, isNewAccount: true });
       recordRegisterAttempt(true);
       toast('Cuenta creada');
-      hydrateCloudStateForUser(user).catch(console.error);
     } catch (error) {
       const code = String(error?.code || '').trim();
       if (code === 'auth/email-already-in-use') {
@@ -225,10 +227,12 @@ export async function registrarUsuario() {
       const user = await registerSqlAuth(email, pass, name);
       rememberCurrentAuthAccessMode('sql');
       ensureIndividualLicenseModel();
+      await hydrateCloudStateForUser(user).catch((hydrateError) => {
+        console.warn('[EduGest][auth] Fallo al hidratar estado SQL tras registro.', hydrateError);
+      });
       finalizarSesionAutenticacion(user, { openSetup: true, isNewAccount: true });
       recordRegisterAttempt(true);
       toast('Cuenta creada');
-      hydrateCloudStateForUser(user).catch(console.error);
       return;
     } catch (error) {
       showAuthCornerToast(error?.message || 'No se pudo crear la cuenta.', 'Registro no completado', 'error');

@@ -22,7 +22,7 @@ export function renderizarUsersPanel(container) {
  */
 
 export function inicializar() {
-  window.RENDERS.usuarios = (c) => renderUsersPanel(c);
+  window.RENDERS.usuarios = (c) => renderizarUsersPanel(c);
   window.delUsr = async (id) => {
     if (!confirm('¿Eliminar este usuario de acceso adicional?')) return;
     S.usuarios = (S.usuarios || []).filter(u => u.id !== id);

@@ -10,6 +10,12 @@ import { S } from './state.js';
 import { round2 } from './math-utils.js';
 import { findActivity } from './academic-logic.js';
 import { ensureSqlAcademicContext, syncSqlActivityCreateOrUpdate } from './api-sql.js';
+import {
+  isSqlUuidLike,
+  resolveGradeSqlId,
+  resolveSectionSqlId,
+  resolveStudentSqlId,
+} from './sql-id-utils.js';
 
 /**
  * Transforma un objeto de Grado al esquema de carga para SQL.
@@ -36,7 +42,7 @@ export function mapGradeToSqlPayload(grade, schoolId) {
 export function mapSectionToSqlPayload(section, schoolId, gradeId) {
   return {
     schoolId,
-    gradeId,
+    gradeId: resolveGradeSqlId(gradeId || section?.gradeId),
     name: String(section?.sec || section?.name || '').trim(),
     subjectArea: String(section?.area || '').trim() || null,
     subjectName: String(section?.materia || '').trim() || null,
@@ -55,8 +61,8 @@ export function mapSectionToSqlPayload(section, schoolId, gradeId) {
 export function mapStudentToSqlPayload(student, schoolId, gradeId, sectionId) {
   return {
     schoolId,
-    gradeId,
-    sectionId,
+    gradeId: resolveGradeSqlId(gradeId || student?.gradeId),
+    sectionId: resolveSectionSqlId(sectionId || student?.sectionId || student?.seccionId || student?.courseId),
     enrollmentCode: String(student?.matricula || '').trim() || null,
     firstName: String(student?.nombre || '').trim(),
     lastName: String(student?.apellido || '').trim(),
@@ -75,7 +81,7 @@ export function mapStudentToSqlPayload(student, schoolId, gradeId, sectionId) {
 export function mapActivityToSqlPayload(activity, meta = {}) {
   return {
     schoolId: String(meta.schoolId || '').trim(),
-    sectionId: String(meta.sectionId || activity?.courseId || '').trim(),
+    sectionId: resolveSectionSqlId(meta.sectionId || activity?.courseId || activity?.sectionId || activity?.seccionId),
     teacherUserId: String(meta.teacherUserId || '').trim() || null,
     periodId: String(meta.periodId || activity?.periodId || 'P1').trim() || 'P1',
     blockKey: String(meta.blockKey || '').trim() || null,
@@ -119,9 +125,9 @@ export function mapEvaluationToSqlPayload(evaluation, meta = {}) {
   };
   return {
     schoolId: String(meta.schoolId || '').trim(),
-    sectionId: String(meta.sectionId || evaluation?.groupId || evaluation?.courseId || '').trim(),
+    sectionId: resolveSectionSqlId(meta.sectionId || evaluation?.groupId || evaluation?.courseId || evaluation?.sectionId),
     activityId: String(evaluation?.activityId || '').trim(),
-    studentId: String(evaluation?.studentId || '').trim(),
+    studentId: resolveStudentSqlId(evaluation?.studentId),
     periodId: String(evaluation?.periodId || 'P1').trim() || 'P1',
     score: Number.isFinite(activityScore) ? activityScore : 0,
     scorePercent: normalizeSqlEvaluationScorePercent(evaluation, activity),
@@ -143,7 +149,8 @@ export async function syncSqlEvaluationUpsert(evaluation, meta = {}) {
   const context = await ensureSqlAcademicContext();
   if (!context?.schoolId) return null;
   const sectionId = String(meta.sectionId || evaluation?.groupId || evaluation?.courseId || '').trim();
-  if (!sectionId) return null;
+  const sqlSectionId = resolveSectionSqlId(sectionId);
+  if (!sqlSectionId) return null;
   let activity = meta.activity || null;
   if (!activity && evaluation?.activityId) {
     const found = findActivity(evaluation.activityId, sectionId, evaluation?.periodId || S.activePeriodId);
@@ -153,7 +160,7 @@ export async function syncSqlEvaluationUpsert(evaluation, meta = {}) {
     const activityForSql = activity.sqlId ? { ...activity, id: activity.sqlId } : activity;
     const syncedActivity = await syncSqlActivityCreateOrUpdate(activityForSql, {
       schoolId: context.schoolId,
-      sectionId,
+      sectionId: sqlSectionId,
       periodId: String(meta.periodId || evaluation?.periodId || S.activePeriodId || 'P1').trim() || 'P1',
       blockKey: meta.blockKey || null,
     });
@@ -162,10 +169,14 @@ export async function syncSqlEvaluationUpsert(evaluation, meta = {}) {
       activity = syncedActivity;
     }
   }
-  const sqlActivityId = String(activity?.sqlId || activity?.id || evaluation?.activityId || '').trim();
+  const sqlActivityId = [
+    activity?.sqlId,
+    isSqlUuidLike(activity?.id) ? activity?.id : '',
+    isSqlUuidLike(evaluation?.activityId) ? evaluation?.activityId : '',
+  ].map((value) => String(value || '').trim()).find(Boolean) || '';
   const payload = mapEvaluationToSqlPayload(evaluation, {
     schoolId: context.schoolId,
-    sectionId,
+    sectionId: sqlSectionId,
     activity,
   });
   if (sqlActivityId) payload.activityId = sqlActivityId;

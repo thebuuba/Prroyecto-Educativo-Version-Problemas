@@ -11,6 +11,36 @@ function badRequest(message) {
 }
 
 async function resolveSchoolForUser(client, input = {}, userId) {
+  const explicitSchoolId = String(input.schoolId || '').trim();
+  const schoolName = String(input.schoolName || '').trim();
+  if (explicitSchoolId && !schoolName) {
+    const schoolById = await client.query(
+      `SELECT id, name, academic_year, timezone
+       FROM schools
+       WHERE id = $1
+       LIMIT 1`,
+      [explicitSchoolId]
+    );
+    if (schoolById.rows[0]) return schoolById.rows[0];
+  }
+
+  if (schoolName) {
+    const academicYear = String(input.academicYear || '').trim() || null;
+    const timezone = String(input.timezone || '').trim() || 'America/Santo_Domingo';
+    const schoolResult = await client.query(
+      `INSERT INTO schools (name, academic_year, timezone)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (name) DO UPDATE
+       SET academic_year = COALESCE(EXCLUDED.academic_year, schools.academic_year),
+           timezone = COALESCE(EXCLUDED.timezone, schools.timezone),
+           updated_at = NOW()
+       RETURNING id, name, academic_year, timezone`,
+      [schoolName, academicYear, timezone]
+    );
+
+    return schoolResult.rows[0];
+  }
+
   if (userId) {
     const membershipResult = await client.query(
       `SELECT s.id, s.name, s.academic_year, s.timezone
@@ -25,35 +55,7 @@ async function resolveSchoolForUser(client, input = {}, userId) {
     if (membershipResult.rows[0]) return membershipResult.rows[0];
   }
 
-  const explicitSchoolId = String(input.schoolId || '').trim();
-  if (explicitSchoolId) {
-    const schoolById = await client.query(
-      `SELECT id, name, academic_year, timezone
-       FROM schools
-       WHERE id = $1
-       LIMIT 1`,
-      [explicitSchoolId]
-    );
-    if (schoolById.rows[0]) return schoolById.rows[0];
-  }
-
-  const schoolName = String(input.schoolName || '').trim();
-  if (!schoolName) throw badRequest('La institución es obligatoria.');
-
-  const academicYear = String(input.academicYear || '').trim() || null;
-  const timezone = String(input.timezone || '').trim() || 'America/Santo_Domingo';
-  const schoolResult = await client.query(
-    `INSERT INTO schools (name, academic_year, timezone)
-     VALUES ($1, $2, $3)
-     ON CONFLICT (name) DO UPDATE
-     SET academic_year = COALESCE(EXCLUDED.academic_year, schools.academic_year),
-         timezone = COALESCE(EXCLUDED.timezone, schools.timezone),
-         updated_at = NOW()
-     RETURNING id, name, academic_year, timezone`,
-    [schoolName, academicYear, timezone]
-  );
-
-  return schoolResult.rows[0];
+  throw badRequest('La institución es obligatoria.');
 }
 
 async function ensureWorkspaceContext(client, input = {}) {

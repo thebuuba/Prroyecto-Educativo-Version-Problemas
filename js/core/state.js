@@ -35,21 +35,21 @@ window.S = S;
 export function setS(val) { Object.assign(S, val); }
 
 /** 
- * Indica si el estado ha sido hidratado desde la nube (Firestore).
+ * Indica si el estado ha sido hidratado desde la nube SQL/Supabase.
  * @type {boolean} 
  */
 export let cloudStateHydrated = false;
 export function setCloudStateHydrated(val) { cloudStateHydrated = val; }
 
 /** 
- * Almacena la función de desuscripción de la escucha en tiempo real de Firestore.
+ * Almacena la función de desuscripción de la escucha cloud, si una integración la registra.
  * @type {Function|null} 
  */
 export let cloudStateUnsubscribe = null;
 export function setCloudStateUnsubscribe(val) { cloudStateUnsubscribe = val; }
 
 /** 
- * Flag para evitar bucles durante la aplicación de cambios remotos de Firestore.
+ * Flag para evitar bucles durante la aplicación de cambios remotos.
  * @type {boolean} 
  */
 export let isApplyingRemoteCloudState = false;
@@ -153,4 +153,3 @@ export const DEVICE_VERIFICATION_FLOW = {
   pendingMaskedEmail: '',
   pendingSource: 'login',
 };
-

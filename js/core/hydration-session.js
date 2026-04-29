@@ -95,6 +95,7 @@ export function persistBrowserSession() {
     const sessionData = JSON.stringify({
       uid: S.sessionUserId,
       name: S.sessionUserName || '',
+      email: S.profile?.email || '',
       startedAt: S.sessionStartedAt,
     });
     window.sessionStorage.setItem(SESSION_STORAGE_KEY, sessionData);
@@ -128,6 +129,10 @@ export function applySessionUser(user) {
   S.cloudOwnerUid = user?.id || null;
 
   if (user?.id) {
+    if (!S.profile || typeof S.profile !== 'object') S.profile = {};
+    const email = String(user.email || S.profile.email || '').trim().toLowerCase();
+    if (email) S.profile.email = email;
+    if (!S.profile.name && user.name) S.profile.name = user.name;
     if (prevUserId !== user.id) S.sessionStartedAt = nowIso();
     refreshSessionWindow();
   } else {

@@ -12,7 +12,13 @@ import {
   mapSectionToSqlPayload,
   mapStudentToSqlPayload
 } from './api-mappings.js';
-import { isSqlUuidLike } from './api-sql.js';
+import {
+  isSqlUuidLike,
+  rememberSqlId,
+  resolveEntitySqlId,
+  resolveGradeSqlId,
+  resolveSectionSqlId,
+} from './sql-id-utils.js';
 
 /**
  * Sincroniza un Grado y su Sección principal con el servidor SQL.
@@ -33,27 +39,30 @@ export async function syncSqlGradeCreateOrUpdate(grade, section) {
 
   const schoolId = context.schoolId;
   const gradePayload = mapGradeToSqlPayload(grade, schoolId);
-  const isUpdatingGrade = isSqlUuidLike(grade?.id);
+  const gradeSqlId = resolveEntitySqlId(grade);
+  const isUpdatingGrade = isSqlUuidLike(gradeSqlId);
 
   let gradeResult = null;
   if (isUpdatingGrade) {
-    gradeResult = await SQL.updateGrade(grade.id, gradePayload);
+    gradeResult = await SQL.updateGrade(gradeSqlId, gradePayload);
   } else {
     gradeResult = await SQL.createGrade(gradePayload);
   }
+  rememberSqlId(grade, gradeResult?.id);
 
-  // Si el servidor devolvió un nuevo ID (ej: al crear), lo usamos para la sección
-  const sqlGradeId = gradeResult?.id || grade.id;
+  const sqlGradeId = resolveEntitySqlId(grade) || gradeResult?.id || grade.id;
 
   const sectionPayload = mapSectionToSqlPayload(section, schoolId, sqlGradeId);
-  const isUpdatingSection = isSqlUuidLike(section?.id);
+  const sectionSqlId = resolveEntitySqlId(section);
+  const isUpdatingSection = isSqlUuidLike(sectionSqlId);
 
   let sectionResult = null;
   if (isUpdatingSection) {
-    sectionResult = await SQL.updateSection(section.id, sectionPayload);
+    sectionResult = await SQL.updateSection(sectionSqlId, sectionPayload);
   } else {
     sectionResult = await SQL.createSection(sectionPayload);
   }
+  rememberSqlId(section, sectionResult?.id);
 
   return {
     grade: gradeResult || grade,
@@ -76,14 +85,18 @@ export async function syncSqlStudentCreateOrUpdate(student) {
   const gradeId = student.gradeId;
   
   const payload = mapStudentToSqlPayload(student, context.schoolId, gradeId, sectionId);
-  const isUpdate = isSqlUuidLike(student.id);
+  if (!payload.gradeId || !payload.sectionId) return student;
+
+  const studentSqlId = resolveEntitySqlId(student);
+  const isUpdate = isSqlUuidLike(studentSqlId);
 
   let result = null;
   if (isUpdate) {
-    result = await SQL.updateStudent(student.id, payload);
+    result = await SQL.updateStudent(studentSqlId, payload);
   } else {
     result = await SQL.createStudent(payload);
   }
+  rememberSqlId(student, result?.id);
 
   return result || student;
 }
@@ -99,15 +112,20 @@ export async function syncSqlSectionCreateOrUpdate(section) {
   const context = await SQL.ensureSqlAcademicContext();
   if (!context?.schoolId) return section;
 
-  const payload = mapSectionToSqlPayload(section, context.schoolId, section.gradeId);
-  const isUpdate = isSqlUuidLike(section.id);
+  const sqlGradeId = resolveGradeSqlId(section.gradeId);
+  if (!sqlGradeId) return section;
+
+  const payload = mapSectionToSqlPayload(section, context.schoolId, sqlGradeId);
+  const sectionSqlId = resolveSectionSqlId(section);
+  const isUpdate = isSqlUuidLike(sectionSqlId);
 
   let result = null;
   if (isUpdate) {
-    result = await SQL.updateSection(section.id, payload);
+    result = await SQL.updateSection(sectionSqlId, payload);
   } else {
     result = await SQL.createSection(payload);
   }
+  rememberSqlId(section, result?.id);
 
   return result || section;
 }

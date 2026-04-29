@@ -21,6 +21,9 @@ async function flushBeforeWorkspaceSwap() {
   if (typeof window.flushSqlStateBlockSyncs === 'function') {
     await window.flushSqlStateBlockSyncs().catch(() => null);
   }
+  if (typeof window.flushSqlProfileSync === 'function') {
+    await window.flushSqlProfileSync().catch(() => null);
+  }
   stopCloudStateSync();
 }
 
@@ -114,6 +117,9 @@ export async function logoutAuth() {
   await DB.flushPendingSave();
   if (typeof window.flushSqlStateBlockSyncs === 'function') {
     await window.flushSqlStateBlockSyncs().catch(() => null);
+  }
+  if (typeof window.flushSqlProfileSync === 'function') {
+    await window.flushSqlProfileSync().catch(() => null);
   }
 
   replaceState();

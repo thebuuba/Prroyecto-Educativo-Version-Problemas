@@ -1,6 +1,6 @@
 # Paddle (MoR) Setup para AulaBase (RD)
 
-Este documento deja Paddle como pasarela de pago mensual con Firebase Functions.
+> Estado actual: este flujo es legacy y no forma parte del montaje activo. La base de datos oficial es Supabase PostgreSQL. Antes de reactivar Paddle, migra estos registros a tablas SQL en `server/src/db/migrations/` y expón endpoints en `server/src/routes/`.
 
 ## 1) Crear productos y precios en Paddle
 
@@ -8,13 +8,13 @@ Este documento deja Paddle como pasarela de pago mensual con Firebase Functions.
 2. Crea al menos un precio recurrente mensual.
 3. Copia el `price_id` (ejemplo: `pri_...`).
 
-## 2) Configurar secretos en Firebase Functions
+## 2) Configurar secretos
 
-En la raiz del proyecto:
+Pendiente de migrar a la API SQL.
 
 ```bash
-firebase functions:secrets:set PADDLE_API_KEY
-firebase functions:secrets:set PADDLE_WEBHOOK_SECRET
+PADDLE_API_KEY=
+PADDLE_WEBHOOK_SECRET=
 ```
 
 Luego (opcional) define entorno live o sandbox:
@@ -26,22 +26,13 @@ export PADDLE_ENV=sandbox
 # export PADDLE_ENV=live
 ```
 
-## 3) Desplegar Functions
+## 3) Despliegue
 
-```bash
-firebase deploy --only functions
-```
-
-Funciones nuevas:
-
-- `createPaddleCheckout` (callable)
-- `createPaddleCustomerPortal` (callable)
-- `paddleWebhook` (HTTP)
+No hay deploy activo para billing. El webhook debe implementarse en `server/`.
 
 ## 4) Configurar webhook en Paddle
 
-1. Copia URL de la function `paddleWebhook`:
-   - `https://us-central1-<tu-proyecto>.cloudfunctions.net/paddleWebhook`
+1. Crea un endpoint HTTP en `server/` para el webhook.
 2. En Paddle Dashboard crea Webhook Destination con esa URL.
 3. Activa eventos de suscripcion:
    - `subscription.created`
@@ -51,18 +42,18 @@ Funciones nuevas:
    - `subscription.canceled`
    - `subscription.past_due`
 
-## 5) Firestore que se actualiza automaticamente
+## 5) Tablas SQL esperadas
 
-El webhook escribe:
+Cuando se reactive, el webhook debe escribir en Supabase SQL, por ejemplo:
 
-- `billing_events/{eventId}`
-- `billing_subscriptions/{subscriptionId}`
-- `entitlements/{uid}`
-- `billing_customers/{uid}` (cuando se crea cliente)
+- `billing_events`
+- `billing_subscriptions`
+- `entitlements`
+- `billing_customers`
 
 Campo clave para acceso premium:
 
-- `entitlements/{uid}.active` (boolean)
+- `entitlements.active` (boolean)
 
 ## 6) Flujo recomendado en frontend
 
@@ -88,7 +79,7 @@ window.location.href = result.portalUrl;
 Antes de mostrar o ejecutar funciones premium, valida:
 
 1. Usuario autenticado
-2. `entitlements/{uid}.active === true`
+2. `entitlements.active === true` para el usuario autenticado en SQL
 
 Si es `false`, mostrar pantalla de pago y boton "Activar plan mensual".
 
@@ -98,11 +89,10 @@ Checklist:
 
 1. Cambiar `PADDLE_ENV=live`
 2. Crear precio live en Paddle
-3. Reconfigurar webhook live
+3. Reconfigurar webhook live hacia la API SQL
 4. Probar alta, renovacion, cancelacion y past_due
-5. Activar logs/alertas para errores de `paddleWebhook`
+5. Activar logs/alertas para errores del endpoint de webhook SQL
 
 ## 9) Estado actual del repositorio
 
-El backend activo ya no incluye el flujo de registro por correo.
-En este momento las Functions se concentran en Paddle y en el webhook de suscripciones.
+El backend activo es `server/` con Supabase SQL.

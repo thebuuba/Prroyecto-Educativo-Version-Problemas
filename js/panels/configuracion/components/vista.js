@@ -70,7 +70,8 @@ export function renderizarSettingsView() {
             <input type="text" id="set-inst" value="${S.profile?.inst || ''}" 
                    class="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl font-bold text-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all outline-none"
                    placeholder="Ej. Colegio San Miguel"
-                   oninput="if(!window.S.profile) window.S.profile = {}; window.S.profile.inst = this.value; window.persist()">
+                   oninput="if(!window.S.profile) window.S.profile = {}; window.S.profile.inst = this.value; delete window.S.profile.schoolId; delete window.S.profile.school; window.persist()"
+                   onchange="window.persist({ immediate: true }); window.flushSqlProfileSync?.()">
           </div>
           
           <div class="p-5 bg-amber-50/50 border border-amber-100 rounded-2xl flex items-start gap-4">

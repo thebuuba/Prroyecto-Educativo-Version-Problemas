@@ -11,7 +11,7 @@
     "check": "npm run build && npm --prefix server run check",
     "backend:check": "npm --prefix server run check",
     "backend:smoke": "cd server && npm run smoke",
-    "deploy": "./scripts/deploy.sh"
+    "prepare:dist": "npm run assemble && npm run build"
   },
   "devDependencies": {
     "vite": "^6.0.0"

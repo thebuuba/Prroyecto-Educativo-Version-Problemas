@@ -63,6 +63,8 @@ const SQL_MAPPING_GLOBALS = {
   applySqlAcademicSnapshot: SQL.applySqlAcademicSnapshot,
   hydrateSqlAcademicSnapshotForActiveUser: SQL.hydrateSqlAcademicSnapshotForActiveUser,
   hydrateSqlStateBlocksForActiveUser: SQL.hydrateSqlStateBlocksForActiveUser,
+  scheduleSqlProfileSync: SQL.scheduleSqlProfileSync,
+  flushSqlProfileSync: SQL.flushSqlProfileSync,
   scheduleSqlStateBlockSyncs: SQL.scheduleSqlStateBlockSyncs,
   flushSqlStateBlockSyncs: SQL.flushSqlStateBlockSyncs,
   syncSqlActivityDelete: SQL.syncSqlActivityDelete,
@@ -125,6 +127,10 @@ export function installPersistGuards() {
   const flushPendingState = () => {
     try {
       window.EduGestDB?.flushPendingSave?.();
+    } catch (_) {}
+    try {
+      window.flushSqlProfileSync?.();
+      window.flushSqlStateBlockSyncs?.();
     } catch (_) {}
   };
 

@@ -80,7 +80,6 @@ Este proyecto se mantiene por secciones para localizar errores rápido por panel
 - Scripts auxiliares:
   - `scripts/assemble-all.sh`
   - `scripts/assemble-index-html.sh`
-  - `scripts/deploy.sh`
 
 ## CSS
 - Entrada: `styles.css`
@@ -102,9 +101,7 @@ Este proyecto se mantiene por secciones para localizar errores rápido por panel
 - `README.md` - Documentación general del sistema
 - `docs/LEARNING_GUIDE.md` - Guía de aprendizaje para nuevos desarrolladores
 - `docs/PROJECT_STRUCTURE.md` - Esta estructura detallada
-- `docs/FIREBASE_AUTH_SETUP.md` - Configuración de Firebase Auth
-- `docs/FIREBASE_SETUP.md` - Configuración de Firebase
-- `docs/DEPLOY_AUTOMATICO.md` - Guía de despliegue
+- `server/README.md` - Configuración de la API SQL con Supabase PostgreSQL
 - Panel `README.md` - Documentación específica de cada panel
 
 ## Flujo recomendado
@@ -130,8 +127,7 @@ Este proyecto se mantiene por secciones para localizar errores rápido por panel
 - Si agregas una utilidad requerida por HTML inline o modales globales, documenta por qué debe exponerse en `window` y hazlo desde `js/core/legacy-bridge.js` o desde un `utils/actions.js` del panel responsable.
 - Los componentes van en `components/`, las utilidades en `utils/`, los estilos del panel en `styles/` y los fragmentos HTML propios en `html/`.
 
-## Deploy recomendado
-- Un solo comando:
-  - `npm run deploy`
-- Variables opcionales:
-  - `FIREBASE_CONFIG=./firebase.json npm run deploy`
+## Publicación recomendada
+- Genera la salida estática:
+  - `npm run prepare:dist`
+- Publica `dist/` en el proveedor de hosting elegido y configura `VITE_API_URL` apuntando a la API SQL.

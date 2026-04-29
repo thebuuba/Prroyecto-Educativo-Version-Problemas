@@ -29,8 +29,13 @@ export function persistNow() {
       DB.scheduleRawStateSave(STORAGE_KEY, localSnapshotRaw);
     }
     persistActiveUserWorkspace(localSnapshotRaw);
-    if (!suppressSqlStateSave && typeof window.scheduleSqlStateBlockSyncs === 'function') {
-      window.scheduleSqlStateBlockSyncs();
+    if (!suppressSqlStateSave) {
+      if (typeof window.scheduleSqlProfileSync === 'function') {
+        window.scheduleSqlProfileSync({ immediate: true });
+      }
+      if (typeof window.scheduleSqlStateBlockSyncs === 'function') {
+        window.scheduleSqlStateBlockSyncs();
+      }
     }
   } catch (_) {}
 }

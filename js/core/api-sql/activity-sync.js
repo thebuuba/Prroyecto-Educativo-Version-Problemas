@@ -1,7 +1,8 @@
 import { mapActivityToSqlPayload } from '../api-mappings.js';
 import { isEnabled } from './client.js';
 import { createActivity, updateActivity } from './academic-endpoints.js';
-import { ensureSqlAcademicContext, isSqlUuidLike } from './context.js';
+import { ensureSqlAcademicContext } from './context.js';
+import { isSqlUuidLike, rememberSqlId, resolveEntitySqlId } from '../sql-id-utils.js';
 
 /**
  * Sincroniza una actividad evaluativa con la base de datos SQL.
@@ -20,8 +21,11 @@ export async function syncSqlActivityCreateOrUpdate(activity, meta = {}) {
   
   if (!payload.sectionId || !payload.name) return null;
   
-  const shouldUpdate = isSqlUuidLike(activity?.id);
-  return shouldUpdate
-    ? updateActivity(activity.id, payload)
-    : createActivity(payload);
+  const activitySqlId = resolveEntitySqlId(activity);
+  const shouldUpdate = isSqlUuidLike(activitySqlId);
+  const result = shouldUpdate
+    ? await updateActivity(activitySqlId, payload)
+    : await createActivity(payload);
+  rememberSqlId(activity, result?.id);
+  return result;
 }

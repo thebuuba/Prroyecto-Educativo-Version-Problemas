@@ -17,10 +17,18 @@ import {
   loadAcademicSnapshot,
 } from './api-sql/academic-endpoints.js';
 import {
+  applySqlProfileBundle,
   ensureSqlAcademicContext,
   getSqlStateContext,
 } from './api-sql/context.js';
 import { loadStateBlock, syncStateBlock } from './api-sql/state-api.js';
+import { syncProfile as syncProfileRequest } from './api-sql/bootstrap.js';
+import {
+  isSqlUuidLike,
+  resolveGradeSqlId,
+  resolveSectionSqlId,
+  resolveStudentSqlId,
+} from './sql-id-utils.js';
 
 export { getBaseUrl, isEnabled, request } from './api-sql/client.js';
 export { loadSchoolCatalog, syncProfile } from './api-sql/bootstrap.js';
@@ -61,9 +69,9 @@ export {
   ensureSqlAcademicContext,
   ensureSqlSchoolIdForProfile,
   getSqlStateContext,
-  isSqlUuidLike,
   normalizeSchoolName,
 } from './api-sql/context.js';
+export { isSqlUuidLike } from './sql-id-utils.js';
 export {
   getSqlAuthSession,
   loginSqlAuth,
@@ -72,11 +80,17 @@ export {
   sendSqlPasswordReset,
 } from './api-sql/auth.js';
 
-const SQL_STATE_BLOCK_KEYS = ['assessment', 'planner'];
+const SQL_STATE_BLOCK_KEYS = ['academics', 'assessment', 'planner'];
 const SQL_STATE_SYNC_RUNTIME = SQL_STATE_BLOCK_KEYS.reduce((acc, blockKey) => {
   acc[blockKey] = { timer: null, inFlight: false, pending: false };
   return acc;
 }, {});
+const SQL_PROFILE_SYNC_RUNTIME = {
+  timer: null,
+  inFlight: false,
+  pending: false,
+  context: null,
+};
 
 function cloneJson(value, fallback) {
   try {
@@ -148,6 +162,15 @@ function buildSqlAttendanceSnapshot(rows = []) {
 }
 
 export function buildSqlStateBlockPayload(blockKey) {
+  if (blockKey === 'academics') {
+    return {
+      instruments: cloneJson(S.instruments || [], []),
+      usuarios: cloneJson(S.usuarios || [], []),
+      preferences: cloneJson(S.preferences || {}, {}),
+      profilePreferences: cloneJson(S.profile?.preferences || {}, {}),
+      activityViewMode: S.activityViewMode || '',
+    };
+  }
   if (blockKey === 'assessment') {
     return {
       periods: cloneJson(S.periods || [], []),
@@ -165,6 +188,20 @@ export function buildSqlStateBlockPayload(blockKey) {
 
 export function applySqlStateBlockPayload(blockKey, payload) {
   if (!payload || typeof payload !== 'object') return false;
+  if (blockKey === 'academics') {
+    if (Array.isArray(payload.instruments)) S.instruments = cloneJson(payload.instruments, []);
+    const usuarios = Array.isArray(payload.usuarios) ? payload.usuarios : payload.users;
+    if (Array.isArray(usuarios)) S.usuarios = cloneJson(usuarios, []);
+    if (payload.preferences && typeof payload.preferences === 'object') {
+      S.preferences = cloneJson(payload.preferences, {});
+    }
+    if (payload.profilePreferences && typeof payload.profilePreferences === 'object') {
+      if (!S.profile || typeof S.profile !== 'object') S.profile = {};
+      S.profile.preferences = cloneJson(payload.profilePreferences, {});
+    }
+    if (payload.activityViewMode) S.activityViewMode = payload.activityViewMode;
+    return true;
+  }
   if (blockKey === 'assessment') {
     if (Array.isArray(payload.periods) && payload.periods.length) S.periods = cloneJson(payload.periods, []);
     if (payload.schoolYear && typeof payload.schoolYear === 'object') S.schoolYear = cloneJson(payload.schoolYear, {});
@@ -331,39 +368,61 @@ export async function syncSqlActivityDelete(activityId) {
   if (!isEnabled()) return null;
   const context = await ensureSqlAcademicContext();
   if (!context?.schoolId) return null;
-  return deleteActivity(activityId, { schoolId: context.schoolId });
+  const sqlActivityId = String(activityId || '').trim();
+  if (!isSqlUuidLike(sqlActivityId)) return null;
+  return deleteActivity(sqlActivityId, { schoolId: context.schoolId });
 }
 
 export async function syncSqlGradeDelete(gradeId) {
   if (!isEnabled()) return null;
   const context = await ensureSqlAcademicContext();
   if (!context?.schoolId) return null;
-  return deleteGrade(gradeId, { schoolId: context.schoolId });
+  const sqlGradeId = resolveGradeSqlId(gradeId);
+  if (!sqlGradeId) return null;
+  return deleteGrade(sqlGradeId, { schoolId: context.schoolId });
 }
 
 export async function syncSqlSectionDelete(sectionId) {
   if (!isEnabled()) return null;
   const context = await ensureSqlAcademicContext();
   if (!context?.schoolId) return null;
-  return deleteSection(sectionId, { schoolId: context.schoolId });
+  const sqlSectionId = resolveSectionSqlId(sectionId);
+  if (!sqlSectionId) return null;
+  return deleteSection(sqlSectionId, { schoolId: context.schoolId });
 }
 
 export async function syncSqlStudentDelete(studentId) {
   if (!isEnabled()) return null;
   const context = await ensureSqlAcademicContext();
   if (!context?.schoolId) return null;
-  return deleteStudent(studentId, { schoolId: context.schoolId });
+  const sqlStudentId = resolveStudentSqlId(studentId);
+  if (!sqlStudentId) return null;
+  return deleteStudent(sqlStudentId, { schoolId: context.schoolId });
 }
 
 export async function syncSqlEvaluationsDelete(filters = {}) {
   if (!isEnabled()) return null;
   const context = await ensureSqlAcademicContext();
   if (!context?.schoolId) return null;
-  return deleteEvaluations({ schoolId: context.schoolId, ...filters });
+  const normalized = { schoolId: context.schoolId, ...filters };
+  if (filters.sectionId) {
+    normalized.sectionId = resolveSectionSqlId(filters.sectionId);
+    if (!normalized.sectionId) return null;
+  }
+  if (filters.studentId) {
+    normalized.studentId = resolveStudentSqlId(filters.studentId);
+    if (!normalized.studentId) return null;
+  }
+  if (filters.activityId) {
+    normalized.activityId = String(filters.activityId || '').trim();
+    if (!isSqlUuidLike(normalized.activityId)) return null;
+  }
+  return deleteEvaluations(normalized);
 }
 
 export async function flushSqlStateBlockSyncs() {
   const pending = [];
+  pending.push(flushSqlProfileSync());
   for (const blockKey of SQL_STATE_BLOCK_KEYS) {
     const runtime = SQL_STATE_SYNC_RUNTIME[blockKey];
     if (runtime?.timer) {
@@ -377,8 +436,60 @@ export async function flushSqlStateBlockSyncs() {
   return Promise.allSettled(pending);
 }
 
+export function scheduleSqlProfileSync(options = {}) {
+  if (!isEnabled()) return;
+  const context = getSqlStateContext();
+  if (!context?.email) return;
+  SQL_PROFILE_SYNC_RUNTIME.context = context;
+  if (SQL_PROFILE_SYNC_RUNTIME.timer) window.clearTimeout(SQL_PROFILE_SYNC_RUNTIME.timer);
+  const delay = options?.immediate === true ? 0 : 180;
+  SQL_PROFILE_SYNC_RUNTIME.timer = window.setTimeout(() => {
+    SQL_PROFILE_SYNC_RUNTIME.timer = null;
+    syncSqlProfile().catch(() => null);
+  }, delay);
+}
+
+export async function flushSqlProfileSync() {
+  if (SQL_PROFILE_SYNC_RUNTIME.timer) {
+    window.clearTimeout(SQL_PROFILE_SYNC_RUNTIME.timer);
+    SQL_PROFILE_SYNC_RUNTIME.timer = null;
+  }
+  if (!SQL_PROFILE_SYNC_RUNTIME.context) return null;
+  return syncSqlProfile();
+}
+
 export function scheduleSqlStateBlockSyncs() {
   SQL_STATE_BLOCK_KEYS.forEach((blockKey) => scheduleSqlStateBlockSync(blockKey));
+}
+
+async function syncSqlProfile() {
+  const runtime = SQL_PROFILE_SYNC_RUNTIME;
+  if (!runtime.context) return null;
+  if (runtime.inFlight) {
+    runtime.pending = true;
+    return null;
+  }
+  runtime.inFlight = true;
+  try {
+    const result = await syncProfileRequest(runtime.context);
+    const resolvedSchoolId = String(result?.school?.id || runtime.context.schoolId || '').trim();
+    const resolvedSchoolName = String(result?.school?.name || runtime.context.schoolName || '').trim();
+    if (resolvedSchoolId) {
+      if (!S.profile || typeof S.profile !== 'object') S.profile = {};
+      S.profile.schoolId = resolvedSchoolId;
+      if (resolvedSchoolName) S.profile.inst = resolvedSchoolName;
+      if (result?.school) S.profile.school = cloneJson(result.school, null);
+    }
+    applySqlProfileBundle(result);
+    runtime.context = null;
+    return result;
+  } finally {
+    runtime.inFlight = false;
+    if (runtime.pending) {
+      runtime.pending = false;
+      scheduleSqlProfileSync();
+    }
+  }
 }
 
 function scheduleSqlStateBlockSync(blockKey) {

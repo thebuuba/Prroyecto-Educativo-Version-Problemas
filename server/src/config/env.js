@@ -9,9 +9,27 @@ function getEnv(name, fallback = '') {
   return fallback;
 }
 
+const isProduction = process.env.NODE_ENV === 'production';
+
+function requireProductionEnv(names = []) {
+  if (!isProduction) return;
+  const missing = names.filter((name) => !getEnv(name));
+  if (!missing.length) return;
+  throw new Error(`Faltan variables obligatorias en produccion: ${missing.join(', ')}`);
+}
+
+requireProductionEnv([
+  'DATABASE_URL',
+  'SUPABASE_URL',
+  'SUPABASE_PUBLISHABLE_KEY',
+  'JWT_SECRET',
+  'CORS_ORIGIN',
+]);
+
 const env = {
+  isProduction,
   port: Number(getEnv('PORT', '4000')),
-  databaseUrl: getEnv('DATABASE_URL', 'postgresql://aulabase:aulabase_dev@localhost:5432/aulabase'),
+  databaseUrl: getEnv('DATABASE_URL', isProduction ? '' : 'postgresql://aulabase:aulabase_dev@localhost:5432/aulabase'),
   databaseSsl: getEnv('DATABASE_SSL', 'false').toLowerCase() === 'true',
   corsOrigin: getEnv('CORS_ORIGIN', 'http://localhost:5173,http://127.0.0.1:5173'),
   supabaseUrl: getEnv('SUPABASE_URL', ''),

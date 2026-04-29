@@ -139,10 +139,10 @@ Los paneles son las principales unidades de la aplicación:
 - **Material Symbols**: Iconos
 - **HTML5**: Estructura de la aplicación
 
-### Backend (Opcional)
-- **Node.js**: Runtime del servidor
-- **Supabase**: Autenticación y PostgreSQL
-- **Firestore**: Base de datos en la nube
+### Backend y nube
+- **Node.js/Express**: API de sincronización SQL.
+- **Supabase Auth**: Autenticación cloud.
+- **Supabase PostgreSQL**: Base de datos cloud oficial para perfiles, grados, secciones, estudiantes, asistencia, actividades, evaluaciones y bloques de estado.
 
 ### Herramientas de Desarrollo
 - **Git**: Control de versiones
@@ -192,8 +192,8 @@ npm run check
 # Ensamblar HTML
 npm run assemble
 
-# Deploy completo
-npm run deploy
+# Preparar dist para publicar en cualquier hosting
+npm run prepare:dist
 
 # Validar backend solamente
 npm run backend:check
@@ -205,7 +205,7 @@ npm run backend:check
 - `docs/PROJECT_STRUCTURE.md` - Estructura detallada del proyecto
 - `server/.env.example` - Variables para conectar PostgreSQL/Supabase
 - `.env.example` - Variables públicas de Vite y Supabase Auth
-- `docs/DEPLOY_AUTOMATICO.md` - Guía de despliegue
+- `server/README.md` - Setup de la API SQL sobre Supabase PostgreSQL
 - `AGENTS.md` - Guía para agentes de desarrollo
 
 ### Documentación por Panel

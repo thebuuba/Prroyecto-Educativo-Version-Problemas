@@ -42,13 +42,19 @@ export function inicializar() {
  */
 export function populateSetupForm() {
   const p = S.profile || {};
+  const sessionNameParts = String(S.sessionUserName || '')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  const fallbackFirstName = sessionNameParts[0] || '';
+  const fallbackLastName = sessionNameParts.slice(1).join(' ');
   const setVal = (id, val) => {
     const el = document.getElementById(id);
     if (el) el.value = val || '';
   };
 
-  setVal('s-name', p.firstName || '');
-  setVal('s-lastname', p.lastName || '');
+  setVal('s-name', p.firstName || fallbackFirstName);
+  setVal('s-lastname', p.lastName || fallbackLastName);
   setVal('s-phone', p.phone || '');
   setVal('s-role', p.role || 'Docente');
   setVal('s-inst', p.inst || '');
@@ -117,7 +123,10 @@ export async function guardarSetup() {
 
   // Persistir cambios inmediatamente
   try {
-    await persist({ immediate: true });
+    persist({ immediate: true });
+    if (typeof window.flushSqlProfileSync === 'function') {
+      await window.flushSqlProfileSync();
+    }
     closeM('m-setup');
 
     // Flujo de seguridad: si no hay nivel educativo, forzar su selección
@@ -131,7 +140,7 @@ export async function guardarSetup() {
 
     // Actualizar UI y navegar
     if (typeof window.updateSBUser === 'function') window.updateSBUser();
-    go('dashboard'); // Usar 'dashboard' en lugar de 'tablero' para consistencia
+    go('dashboard', { replace: true, force: true }); // Usar 'dashboard' en lugar de 'tablero' para consistencia
     window.toast('¡Perfil configurado correctamente!');
   } catch (error) {
     console.error('[EduGest][setup] Error al guardar:', error);
@@ -151,7 +160,7 @@ export function cancelSetup() {
     return;
   }
   closeM('m-setup');
-  go('dashboard');
+  go('dashboard', { replace: true, force: true });
 }
 
 /**

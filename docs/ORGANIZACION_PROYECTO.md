@@ -4,6 +4,8 @@
 
 El proyecto ya tiene una base buena: la lógica principal vive en `js/core/` y los paneles están separados en `js/panels/<panel>/`. El build moderno con Vite funciona.
 
+La fuente de verdad de datos cloud es Supabase SQL/PostgreSQL mediante `server/` y `js/core/api-sql/`.
+
 ## Ajustes aplicados
 
 - HTML del shell movido a `sections/shell/`.
@@ -28,8 +30,8 @@ El proyecto ya tiene una base buena: la lógica principal vive en `js/core/` y l
 - Se eliminaron placeholders legacy de autenticación en `sections/auth`.
 - Se eliminaron scripts de migración antiguos con rutas absolutas.
 - Se eliminaron carpetas vacías (`types/`, `utils/`, `components/`) que no tenían archivos reales.
-- `package.json` ahora expone comandos claros: `assemble`, `check`, `backend:check` y `deploy`.
-- Se eliminó el subproyecto `web-legacy` y el flujo `hosting-live`; el camino oficial es Vite -> `dist/` -> Firebase Hosting.
+- `package.json` ahora expone comandos claros: `assemble`, `check`, `backend:check`, `backend:smoke` y `prepare:dist`.
+- Se eliminó el subproyecto `web-legacy` y el flujo `hosting-live`; el camino oficial es Vite -> `dist/` -> hosting estático elegido.
 - Los paneles grandes separan entrada, vista y acciones:
   - `principal.js`: registra el panel y conecta acciones.
   - `components/vista.js`: contiene el HTML dinámico y renderizado.

@@ -48,7 +48,7 @@ export async function boot() {
         id: browserSession.uid,
         uid: browserSession.uid,
         name: browserSession.name || '',
-        email: '',
+        email: browserSession.email || '',
       }
     : null;
 

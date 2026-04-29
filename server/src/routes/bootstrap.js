@@ -11,6 +11,36 @@ function badRequest(message) {
 }
 
 async function resolveSchoolForUser(client, input = {}, userId) {
+  const explicitSchoolId = String(input.schoolId || '').trim();
+  const schoolName = String(input.schoolName || '').trim();
+  if (explicitSchoolId && !schoolName) {
+    const schoolById = await client.query(
+      `SELECT id, name, academic_year, timezone
+       FROM schools
+       WHERE id = $1
+       LIMIT 1`,
+      [explicitSchoolId]
+    );
+    if (schoolById.rows[0]) return schoolById.rows[0];
+  }
+
+  if (schoolName) {
+    const academicYear = String(input.academicYear || '').trim() || null;
+    const timezone = String(input.timezone || '').trim() || 'America/Santo_Domingo';
+    const schoolResult = await client.query(
+      `INSERT INTO schools (name, academic_year, timezone)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (name) DO UPDATE
+       SET academic_year = COALESCE(EXCLUDED.academic_year, schools.academic_year),
+           timezone = COALESCE(EXCLUDED.timezone, schools.timezone),
+           updated_at = NOW()
+       RETURNING id, name, academic_year, timezone`,
+      [schoolName, academicYear, timezone]
+    );
+
+    return schoolResult.rows[0];
+  }
+
   if (userId) {
     const membershipResult = await client.query(
       `SELECT s.id, s.name, s.academic_year, s.timezone
@@ -25,35 +55,7 @@ async function resolveSchoolForUser(client, input = {}, userId) {
     if (membershipResult.rows[0]) return membershipResult.rows[0];
   }
 
-  const explicitSchoolId = String(input.schoolId || '').trim();
-  if (explicitSchoolId) {
-    const schoolById = await client.query(
-      `SELECT id, name, academic_year, timezone
-       FROM schools
-       WHERE id = $1
-       LIMIT 1`,
-      [explicitSchoolId]
-    );
-    if (schoolById.rows[0]) return schoolById.rows[0];
-  }
-
-  const schoolName = String(input.schoolName || '').trim();
-  if (!schoolName) throw badRequest('La institución es obligatoria.');
-
-  const academicYear = String(input.academicYear || '').trim() || null;
-  const timezone = String(input.timezone || '').trim() || 'America/Santo_Domingo';
-  const schoolResult = await client.query(
-    `INSERT INTO schools (name, academic_year, timezone)
-     VALUES ($1, $2, $3)
-     ON CONFLICT (name) DO UPDATE
-     SET academic_year = COALESCE(EXCLUDED.academic_year, schools.academic_year),
-         timezone = COALESCE(EXCLUDED.timezone, schools.timezone),
-         updated_at = NOW()
-     RETURNING id, name, academic_year, timezone`,
-    [schoolName, academicYear, timezone]
-  );
-
-  return schoolResult.rows[0];
+  throw badRequest('La institución es obligatoria.');
 }
 
 router.post('/profile', requireAuth, async (req, res, next) => {
@@ -63,6 +65,23 @@ router.post('/profile', requireAuth, async (req, res, next) => {
     const phone = String(req.body?.phone || '').trim() || null;
     const authProviderUid = String(req.body?.authProviderUid || '').trim() || null;
     const role = String(req.body?.role || '').trim() || 'teacher';
+    const firstName = String(req.body?.firstName || '').trim();
+    const lastName = String(req.body?.lastName || '').trim();
+    const educationLevel = String(req.body?.educationLevel || '').trim() || null;
+    const academicYear = String(req.body?.academicYear || '').trim() || null;
+    const timezone = String(req.body?.timezone || '').trim() || 'America/Santo_Domingo';
+    const preferences = req.body?.preferences && typeof req.body.preferences === 'object' && !Array.isArray(req.body.preferences)
+      ? req.body.preferences
+      : {};
+    const metadata = {};
+    if (firstName) metadata.firstName = firstName;
+    if (lastName) metadata.lastName = lastName;
+    const activePeriod = String(req.body?.activePeriod || '').trim();
+    if (activePeriod) metadata.activePeriod = activePeriod;
+    if (Array.isArray(req.body?.educationSections) && req.body.educationSections.length) {
+      metadata.educationSections = req.body.educationSections;
+    }
+    if (req.body?.setupCompleted === true) metadata.setupCompleted = true;
 
     if (!email) throw badRequest('El correo es obligatorio.');
     if (!displayName) throw badRequest('El nombre es obligatorio.');
@@ -107,24 +126,27 @@ router.post('/profile', requireAuth, async (req, res, next) => {
       const school = await resolveSchoolForUser(client, req.body || {}, user.id);
 
       await client.query(
-        `INSERT INTO user_profiles (user_id, full_name, institution_name, teacher_role, academic_year, phone)
-         VALUES ($1, $2, $3, $4, $5, $6)
+        `INSERT INTO user_profiles (user_id, full_name, institution_name, teacher_role, education_level, academic_year, phone, metadata)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb)
          ON CONFLICT (user_id) DO UPDATE
          SET full_name = EXCLUDED.full_name,
              institution_name = COALESCE(EXCLUDED.institution_name, user_profiles.institution_name),
              teacher_role = EXCLUDED.teacher_role,
+             education_level = COALESCE(EXCLUDED.education_level, user_profiles.education_level),
              academic_year = COALESCE(EXCLUDED.academic_year, user_profiles.academic_year),
              phone = COALESCE(EXCLUDED.phone, user_profiles.phone),
+             metadata = user_profiles.metadata || EXCLUDED.metadata,
              updated_at = NOW()`,
-        [user.id, displayName, school.name, role, String(req.body?.academicYear || '').trim() || null, phone]
+        [user.id, displayName, school.name, role, educationLevel, academicYear, phone, JSON.stringify(metadata)]
       );
       await client.query(
-        `INSERT INTO user_settings (user_id, timezone)
-         VALUES ($1, $2)
+        `INSERT INTO user_settings (user_id, timezone, preferences)
+         VALUES ($1, $2, $3::jsonb)
          ON CONFLICT (user_id) DO UPDATE
          SET timezone = EXCLUDED.timezone,
+             preferences = user_settings.preferences || EXCLUDED.preferences,
              updated_at = NOW()`,
-        [user.id, String(req.body?.timezone || '').trim() || 'America/Santo_Domingo']
+        [user.id, timezone, JSON.stringify(preferences)]
       );
 
       await client.query(
@@ -136,7 +158,27 @@ router.post('/profile', requireAuth, async (req, res, next) => {
         [school.id, user.id, role]
       );
 
-      return { user, school };
+      const profileResult = await client.query(
+        `SELECT full_name, institution_name, teacher_role, education_level, academic_year, phone, metadata
+         FROM user_profiles
+         WHERE user_id = $1
+         LIMIT 1`,
+        [user.id]
+      );
+      const settingsResult = await client.query(
+        `SELECT locale, timezone, theme, preferences
+         FROM user_settings
+         WHERE user_id = $1
+         LIMIT 1`,
+        [user.id]
+      );
+
+      return {
+        user,
+        school,
+        profile: profileResult.rows[0] || null,
+        settings: settingsResult.rows[0] || null,
+      };
     });
 
     res.status(200).json({ ok: true, ...result });

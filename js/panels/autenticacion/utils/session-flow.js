@@ -72,8 +72,12 @@ export function finalizarSesionAutenticacion(user, options = {}) {
   persist();
 
   if (shouldOpenSetup) {
-    closeM('m-auth');
-    openM('m-setup', { fromAuth: true });
+    forceCloseM('m-auth');
+    document.body?.classList.remove('auth-screen-open');
+    go('dashboard', { replace: true, force: true });
+    window.setTimeout(() => {
+      openM('m-setup', { fromAuth: true });
+    }, 80);
   } else {
     mostrarTableroAutenticado();
   }

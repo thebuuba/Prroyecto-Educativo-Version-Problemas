@@ -2,6 +2,7 @@ import { S } from '../state.js';
 import { isEnabled } from './client.js';
 import { clearAttendanceMonth, replaceAttendanceMonth } from './academic-endpoints.js';
 import { ensureSqlSchoolIdForProfile } from './context.js';
+import { resolveSectionSqlId, resolveStudentSqlId } from '../sql-id-utils.js';
 
 /**
  * --- Sincronización de Asistencia SQL ---
@@ -58,7 +59,7 @@ function buildSqlAttendanceMonthRows(sectionId, monthKey) {
 
   const rows = [];
   const pushRow = (studentId, attendanceDate, status, reason = null) => {
-    const cleanStudentId = String(studentId || '').trim();
+    const cleanStudentId = resolveStudentSqlId(studentId);
     const cleanDate = String(attendanceDate || '').trim().slice(0, 10);
     const cleanStatus = normalizeSqlAttendanceStatus(status || '');
     const cleanReason = String(reason || '').trim() || null;
@@ -104,15 +105,16 @@ export async function syncSqlAttendanceMonth(sectionId, monthKey, options = {}) 
   if (!isEnabled()) return null;
   const schoolId = await ensureSqlSchoolIdForProfile();
   const cleanSectionId = String(sectionId || '').trim();
+  const sqlSectionId = resolveSectionSqlId(cleanSectionId);
   const normalizedMonth = normalizeSqlAttendanceMonthKey(monthKey);
-  if (!schoolId || !cleanSectionId || !/^\d{4}-\d{2}$/.test(normalizedMonth)) return null;
+  if (!schoolId || !sqlSectionId || !/^\d{4}-\d{2}$/.test(normalizedMonth)) return null;
 
   if (options?.clear) {
-    return clearAttendanceMonth({ schoolId, sectionId: cleanSectionId, monthKey: normalizedMonth });
+    return clearAttendanceMonth({ schoolId, sectionId: sqlSectionId, monthKey: normalizedMonth });
   }
 
   const rows = buildSqlAttendanceMonthRows(cleanSectionId, normalizedMonth);
-  return replaceAttendanceMonth({ schoolId, sectionId: cleanSectionId, monthKey: normalizedMonth, rows });
+  return replaceAttendanceMonth({ schoolId, sectionId: sqlSectionId, monthKey: normalizedMonth, rows });
 }
 
 /**

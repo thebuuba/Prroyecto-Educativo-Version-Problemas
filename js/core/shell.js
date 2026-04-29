@@ -50,7 +50,8 @@ export function updateSBUser() {
   
   const displayName = getDisplayUserName();
   const displayEmail = S.sessionUserName || S.profile?.email || (S.sessionUserId ? 'usuario@aulabase.edu' : 'sin.correo@aulabase.edu');
-  const roleText = S.profile ? `${S.profile.role} - ${periodName()}` : (S.sessionUserId ? 'Perfil incompleto' : 'Sin sesión');
+  const role = String(S.profile?.role || '').trim() || (S.sessionUserId ? 'Perfil incompleto' : '');
+  const roleText = role ? `${role} - ${periodName()}` : 'Sin sesión';
 
   if (sidebarName) sidebarName.textContent = displayName;
   if (sidebarRole) sidebarRole.textContent = roleText;

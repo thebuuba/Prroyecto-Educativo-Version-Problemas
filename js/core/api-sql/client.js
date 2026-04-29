@@ -1,6 +1,15 @@
 /** Cliente HTTP base para la API SQL/RDS. */
 
-const DEFAULT_BASE_URL = import.meta.env?.VITE_API_URL || 'http://127.0.0.1:4000';
+const configuredBaseUrl = String(import.meta.env?.VITE_API_URL || '').trim();
+
+function shouldUseLocalApiFallback() {
+  if (configuredBaseUrl) return false;
+  if (import.meta.env?.DEV) return true;
+  const host = typeof window === 'undefined' ? '' : String(window.location?.hostname || '').trim();
+  return host === 'localhost' || host === '127.0.0.1';
+}
+
+const DEFAULT_BASE_URL = configuredBaseUrl || (shouldUseLocalApiFallback() ? 'http://127.0.0.1:4000' : '');
 
 export function getBaseUrl() {
   const runtime = String(window.localStorage?.getItem('aulabase:sql-api-base-url') || '').trim();

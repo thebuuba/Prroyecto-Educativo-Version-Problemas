@@ -274,7 +274,7 @@ const initialState = createInitialState() as GlobalState;
 Object.defineProperty(initialState, 'runtime', {
   value: createRuntimeState(),
   enumerable: false,
-  configurable: false,
+  configurable: true,
   writable: false,
 });
 

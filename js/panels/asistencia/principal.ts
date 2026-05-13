@@ -12,8 +12,8 @@ import { persist } from '../../core/hydration.ts';
 import { scheduleNonCriticalTask } from '../../core/utils.ts';
 import { getGroups, isAcademicMonthActive } from '../../core/domain-utils.ts';
 import { scheduleSqlAttendanceMonthSync } from '../../core/api-sql.ts';
-import { registerAttendanceActions } from './utils/actions.js';
-import { renderizarAttendanceEmpty, renderizarAttendancePanel as renderAttendancePanelView } from './components/vista.js';
+import { registerAttendanceActions } from './logic.ts';
+import { renderizarAttendanceEmpty, renderizarAttendancePanel as renderAttendancePanelView } from './view.ts';
 import {
   ATTENDANCE_V2_CODE_ORDER,
   ATTENDANCE_V2_EXCEPTION_ORDER,
@@ -26,7 +26,7 @@ import {
   normalizeMonthKey,
   setSlotCode,
   shiftMonthKey,
-} from './utils/model.js';
+} from './logic.ts';
 
 // UI State (Private to module)
 const UI = {

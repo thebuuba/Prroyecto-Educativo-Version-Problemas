@@ -1,4 +1,4 @@
-import { renderizarMatrixPanel } from './components/vista.js';
+import { renderizarMatrixPanel } from './view.ts';
 
 export function inicializar() {
   if (!window.RENDERS) window.RENDERS = {};

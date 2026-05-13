@@ -14,8 +14,8 @@ import {
   toast,
   escapeHtml,
 } from '../../core/domain-utils.ts';
-import { renderizarScheduleContent } from './components/vista.js';
-import { registerScheduleActions } from './utils/actions.js';
+import { renderizarScheduleContent } from './view.ts';
+import { registerScheduleActions } from './logic.ts';
 
 /**
  * --- Constantes Internas ---

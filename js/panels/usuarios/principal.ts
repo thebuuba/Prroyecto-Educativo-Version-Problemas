@@ -6,7 +6,7 @@
 import { S } from '../../core/state.ts';
 import { persist } from '../../core/hydration.ts';
 import { go, toast } from '../../core/domain-utils.ts';
-import { renderizarUsersView } from './components/vista.js';
+import { renderizarUsersView } from './view.ts';
 
 /**
  * --- Main Rendering ---

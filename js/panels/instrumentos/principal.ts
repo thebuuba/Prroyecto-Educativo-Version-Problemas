@@ -5,7 +5,7 @@ import {
   INSTRUMENT_META,
   UI,
   renderizarInstrumentsPanel,
-} from './components/vista.js';
+} from './view.ts';
 
 export function inicializar() {
   if (!window.RENDERS) window.RENDERS = {};

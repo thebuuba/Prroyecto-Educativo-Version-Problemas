@@ -1,5 +1,5 @@
-import { registerPlanningActions } from './utils/actions.js';
-import { renderizarPlanningPanel } from './components/vista.js';
+import { registerPlanningActions } from './logic.ts';
+import { renderizarPlanningPanel } from './view.ts';
 
 export function inicializar() {
   registerPlanningActions();

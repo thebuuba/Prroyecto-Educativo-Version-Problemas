@@ -7,8 +7,8 @@ import {
   actualizarSubjectGrid,
   renderizarGradeSetupPanel,
   subjectsForArea,
-} from './components/vista.js';
-import { registerGradeSetupActions } from './utils/actions.js';
+} from './view.ts';
+import { registerGradeSetupActions } from './logic.ts';
 
 export function inicializar() {
   registerGradeSetupActions({

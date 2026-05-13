@@ -2,8 +2,8 @@ import {
   FormState,
   actualizarPreviews,
   renderizarStudentCreatePanel,
-} from './components/vista.js';
-import { registerStudentCreateActions } from './utils/actions.js';
+} from './view.ts';
+import { registerStudentCreateActions } from './logic.ts';
 
 export function inicializar() {
   registerStudentCreateActions({ FormState, updatePreviews: actualizarPreviews });

@@ -2,8 +2,8 @@ import {
   FormState,
   actualizarSync,
   renderizarStudentEditPanel,
-} from './components/vista.js';
-import { registerStudentEditActions } from './utils/actions.js';
+} from './view.ts';
+import { registerStudentEditActions } from './logic.ts';
 
 export function inicializar() {
   registerStudentEditActions({ FormState, updateSync: actualizarSync });

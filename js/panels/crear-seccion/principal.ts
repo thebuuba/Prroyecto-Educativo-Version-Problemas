@@ -4,8 +4,8 @@ import {
   actualizarSubjectGrid,
   obtenerAreaCatalogForCurrentGrade,
   renderizarSectionCreatePanel,
-} from './components/vista.js';
-import { registerSectionCreateActions } from './utils/actions.js';
+} from './view.ts';
+import { registerSectionCreateActions } from './logic.ts';
 
 export function inicializar() {
   registerSectionCreateActions({

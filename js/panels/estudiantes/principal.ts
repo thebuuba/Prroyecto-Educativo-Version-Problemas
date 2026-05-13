@@ -1,5 +1,5 @@
-import { registrarStudentsPanel } from './components/vista.js';
-import { registerStudentsActions } from './utils/actions.js';
+import { registrarStudentsPanel } from './view.ts';
+import { registerStudentsActions } from './logic.ts';
 
 export function inicializar() {
   if (!window.RENDERS) window.RENDERS = {};

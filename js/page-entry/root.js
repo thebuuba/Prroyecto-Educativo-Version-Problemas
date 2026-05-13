@@ -22,9 +22,9 @@ import {
   registerLegacyBridge,
   registerPanelRenderer,
 } from '../core/legacy-bridge.ts';
-import { inicializar as inicializarAuth } from '../panels/autenticacion/principal.js';
-import { inicializar as inicializarSetup } from '../panels/configuracion-inicial/principal.js';
-import { inicializar as inicializarTablero } from '../panels/tablero/principal.js';
+import { inicializar as inicializarAuth } from '../panels/autenticacion/principal.ts';
+import { inicializar as inicializarSetup } from '../panels/configuracion-inicial/principal.ts';
+import { inicializar as inicializarTablero } from '../panels/tablero/principal.ts';
 
 // Inicializar paneles críticos inmediatamente
 try {

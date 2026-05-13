@@ -1,5 +1,5 @@
-import { renderizarReportsPanel } from './components/vista.js';
-import { registerReportsActions } from './utils/actions.js';
+import { renderizarReportsPanel } from './view.ts';
+import { registerReportsActions } from './logic.ts';
 
 export function inicializar() {
   registerReportsActions();

@@ -1,5 +1,5 @@
-import { renderizarActivitiesPanel } from './components/vista.js';
-import { registerActivitiesActions } from './utils/actions.js';
+import { renderizarActivitiesPanel } from './view.ts';
+import { registerActivitiesActions } from './logic.ts';
 
 export function inicializar() {
   registerActivitiesActions();

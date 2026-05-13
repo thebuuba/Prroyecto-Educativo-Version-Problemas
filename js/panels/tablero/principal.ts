@@ -21,12 +21,12 @@ import { BLOCKS } from '../../core/constants.ts';
 import { escapeHtml } from '../../core/utils.ts';
 
 // Componentes
-import { renderStatCard, renderizarTarjetaEstadistica } from './components/stat-card.js';
-import { renderCourseItem, renderizarCourseItem } from './components/course-item.js';
-import { renderOverviewItem, renderizarOverviewItem } from './components/overview-item.js';
+import { renderStatCard, renderizarTarjetaEstadistica } from './view.ts';
+import { renderCourseItem, renderizarCourseItem } from './view.ts';
+import { renderOverviewItem, renderizarOverviewItem } from './view.ts';
 
 // Utilidades
-import { buildFocusItems, construirElementosEnfoque } from './utils/focus-items.js';
+import { buildFocusItems, construirElementosEnfoque } from './logic.ts';
 
 // Alias de funciones para compatibilidad con nombres en español
 const renderTarjetaEstadistica = renderStatCard;

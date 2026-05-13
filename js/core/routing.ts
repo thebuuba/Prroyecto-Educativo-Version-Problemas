@@ -19,20 +19,20 @@ type GoOptions = {
 
 /** Diccionario de módulos que sí participan en la carga diferida vía Vite. */
 const PANEL_MODULES: PanelModuleMap = {
-  '/js/panels/usuarios/principal.js': () => import('../panels/usuarios/principal.js'),
-  '/js/panels/estudiantes/principal.js': () => import('../panels/estudiantes/principal.js'),
-  '/js/panels/actividades/principal.js': () => import('../panels/actividades/principal.js'),
-  '/js/panels/matriz/principal.js': () => import('../panels/matriz/principal.js'),
-  '/js/panels/reportes/principal.js': () => import('../panels/reportes/principal.js'),
-  '/js/panels/horario/principal.js': () => import('../panels/horario/principal.js'),
-  '/js/panels/instrumentos/principal.js': () => import('../panels/instrumentos/principal.js'),
-  '/js/panels/planificaciones/principal.js': () => import('../panels/planificaciones/principal.js'),
-  '/js/panels/asistencia/principal.js': () => import('../panels/asistencia/principal.js'),
-  '/js/panels/configuracion/principal.js': () => import('../panels/configuracion/principal.js'),
-  '/js/panels/configuracion-academica/principal.js': () => import('../panels/configuracion-academica/principal.js'),
-  '/js/panels/crear-estudiante/principal.js': () => import('../panels/crear-estudiante/principal.js'),
-  '/js/panels/crear-seccion/principal.js': () => import('../panels/crear-seccion/principal.js'),
-  '/js/panels/editar-estudiante/principal.js': () => import('../panels/editar-estudiante/principal.js'),
+  '/js/panels/usuarios/principal.ts': () => import('../panels/usuarios/principal.ts'),
+  '/js/panels/estudiantes/principal.ts': () => import('../panels/estudiantes/principal.ts'),
+  '/js/panels/actividades/principal.ts': () => import('../panels/actividades/principal.ts'),
+  '/js/panels/matriz/principal.ts': () => import('../panels/matriz/principal.ts'),
+  '/js/panels/reportes/principal.ts': () => import('../panels/reportes/principal.ts'),
+  '/js/panels/horario/principal.ts': () => import('../panels/horario/principal.ts'),
+  '/js/panels/instrumentos/principal.ts': () => import('../panels/instrumentos/principal.ts'),
+  '/js/panels/planificaciones/principal.ts': () => import('../panels/planificaciones/principal.ts'),
+  '/js/panels/asistencia/principal.ts': () => import('../panels/asistencia/principal.ts'),
+  '/js/panels/configuracion/principal.ts': () => import('../panels/configuracion/principal.ts'),
+  '/js/panels/configuracion-academica/principal.ts': () => import('../panels/configuracion-academica/principal.ts'),
+  '/js/panels/crear-estudiante/principal.ts': () => import('../panels/crear-estudiante/principal.ts'),
+  '/js/panels/crear-seccion/principal.ts': () => import('../panels/crear-seccion/principal.ts'),
+  '/js/panels/editar-estudiante/principal.ts': () => import('../panels/editar-estudiante/principal.ts'),
 };
 
 /**
@@ -113,21 +113,21 @@ export const PANEL_BUNDLES: PanelRouteMap = {
  * @type {Object<string, string>}
  */
 export const PANEL_BUNDLE_URLS: PanelRouteMap = {
-  usuarios: '/js/panels/usuarios/principal.js',
-  dashboard: '/js/panels/tablero/principal.js',
-  estudiantes: '/js/panels/estudiantes/principal.js',
-  actividades: '/js/panels/actividades/principal.js',
-  matriz: '/js/panels/matriz/principal.js',
-  reportes: '/js/panels/reportes/principal.js',
-  horario: '/js/panels/horario/principal.js',
-  instrumentos: '/js/panels/instrumentos/principal.js',
-  planificaciones: '/js/panels/planificaciones/principal.js',
-  asistencia: '/js/panels/asistencia/principal.js',
-  ajustes: '/js/panels/configuracion/principal.js',
-  grados: '/js/panels/configuracion-academica/principal.js',
-  'estudiantes-nuevo': '/js/panels/crear-estudiante/principal.js',
-  'secciones-nuevo': '/js/panels/crear-seccion/principal.js',
-  'estudiantes-edicion': '/js/panels/editar-estudiante/principal.js',
+  usuarios: '/js/panels/usuarios/principal.ts',
+  dashboard: '/js/panels/tablero/principal.ts',
+  estudiantes: '/js/panels/estudiantes/principal.ts',
+  actividades: '/js/panels/actividades/principal.ts',
+  matriz: '/js/panels/matriz/principal.ts',
+  reportes: '/js/panels/reportes/principal.ts',
+  horario: '/js/panels/horario/principal.ts',
+  instrumentos: '/js/panels/instrumentos/principal.ts',
+  planificaciones: '/js/panels/planificaciones/principal.ts',
+  asistencia: '/js/panels/asistencia/principal.ts',
+  ajustes: '/js/panels/configuracion/principal.ts',
+  grados: '/js/panels/configuracion-academica/principal.ts',
+  'estudiantes-nuevo': '/js/panels/crear-estudiante/principal.ts',
+  'secciones-nuevo': '/js/panels/crear-seccion/principal.ts',
+  'estudiantes-edicion': '/js/panels/editar-estudiante/principal.ts',
 };
 
 /** Registro de bundles ya cargados en la sesión actual. */

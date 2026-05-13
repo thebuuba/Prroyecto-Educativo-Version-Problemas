@@ -1,4 +1,4 @@
-import { renderizarSettingsView } from './components/vista.js';
+import { renderizarSettingsView } from './view.ts';
 
 /**
  * UI Rendering

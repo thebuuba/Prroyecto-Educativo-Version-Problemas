@@ -30,14 +30,14 @@ import {
 import {
   currentAuthMode,
   establecerAuthMode,
-} from './utils/auth-mode.js';
+} from './logic.ts';
 import {
   ensureIndividualLicenseModel,
   finalizarSesionAutenticacion,
   mostrarTableroAutenticado,
   restoreSqlSessionIfAvailable,
-} from './utils/session-flow.js';
-import { setupAuthButtonListeners } from './utils/event-bindings.js';
+} from './logic.ts';
+import { setupAuthButtonListeners } from './logic.ts';
 import {
   clearRegisterFieldErrors,
   createLocalPasswordRecord,
@@ -51,9 +51,9 @@ import {
   showAuthCornerToast,
   togglePasswordVisibility,
   validateRegisterPassword,
-} from './utils/auth-support.js';
+} from './logic.ts';
 
-export { currentAuthMode, establecerAuthMode } from './utils/auth-mode.js';
+export { currentAuthMode, establecerAuthMode } from './logic.ts';
 
 // --- Auth Flow Logic ---
 

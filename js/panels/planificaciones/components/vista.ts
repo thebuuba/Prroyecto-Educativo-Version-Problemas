@@ -13,7 +13,7 @@ import {
   lessonPlanSectionOptionsForGradeId,
 } from '../../../core/domain-utils.ts';
 import { LESSON_PLAN_TRANSVERSAL_AXES } from '../../../core/constants.ts';
-import { getPlanningState } from '../utils/actions.js';
+import { getPlanningState } from '../utils/actions.ts';
 
 function renderizarHeader(draftsCount, totalCount) {
   return `

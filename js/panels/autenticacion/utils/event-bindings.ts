@@ -9,8 +9,8 @@ import {
   readBrowserSession,
 } from '../../../core/hydration.ts';
 import { forceCloseM } from '../../../core/ui.ts';
-import { establecerAuthMode } from './auth-mode.js';
-import { mostrarTableroAutenticado } from './session-flow.js';
+import { establecerAuthMode } from './auth-mode.ts';
+import { mostrarTableroAutenticado } from './session-flow.ts';
 
 let cloudAuthStateBound = false;
 

@@ -1,1 +1,1 @@
-export * from './components/vista.js';
+export * from './components/vista.ts';

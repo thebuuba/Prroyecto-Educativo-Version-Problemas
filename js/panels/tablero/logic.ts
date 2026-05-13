@@ -1,1 +1,1 @@
-export * from './utils/focus-items.js';
+export * from './utils/focus-items.ts';

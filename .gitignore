@@ -18,3 +18,5 @@ server/.npm-cache/
 __pycache__/
 *.pyc
 .venv/
+.vercel
+.env*.local

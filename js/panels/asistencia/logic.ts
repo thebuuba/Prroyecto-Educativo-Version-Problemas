@@ -1,2 +1,2 @@
-export * from './utils/actions.js';
-export * from './utils/model.js';
+export * from './utils/actions.ts';
+export * from './utils/model.ts';

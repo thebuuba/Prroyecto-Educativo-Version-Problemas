@@ -11,7 +11,7 @@ import {
   setAuthNote,
   setupRegisterFieldUX,
   updateRegisterPasswordStrengthUI,
-} from './auth-support.js';
+} from './auth-support.ts';
 
 export function currentAuthMode() {
   return document.querySelector('.auth-panel')?.dataset.mode === 'register' ? 'register' : 'login';

@@ -19,7 +19,7 @@ import {
   ensureActiveContext
 } from '../../../core/domain-utils.ts';
 import { sortCourses, escapeHtml } from '../../../core/utils.ts';
-import { getStudentsViewMode } from '../utils/actions.js';
+import { getStudentsViewMode } from '../utils/actions.ts';
 
 /**
  * Renderiza el panel bento moderno de gestión de estudiantes.

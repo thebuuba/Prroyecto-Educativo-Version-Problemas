@@ -261,17 +261,6 @@ export function manejarInstitutionKeydown(event) {
   clearInstitutionInlineHint();
 }
 
-// Inyección en window para compatibilidad con HTML onclick e inline scripts
-window.saveSetup = guardarSetup;
-window.cancelSetup = cancelSetup;
-window.populateSetupForm = populateSetupForm;
-window.enforceMandatorySetup = enforceMandatorySetup;
-window.handlePhoneInput = manejarPhoneInput;
-window.handleInstitutionInput = manejarInstitutionInput;
-window.handleInstitutionKeydown = manejarInstitutionKeydown;
-window.updateInstitutionInlineHint = actualizarInstitutionInlineHint;
-window.clearInstitutionInlineHint = clearInstitutionInlineHint;
-
 // Export de compatibilidad para nombres en inglés
 export const saveSetup = guardarSetup;
 export const handlePhoneInput = manejarPhoneInput;

@@ -188,6 +188,10 @@ export function initShell(): void {
   syncSidebarNavState(S.currentPage || 'tablero');
   applyUserPreferences();
   
+  // Suscripciones reactivas al store
+  S.subscribe('sessionUserId', () => { updateSBUser(); });
+  S.subscribe('currentPage', () => { syncSidebarNavState(S.currentPage); });
+
   // Registro en el objeto window para compatibilidad legacy
   window.updateSBUser = updateSBUser;
   window.closeProfileMenu = closeProfileMenu;

@@ -315,8 +315,15 @@
 
 <!-- Runtime compartido: toast global, auth bootstrap y entrypoint de la app. -->
 <div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+<script>
+// Fallback de configuracion Supabase por si VITE_ no se inyecta (ej. Vercel sin env vars configuradas)
+window.EDUGEST_SUPABASE_CONFIG = window.EDUGEST_SUPABASE_CONFIG || {
+  url: 'https://zxuscgenmwseruvcaafm.supabase.co',
+  anonKey: 'sb_publishable_OEuKjKStVVzP99x3rT0B0Q_M3O1xUhB',
+};
+</script>
 <script type="module" src="/login-registro-auth/auth-bootstrap.js"></script>
-<script type="module" src="/js/page-entry/root.js"></script>
+<script type="module" src="/js/page-entry/root.ts"></script>
 
 <!-- EduGest AI Copilot Container -->
 <div id="ai-copilot-container" class="ai-closed" hidden aria-hidden="true" style="display:none">

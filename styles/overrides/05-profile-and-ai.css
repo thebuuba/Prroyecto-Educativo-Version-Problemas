@@ -445,3 +445,37 @@ body:has(#m-auth.open) #ai-copilot-container,
     filter: brightness(0) saturate(100%) invert(24%) sepia(69%) saturate(1918%) hue-rotate(327deg) brightness(83%) contrast(90%) !important;
   }
 }
+
+/* Fondo general menos blanco para separar mejor las superficies del sistema. */
+body:not(.auth-screen-open):not(.theme-dark) {
+  background:
+    radial-gradient(circle at 18% 10%, rgba(143, 180, 218, .22) 0%, transparent 28%),
+    linear-gradient(180deg, #e8eef5 0%, #dce5ee 100%) !important;
+}
+
+body:not(.auth-screen-open):not(.theme-dark) #main {
+  background: transparent !important;
+}
+
+body:not(.auth-screen-open):not(.theme-dark) #view {
+  background:
+    linear-gradient(180deg, rgba(232, 238, 245, .86) 0%, rgba(220, 229, 238, .92) 100%) !important;
+}
+
+body:not(.auth-screen-open):not(.theme-dark) #topbar {
+  background: rgba(244, 248, 252, .92) !important;
+  border-bottom-color: rgba(174, 190, 210, .72) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .7), 0 10px 24px rgba(54, 75, 102, .06) !important;
+}
+
+body:not(.auth-screen-open):not(.theme-dark) #view .card,
+body:not(.auth-screen-open):not(.theme-dark) .card,
+body:not(.auth-screen-open):not(.theme-dark) #view .settings-page-card,
+body:not(.auth-screen-open):not(.theme-dark) #view .settings-section-card,
+body:not(.auth-screen-open):not(.theme-dark) #view .planner-card,
+body:not(.auth-screen-open):not(.theme-dark) #view .dashboard-summary-card,
+body:not(.auth-screen-open):not(.theme-dark) #view .dashboard-overview-card,
+body:not(.auth-screen-open):not(.theme-dark) #view .dashboard-quick-card {
+  background: rgba(248, 251, 254, .88) !important;
+  border-color: rgba(183, 197, 215, .72) !important;
+}

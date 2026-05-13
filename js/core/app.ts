@@ -76,6 +76,35 @@ function cleanOAuthCallbackUrl() {
   }
 }
 
+function refreshSessionUi() {
+  if (typeof window.updateSBUser === 'function') window.updateSBUser();
+  if (typeof window.refreshTop === 'function') window.refreshTop();
+}
+
+function hideBootSplashNow(reason = 'boot_ready') {
+  if (typeof window.hideBootSplash === 'function') {
+    window.hideBootSplash(reason);
+  }
+}
+
+function scheduleCloudStateHydration(user, page) {
+  if (!user?.id) return;
+  window.setTimeout(() => {
+    hydrateCloudStateForUser(user)
+      .then(() => {
+        refreshSessionUi();
+        go(page || S.currentPage || 'dashboard', {
+          replace: true,
+          force: true,
+          skipHistory: true,
+        });
+      })
+      .catch((error) => {
+        console.warn('[EduGest][boot] Hidratación SQL en segundo plano falló:', error);
+      });
+  }, 0);
+}
+
 /**
  * Función de arranque principal de la aplicación.
  * Realiza la carga de datos desde almacenamiento local, resuelve la página de inicio
@@ -126,17 +155,14 @@ export async function boot() {
     }
   }
   
-  // 3. Si hay usuario de Supabase, restaurar/sincronizar sesión local
+  // 3. Si hay usuario de Supabase, aplicar sesión rápido y dejar SQL en segundo plano.
+  let shouldHydrateCloudInBackground = false;
   if (cloudUser && S.sessionUserId !== cloudUser.id) {
-    await hydrateCloudStateForUser(cloudUser);
-    
-    // Sincronizar UI después de restaurar sesión
-    if (typeof window.updateSBUser === 'function') window.updateSBUser();
-    if (typeof window.refreshTop === 'function') window.refreshTop();
+    applySessionUser(cloudUser);
+    shouldHydrateCloudInBackground = true;
+    refreshSessionUi();
   } else {
-    // Sincronizar UI normal si no hubo restauración
-    if (typeof window.updateSBUser === 'function') window.updateSBUser();
-    if (typeof window.refreshTop === 'function') window.refreshTop();
+    refreshSessionUi();
   }
   
   // 4. Determinación de la página inicial (URL > Estado > Default)
@@ -170,14 +196,16 @@ export async function boot() {
     
     go(page, { replace: true, force: true });
     document.documentElement?.classList.remove('auth-session-checking');
+    hideBootSplashNow('boot_ready');
+    if (shouldHydrateCloudInBackground) {
+      scheduleCloudStateHydration(cloudUser, page);
+    }
   } else {
     showAuthModal();
   }
   
   // 6. Ocultar pantalla de bienvenida (Splash Screen) una vez listo
-  if (typeof window.hideBootSplash === 'function') {
-    window.hideBootSplash('boot_complete');
-  }
+  hideBootSplashNow('boot_complete');
 
   // 7. Verificación post-boot: Resiliencia de sesión
   //    Si no hay sesión en S pero SÍ hay un token en el navegador, evitamos borrarlo
@@ -186,8 +214,6 @@ export async function boot() {
     console.warn('[EduGest][boot] Sin sesión detectada en ningún lugar, limpiando rastro local.');
     clearBrowserSession(); 
     showAuthModal();
-  } else if (cloudUser && S.sessionUserId !== cloudUser.id) {
-    await hydrateCloudStateForUser(cloudUser);
   }
 }
 

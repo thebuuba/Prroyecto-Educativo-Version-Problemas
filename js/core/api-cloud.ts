@@ -380,9 +380,9 @@ export async function getCurrentUser() {
   if (!supabase) return null;
   const { data: sessionData } = await supabase.auth.getSession();
   if (!sessionData?.session) return null;
-  const { data, error } = await supabase.auth.getUser();
-  if (error) return normalizeUser(sessionData.session.user);
-  return normalizeUser(data.user || sessionData.session.user);
+  // Para el arranque visual usamos la sesión persistida localmente. `getUser()`
+  // valida contra red y puede dejar la SPA en splash varios segundos.
+  return normalizeUser(sessionData.session.user);
 }
 
 export async function bindAuthStateChanged(): Promise<any | null> {

@@ -139,9 +139,10 @@ export function initShell(): void {
     }
   });
 
-  // Interacción de la Barra Lateral (Hover y Auto-cierre)
+  // En escritorio la barra queda fija para evitar relayouts por hover.
   const sidebarEl = document.getElementById('sb');
-  if (sidebarEl) {
+  const shouldUseHoverSidebar = window.matchMedia?.('(max-width: 760px)')?.matches ?? false;
+  if (sidebarEl && shouldUseHoverSidebar) {
     sidebarEl.addEventListener('mouseenter', () => {
        clearSidebarCloseTimer();
        setSidebarExpanded(true);

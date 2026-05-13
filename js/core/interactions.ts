@@ -62,8 +62,9 @@ export function scheduleSidebarAutoClose(sidebar, delayMs) {
 export function syncSidebarOverlayState() {
   const sidebar = document.getElementById('sb');
   const backdrop = document.getElementById('sb-backdrop');
+  const isDesktop = window.matchMedia?.('(min-width: 761px)')?.matches ?? true;
   const isExpanded = !!sidebar?.classList.contains('sb-expanded');
-  const overlayOpen = isExpanded;
+  const overlayOpen = !isDesktop && isExpanded;
   document.body.classList.toggle('sb-overlay-open', overlayOpen);
   if (backdrop) {
     backdrop.hidden = !overlayOpen;

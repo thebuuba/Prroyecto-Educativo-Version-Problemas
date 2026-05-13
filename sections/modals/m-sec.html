@@ -1,0 +1,31 @@
+<!-- Modal de secciones: vincula el grado con la materia, aula y configuración asociada. -->
+<div class="ov" id="m-sec">
+  <div class="modal">
+    <div class="mh"><div class="mt">Nueva Sección</div><button class="mx" onclick="closeM('m-sec')">&times;</button></div>
+    <div class="mb">
+      <div class="fr">
+        <div class="fg"><label class="lbl">Grado</label><select class="sel" id="sec-g" onchange="refreshSectionCurriculumForm('sec', true)"></select></div>
+        <div class="fg"><label class="lbl">Secci&oacute;n</label><input class="inp" id="sec-s" placeholder="A, B, C..."></div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Área</label>
+        <div class="field-inline-actions">
+          <select class="sel" id="sec-area" onchange="refreshSectionCurriculumForm('sec', true)"></select>
+          <button class="btn btn-outline btn-sm" type="button" onclick="createSectionCustomArea('sec')">+ Área</button>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Asignatura / materia</label>
+        <div class="field-inline-actions">
+          <select class="sel" id="sec-m"></select>
+          <button class="btn btn-outline btn-sm" type="button" onclick="createSectionCustomSubject('sec')">+ Asignatura</button>
+        </div>
+      </div>
+      <div class="fg"><label class="lbl">Aula por defecto (opcional)</label><input class="inp" id="sec-room" placeholder="Ej. Aula 3A"></div>
+      <div class="mf">
+        <button class="btn btn-outline" onclick="closeM('m-sec')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveSec()">Crear secci&oacute;n</button>
+      </div>
+    </div>
+  </div>
+</div>

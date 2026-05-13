@@ -15,6 +15,7 @@ import {
 import { syncSqlStudentCreateOrUpdate } from './sync-logic.ts';
 import { ensurePeriodBuckets, getGroupLabel } from './academic-context-logic.ts';
 import { studentFinal } from './math-utils.ts';
+import { ensureModalLoaded } from './modal-loader.ts';
 
 // --- Estado de Carga Masiva ---
 export const BULK_IMPORT_STATE = {
@@ -50,7 +51,7 @@ export function chooseStudentAddMode(mode) {
  * Abre el modal de registro manual de estudiante.
  * @param {string} [secId] - ID de sección sugerido.
  */
-export function openEstM(secId) {
+export async function openEstM(secId) {
   const targetSecId = secId || S.activeGroupId;
   const sections = sortCourses(getScopedSections());
   
@@ -59,6 +60,7 @@ export function openEstM(secId) {
     return;
   }
 
+  await ensureModalLoaded('m-est');
   fillSel('e-sec', sections, s => s.id, s => `${s.grado} ${s.sec} · ${s.materia}`, targetSecId || sections[0].id);
   
   // Limpiar campos si es necesario
@@ -133,9 +135,11 @@ export async function saveEst(options = {}) {
 /**
  * Abre la vista detallada de un estudiante.
  */
-export function openViewStudent(stId) {
+export async function openViewStudent(stId) {
   const st = S.estudiantes.find(e => e.id === stId);
   if (!st) return;
+
+  await ensureModalLoaded('m-est-view');
 
   const secId = st.courseId || st.sectionId || st.seccionId || '';
   const sec = S.secciones.find(s => s.id === secId);
@@ -163,10 +167,11 @@ export function openViewStudent(stId) {
 /**
  * Abre el modal para editar un estudiante.
  */
-export function openEditStudent(stId) {
+export async function openEditStudent(stId) {
   const st = S.estudiantes.find(e => e.id === stId);
   if (!st) return;
 
+  await ensureModalLoaded('m-est-edit');
   const sections = sortCourses(getScopedSections());
   fillSel('ee-sec', sections, s => s.id, s => `${s.grado} ${s.sec} · ${s.materia}`, st.courseId || st.sectionId || st.seccionId);
 
@@ -259,13 +264,14 @@ export function upsertStudentDirectoryEntry(student, sectionId = '') {
 /**
  * Abre el modal de carga masiva de estudiantes.
  */
-export function openBulkEstM(secId) {
+export async function openBulkEstM(secId) {
   const sections = sortCourses(getScopedSections());
   if (sections.length === 0) {
     toast('Crea una sección antes de la carga masiva', true);
     return;
   }
 
+  await ensureModalLoaded('m-est-bulk');
   fillSel('be-sec', sections, s => s.id, s => `${s.grado} ${s.sec} · ${s.materia}`, secId || S.activeGroupId || sections[0].id);
   
   const ta = document.getElementById('be-list');

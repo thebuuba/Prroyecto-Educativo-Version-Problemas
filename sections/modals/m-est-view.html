@@ -1,0 +1,41 @@
+<!-- Ver Estudiante -->
+<div class="ov" id="m-est-view">
+  <div class="modal modal-est-view">
+    <div class="mh"><div class="mt">Datos del Estudiante</div><button class="mx" onclick="closeM('m-est-view')">&times;</button></div>
+    <div class="mb">
+      <input type="hidden" id="sv-id">
+      <div class="student-view-layout">
+        <aside class="student-view-hero">
+          <div class="student-view-avatar-wrap" ondblclick="openStudentViewPhotoPicker()" title="Doble clic para agregar o cambiar la foto">
+            <img class="student-view-avatar" id="sv-photo" alt="Foto del estudiante">
+          </div>
+          <input type="file" id="sv-photo-file" accept="image/*" hidden onchange="handleStudentViewPhotoInput(this)">
+          <div class="student-view-hero-copy">
+            <div class="student-view-hero-name" id="sv-hero-name">—</div>
+            <div class="student-view-hero-course" id="sv-hero-course">—</div>
+          </div>
+        </aside>
+        <div class="student-view-details">
+          <div class="fr">
+            <div class="fg"><label class="lbl">Nombre completo</label><div class="student-view-value" id="sv-name">—</div></div>
+            <div class="fg"><label class="lbl">Matr&iacute;cula</label><div class="student-view-value" id="sv-mat">—</div></div>
+          </div>
+          <div class="fr3">
+            <div class="fg"><label class="lbl">Grado</label><div class="student-view-value" id="sv-grade">—</div></div>
+            <div class="fg"><label class="lbl">Secci&oacute;n</label><div class="student-view-value" id="sv-section">—</div></div>
+            <div class="fg"><label class="lbl">Materias</label><div class="student-view-value" id="sv-subject">—</div></div>
+          </div>
+          <div class="fg"><label class="lbl">Cursos</label><div class="student-view-value" id="sv-course">—</div></div>
+          <div class="fr">
+            <div class="fg"><label class="lbl">Final</label><div class="student-view-value" id="sv-final">—</div></div>
+            <div class="fg"><label class="lbl">Estado</label><div class="student-view-value" id="sv-status">—</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="mf">
+        <button class="btn btn-primary" onclick="openEditStudentFromView()">Editar</button>
+        <button class="btn btn-outline" onclick="closeM('m-est-view')">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

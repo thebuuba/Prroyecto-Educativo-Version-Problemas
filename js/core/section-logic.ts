@@ -13,12 +13,13 @@ import {
 import { syncSqlSectionCreateOrUpdate } from './sync-logic.ts';
 import { ensurePeriodBuckets } from './academic-context-logic.ts';
 import { emptyGroupCfg } from './config.ts';
+import { ensureModalLoaded } from './modal-loader.ts';
 
 /**
  * Abre el modal para crear una nueva sección o asignatura.
  * @param {string} [gradeId] - ID del grado al que pertenecerá.
  */
-export function openSecM(gradeId) {
+export async function openSecM(gradeId) {
   const targetGradeId = gradeId || S.activeGradeId;
   const grades = getScopedGrades();
 
@@ -27,6 +28,7 @@ export function openSecM(gradeId) {
     return;
   }
 
+  await ensureModalLoaded('m-sec');
   fillSel('sec-g', grades, g => g.id, g => g.name, targetGradeId || grades[0].id);
   
   // Limpiar campos del modal
@@ -139,10 +141,11 @@ export function migrateSectionReferences(oldId, newId) {
 /**
  * Abre el modal para editar una sección.
  */
-export function openEditSection(sectionId) {
+export async function openEditSection(sectionId) {
   const sec = S.secciones.find(s => s.id === sectionId);
   if (!sec) return;
 
+  await ensureModalLoaded('m-sec-edit');
   const grades = getScopedGrades();
   fillSel('es-gid', grades, g => g.id, g => g.name, sec.gradeId);
 
@@ -196,12 +199,10 @@ export async function saveEditSection() {
  */
 export function openSubjectInGrade(gradeId, sectionId) {
   const sec = S.secciones.find(s => s.id === sectionId);
-  openSecM(gradeId || sec?.gradeId);
-  
-  window.setTimeout(() => {
+  openSecM(gradeId || sec?.gradeId).then(() => window.setTimeout(() => {
     const secInput = document.getElementById('sec-s');
     if (secInput && sec) secInput.value = sec.sec;
     const areaInput = document.getElementById('sec-area');
     if (areaInput && sec) areaInput.value = sec.area || '';
-  }, 100);
+  }, 100));
 }

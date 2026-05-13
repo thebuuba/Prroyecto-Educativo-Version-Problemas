@@ -1,0 +1,14 @@
+<!-- Modal de plantilla: guarda una configuración de actividades reutilizable. -->
+<div class="ov" id="m-tpl">
+  <div class="modal">
+    <div class="mh"><div class="mt">Guardar Plantilla</div><button class="mx" onclick="closeM('m-tpl')">&times;</button></div>
+    <div class="mb">
+      <div class="fg"><label class="lbl">Nombre de la plantilla</label><input class="inp" id="tpl-name" placeholder='Ej. "P2 Secundaria (5x20)"'></div>
+      <div class="fg"><label class="lbl">Descripci&oacute;n</label><input class="inp" id="tpl-desc" placeholder="Descripci&oacute;n breve..."></div>
+      <div class="mf">
+        <button class="btn btn-outline" onclick="closeM('m-tpl')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveTpl()">Guardar plantilla</button>
+      </div>
+    </div>
+  </div>
+</div>

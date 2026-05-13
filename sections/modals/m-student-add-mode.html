@@ -1,0 +1,22 @@
+<!-- Selector de modo para agregar estudiantes: flujo manual o carga masiva. -->
+<div class="ov" id="m-student-add-mode">
+  <div class="modal">
+    <div class="mh"><div class="mt">¿Cómo deseas agregar los estudiantes?</div><button class="mx" onclick="closeM('m-student-add-mode')">&times;</button></div>
+    <div class="mb">
+      <p class="es" style="margin:0 0 12px;">Puedes registrarlos manualmente o subir varios a la vez.</p>
+      <div class="fr">
+        <div class="fg">
+          <button class="btn btn-primary" type="button" onclick="chooseStudentAddMode('manual')">Agregar uno por uno</button>
+          <div class="form-note">Manual: ideal si vas a registrar pocos estudiantes.</div>
+        </div>
+        <div class="fg">
+          <button class="btn btn-outline" type="button" onclick="chooseStudentAddMode('bulk')">Carga masiva</button>
+          <div class="form-note">Carga masiva: ideal para subir un curso completo.</div>
+        </div>
+      </div>
+      <div class="mf">
+        <button class="btn btn-outline" type="button" onclick="closeM('m-student-add-mode')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>

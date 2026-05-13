@@ -1,0 +1,57 @@
+<!-- Modal de grados: crea o edita la estructura académica base del curso. -->
+<div class="ov" id="m-grade">
+  <div class="modal">
+    <div class="mh"><div class="mt">Nuevo Grado</div><button class="mx" onclick="closeM('m-grade')">&times;</button></div>
+    <div class="mb">
+      <div class="fr">
+        <div class="fg">
+          <label class="lbl">Nivel</label>
+          <select class="sel" id="gr-edu-level" onchange="handleGradeEducationLevelChange(this.value)">
+            <option value="Inicial">Inicial</option>
+            <option value="Primaria">Primaria</option>
+            <option value="Secundaria">Secundaria</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="lbl">Grado</label>
+          <select class="sel" id="gr-grade-num" onchange="refreshGradeCurriculumForm(true)">
+            <option value="">Selecciona un grado</option>
+          </select>
+        </div>
+      </div>
+      <div class="fr">
+        <div class="fg">
+          <label class="lbl">Sección</label>
+          <div class="field-inline-actions">
+            <select class="sel" id="gr-section"></select>
+            <button class="btn btn-outline btn-sm" type="button" onclick="createGradeCustomSection()">+ Sección</button>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="lbl">Área</label>
+          <div class="field-inline-actions">
+            <select class="sel" id="gr-area" onchange="refreshGradeCurriculumForm(true)"></select>
+            <button class="btn btn-outline btn-sm" type="button" onclick="createGradeCustomArea()">+ Área</button>
+          </div>
+        </div>
+      </div>
+      <div class="fr">
+        <div class="fg">
+          <label class="lbl">Asignatura</label>
+          <div class="field-inline-actions">
+            <select class="sel" id="gr-subject"></select>
+            <button class="btn btn-outline btn-sm" type="button" onclick="createGradeCustomSubject()">+ Asignatura</button>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="lbl">Aula física (opcional)</label>
+          <input class="inp" id="gr-room" placeholder="Ej. Aula 3A">
+        </div>
+      </div>
+      <div class="mf">
+        <button class="btn btn-outline" onclick="closeM('m-grade')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveGrade()">Crear grado</button>
+      </div>
+    </div>
+  </div>
+</div>

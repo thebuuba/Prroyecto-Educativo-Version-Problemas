@@ -1,0 +1,34 @@
+<!-- Modal de actividad: define nombre, bloque, tipo, puntos y observaciones. -->
+<div class="ov" id="m-act">
+  <div class="modal">
+    <div class="mh"><div class="mt">Nueva Actividad</div><button class="mx" onclick="closeM('m-act')">&times;</button></div>
+    <div class="mb">
+      <div class="fg"><label class="lbl">Nombre</label><input class="inp" id="a-nom" placeholder="Ej. Presentación oral - Sec. 2"></div>
+      <div class="fr">
+        <div class="fg"><label class="lbl">Bloque</label>
+          <select class="sel" id="a-blq">
+            <option value="B1">Comunicativa</option>
+            <option value="B2">Pensamiento lógico, creativo y crítico / Resolución de problemas</option>
+            <option value="B3">Ética y ciudadana / Desarrollo personal y espiritual</option>
+            <option value="B4">Científica y tecnológica / Ambiental y de la salud</option>
+          </select>
+        </div>
+        <div class="fg"><label class="lbl">Tipo</label>
+          <select class="sel" id="a-tipo">
+            <option>Pr&aacute;ctica</option><option>Proyecto</option><option>Exposici&oacute;n</option>
+            <option>Experimento</option><option>Prueba escrita</option>
+          </select>
+        </div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label class="lbl">Puntos</label><input class="inp" type="number" id="a-pts" value="20" min="0" max="999" step="0.1" inputmode="decimal"></div>
+        <div class="fg"><label class="lbl">Fecha</label><input class="inp" type="date" id="a-fecha"></div>
+      </div>
+      <div class="fg"><label class="lbl">Observaciones</label><textarea class="ta" id="a-obs" placeholder="Notas opcionales..."></textarea></div>
+      <div class="mf">
+        <button class="btn btn-outline" onclick="closeM('m-act')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveAct()">Guardar actividad</button>
+      </div>
+    </div>
+  </div>
+</div>

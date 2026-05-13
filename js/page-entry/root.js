@@ -15,6 +15,7 @@ import { boot } from '../core/app.ts';
 import { initShell } from '../core/shell.ts';
 import { initDeleters } from '../core/deleters.ts';
 import { loadedPanelBundles } from '../core/routing.ts';
+import { registerDefaultModals } from '../core/modal-loader.ts';
 import { mountAuthFragments } from '../../login-registro-auth/auth-loader.js';
 import {
   installPersistGuards,
@@ -55,6 +56,7 @@ registerPanelRenderer();
  * Gestiona el arranque de los subsistemas y la hidratación de datos.
  */
 function startEduGest() {
+  registerDefaultModals();
   mountAuthFragments();
 
   // Inicializar componentes del shell (Sidebars, Modales, Tooltips)

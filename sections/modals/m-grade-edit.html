@@ -1,0 +1,17 @@
+<!-- Editar Grado -->
+<div class="ov" id="m-grade-edit">
+  <div class="modal">
+    <div class="mh"><div class="mt">Editar Grado</div><button class="mx" onclick="closeM('m-grade-edit')">&times;</button></div>
+    <div class="mb">
+      <input type="hidden" id="eg-id">
+      <div class="fr">
+        <div class="fg"><label class="lbl">Nivel educativo</label><select class="sel" id="eg-edu-level"><option value="Inicial">Inicial</option><option value="Primaria">Primaria</option><option value="Secundaria">Secundaria</option></select></div>
+        <div class="fg"><label class="lbl">Grado</label><select class="sel" id="eg-grade-num"><option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option><option value="4to">4to</option><option value="5to">5to</option><option value="6to">6to</option></select></div>
+      </div>
+      <div class="mf">
+        <button class="btn btn-outline" onclick="closeM('m-grade-edit')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveEditGrade()">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -7,6 +7,7 @@
  */
 
 import { S } from './state.ts';
+import { ensureModalLoaded } from './modal-loader.ts';
 import { fixMojibakeText } from './utils.ts';
 import { DEFAULT_PERIODS } from './constants.ts';
 import { getGroupLabel, getGroups, ensureActiveContext } from './academic-context-logic.ts';
@@ -42,15 +43,26 @@ export function initials(n) {
  * @param {string} id - ID del modal.
  * @param {Object} [context={}] - Datos de contexto (ej. para configuración inicial).
  */
-export function openM(id, context = {}) {
+export function openM(id: string, context: Record<string, unknown> = {}) {
+  const modal = document.getElementById(id);
+  if (!modal) {
+    ensureModalLoaded(id)
+      .then((loadedModal) => {
+        if (loadedModal) openM(id, context);
+      })
+      .catch((error) => {
+        console.error('[EduGest][modal-loader] Error abriendo modal:', id, error);
+        toast('No se pudo abrir el modal solicitado.', true);
+      });
+    return;
+  }
+
   // Gancho para inicialización legacy
   if (typeof window.onOpenCreateModal === 'function') {
     window.onOpenCreateModal(id, context);
   }
 
-  const modal = document.getElementById(id);
   const aiCopilot = document.getElementById('ai-copilot-container');
-  if (!modal) return;
 
   if (id === 'm-setup') {
     modal.classList.toggle('auth-setup', !!context.fromAuth);

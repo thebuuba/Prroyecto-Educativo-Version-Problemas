@@ -5,10 +5,10 @@
  * Reemplaza la lógica legada que residía en el monolito 00-core-state-and-utils.js.
  */
 
-import { S } from '../../core/state.js';
-import { persist } from '../../core/hydration.js';
-import { openM, closeM } from '../../core/ui.js';
-import { go } from '../../core/routing.js';
+import { S } from '../../core/state.ts';
+import { persist } from '../../core/hydration.ts';
+import { openM, closeM } from '../../core/ui.ts';
+import { go } from '../../core/routing.ts';
 import { 
   v, 
   normalizePhoneValue, 
@@ -17,7 +17,7 @@ import {
   normalizeSchoolName,
   applyEducationSectionTheme,
   escapeHtml
-} from '../../core/utils.js';
+} from '../../core/utils.ts';
 
 /**
  * Inicializa el panel de configuración inicial.

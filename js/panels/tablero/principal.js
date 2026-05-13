@@ -6,9 +6,9 @@
  * y sugerencias contextuales al docente.
  */
 
-import { S } from '../../core/state.js';
-import { go } from '../../core/routing.js';
-import { persist } from '../../core/hydration.js';
+import { S } from '../../core/state.ts';
+import { go } from '../../core/routing.ts';
+import { persist } from '../../core/hydration.ts';
 import { 
   getScopedSections, 
   getScopedStudents, 
@@ -16,9 +16,9 @@ import {
   periodName, 
   normalizeCourseSearchText,
   studentsInGroup
-} from '../../core/domain-utils.js';
-import { BLOCKS } from '../../core/constants.js';
-import { escapeHtml } from '../../core/utils.js';
+} from '../../core/domain-utils.ts';
+import { BLOCKS } from '../../core/constants.ts';
+import { escapeHtml } from '../../core/utils.ts';
 
 // Componentes
 import { renderStatCard, renderizarTarjetaEstadistica } from './components/stat-card.js';

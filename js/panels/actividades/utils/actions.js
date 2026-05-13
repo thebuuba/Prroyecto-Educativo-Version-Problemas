@@ -1,7 +1,7 @@
-import { S } from '../../../core/state.js';
-import { go } from '../../../core/routing.js';
-import { persist } from '../../../core/hydration.js';
-import { uid, getGroupCfg, findActivity } from '../../../core/domain-utils.js';
+import { S } from '../../../core/state.ts';
+import { go } from '../../../core/routing.ts';
+import { persist } from '../../../core/hydration.ts';
+import { uid, getGroupCfg, findActivity } from '../../../core/domain-utils.ts';
 
 async function syncActivityRecord(activity, meta = {}) {
   if (!activity || !window.AulaBaseSqlApi?.isEnabled?.() || typeof window.AulaBaseSqlApi.syncSqlActivityCreateOrUpdate !== 'function') {

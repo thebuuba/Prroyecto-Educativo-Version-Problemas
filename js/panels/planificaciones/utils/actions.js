@@ -8,7 +8,7 @@ import {
   lessonPlanDraft,
   lessonPlanPersistDraftNow,
   ensureLessonPlansState,
-} from '../../../core/domain-utils.js';
+} from '../../../core/domain-utils.ts';
 
 function getPlanningState() {
   ensureLessonPlansState();

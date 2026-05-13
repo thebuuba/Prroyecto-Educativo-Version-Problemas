@@ -6,9 +6,9 @@
  * visualizar promedios globales y resúmenes anuales por estudiante.
  */
 
-import { S } from '../../../core/state.js';
-import { BNAME, BICON, BCOLOR } from '../../../core/config.js';
-import { BLOCKS } from '../../../core/constants.js';
+import { S } from '../../../core/state.ts';
+import { BNAME, BICON, BCOLOR } from '../../../core/config.ts';
+import { BLOCKS } from '../../../core/constants.ts';
 import { 
   fmtNum, 
   getGroupLabel, 
@@ -22,7 +22,7 @@ import {
   studentAnnualBlockAverage, 
   studentAnnualFinal,
   studentsInGroup
-} from '../../../core/domain-utils.js';
+} from '../../../core/domain-utils.ts';
 
 /**
  * --- Renderizado de UI ---

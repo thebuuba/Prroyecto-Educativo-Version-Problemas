@@ -1,4 +1,4 @@
-import { escapeHtml } from '../../../core/domain-utils.js';
+import { escapeHtml } from '../../../core/domain-utils.ts';
 
 export function renderizarUsersView(usuarios) {
   if (usuarios.length === 0) {

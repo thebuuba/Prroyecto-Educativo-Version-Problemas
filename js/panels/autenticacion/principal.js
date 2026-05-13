@@ -6,7 +6,7 @@
  * Incluye lógica de limitación de tasa (rate limiting) y validación de seguridad.
  */
 
-import { S } from '../../core/state.js';
+import { S } from '../../core/state.ts';
 import { 
   uid, 
   nowIso,
@@ -14,19 +14,19 @@ import {
   formatMsToMinSec, 
   canUseCloudAuth, 
   shouldFallbackToLocalAuth
-} from '../../core/utils.js';
-import { v, toast, openM, forceCloseM } from '../../core/ui.js';
+} from '../../core/utils.ts';
+import { v, toast, openM, forceCloseM } from '../../core/ui.ts';
 import {
   persistLocalAuthUsers, 
   hydrateCloudStateForUser, 
   hydrateLocalWorkspaceForUser,
-} from '../../core/hydration.js';
+} from '../../core/hydration.ts';
 import {
   isEnabled as canUseSqlAuth,
   loginSqlAuth,
   registerSqlAuth,
   sendSqlPasswordReset,
-} from '../../core/api-sql.js';
+} from '../../core/api-sql.ts';
 import {
   currentAuthMode,
   establecerAuthMode,

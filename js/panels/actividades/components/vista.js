@@ -6,16 +6,16 @@
  * y Configuración de Puntaje/Meta.
  */
 
-import { S } from '../../../core/state.js';
+import { S } from '../../../core/state.ts';
 import { 
   BNAME, 
   BICON, 
   BCOLOR 
-} from '../../../core/config.js';
+} from '../../../core/config.ts';
 import { 
   BLOCKS, 
   ACT_VIEW_MODE_DEFAULT 
-} from '../../../core/constants.js';
+} from '../../../core/constants.ts';
 import { 
   fmtNum, 
   round2, 
@@ -29,7 +29,7 @@ import {
   studentBlockScore,
   periodName,
   getGroupLabel
-} from '../../../core/domain-utils.js';
+} from '../../../core/domain-utils.ts';
 
 /**
  * Obtiene el modo de vista actual del panel de actividades desde el estado.

@@ -4,13 +4,13 @@
  * Reemplaza el modal 'm-est' con una interfaz de navegación fluida.
  */
 
-import { S } from '../../../core/state.js';
+import { S } from '../../../core/state.ts';
 import { 
   toast, 
   buildStudentAvatarDataUrl,
   sortCourses,
   getScopedSections
-} from '../../../core/domain-utils.js';
+} from '../../../core/domain-utils.ts';
 
 export const FormState = {
   nombre: '',

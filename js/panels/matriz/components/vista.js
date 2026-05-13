@@ -6,9 +6,9 @@
  * detallando actividades individuales, totales por bloque y promedios finales.
  */
 
-import { S } from '../../../core/state.js';
-import { BNAME, BICON, BCOLOR } from '../../../core/config.js';
-import { BLOCKS } from '../../../core/constants.js';
+import { S } from '../../../core/state.ts';
+import { BNAME, BICON, BCOLOR } from '../../../core/config.ts';
+import { BLOCKS } from '../../../core/constants.ts';
 import { 
   fmtNum, 
   getGroupCfg, 
@@ -20,7 +20,7 @@ import {
   getGroupLabel,
   scoreClass,
   totalActs
-} from '../../../core/domain-utils.js';
+} from '../../../core/domain-utils.ts';
 
 /**
  * --- Componentes de Interfaz ---

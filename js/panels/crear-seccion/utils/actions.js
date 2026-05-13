@@ -1,4 +1,4 @@
-import { toast } from '../../../core/domain-utils.js';
+import { toast } from '../../../core/domain-utils.ts';
 
 export function registerSectionCreateActions({
   FormState,

@@ -3,7 +3,7 @@
  * Mantiene juntas las transiciones entre login y registro.
  */
 
-import { S } from '../../../core/state.js';
+import { S } from '../../../core/state.ts';
 import {
   clearRegisterFieldErrors,
   resetRegisterCodeFlow,

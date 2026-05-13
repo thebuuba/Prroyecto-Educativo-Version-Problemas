@@ -1,5 +1,5 @@
-import { S } from '../../../core/state.js';
-import { getGroupLabel, periodName, normTxt, escapeHtml } from '../../../core/domain-utils.js';
+import { S } from '../../../core/state.ts';
+import { getGroupLabel, periodName, normTxt, escapeHtml } from '../../../core/domain-utils.ts';
 
 function reportExportBaseName() {
   const group = getGroupLabel(S.activeGroupId) || 'grupo';

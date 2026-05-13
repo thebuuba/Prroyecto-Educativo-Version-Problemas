@@ -5,11 +5,11 @@
  * en Bento Grid, optimizada para velocidad y estética Premium.
  */
 
-import { S } from '../../../core/state.js';
+import { S } from '../../../core/state.ts';
 import { 
   toast, 
   getActiveEducationSections
-} from '../../../core/domain-utils.js';
+} from '../../../core/domain-utils.ts';
 
 // Estado local del formulario para reactividad inmediata sin persistir aún
 export const FormState = {

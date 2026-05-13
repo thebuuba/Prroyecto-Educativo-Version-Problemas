@@ -2,13 +2,13 @@
  * Conexion de eventos DOM del panel de autenticacion.
  */
 
-import { S } from '../../../core/state.js';
+import { S } from '../../../core/state.ts';
 import {
   applySessionUser,
   persistBrowserSession,
   readBrowserSession,
-} from '../../../core/hydration.js';
-import { forceCloseM } from '../../../core/ui.js';
+} from '../../../core/hydration.ts';
+import { forceCloseM } from '../../../core/ui.ts';
 import { establecerAuthMode } from './auth-mode.js';
 import { mostrarTableroAutenticado } from './session-flow.js';
 

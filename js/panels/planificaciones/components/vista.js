@@ -11,8 +11,8 @@ import {
   lessonPlanPersistDraftNow,
   lessonPlanAvailableGrades,
   lessonPlanSectionOptionsForGradeId,
-} from '../../../core/domain-utils.js';
-import { LESSON_PLAN_TRANSVERSAL_AXES } from '../../../core/constants.js';
+} from '../../../core/domain-utils.ts';
+import { LESSON_PLAN_TRANSVERSAL_AXES } from '../../../core/constants.ts';
 import { getPlanningState } from '../utils/actions.js';
 
 function renderizarHeader(draftsCount, totalCount) {

@@ -4,7 +4,7 @@
  * Reemplaza el modal 'm-est-edit' con una interfaz de navegación de perfil completo.
  */
 
-import { S } from '../../../core/state.js';
+import { S } from '../../../core/state.ts';
 import { 
   toast, 
   buildStudentAvatarDataUrl,
@@ -12,8 +12,8 @@ import {
   getScopedSections,
   getGrade,
   formatMatricula
-} from '../../../core/domain-utils.js';
-import { studentFinal } from '../../../core/math-utils.js';
+} from '../../../core/domain-utils.ts';
+import { studentFinal } from '../../../core/math-utils.ts';
 
 let CurrentStudent = null;
 export const FormState = {

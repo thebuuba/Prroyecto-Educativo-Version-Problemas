@@ -1,5 +1,5 @@
-import { scheduleNonCriticalTask, escapeHtml } from '../../../core/utils.js';
-import { getGroups, studentsInGroup, getAttendanceGroupLabel } from '../../../core/domain-utils.js';
+import { scheduleNonCriticalTask, escapeHtml } from '../../../core/utils.ts';
+import { getGroups, studentsInGroup, getAttendanceGroupLabel } from '../../../core/domain-utils.ts';
 
 export function renderizarAttendancePanel(container, group, monthKey, deps) {
   const {

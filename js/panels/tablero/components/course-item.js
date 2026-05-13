@@ -5,10 +5,10 @@
  * mostrando información básica y progreso de evaluación.
  */
 
-import { S } from '../../../core/state.js';
-import { getGroupCfg, studentsInGroup } from '../../../core/domain-utils.js';
-import { BLOCKS } from '../../../core/constants.js';
-import { escapeHtml } from '../../../core/utils.js';
+import { S } from '../../../core/state.ts';
+import { getGroupCfg, studentsInGroup } from '../../../core/domain-utils.ts';
+import { BLOCKS } from '../../../core/constants.ts';
+import { escapeHtml } from '../../../core/utils.ts';
 
 /**
  * Renderiza un ítem compacto para la lista de cursos en el tablero.

@@ -3,9 +3,9 @@
  * Modernized version of the coordinator/co-teacher management system.
  */
 
-import { S } from '../../core/state.js';
-import { persist } from '../../core/hydration.js';
-import { go, toast } from '../../core/domain-utils.js';
+import { S } from '../../core/state.ts';
+import { persist } from '../../core/hydration.ts';
+import { go, toast } from '../../core/domain-utils.ts';
 import { renderizarUsersView } from './components/vista.js';
 
 /**

@@ -4,7 +4,7 @@
  * Renderiza un renglón de información tipo resumen para la matriz de progreso.
  */
 
-import { escapeHtml } from '../../../core/utils.js';
+import { escapeHtml } from '../../../core/utils.ts';
 
 /**
  * Renderiza un renglón de información tipo resumen.

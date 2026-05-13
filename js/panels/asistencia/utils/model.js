@@ -1,6 +1,6 @@
-import { S } from '../../../core/state.js';
-import { academicCalendarActiveMonths } from '../../../core/domain-utils.js';
-import { scheduleSqlAttendanceMonthSync } from '../../../core/api-sql.js';
+import { S } from '../../../core/state.ts';
+import { academicCalendarActiveMonths } from '../../../core/domain-utils.ts';
+import { scheduleSqlAttendanceMonthSync } from '../../../core/api-sql.ts';
 
 export const ATTENDANCE_V2_SLOT_CAPACITY = 96;
 export const ATTENDANCE_V2_CODE_ORDER = ['', 'P', 'T', 'A', 'E', 'R'];

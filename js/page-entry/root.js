@@ -11,16 +11,16 @@
  * 3. Orquestar el ciclo de arranque (Boot).
  */
 
-import { boot } from '../core/app.js';
-import { initShell } from '../core/shell.js';
-import { initDeleters } from '../core/deleters.js';
-import { loadedPanelBundles } from '../core/routing.js';
+import { boot } from '../core/app.ts';
+import { initShell } from '../core/shell.ts';
+import { initDeleters } from '../core/deleters.ts';
+import { loadedPanelBundles } from '../core/routing.ts';
 import { mountAuthFragments } from '../../login-registro-auth/auth-loader.js';
 import {
   installPersistGuards,
   registerLegacyBridge,
   registerPanelRenderer,
-} from '../core/legacy-bridge.js';
+} from '../core/legacy-bridge.ts';
 import { inicializar as inicializarAuth } from '../panels/autenticacion/principal.js';
 import { inicializar as inicializarSetup } from '../panels/configuracion-inicial/principal.js';
 import { inicializar as inicializarTablero } from '../panels/tablero/principal.js';

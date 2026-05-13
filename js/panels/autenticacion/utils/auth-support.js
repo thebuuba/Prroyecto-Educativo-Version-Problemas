@@ -4,9 +4,9 @@
  * para mantener el flujo principal de auth más legible.
  */
 
-import { S } from '../../../core/state.js';
-import { REGISTER_RATE_LIMIT } from '../../../core/constants.js';
-import { authEmailKey, normalizeAuthAccessMode } from '../../../core/utils.js';
+import { S } from '../../../core/state.ts';
+import { REGISTER_RATE_LIMIT } from '../../../core/constants.ts';
+import { authEmailKey, normalizeAuthAccessMode } from '../../../core/utils.ts';
 
 let registerPasswordStrengthVisible = false;
 let authCornerToastTimer = 0;

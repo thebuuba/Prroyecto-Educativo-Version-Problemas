@@ -5,7 +5,7 @@
  * métricas clave en el dashboard.
  */
 
-import { escapeHtml } from '../../../core/utils.js';
+import { escapeHtml } from '../../../core/utils.ts';
 
 /**
  * Renderiza una tarjeta de estadística tipo KPI.

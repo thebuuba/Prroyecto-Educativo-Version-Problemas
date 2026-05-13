@@ -1,5 +1,5 @@
-import { S } from '../../../core/state.js';
-import { periodName } from '../../../core/domain-utils.js';
+import { S } from '../../../core/state.ts';
+import { periodName } from '../../../core/domain-utils.ts';
 
 export function renderizarSettingsView() {
   return `

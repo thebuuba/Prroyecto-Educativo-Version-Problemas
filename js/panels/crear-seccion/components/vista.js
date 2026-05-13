@@ -4,12 +4,12 @@
  * Reemplaza el modal 'm-sec' con una interfaz de navegación fluida.
  */
 
-import { S } from '../../../core/state.js';
+import { S } from '../../../core/state.ts';
 import { 
   toast, 
   getScopedGrades,
   normalizeEducationLevelName
-} from '../../../core/domain-utils.js';
+} from '../../../core/domain-utils.ts';
 
 export const FormState = {
   gradeId: '',

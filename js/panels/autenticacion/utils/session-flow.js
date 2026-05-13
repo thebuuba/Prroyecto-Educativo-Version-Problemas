@@ -2,24 +2,24 @@
  * Aplicacion y restauracion de sesiones autenticadas.
  */
 
-import { S } from '../../../core/state.js';
+import { S } from '../../../core/state.ts';
 import {
   ACCOUNT_MAX_ACTIVE_SESSIONS,
   ACCOUNT_MAX_TRUSTED_DEVICES,
   LICENSE_MODEL_VERSION,
-} from '../../../core/constants.js';
-import { nowIso } from '../../../core/utils.js';
-import { closeM, forceCloseM, openM } from '../../../core/ui.js';
+} from '../../../core/constants.ts';
+import { nowIso } from '../../../core/utils.ts';
+import { closeM, forceCloseM, openM } from '../../../core/ui.ts';
 import {
   applySessionUser,
   hydrateCloudStateForUser,
   persist,
-} from '../../../core/hydration.js';
-import { go } from '../../../core/routing.js';
+} from '../../../core/hydration.ts';
+import { go } from '../../../core/routing.ts';
 import {
   getSqlAuthSession,
   isEnabled as canUseSqlAuth,
-} from '../../../core/api-sql.js';
+} from '../../../core/api-sql.ts';
 
 export function ensureIndividualLicenseModel() {
   if (!S.profile || typeof S.profile !== 'object') S.profile = {};

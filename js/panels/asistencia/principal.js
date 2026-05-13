@@ -6,12 +6,12 @@
  * sincronización SQL y exportación de reportes.
  */
 
-import { S } from '../../core/state.js';
-import { go } from '../../core/routing.js';
-import { persist } from '../../core/hydration.js';
-import { scheduleNonCriticalTask } from '../../core/utils.js';
-import { getGroups, isAcademicMonthActive } from '../../core/domain-utils.js';
-import { scheduleSqlAttendanceMonthSync } from '../../core/api-sql.js';
+import { S } from '../../core/state.ts';
+import { go } from '../../core/routing.ts';
+import { persist } from '../../core/hydration.ts';
+import { scheduleNonCriticalTask } from '../../core/utils.ts';
+import { getGroups, isAcademicMonthActive } from '../../core/domain-utils.ts';
+import { scheduleSqlAttendanceMonthSync } from '../../core/api-sql.ts';
 import { registerAttendanceActions } from './utils/actions.js';
 import { renderizarAttendanceEmpty, renderizarAttendancePanel as renderAttendancePanelView } from './components/vista.js';
 import {

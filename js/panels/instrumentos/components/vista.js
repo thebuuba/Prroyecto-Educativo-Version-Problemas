@@ -6,12 +6,12 @@
  * de herramientas pedagógicas para la calificación de actividades.
  */
 
-import { S } from '../../../core/state.js';
+import { S } from '../../../core/state.ts';
 import { 
   escapeHtml,
   getGroups,
   periodName,
-} from '../../../core/domain-utils.js';
+} from '../../../core/domain-utils.ts';
 
 /** Tipos base de instrumentos soportados por el sistema. */
 export const BASIC_INSTRUMENT_TYPES = [

@@ -1,6 +1,6 @@
-import { S } from '../../core/state.js';
-import { persist } from '../../core/hydration.js';
-import { openM, toast } from '../../core/domain-utils.js';
+import { S } from '../../core/state.ts';
+import { persist } from '../../core/hydration.ts';
+import { openM, toast } from '../../core/domain-utils.ts';
 import {
   INSTRUMENT_META,
   UI,

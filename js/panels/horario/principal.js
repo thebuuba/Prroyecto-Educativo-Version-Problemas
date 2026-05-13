@@ -6,14 +6,14 @@
  * Asistente de Jornada Escolar.
  */
 
-import { S } from '../../core/state.js';
+import { S } from '../../core/state.ts';
 import { 
   attendanceMonthStart, 
   attendanceMonthKey, 
   getCurrentMonthKey,
   toast,
   escapeHtml,
-} from '../../core/domain-utils.js';
+} from '../../core/domain-utils.ts';
 import { renderizarScheduleContent } from './components/vista.js';
 import { registerScheduleActions } from './utils/actions.js';
 

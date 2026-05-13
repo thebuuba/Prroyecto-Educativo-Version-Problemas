@@ -6,7 +6,7 @@
  * y secciones, y un motor de búsqueda global integrado.
  */
 
-import { S } from '../../../core/state.js';
+import { S } from '../../../core/state.ts';
 import { 
   getScopedSections, 
   getScopedStudents, 
@@ -17,8 +17,8 @@ import {
   normalizeCourseSearchText,
   getStudentSearchResults,
   ensureActiveContext
-} from '../../../core/domain-utils.js';
-import { sortCourses, escapeHtml } from '../../../core/utils.js';
+} from '../../../core/domain-utils.ts';
+import { sortCourses, escapeHtml } from '../../../core/utils.ts';
 import { getStudentsViewMode } from '../utils/actions.js';
 
 /**

@@ -1,5 +1,5 @@
-import { S } from '../../../core/state.js';
-import { go } from '../../../core/routing.js';
+import { S } from '../../../core/state.ts';
+import { go } from '../../../core/routing.ts';
 
 let studentsViewMode = 'grid';
 

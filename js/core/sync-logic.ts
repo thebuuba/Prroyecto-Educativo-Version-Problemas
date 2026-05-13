@@ -7,6 +7,7 @@
  */
 
 import * as SQL from './api-sql.ts';
+import { S } from './state.ts';
 import { 
   mapGradeToSqlPayload, 
   mapSectionToSqlPayload,
@@ -128,4 +129,61 @@ export async function syncSqlSectionCreateOrUpdate(section) {
   rememberSqlId(section, result?.id);
 
   return result || section;
+}
+
+/**
+ * Resincroniza las entidades académicas locales contra SQL.
+ * Útil cuando un cambio anterior quedó solo en IndexedDB/localStorage por un
+ * fallo transitorio de red o por restricciones SQL ya corregidas.
+ */
+export async function syncSqlAcademicEntitiesForActiveUser() {
+  if (!SQL.isEnabled()) return { ok: false, reason: 'disabled' };
+
+  const context = await SQL.ensureSqlAcademicContext();
+  if (!context?.schoolId) return { ok: false, reason: 'missing-context' };
+
+  let grades = 0;
+  let sections = 0;
+  let students = 0;
+
+  const localGrades = Array.isArray(S.grades) ? S.grades : [];
+  const localSections = Array.isArray(S.secciones) ? S.secciones : [];
+  const localStudents = Array.isArray(S.estudiantes) ? S.estudiantes : [];
+
+  for (const grade of localGrades) {
+    const payload = mapGradeToSqlPayload(grade, context.schoolId);
+    if (!payload.name) continue;
+    const gradeSqlId = resolveEntitySqlId(grade);
+    const result = isSqlUuidLike(gradeSqlId)
+      ? await SQL.updateGrade(gradeSqlId, payload)
+      : await SQL.createGrade(payload);
+    if (rememberSqlId(grade, result?.id)) grades += 1;
+  }
+
+  for (const section of localSections) {
+    const sqlGradeId = resolveGradeSqlId(section?.gradeId);
+    if (!sqlGradeId) continue;
+    const payload = mapSectionToSqlPayload(section, context.schoolId, sqlGradeId);
+    if (!payload.name || !payload.gradeId) continue;
+    const sectionSqlId = resolveSectionSqlId(section);
+    const result = isSqlUuidLike(sectionSqlId)
+      ? await SQL.updateSection(sectionSqlId, payload)
+      : await SQL.createSection(payload);
+    if (rememberSqlId(section, result?.id)) sections += 1;
+  }
+
+  for (const student of localStudents) {
+    const gradeId = resolveGradeSqlId(student?.gradeId);
+    const sectionId = resolveSectionSqlId(student?.sectionId || student?.seccionId || student?.courseId);
+    if (!gradeId || !sectionId) continue;
+    const payload = mapStudentToSqlPayload(student, context.schoolId, gradeId, sectionId);
+    if (!payload.firstName || !payload.lastName || !payload.gradeId || !payload.sectionId) continue;
+    const studentSqlId = resolveEntitySqlId(student);
+    const result = isSqlUuidLike(studentSqlId)
+      ? await SQL.updateStudent(studentSqlId, payload)
+      : await SQL.createStudent(payload);
+    if (rememberSqlId(student, result?.id)) students += 1;
+  }
+
+  return { ok: true, grades, sections, students };
 }

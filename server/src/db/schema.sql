@@ -42,9 +42,9 @@ CREATE TABLE IF NOT EXISTS grades (
   education_level TEXT NOT NULL,
   name TEXT NOT NULL,
   ordinal INTEGER,
+  owner_user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  UNIQUE (school_id, education_level, name)
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS sections (
@@ -64,12 +64,13 @@ CREATE TABLE IF NOT EXISTS students (
   school_id UUID NOT NULL REFERENCES schools(id) ON DELETE CASCADE,
   grade_id UUID NOT NULL REFERENCES grades(id) ON DELETE RESTRICT,
   section_id UUID NOT NULL REFERENCES sections(id) ON DELETE RESTRICT,
-  enrollment_code TEXT UNIQUE,
+  enrollment_code TEXT,
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
   middle_name TEXT,
   birth_date DATE,
   status TEXT NOT NULL DEFAULT 'active',
+  owner_user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -77,10 +78,26 @@ CREATE TABLE IF NOT EXISTS students (
 CREATE INDEX IF NOT EXISTS idx_memberships_school_id ON school_memberships(school_id);
 CREATE INDEX IF NOT EXISTS idx_memberships_user_id ON school_memberships(user_id);
 CREATE INDEX IF NOT EXISTS idx_grades_school_id ON grades(school_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_grades_school_owner_level_name_unique
+  ON grades (school_id, owner_user_id, education_level, name)
+  WHERE owner_user_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_grades_school_level_name_shared_unique
+  ON grades (school_id, education_level, name)
+  WHERE owner_user_id IS NULL;
 CREATE INDEX IF NOT EXISTS idx_sections_school_id ON sections(school_id);
 CREATE INDEX IF NOT EXISTS idx_sections_grade_id ON sections(grade_id);
-CREATE UNIQUE INDEX IF NOT EXISTS idx_sections_grade_name_subject_unique
-  ON sections (grade_id, name, COALESCE(subject_name, ''));
+CREATE UNIQUE INDEX IF NOT EXISTS idx_sections_grade_teacher_name_subject_unique
+  ON sections (grade_id, teacher_user_id, name, COALESCE(subject_name, ''))
+  WHERE teacher_user_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_sections_grade_name_subject_shared_unique
+  ON sections (grade_id, name, COALESCE(subject_name, ''))
+  WHERE teacher_user_id IS NULL;
 CREATE INDEX IF NOT EXISTS idx_students_school_id ON students(school_id);
 CREATE INDEX IF NOT EXISTS idx_students_grade_id ON students(grade_id);
 CREATE INDEX IF NOT EXISTS idx_students_section_id ON students(section_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_students_school_owner_enrollment_unique
+  ON students (school_id, owner_user_id, enrollment_code)
+  WHERE owner_user_id IS NOT NULL AND enrollment_code IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_students_school_enrollment_shared_unique
+  ON students (school_id, enrollment_code)
+  WHERE owner_user_id IS NULL AND enrollment_code IS NOT NULL;

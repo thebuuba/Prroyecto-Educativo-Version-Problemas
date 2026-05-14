@@ -457,11 +457,13 @@ body:has(#m-auth.open) #ai-copilot-container,
 
 
 
-/* Fondo general menos blanco para separar mejor las superficies del sistema. */
+/* Fondo general premium: Snow Slate Mesh (Más claro) */
 body:not(.auth-screen-open):not(.theme-dark) {
-  background:
-    radial-gradient(circle at 18% 10%, rgba(143, 180, 218, .22) 0%, transparent 28%),
-    linear-gradient(180deg, #e8eef5 0%, #dce5ee 100%) !important;
+  background: 
+    radial-gradient(circle at 0% 0%, rgba(24, 119, 242, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(24, 119, 242, 0.04) 0%, transparent 40%),
+    linear-gradient(180deg, #f9fbff 0%, #f1f4f9 100%) !important;
+  background-attachment: fixed !important;
 }
 
 body:not(.auth-screen-open):not(.theme-dark) #main {
@@ -469,8 +471,7 @@ body:not(.auth-screen-open):not(.theme-dark) #main {
 }
 
 body:not(.auth-screen-open):not(.theme-dark) #view {
-  background:
-    linear-gradient(180deg, rgba(232, 238, 245, .86) 0%, rgba(220, 229, 238, .92) 100%) !important;
+  background: transparent !important;
 }
 
 body:not(.auth-screen-open):not(.theme-dark) #topbar {

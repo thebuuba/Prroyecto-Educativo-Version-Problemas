@@ -104,7 +104,11 @@ body.theme-dark .empty {
 /* Segundo pase visual para que tarjetas, headers y botones se sientan más premium. */
 #view .card {
   border-radius: 20px;
-  border-color: color-mix(in srgb, var(--line2) 76%, #fff 24%);
+  border: 1px solid rgba(183, 197, 215, 0.4);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 4px 24px rgba(55, 80, 112, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 #view .ch {
@@ -611,10 +615,19 @@ body.sb-overlay-open #sb-backdrop {
 /* ─────────────────────────────────────────
    DARK MODE – Shell, Cards & Modals
 ───────────────────────────────────────── */
+body.theme-dark {
+  background: 
+    radial-gradient(circle at 0% 0%, rgba(24, 119, 242, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(24, 119, 242, 0.03) 0%, transparent 50%),
+    linear-gradient(180deg, #050720 0%, #030412 100%) !important;
+  background-attachment: fixed !important;
+}
+
 body.theme-dark #topbar,
 body.theme-dark #view .card,
 body.theme-dark .card,
 body.theme-dark .modal {
-  background: rgba(20, 31, 48, .84);
-  border-color: rgba(62, 82, 110, .72);
+  background: rgba(13, 20, 36, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(12px) !important;
 }

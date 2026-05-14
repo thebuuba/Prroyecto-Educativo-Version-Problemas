@@ -149,12 +149,9 @@ body.theme-dark .empty {
   max-width: 420px;
 }
 
-/* Base de rediseño de la app: superficie translúcida suave heredada del auth. */
-body:not(.auth-screen-open) {
-  /* Fondo transparente para heredar el degradado de body de Stitch */
-  background: transparent;
-}
-
+/* ─────────────────────────────────────────
+   PREMIUM TOKENS
+───────────────────────────────────────── */
 :root {
   --premium-navy: #050720;
   --premium-navy-surface: #0a0e2a;
@@ -163,21 +160,31 @@ body:not(.auth-screen-open) {
   --premium-text-muted: #64748b;
   --premium-text-soft: #94a3b8;
   --premium-glass: rgba(5, 7, 32, 0.85);
+  /* Sidebar animation timing */
+  --sb-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --sb-duration: 0.38s;
 }
 
-.top {
-  position: sticky;
-  top: 0;
-  width: 100%;
-  height: 60px;
-  z-index: 90;
-  background: rgba(239, 239, 242, .74);
-  border-bottom: 1px solid rgba(182, 190, 204, .55);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+/* ─────────────────────────────────────────
+   APP BACKGROUND – Acorde al sistema Navy
+───────────────────────────────────────── */
+body:not(.auth-screen-open) {
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(24, 119, 242, .07) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 100%, rgba(24, 119, 242, .05) 0%, transparent 50%),
+    linear-gradient(180deg, #e8edf4 0%, #d4dbe4 50%, #c8d0dc 100%);
 }
 
-/* Shell lateral del escritorio: barra tipo isla flotante premium. */
+body.theme-dark:not(.auth-screen-open) {
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(24, 119, 242, .12) 0%, transparent 45%),
+    radial-gradient(ellipse at 90% 100%, rgba(24, 119, 242, .08) 0%, transparent 45%),
+    linear-gradient(180deg, #070b1e 0%, #0a0e2a 50%, #0d1232 100%);
+}
+
+/* ─────────────────────────────────────────
+   SIDEBAR – Rediseño Premium con Animaciones
+───────────────────────────────────────── */
 #sb {
   position: fixed !important;
   left: 0 !important;
@@ -185,54 +192,332 @@ body:not(.auth-screen-open) {
   bottom: 0 !important;
   width: 80px;
   z-index: 100;
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width var(--sb-duration) var(--sb-ease);
   pointer-events: none;
 }
 
-#sb.sb-expanded {
-  width: 280px;
+#sb.sb-expanded,
+#sb:focus-within,
+#sb.sb-pinned {
+  width: 272px;
 }
 
+/* ── Shell Interior ── */
 #sb .sb-shell {
-  height: 100%;
+  height: 100% !important;
   pointer-events: auto;
-  /* Acabado Glassmorphism Premium */
-  background: linear-gradient(180deg, rgba(5, 7, 32, 0.94) 0%, rgba(10, 18, 42, 0.92) 100%);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(180deg,
+      rgba(8, 12, 38, 0.97) 0%,
+      rgba(5, 7, 32, 0.98) 40%,
+      rgba(10, 16, 44, 0.96) 100%) !important;
+  backdrop-filter: blur(28px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+  border: none !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
   border-radius: 0 !important;
-  box-shadow: 
-    0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 25px 50px -12px rgba(5, 7, 32, 0.35);
+  box-shadow:
+    4px 0 24px rgba(5, 7, 32, 0.3),
+    1px 0 0 rgba(255, 255, 255, 0.04) !important;
   display: flex;
   flex-direction: column;
-  padding: 1.5rem 0;
+  align-items: stretch !important;
+  padding: 20px 0 16px !important;
   overflow-y: auto;
   overflow-x: hidden;
-  transition: all 0.4s ease;
-  /* Ocultar scrollbar de forma profesional */
   scrollbar-width: none;
   -ms-overflow-style: none;
+  contain: none !important;
+  transition:
+    box-shadow var(--sb-duration) var(--sb-ease),
+    border-radius var(--sb-duration) var(--sb-ease);
 }
 
 #sb .sb-shell::-webkit-scrollbar {
   display: none;
 }
 
+/* Expanded shell gets a soft right radius */
 #sb.sb-expanded .sb-shell,
 #sb:focus-within .sb-shell,
 #sb.sb-pinned .sb-shell {
-  border-radius: 0 1.25rem 1.25rem 0 !important;
+  border-radius: 0 20px 20px 0 !important;
+  box-shadow:
+    8px 0 40px rgba(5, 7, 32, 0.4),
+    2px 0 0 rgba(24, 119, 242, 0.08);
 }
 
+/* Dark mode: deeper shadow */
 body.theme-dark .sb-shell {
-  background: var(--premium-navy);
-  border-color: rgba(255, 255, 255, 0.04);
-  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+  background:
+    linear-gradient(180deg,
+      rgba(3, 4, 18, 0.99) 0%,
+      rgba(5, 7, 32, 1) 50%,
+      rgba(8, 10, 36, 0.98) 100%);
+  border-color: rgba(255, 255, 255, 0.03) !important;
+  box-shadow: 6px 0 32px rgba(0, 0, 0, 0.55);
 }
 
-/* UTILIDADES DE JERARQUÍA PROFESIONAL */
+/* ── Brand Area ── */
+.sb-brand {
+  padding: 8px 12px 16px !important;
+}
+
+/* ── Navigation Links ── */
+.sb-nav {
+  flex: 1;
+  padding: 4px 0;
+}
+
+.sb-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 46px;
+  margin: 3px 10px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  transition:
+    background var(--sb-duration) var(--sb-ease),
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s var(--sb-ease),
+    box-shadow 0.3s ease;
+}
+
+/* Staggered reveal animation for nav items on expand */
+#sb.sb-expanded .sb-link,
+#sb:focus-within .sb-link,
+#sb.sb-pinned .sb-link {
+  animation: sbLinkReveal 0.4s var(--sb-ease) both;
+}
+
+#sb.sb-expanded .sb-link:nth-child(1),
+#sb:focus-within .sb-link:nth-child(1),
+#sb.sb-pinned .sb-link:nth-child(1) { animation-delay: 0.02s; }
+
+#sb.sb-expanded .sb-link:nth-child(2),
+#sb:focus-within .sb-link:nth-child(2),
+#sb.sb-pinned .sb-link:nth-child(2) { animation-delay: 0.04s; }
+
+#sb.sb-expanded .sb-link:nth-child(3),
+#sb:focus-within .sb-link:nth-child(3),
+#sb.sb-pinned .sb-link:nth-child(3) { animation-delay: 0.06s; }
+
+#sb.sb-expanded .sb-link:nth-child(4),
+#sb:focus-within .sb-link:nth-child(4),
+#sb.sb-pinned .sb-link:nth-child(4) { animation-delay: 0.08s; }
+
+#sb.sb-expanded .sb-link:nth-child(5),
+#sb:focus-within .sb-link:nth-child(5),
+#sb.sb-pinned .sb-link:nth-child(5) { animation-delay: 0.10s; }
+
+#sb.sb-expanded .sb-link:nth-child(6),
+#sb:focus-within .sb-link:nth-child(6),
+#sb.sb-pinned .sb-link:nth-child(6) { animation-delay: 0.12s; }
+
+#sb.sb-expanded .sb-link:nth-child(7),
+#sb:focus-within .sb-link:nth-child(7),
+#sb.sb-pinned .sb-link:nth-child(7) { animation-delay: 0.14s; }
+
+#sb.sb-expanded .sb-link:nth-child(8),
+#sb:focus-within .sb-link:nth-child(8),
+#sb.sb-pinned .sb-link:nth-child(8) { animation-delay: 0.16s; }
+
+#sb.sb-expanded .sb-link:nth-child(9),
+#sb:focus-within .sb-link:nth-child(9),
+#sb.sb-pinned .sb-link:nth-child(9) { animation-delay: 0.18s; }
+
+#sb.sb-expanded .sb-link:nth-child(n+10),
+#sb:focus-within .sb-link:nth-child(n+10),
+#sb.sb-pinned .sb-link:nth-child(n+10) { animation-delay: 0.20s; }
+
+@keyframes sbLinkReveal {
+  from {
+    opacity: 0.6;
+    transform: translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ── Hover State ── */
+.sb-link:hover:not(.on) {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.04);
+  color: #ffffff !important;
+  transform: translateX(3px);
+}
+
+/* ── Active State – Azure glow ── */
+.sb-link.on {
+  background: linear-gradient(135deg, #1877F2 0%, #2a8af7 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  border-color: rgba(24, 119, 242, 0.3) !important;
+  box-shadow:
+    0 4px 16px rgba(24, 119, 242, 0.35),
+    0 0 0 1px rgba(24, 119, 242, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+body.theme-dark .sb-link.on {
+  background: linear-gradient(135deg, #1877F2 0%, #2a8af7 100%) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 6px 20px rgba(24, 119, 242, 0.4),
+    0 0 0 1px rgba(24, 119, 242, 0.2) !important;
+}
+
+/* Active item left accent bar */
+.sb-link.on::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 24px;
+  border-radius: 0 4px 4px 0;
+  background: #ffffff;
+  opacity: 0.9;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+  animation: sbAccentIn 0.3s var(--sb-ease) both;
+}
+
+@keyframes sbAccentIn {
+  from {
+    opacity: 0;
+    height: 0;
+  }
+  to {
+    opacity: 0.9;
+    height: 24px;
+  }
+}
+
+/* ── Icons ── */
+.sb-ico {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s var(--sb-ease);
+}
+
+.sb-link.on .sb-ico {
+  transform: scale(1.08);
+}
+
+.sb-link.on .sb-ico img,
+.sb-link.on .sb-ico svg {
+  filter: brightness(0) invert(1) !important;
+  -webkit-filter: brightness(0) invert(1) !important;
+}
+
+/* Default icon tint (light muted) */
+.sb-ico img {
+  filter: brightness(0) saturate(100%) invert(80%) sepia(8%) saturate(300%) hue-rotate(180deg) brightness(95%) contrast(85%);
+}
+
+.sb-link:hover:not(.on) .sb-ico img {
+  filter: brightness(0) invert(1);
+}
+
+body.theme-dark .sb-ico img {
+  filter: brightness(0) saturate(100%) invert(75%) sepia(10%) saturate(350%) hue-rotate(180deg) brightness(90%) contrast(85%);
+}
+
+body.theme-dark .sb-link:hover:not(.on) .sb-ico img {
+  filter: brightness(0) invert(1);
+}
+
+/* ── Labels ── */
+.sb-link-label {
+  margin-left: 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition:
+    opacity 0.25s var(--sb-ease),
+    transform 0.25s var(--sb-ease);
+  will-change: opacity, transform;
+}
+
+#sb.sb-expanded .sb-link-label,
+#sb:focus-within .sb-link-label,
+#sb.sb-pinned .sb-link-label {
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: 0.06s;
+}
+
+/* ── Footer / Logout ── */
+.sb-footer {
+  margin-top: auto;
+  padding: 12px 10px 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sb-link.sb-logout-btn {
+  background: transparent !important;
+  color: rgba(223, 28, 68, 0.7) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.sb-link.sb-logout-btn::before {
+  display: none !important;
+}
+
+.sb-link.sb-logout-btn:hover {
+  background: rgba(223, 28, 68, 0.08) !important;
+  color: #df1c44 !important;
+  transform: translateX(3px);
+}
+
+.sb-link.sb-logout-btn .sb-ico .sb-logout-icon,
+.sb-link.sb-logout-btn .sb-ico img {
+  filter: brightness(0) saturate(100%) invert(18%) sepia(91%) saturate(5423%) hue-rotate(341deg) brightness(88%) contrast(97%) !important;
+  -webkit-filter: brightness(0) saturate(100%) invert(18%) sepia(91%) saturate(5423%) hue-rotate(341deg) brightness(88%) contrast(97%) !important;
+}
+
+/* ── Backdrop overlay (mobile) ── */
+#sb-backdrop {
+  transition: opacity 0.3s ease;
+}
+
+body.sb-overlay-open #sb-backdrop {
+  background: rgba(5, 7, 32, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* ─────────────────────────────────────────
+   MAIN CONTENT AREA
+───────────────────────────────────────── */
+#main {
+  flex: 1;
+  margin-left: 80px !important;
+  min-width: 0;
+  transition: margin-left var(--sb-duration) var(--sb-ease);
+}
+
+/* ─────────────────────────────────────────
+   UTILITY CLASSES
+───────────────────────────────────────── */
 .bg-premium-navy {
   background: var(--premium-navy) !important;
 }
@@ -254,122 +539,6 @@ body.theme-dark .sb-shell {
   background-color: #2563eb !important;
 }
 
-/* Ajuste del contenido principal para que la isla respire */
-/* Remoción del desplazamiento: ahora se superpone (estilo overlay) */
-#main {
-  flex: 1;
-  margin-left: 80px !important;
-  min-width: 0;
-}
-
-.sb-nav {
-  flex: 1;
-  padding: 1rem 0;
-}
-
-/* Estado activo (Azure) con indicador sofisticado */
-.sb-link {
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: 48px;
-  margin: 0.25rem 0.75rem;
-  padding: 0 1rem;
-  border-radius: 1.25rem;
-  color: rgba(255, 255, 255, 0.6);
-  text-decoration: none;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap;
-}
-
-/* Estado activo (Azure) - Fondo sólido vibrante como pidió el usuario */
-.sb-link.on {
-  background: #1877F2 !important;
-  color: #ffffff !important;
-  font-weight: 700 !important;
-  box-shadow: 0 8px 16px -4px rgba(24, 119, 242, 0.4) !important;
-}
-
-body.theme-dark .sb-link.on {
-  background: #1877F2;
-  color: #ffffff;
-}
-
-.sb-link:hover:not(.on) {
-  background: rgba(255, 255, 255, 0.06);
-  color: #ffffff;
-  transform: translateX(4px);
-}
-
-/* Estado activo (Azure) - Fondo sólido vibrante */
-.sb-link.on {
-  background: #1877F2 !important;
-  color: #ffffff !important;
-  font-weight: 700 !important;
-  box-shadow: 0 8px 16px -4px rgba(24, 119, 242, 0.4) !important;
-}
-
-body.theme-dark .sb-link.on {
-  background: #1877F2 !important;
-  color: #ffffff !important;
-}
-
-.sb-link:hover:not(.on) {
-  background: rgba(255, 255, 255, 0.08) !important;
-  color: #ffffff !important;
-  transform: translateX(4px);
-}
-
-.sb-link.on .sb-ico img, 
-.sb-link.on .sb-ico svg {
-  filter: brightness(0) invert(1) !important; /* Icono blanco puro para navegación */
-  -webkit-filter: brightness(0) invert(1) !important;
-  drop-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
-}
-
-/* Logout con tema Berry (Excepción) */
-.sb-link.sb-logout-btn {
-  background: transparent !important;
-  color: var(--premium-berry) !important;
-  margin-top: 0.5rem;
-}
-
-.sb-link.sb-logout-btn:hover {
-  background: rgba(223, 28, 68, 0.1) !important;
-  color: #c4123a !important;
-}
-
-.sb-link.sb-logout-btn .sb-ico .sb-logout-icon, 
-.sb-link.sb-logout-btn .sb-ico img {
-  filter: brightness(0) saturate(100%) invert(18%) sepia(91%) saturate(5423%) hue-rotate(341deg) brightness(88%) contrast(97%) !important;
-  -webkit-filter: brightness(0) saturate(100%) invert(18%) sepia(91%) saturate(5423%) hue-rotate(341deg) brightness(88%) contrast(97%) !important;
-}
-
-.sb-ico {
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s ease;
-}
-
-.sb-link.on .sb-ico {
-  transform: scale(1.1);
-}
-
-.sb-link-label {
-  margin-left: 12px;
-  font-size: 0.875rem;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-#sb.expanded .sb-link-label {
-  opacity: 1;
-}
-
 /* Ocultar scrollbar */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
@@ -379,6 +548,9 @@ body.theme-dark .sb-link.on {
   scrollbar-width: none;
 }
 
+/* ─────────────────────────────────────────
+   CARDS, MODALS, INPUTS, TABLES
+───────────────────────────────────────── */
 #view .card,
 .card {
   background: rgba(239, 239, 242, .74);
@@ -392,7 +564,6 @@ body.theme-dark .sb-link.on {
   border-bottom: 1px solid rgba(186, 196, 211, .55);
 }
 
-/* Modal base compartido para ventanas de edición y asistentes. */
 .modal {
   background: rgba(239, 239, 242, .84);
   border: 1px solid rgba(255, 255, 255, .5);
@@ -401,7 +572,6 @@ body.theme-dark .sb-link.on {
   -webkit-backdrop-filter: blur(10px);
 }
 
-/* Inputs compartidos para formularios y selectores del sistema. */
 .inp,
 .sel,
 .ta {
@@ -417,7 +587,6 @@ body.theme-dark .sb-link.on {
   box-shadow: 0 0 0 3px rgba(96, 139, 201, .16);
 }
 
-/* Tabla base reutilizada en listados y reportes. */
 .tbl th {
   background: rgba(244, 246, 250, .9);
   border-bottom: 1px solid rgba(184, 194, 210, .8);
@@ -427,7 +596,6 @@ body.theme-dark .sb-link.on {
   border-bottom: 1px solid rgba(187, 196, 210, .48);
 }
 
-/* Botón principal global: llamado a la acción más importante del panel. */
 .btn-primary {
   background: #060733;
   border-color: #060733;
@@ -440,18 +608,13 @@ body.theme-dark .sb-link.on {
   box-shadow: 0 12px 26px rgba(6, 7, 51, .3);
 }
 
-/* Base oscura global cuando la app no está en auth. */
-body.theme-dark:not(.auth-screen-open) {
-  background: transparent;
-}
-
-/* Ajustes base de modo oscuro para shell, cards y modales. */
+/* ─────────────────────────────────────────
+   DARK MODE – Shell, Cards & Modals
+───────────────────────────────────────── */
 body.theme-dark #topbar,
-body.theme-dark .sb-shell,
 body.theme-dark #view .card,
 body.theme-dark .card,
 body.theme-dark .modal {
   background: rgba(20, 31, 48, .84);
   border-color: rgba(62, 82, 110, .72);
 }
-

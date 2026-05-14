@@ -227,7 +227,7 @@ body:has(#m-auth.open) #ai-copilot-container,
 
 /* Fin de estilos AI */
 
-/* Sidebar fluida y clara: layout fijo, sin glass oscuro ni relayout por hover. */
+/* Sidebar desktop: always-expanded Navy glassmorphism */
 @media (min-width: 761px) {
   :root {
     --sidebar-width: 252px;
@@ -253,18 +253,22 @@ body:has(#m-auth.open) #ai-copilot-container,
   body.theme-dark #sb .sb-shell {
     height: 100% !important;
     border-radius: 0 !important;
-    background: linear-gradient(180deg, #f8fbff 0%, #eef5fc 100%) !important;
+    background: linear-gradient(180deg, #080c26 0%, #050720 40%, #0a102c 100%) !important;
     border: 0 !important;
-    border-right: 1px solid rgba(190, 204, 222, .72) !important;
-    box-shadow: 6px 0 22px rgba(55, 80, 112, .08) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+    box-shadow: 4px 0 24px rgba(5, 7, 32, 0.3), 1px 0 0 rgba(255, 255, 255, 0.04) !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     padding: 18px 12px !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
     scrollbar-width: thin !important;
-    contain: paint !important;
     transition: none !important;
+  }
+
+  body.theme-dark #sb .sb-shell {
+    background: linear-gradient(180deg, #030412 0%, #050720 50%, #080a24 100%) !important;
+    box-shadow: 6px 0 32px rgba(0, 0, 0, 0.55) !important;
   }
 
   #sb .sb-shell::-webkit-scrollbar {
@@ -273,7 +277,7 @@ body:has(#m-auth.open) #ai-copilot-container,
   }
 
   #sb .sb-shell::-webkit-scrollbar-thumb {
-    background: rgba(123, 151, 184, .34);
+    background: rgba(255, 255, 255, 0.12);
     border-radius: 999px;
   }
 
@@ -322,7 +326,7 @@ body:has(#m-auth.open) #ai-copilot-container,
   }
 
   .logo-word {
-    color: #304963 !important;
+    color: rgba(255, 255, 255, 0.9) !important;
     font-weight: 800 !important;
   }
 
@@ -353,7 +357,8 @@ body:has(#m-auth.open) #ai-copilot-container,
     gap: 12px !important;
     justify-content: flex-start !important;
     border-radius: 14px !important;
-    color: #536b84 !important;
+    border: 1px solid transparent !important;
+    color: rgba(255, 255, 255, 0.5) !important;
     background: transparent !important;
     box-shadow: none !important;
     transform: none !important;
@@ -364,17 +369,17 @@ body:has(#m-auth.open) #ai-copilot-container,
   .sb-link:focus-visible:not(.on),
   .sb-utility:hover,
   .sb-utility:focus-visible {
-    background: rgba(214, 229, 244, .76) !important;
-    color: #243f5d !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #ffffff !important;
     transform: none !important;
     outline: none !important;
   }
 
   .sb-link.on,
   body.theme-dark .sb-link.on {
-    background: #dcecff !important;
-    color: #0f5ea8 !important;
-    box-shadow: inset 3px 0 0 #2d8fe8 !important;
+    background: linear-gradient(135deg, #1877F2 0%, #2a8af7 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 16px rgba(24, 119, 242, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
     font-weight: 750 !important;
   }
 
@@ -395,15 +400,18 @@ body:has(#m-auth.open) #ai-copilot-container,
   }
 
   .sb-ico img,
-  body.theme-dark .sb-ico img,
+  body.theme-dark .sb-ico img {
+    filter: brightness(0) saturate(100%) invert(80%) sepia(8%) saturate(300%) hue-rotate(180deg) brightness(95%) contrast(85%) !important;
+  }
+
   .sb-link:hover .sb-ico img,
   .sb-link:focus-visible .sb-ico img {
-    filter: brightness(0) saturate(100%) invert(41%) sepia(11%) saturate(913%) hue-rotate(169deg) brightness(93%) contrast(90%) !important;
+    filter: brightness(0) invert(1) !important;
   }
 
   .sb-link.on .sb-ico img,
   body.theme-dark .sb-link.on .sb-ico img {
-    filter: brightness(0) saturate(100%) invert(34%) sepia(88%) saturate(1169%) hue-rotate(184deg) brightness(90%) contrast(92%) !important;
+    filter: brightness(0) invert(1) !important;
   }
 
   .sb-link.on .sb-ico svg,
@@ -425,19 +433,20 @@ body:has(#m-auth.open) #ai-copilot-container,
 
   .sb-footer {
     padding: 14px 0 0 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
   }
 
   .sb-link.sb-logout-btn,
   .sb-logout-compact,
   body.theme-dark .sb-logout-compact {
-    background: rgba(245, 96, 115, .1) !important;
-    color: #b4233b !important;
+    background: transparent !important;
+    color: rgba(223, 28, 68, 0.7) !important;
   }
 
   .sb-link.sb-logout-btn:hover,
   .sb-link.sb-logout-btn:focus-visible {
-    background: rgba(245, 96, 115, .16) !important;
-    color: #982039 !important;
+    background: rgba(223, 28, 68, 0.08) !important;
+    color: #df1c44 !important;
   }
 
   .sb-link.sb-logout-btn .sb-ico img,
@@ -445,6 +454,8 @@ body:has(#m-auth.open) #ai-copilot-container,
     filter: brightness(0) saturate(100%) invert(24%) sepia(69%) saturate(1918%) hue-rotate(327deg) brightness(83%) contrast(90%) !important;
   }
 }
+
+
 
 /* Fondo general menos blanco para separar mejor las superficies del sistema. */
 body:not(.auth-screen-open):not(.theme-dark) {

@@ -1,3 +1,5 @@
+import { escapeHtml } from '../../../core/utils.ts';
+
 function obtenerWeekdays() {
   return ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 }
@@ -29,7 +31,7 @@ function renderizarWeeklySchedule({ S }) {
         </div>
         <h2 class="text-2xl font-black text-slate-800 mb-4">¡Organicemos tu jornada!</h2>
         <p class="text-slate-500 max-w-md mx-auto mb-8 font-medium">Aún no has configurado tu horario. Usa el asistente para generar una base profesional en segundos.</p>
-        <button onclick="window.openScheduleWizard()" class="px-8 py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
+        <button data-schedule-action="open-wizard" class="px-8 py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
           Iniciar Asistente de Horario
         </button>
       </div>
@@ -84,7 +86,7 @@ function renderizarWeeklySchedule({ S }) {
           </div>
         </div>
 
-        <button onclick="window.openScheduleWizard()" class="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors">
+        <button data-schedule-action="open-wizard" class="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors">
           Reiniciar horario con el asistente
         </button>
       </div>
@@ -125,7 +127,7 @@ function renderizarScheduleCell(cell, weekday, start, end, S) {
 
   return `
     <td class="p-2 min-w-[200px]">
-      <div onclick="window.editScheduleCell(${weekday}, '${start}', '${end}')"
+      <div data-schedule-action="edit-block" data-schedule-day="${weekday}" data-schedule-time="${escapeHtml(start)}" data-schedule-end-time="${escapeHtml(end)}"
            class="${bgColor} ${borderColor} border rounded-2xl p-4 transition-all cursor-pointer group/card relative">
         <div class="text-[10px] font-black uppercase tracking-widest mb-1 opacity-60">${cell.blockType === 'class' ? 'Clase' : cell.blockType}</div>
         <div class="text-sm font-black ${textColor} leading-tight">${cell.subject || 'Sin Título'}</div>
@@ -148,10 +150,10 @@ function renderizarMonthlyCalendar({ UI, getPlannerEvents, attendanceMonthStart,
           <div class="flex items-center justify-between mb-8 px-4">
             <h3 class="text-xl font-black text-slate-800">${new Intl.DateTimeFormat('es-DO', { month: 'long', year: 'numeric' }).format(attendanceMonthStart(UI.monthKey))}</h3>
             <div class="flex gap-2">
-              <button onclick="window.changeCalendarMonth(-1)" class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-all shadow-sm">
+              <button data-schedule-action="previous-month" class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-all shadow-sm">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
               </button>
-              <button onclick="window.changeCalendarMonth(1)" class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-all shadow-sm">
+              <button data-schedule-action="next-month" class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-all shadow-sm">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
               </button>
             </div>
@@ -178,7 +180,7 @@ function renderizarMonthlyCalendar({ UI, getPlannerEvents, attendanceMonthStart,
           <div class="absolute -right-20 -top-20 w-60 h-60 bg-blue-600/20 rounded-full blur-3xl"></div>
         </div>
 
-        <button onclick="window.openAddEventModal()" class="w-full py-5 bg-white border border-slate-200 text-slate-900 font-bold rounded-[2rem] hover:bg-slate-50 transition-all flex items-center justify-center gap-3 shadow-sm hover:shadow-md">
+        <button data-schedule-action="add-block" data-schedule-target="event" class="w-full py-5 bg-white border border-slate-200 text-slate-900 font-bold rounded-[2rem] hover:bg-slate-50 transition-all flex items-center justify-center gap-3 shadow-sm hover:shadow-md">
           <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
           Agregar Evento Personal
         </button>

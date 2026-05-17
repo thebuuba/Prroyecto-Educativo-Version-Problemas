@@ -101,11 +101,11 @@ export function renderizarSchedulePanel(container) {
         </div>
         
         <div class="flex bg-slate-100 p-1.5 rounded-[1.5rem] self-start md:self-auto">
-          <button onclick="window.setScheduleTab('schedule')" 
+          <button data-schedule-action="change-view" data-schedule-view="schedule"
             class="px-6 py-2.5 rounded-2xl text-sm font-bold transition-all ${UI.activeTab === 'schedule' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}">
             Horario Semanal
           </button>
-          <button onclick="window.setScheduleTab('calendar')" 
+          <button data-schedule-action="change-view" data-schedule-view="calendar"
             class="px-6 py-2.5 rounded-2xl text-sm font-bold transition-all ${UI.activeTab === 'calendar' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}">
             Calendario Escolar
           </button>

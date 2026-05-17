@@ -48,6 +48,7 @@ Avance aplicado:
 - Carga masiva migrada para apertura, modo de entrada, archivo seleccionado, opciones, análisis, confirmación y exportaciones simples sin cambiar textos visibles ni formato esperado.
 - Dominio académico migrado a `data-academic-action` con registry explícito en `js/panels/configuracion-academica/utils/academic-actions.ts`.
 - Dominio asistencia migrado a `data-attendance-action` con registry explícito en `js/panels/asistencia/utils/attendance-actions.ts`.
+- Dominio horario migrado a `data-schedule-action` con registry explícito en `js/panels/horario/utils/schedule-actions.ts`.
 
 Conteo de la fase estudiantes:
 
@@ -85,6 +86,17 @@ Riesgos asistencia:
 - `exportToExcel` y `exportToPdf` siguen como adaptadores legacy si existen; no se implementó un exportador nuevo.
 - Algunas acciones del registry (`previous-day`, `next-day`, `select-student`, `clear-filter`) quedan reservadas como ramas seguras porque no hay controles visibles todavía.
 
+Conteo de la fase horario:
+
+| Alcance | Inline antes | Inline después | `data-schedule-action` después |
+| --- | ---: | ---: | ---: |
+| `js/panels/horario/` y fragments `m-schedule*` | 10 | 0 | 10 |
+
+Riesgos horario:
+
+- La generación de plantilla base conserva compatibilidad con `generateTeacherScheduleBase` si existe en runtime; si no, abre el asistente.
+- Varias acciones del registry quedan como placeholders seguros hasta que se modularicen edición avanzada, exportación y eliminación de bloques.
+
 Siguiente trabajo:
 
 1. Migrar handlers inline restantes por dominio con registries explícitos.
@@ -96,7 +108,6 @@ Orden recomendado:
 
 - UI básica: `openM`, `closeM`, `toast`
 - routing: `go`
-- horario
 - calificaciones/evaluaciones
 - auth/setup
 

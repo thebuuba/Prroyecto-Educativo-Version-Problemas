@@ -10,6 +10,7 @@ import { handleDeclarativeAuthAction } from '../panels/autenticacion/utils/auth-
 import { handleDeclarativeStudentAction } from '../panels/estudiantes/utils/student-actions.ts';
 import { handleDeclarativeAcademicAction } from '../panels/configuracion-academica/utils/academic-actions.ts';
 import { handleDeclarativeAttendanceAction } from '../panels/asistencia/utils/attendance-actions.ts';
+import { handleDeclarativeScheduleAction } from '../panels/horario/utils/schedule-actions.ts';
 
 function getDatasetValue(element: Element, key: string): string {
   return String((element as HTMLElement).dataset?.[key] || '').trim();
@@ -91,6 +92,9 @@ export function bindDeclarativeActions(): void {
 
     const attendanceTrigger = target.closest('[data-attendance-action]');
     if (attendanceTrigger) handleDeclarativeAttendanceAction(attendanceTrigger, event);
+
+    const scheduleTrigger = target.closest('[data-schedule-action]');
+    if (scheduleTrigger) handleDeclarativeScheduleAction(scheduleTrigger, event);
   });
 
   document.addEventListener('change', (event) => {
@@ -111,6 +115,9 @@ export function bindDeclarativeActions(): void {
 
     const attendanceTarget = target.closest('[data-attendance-action]');
     if (attendanceTarget) handleDeclarativeAttendanceAction(attendanceTarget, event);
+
+    const scheduleTarget = target.closest('[data-schedule-action]');
+    if (scheduleTarget) handleDeclarativeScheduleAction(scheduleTarget, event);
   });
 
   document.addEventListener('input', (event) => {
@@ -126,6 +133,9 @@ export function bindDeclarativeActions(): void {
     const attendanceTarget = target.closest('[data-attendance-action]');
     if (attendanceTarget && handleDeclarativeAttendanceAction(attendanceTarget, event)) return;
 
+    const scheduleTarget = target.closest('[data-schedule-action]');
+    if (scheduleTarget && handleDeclarativeScheduleAction(scheduleTarget, event)) return;
+
     handleDeclarativeInput(target, event);
   });
 
@@ -135,6 +145,9 @@ export function bindDeclarativeActions(): void {
 
     const studentTarget = target.closest('[data-student-action]');
     if (studentTarget) handleDeclarativeStudentAction(studentTarget, event);
+
+    const scheduleTarget = target.closest('[data-schedule-action]');
+    if (scheduleTarget) handleDeclarativeScheduleAction(scheduleTarget, event);
   });
 
   document.addEventListener('keydown', (event) => {

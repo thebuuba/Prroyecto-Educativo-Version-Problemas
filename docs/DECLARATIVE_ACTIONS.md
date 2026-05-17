@@ -16,6 +16,7 @@ Módulos auxiliares:
 - `js/panels/estudiantes/utils/student-actions.ts`
 - `js/panels/configuracion-academica/utils/academic-actions.ts`
 - `js/panels/asistencia/utils/attendance-actions.ts`
+- `js/panels/horario/utils/schedule-actions.ts`
 - `js/core/form-actions.ts`
 
 ## Acciones soportadas
@@ -173,6 +174,39 @@ Pendiente:
 
 - Las exportaciones dependen de globals legacy `exportToExcel` / `exportToPdf` si existen en runtime.
 - `previous-day`, `next-day`, `clear-filter` y `select-student` quedan registrados como placeholders seguros hasta que existan controles específicos.
+
+### Horario
+
+```html
+<button data-schedule-action="change-view" data-schedule-view="calendar">Calendario</button>
+<button data-schedule-action="previous-month">...</button>
+<div data-schedule-action="edit-block" data-schedule-day="1" data-schedule-time="07:30" data-schedule-end-time="08:10"></div>
+```
+
+Acciones permitidas:
+
+- `create`, `edit`, `delete`, `save`, `cancel`
+- `add-block`, `edit-block`, `delete-block`
+- `select-day`, `select-time`, `select-subject`, `select-teacher`, `select-course`, `select-section`
+- `change-view`, `clear`, `print`, `export`
+- `open-wizard`, `close-wizard`, `generate`
+- `previous-week`, `next-week`, `previous-month`, `next-month`
+
+El registry vive en `js/panels/horario/utils/schedule-actions.ts`. Los parámetros se pasan por `data-schedule-day`, `data-schedule-time`, `data-schedule-end-time`, `data-schedule-view`, `data-schedule-target` y equivalentes. No ejecuta nombres de funciones desde atributos.
+
+Migrado en esta fase:
+
+- Cambio entre horario semanal y calendario escolar.
+- Apertura/reinicio del asistente.
+- Edición de bloque horario desde la grilla semanal.
+- Navegación mensual del calendario.
+- Apertura del flujo de evento personal.
+- Creación de plantilla base desde `m-schedule-base`.
+
+Pendiente:
+
+- `generateTeacherScheduleBase` sigue como adaptador legacy si aparece en runtime; si no existe, se redirige al asistente.
+- Acciones sin controles visibles actuales (`delete`, `save`, `clear`, `export`, selección de docente/asignatura/curso) quedan registradas como ramas seguras.
 
 ### Formularios simples
 

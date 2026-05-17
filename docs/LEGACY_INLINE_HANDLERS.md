@@ -70,6 +70,7 @@ Conteo después de esta fase:
 - Estudiantes y carga masiva: `53` handlers inline en las fuentes reales de `js/panels/estudiantes/`, `js/panels/crear-estudiante/`, `js/panels/editar-estudiante/` y `sections/modals/m-est*.html` / `m-student-add-mode.html` fueron migrados a `data-student-action`. El fragmento combinado `sections/panels/estudiantes/modals.html` recibió la misma migración para conservar el ensamblado legacy.
 - Académico: los `18` handlers inline restantes de grados/secciones en `sections/panels/estudiantes/modals.html` fueron migrados a `data-academic-action`. También se migraron los fragments individuales `m-grade`, `m-sec`, `m-grade-edit`, `m-sec-edit` y acciones simples de `configuracion-academica` / `crear-seccion`.
 - Asistencia: `11` handlers inline del panel `js/panels/asistencia/` fueron migrados a `data-attendance-action` con registry explícito para mes, curso/sección, edición de día, excepciones, marcas, impresión y exportación.
+- Horario: `10` handlers inline del dominio `js/panels/horario/`, `sections/panels/horario/` y fragments `m-schedule*` fueron migrados a `data-schedule-action`.
 
 ## Conteo de fase 3
 
@@ -90,6 +91,8 @@ Conteo después de esta fase:
 | `data-academic-action` en alcance migrado | 0 | 51 | Registry explícito de dominio académico. |
 | `js/panels/asistencia/` handlers inline | 11 | 0 | Mes, grupo, días, excepciones, marcas y exportación. |
 | `data-attendance-action` en asistencia | 0 | 10 | Vista renderizada con parámetros por `data-*`. |
+| Horario/calendario inline | 10 | 0 | Tabs, asistente, calendario, edición de bloque y plantilla base. |
+| `data-schedule-action` en horario | 0 | 10 | Registry explícito de dominio horario. |
 
 ## Pendiente
 
@@ -100,4 +103,6 @@ Conteo después de esta fase:
 - Revisar la edición de grado legacy contra sincronización SQL: el fallback declarativo actual conserva edición local básica si no existe `window.saveEditGrade`.
 - Implementar exportaciones reales de asistencia si no existen globals `exportToExcel` / `exportToPdf`; el registry conserva el adaptador si esas funciones aparecen en runtime.
 - Completar acciones de día anterior/siguiente y selección individual de estudiante si se añaden controles visibles para esos flujos.
+- Completar acciones de horario que hoy quedan como placeholders seguros (`save`, `delete`, `clear`, `export`, selección de docente/asignatura/curso) cuando existan controles visibles o lógica modular específica.
+- `generateTeacherScheduleBase` no existe como módulo local; `data-schedule-action="generate"` conserva el adaptador legacy si aparece en runtime y cae al asistente si no está disponible.
 - Reducir `window` en `legacy-api.ts` solo cuando no queden referencias reales en HTML o strings renderizados.

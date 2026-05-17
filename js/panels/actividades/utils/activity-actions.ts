@@ -1,0 +1,169 @@
+type ActivityActionContext = {
+  trigger: HTMLElement;
+  event: Event;
+};
+
+type ActivityActionHandler = (context: ActivityActionContext) => boolean | void | Promise<boolean | void>;
+
+function data(trigger: HTMLElement, key: string): string {
+  return String(trigger.dataset?.[key] || '').trim();
+}
+
+function valueFromTrigger(trigger: HTMLElement): string {
+  if (trigger instanceof HTMLInputElement || trigger instanceof HTMLSelectElement || trigger instanceof HTMLTextAreaElement) {
+    return trigger.value;
+  }
+  return data(trigger, 'activityValue') || data(trigger, 'gradeValue') || data(trigger, 'value');
+}
+
+function callAllowedWindowFunction(name: string, ...args: unknown[]): boolean {
+  const fn = (window as Record<string, unknown>)[name];
+  if (typeof fn !== 'function') return false;
+  fn(...args);
+  return true;
+}
+
+function blockId(trigger: HTMLElement): string {
+  return data(trigger, 'blockId');
+}
+
+function activityId(trigger: HTMLElement): string {
+  return data(trigger, 'activityId');
+}
+
+function instrumentId(trigger: HTMLElement): string {
+  return data(trigger, 'instrumentId');
+}
+
+const activityActionRegistry: Record<string, ActivityActionHandler> = {
+  create: ({ trigger }) => {
+    const targetBlockId = blockId(trigger);
+    if (targetBlockId) {
+      callAllowedWindowFunction('addActToBlock', targetBlockId);
+      return;
+    }
+    callAllowedWindowFunction('saveAct');
+  },
+  edit: ({ trigger }) => {
+    const targetBlockId = blockId(trigger);
+    const targetActivityId = activityId(trigger);
+    if (targetBlockId && targetActivityId) {
+      callAllowedWindowFunction('handleActNameInput', targetBlockId, targetActivityId, trigger);
+    }
+  },
+  delete: ({ trigger }) => {
+    const targetBlockId = blockId(trigger);
+    const targetActivityId = activityId(trigger);
+    if (targetBlockId && targetActivityId) {
+      callAllowedWindowFunction('removeActFromBlock', targetBlockId, targetActivityId);
+    }
+  },
+  save: ({ trigger }) => {
+    const target = data(trigger, 'target') || data(trigger, 'activityTarget');
+    if (target === 'template') {
+      callAllowedWindowFunction('saveTpl');
+      return;
+    }
+    callAllowedWindowFunction('saveAct');
+  },
+  cancel: () => {},
+  'select-block': ({ trigger }) => {
+    const targetBlockId = blockId(trigger);
+    if (targetBlockId) callAllowedWindowFunction('updateBlockMeta', targetBlockId, valueFromTrigger(trigger));
+  },
+  'create-block': ({ trigger }) => {
+    const targetBlockId = blockId(trigger);
+    if (targetBlockId) callAllowedWindowFunction('addActToBlock', targetBlockId);
+  },
+  'edit-block': () => {},
+  'delete-block': () => {},
+  'select-instrument': ({ trigger }) => {
+    const targetActivityId = activityId(trigger) || String((window as Record<string, unknown>)._linkActId || '').trim();
+    if (targetActivityId) callAllowedWindowFunction('openApplyInstrumentModal', targetActivityId);
+  },
+  'create-instrument': ({ trigger }) => {
+    const type = valueFromTrigger(trigger);
+    const targetActivityId = activityId(trigger) || String((window as Record<string, unknown>)._linkActId || '').trim();
+    if (type) {
+      callAllowedWindowFunction('createNewInstrument', type);
+      return;
+    }
+    if (targetActivityId && callAllowedWindowFunction('openCreateInstrumentTypePicker', targetActivityId)) return;
+    callAllowedWindowFunction('openInstrumentCreator');
+  },
+  'edit-instrument': ({ trigger }) => {
+    const id = instrumentId(trigger);
+    if (id) callAllowedWindowFunction('editInstrument', id);
+  },
+  'delete-instrument': ({ trigger }) => {
+    const id = instrumentId(trigger);
+    if (id) callAllowedWindowFunction('deleteInstrument', id);
+  },
+  'save-instrument': () => {
+    callAllowedWindowFunction('confirmLinkInstrument');
+  },
+  'evaluate-student': ({ trigger }) => {
+    const targetActivityId = activityId(trigger);
+    const studentId = data(trigger, 'studentId');
+    if (!targetActivityId) return;
+    if (studentId) callAllowedWindowFunction('openApplyInstrumentModal', targetActivityId, studentId);
+    else callAllowedWindowFunction('openApplyInstrumentModal', targetActivityId);
+  },
+  'change-grade': ({ trigger }) => {
+    const targetBlockId = blockId(trigger);
+    const targetActivityId = activityId(trigger);
+    if (targetBlockId && targetActivityId) {
+      callAllowedWindowFunction('updateActPts', targetBlockId, targetActivityId, valueFromTrigger(trigger));
+    }
+  },
+  'clear-grade': () => {},
+  'save-grades': () => {
+    callAllowedWindowFunction('saveAct');
+  },
+  'open-matrix': () => {
+    callAllowedWindowFunction('setActView', 'matrix');
+  },
+  'edit-matrix': ({ trigger }) => {
+    const targetActivityId = activityId(trigger);
+    if (targetActivityId) callAllowedWindowFunction('openApplyInstrumentModal', targetActivityId, data(trigger, 'studentId'));
+  },
+  'change-matrix-view': ({ trigger }) => {
+    callAllowedWindowFunction('setActView', data(trigger, 'matrixView') || valueFromTrigger(trigger));
+  },
+  filter: ({ trigger }) => {
+    const target = data(trigger, 'target') || data(trigger, 'activityTarget');
+    if (target) callAllowedWindowFunction('setInstFilter', target, valueFromTrigger(trigger));
+  },
+  'clear-filter': ({ trigger }) => {
+    const target = data(trigger, 'target') || data(trigger, 'activityTarget');
+    if (target) callAllowedWindowFunction('setInstFilter', target, '');
+  },
+  export: () => {},
+  print: () => window.print(),
+  'calculate-average': ({ trigger }) => {
+    const targetBlockId = blockId(trigger);
+    if (targetBlockId) callAllowedWindowFunction('autoAdjustBlock', targetBlockId);
+  },
+  sync: () => {},
+};
+
+export function handleDeclarativeActivityAction(trigger: Element, event: Event): boolean {
+  if (!(trigger instanceof HTMLElement)) return false;
+  const action = data(trigger, 'activityAction');
+  const handler = activityActionRegistry[action];
+  if (!handler) {
+    console.warn('[EduGest][activity-actions] Acción no permitida.', { action });
+    return false;
+  }
+
+  const expectedEvent = data(trigger, 'activityEvent');
+  if (expectedEvent && expectedEvent !== event.type) return false;
+
+  if (event.type === 'click' || event.type === 'dblclick') {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  void handler({ trigger, event });
+  return true;
+}

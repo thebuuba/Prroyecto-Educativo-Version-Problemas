@@ -49,6 +49,8 @@ Avance aplicado:
 - Dominio académico migrado a `data-academic-action` con registry explícito en `js/panels/configuracion-academica/utils/academic-actions.ts`.
 - Dominio asistencia migrado a `data-attendance-action` con registry explícito en `js/panels/asistencia/utils/attendance-actions.ts`.
 - Dominio horario migrado a `data-schedule-action` con registry explícito en `js/panels/horario/utils/schedule-actions.ts`.
+- Dominio actividades/calificaciones migrado a `data-activity-action` con registry explícito en `js/panels/actividades/utils/activity-actions.ts`.
+- Dominio usuarios/modales compartidos migrado a `data-user-action` con registry explícito en `js/panels/usuarios/utils/user-actions.ts`.
 
 Conteo de la fase estudiantes:
 
@@ -97,6 +99,30 @@ Riesgos horario:
 - La generación de plantilla base conserva compatibilidad con `generateTeacherScheduleBase` si existe en runtime; si no, abre el asistente.
 - Varias acciones del registry quedan como placeholders seguros hasta que se modularicen edición avanzada, exportación y eliminación de bloques.
 
+Conteo de la fase actividades/calificaciones:
+
+| Alcance | Inline antes | Inline después | `data-activity-action` después |
+| --- | ---: | ---: | ---: |
+| Componentes y fragments directos de actividades/instrumentos | 25 | 0 | 25 |
+| Alcance ampliado con fragmento combinado legacy | 26 | 1 | 25 |
+
+Riesgos actividades/calificaciones:
+
+- `saveUsr()` fue migrado en la fase usuarios porque pertenece a ese dominio aunque viva en el fragmento combinado de actividades.
+- `saveAct`, `saveTpl`, `openApplyInstrumentModal`, `openCreateInstrumentTypePicker` y `confirmLinkInstrument` se mantienen como adaptadores legacy explícitos si existen en runtime.
+- Acciones sin controles visibles actuales (`export`, `sync`, `clear-grade`, edición profunda de matriz) quedan registradas como ramas seguras hasta modularizar esos flujos.
+
+Conteo de la fase usuarios:
+
+| Alcance | Inline antes | Inline después | `data-user-action` después |
+| --- | ---: | ---: | ---: |
+| `js/panels/usuarios/` y fragments `m-usr` | 5 | 0 | 5 |
+
+Riesgos usuarios:
+
+- Edición, permisos, activación/desactivación, reseteo de contraseña, invitación y perfil quedan como ramas seguras porque no hay controles visibles actuales.
+- `delUsr` y `saveUsr` se invocan solo como adaptadores legacy explícitos si existen en runtime.
+
 Siguiente trabajo:
 
 1. Migrar handlers inline restantes por dominio con registries explícitos.
@@ -108,7 +134,7 @@ Orden recomendado:
 
 - UI básica: `openM`, `closeM`, `toast`
 - routing: `go`
-- calificaciones/evaluaciones
+- planificaciones/reportes y modales compartidos restantes
 - auth/setup
 
 ## Fase 4: backend por capas

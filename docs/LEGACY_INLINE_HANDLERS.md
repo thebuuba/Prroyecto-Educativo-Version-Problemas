@@ -71,6 +71,8 @@ Conteo después de esta fase:
 - Académico: los `18` handlers inline restantes de grados/secciones en `sections/panels/estudiantes/modals.html` fueron migrados a `data-academic-action`. También se migraron los fragments individuales `m-grade`, `m-sec`, `m-grade-edit`, `m-sec-edit` y acciones simples de `configuracion-academica` / `crear-seccion`.
 - Asistencia: `11` handlers inline del panel `js/panels/asistencia/` fueron migrados a `data-attendance-action` con registry explícito para mes, curso/sección, edición de día, excepciones, marcas, impresión y exportación.
 - Horario: `10` handlers inline del dominio `js/panels/horario/`, `sections/panels/horario/` y fragments `m-schedule*` fueron migrados a `data-schedule-action`.
+- Actividades/calificaciones: `25` handlers inline de componentes y fragments directos fueron migrados a `data-activity-action`; el único restante en el alcance ampliado es `saveUsr()` del dominio usuarios.
+- Usuarios/modales compartidos: `5` handlers inline de `js/panels/usuarios/`, `sections/modals/m-usr.html` y el fragmento combinado de actividades fueron migrados a `data-user-action`.
 
 ## Conteo de fase 3
 
@@ -93,6 +95,11 @@ Conteo después de esta fase:
 | `data-attendance-action` en asistencia | 0 | 10 | Vista renderizada con parámetros por `data-*`. |
 | Horario/calendario inline | 10 | 0 | Tabs, asistente, calendario, edición de bloque y plantilla base. |
 | `data-schedule-action` en horario | 0 | 10 | Registry explícito de dominio horario. |
+| Actividades/instrumentos/matriz inline en alcance revisado | 26 | 1 | El restante es `saveUsr()` en el fragmento combinado legacy, fuera del dominio actividades. |
+| Fuentes directas de actividades/instrumentos migradas | 25 | 0 | Componentes renderizados y fragments `m-act`, `m-tpl`, `m-link-inst`. |
+| `data-activity-action` en alcance migrado | 0 | 25 | Registry explícito de actividades, bloques, matriz e instrumentos. |
+| Usuarios/modales compartidos inline | 5 | 0 | Apertura, guardado y eliminación de usuarios. |
+| `data-user-action` en alcance migrado | 0 | 5 | Registry explícito de usuarios. |
 
 ## Pendiente
 
@@ -105,4 +112,8 @@ Conteo después de esta fase:
 - Completar acciones de día anterior/siguiente y selección individual de estudiante si se añaden controles visibles para esos flujos.
 - Completar acciones de horario que hoy quedan como placeholders seguros (`save`, `delete`, `clear`, `export`, selección de docente/asignatura/curso) cuando existan controles visibles o lógica modular específica.
 - `generateTeacherScheduleBase` no existe como módulo local; `data-schedule-action="generate"` conserva el adaptador legacy si aparece en runtime y cae al asistente si no está disponible.
+- `saveUsr()` ya no queda inline en `sections/panels/actividades/modals.html`; fue migrado a `data-user-action="save"`.
+- `openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument`, `saveAct` y `saveTpl` no tienen implementación modular local visible; `data-activity-action` conserva adaptadores legacy explícitos si esas funciones existen en runtime.
+- Acciones de actividades sin controles visibles actuales (`clear-grade`, `save-grades`, `export`, `sync`, edición profunda de matriz) quedan registradas como ramas seguras o placeholders.
+- Acciones de usuarios sin controles visibles actuales (`edit`, permisos, activar/desactivar, reset de contraseña, invitación y perfil) quedan registradas como ramas seguras hasta que existan flujos específicos.
 - Reducir `window` en `legacy-api.ts` solo cuando no queden referencias reales en HTML o strings renderizados.

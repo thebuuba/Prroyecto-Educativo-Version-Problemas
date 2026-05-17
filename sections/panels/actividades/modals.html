@@ -27,7 +27,7 @@
       <div class="fg"><label class="lbl">Observaciones</label><textarea class="ta" id="a-obs" placeholder="Notas opcionales..."></textarea></div>
       <div class="mf">
         <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-act">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveAct()">Guardar actividad</button>
+        <button class="btn btn-primary" data-activity-action="save">Guardar actividad</button>
       </div>
     </div>
   </div>
@@ -42,7 +42,7 @@
       <div class="fg"><label class="lbl">Descripci&oacute;n</label><input class="inp" id="tpl-desc" placeholder="Descripci&oacute;n breve..."></div>
       <div class="mf">
         <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-tpl">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveTpl()">Guardar plantilla</button>
+        <button class="btn btn-primary" data-activity-action="save" data-target="template">Guardar plantilla</button>
       </div>
     </div>
   </div>
@@ -65,7 +65,7 @@
       </div>
       <div class="mf">
         <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-usr">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveUsr()">Crear usuario</button>
+        <button class="btn btn-primary" data-user-action="save">Crear usuario</button>
       </div>
     </div>
   </div>

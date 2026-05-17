@@ -735,7 +735,7 @@ Carlos D&iacute;az 0000034"></textarea>
       <div class="fg"><label class="lbl">Observaciones</label><textarea class="ta" id="a-obs" placeholder="Notas opcionales..."></textarea></div>
       <div class="mf">
         <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-act">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveAct()">Guardar actividad</button>
+        <button class="btn btn-primary" data-activity-action="save">Guardar actividad</button>
       </div>
     </div>
   </div>
@@ -750,7 +750,7 @@ Carlos D&iacute;az 0000034"></textarea>
       <div class="fg"><label class="lbl">Descripci&oacute;n</label><input class="inp" id="tpl-desc" placeholder="Descripci&oacute;n breve..."></div>
       <div class="mf">
         <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-tpl">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveTpl()">Guardar plantilla</button>
+        <button class="btn btn-primary" data-activity-action="save" data-target="template">Guardar plantilla</button>
       </div>
     </div>
   </div>
@@ -773,7 +773,7 @@ Carlos D&iacute;az 0000034"></textarea>
       </div>
       <div class="mf">
         <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-usr">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveUsr()">Crear usuario</button>
+        <button class="btn btn-primary" data-user-action="save">Crear usuario</button>
       </div>
     </div>
   </div>
@@ -790,10 +790,10 @@ Carlos D&iacute;az 0000034"></textarea>
         <select class="sel" id="li-inst"></select>
       </div>
       <div class="mf" style="justify-content:space-between;">
-        <button class="btn btn-outline" id="li-create-btn" onclick="openCreateInstrumentTypePicker(window._linkActId)">+ Crear instrumento</button>
+        <button class="btn btn-outline" id="li-create-btn" data-activity-action="create-instrument">+ Crear instrumento</button>
         <div style="display:flex;gap:8px;">
           <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-link-inst">Cancelar</button>
-          <button class="btn btn-primary" id="li-confirm-btn" onclick="confirmLinkInstrument()">Vincular instrumento</button>
+          <button class="btn btn-primary" id="li-confirm-btn" data-activity-action="save-instrument">Vincular instrumento</button>
         </div>
       </div>
     </div>

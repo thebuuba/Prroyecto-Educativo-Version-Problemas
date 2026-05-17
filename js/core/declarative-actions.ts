@@ -11,6 +11,8 @@ import { handleDeclarativeStudentAction } from '../panels/estudiantes/utils/stud
 import { handleDeclarativeAcademicAction } from '../panels/configuracion-academica/utils/academic-actions.ts';
 import { handleDeclarativeAttendanceAction } from '../panels/asistencia/utils/attendance-actions.ts';
 import { handleDeclarativeScheduleAction } from '../panels/horario/utils/schedule-actions.ts';
+import { handleDeclarativeActivityAction } from '../panels/actividades/utils/activity-actions.ts';
+import { handleDeclarativeUserAction } from '../panels/usuarios/utils/user-actions.ts';
 
 function getDatasetValue(element: Element, key: string): string {
   return String((element as HTMLElement).dataset?.[key] || '').trim();
@@ -95,6 +97,12 @@ export function bindDeclarativeActions(): void {
 
     const scheduleTrigger = target.closest('[data-schedule-action]');
     if (scheduleTrigger) handleDeclarativeScheduleAction(scheduleTrigger, event);
+
+    const activityTrigger = target.closest('[data-activity-action]');
+    if (activityTrigger) handleDeclarativeActivityAction(activityTrigger, event);
+
+    const userTrigger = target.closest('[data-user-action]');
+    if (userTrigger) handleDeclarativeUserAction(userTrigger, event);
   });
 
   document.addEventListener('change', (event) => {
@@ -118,6 +126,12 @@ export function bindDeclarativeActions(): void {
 
     const scheduleTarget = target.closest('[data-schedule-action]');
     if (scheduleTarget) handleDeclarativeScheduleAction(scheduleTarget, event);
+
+    const activityTarget = target.closest('[data-activity-action]');
+    if (activityTarget) handleDeclarativeActivityAction(activityTarget, event);
+
+    const userTarget = target.closest('[data-user-action]');
+    if (userTarget) handleDeclarativeUserAction(userTarget, event);
   });
 
   document.addEventListener('input', (event) => {
@@ -136,6 +150,12 @@ export function bindDeclarativeActions(): void {
     const scheduleTarget = target.closest('[data-schedule-action]');
     if (scheduleTarget && handleDeclarativeScheduleAction(scheduleTarget, event)) return;
 
+    const activityTarget = target.closest('[data-activity-action]');
+    if (activityTarget && handleDeclarativeActivityAction(activityTarget, event)) return;
+
+    const userTarget = target.closest('[data-user-action]');
+    if (userTarget && handleDeclarativeUserAction(userTarget, event)) return;
+
     handleDeclarativeInput(target, event);
   });
 
@@ -148,6 +168,9 @@ export function bindDeclarativeActions(): void {
 
     const scheduleTarget = target.closest('[data-schedule-action]');
     if (scheduleTarget) handleDeclarativeScheduleAction(scheduleTarget, event);
+
+    const activityTarget = target.closest('[data-activity-action]');
+    if (activityTarget) handleDeclarativeActivityAction(activityTarget, event);
   });
 
   document.addEventListener('keydown', (event) => {

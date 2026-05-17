@@ -9,10 +9,10 @@
         <select class="sel" id="li-inst"></select>
       </div>
       <div class="mf" style="justify-content:space-between;">
-        <button class="btn btn-outline" id="li-create-btn" onclick="openCreateInstrumentTypePicker(window._linkActId)">+ Crear instrumento</button>
+        <button class="btn btn-outline" id="li-create-btn" data-activity-action="create-instrument">+ Crear instrumento</button>
         <div style="display:flex;gap:8px;">
           <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-link-inst">Cancelar</button>
-          <button class="btn btn-primary" id="li-confirm-btn" onclick="confirmLinkInstrument()">Vincular instrumento</button>
+          <button class="btn btn-primary" id="li-confirm-btn" data-activity-action="save-instrument">Vincular instrumento</button>
         </div>
       </div>
     </div>

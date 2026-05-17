@@ -17,6 +17,8 @@ Módulos auxiliares:
 - `js/panels/configuracion-academica/utils/academic-actions.ts`
 - `js/panels/asistencia/utils/attendance-actions.ts`
 - `js/panels/horario/utils/schedule-actions.ts`
+- `js/panels/actividades/utils/activity-actions.ts`
+- `js/panels/usuarios/utils/user-actions.ts`
 - `js/core/form-actions.ts`
 
 ## Acciones soportadas
@@ -207,6 +209,69 @@ Pendiente:
 
 - `generateTeacherScheduleBase` sigue como adaptador legacy si aparece en runtime; si no existe, se redirige al asistente.
 - Acciones sin controles visibles actuales (`delete`, `save`, `clear`, `export`, selección de docente/asignatura/curso) quedan registradas como ramas seguras.
+
+### Actividades y Calificaciones
+
+```html
+<button data-activity-action="change-matrix-view" data-matrix-view="matrix">Matriz</button>
+<input data-activity-action="change-grade" data-activity-event="input" data-block-id="B1" data-activity-id="act_1">
+<button data-activity-action="create-instrument">Nuevo Instrumento</button>
+```
+
+Acciones permitidas:
+
+- `create`, `edit`, `delete`, `save`, `cancel`
+- `select-block`, `create-block`, `edit-block`, `delete-block`
+- `select-instrument`, `create-instrument`, `edit-instrument`, `delete-instrument`, `save-instrument`
+- `evaluate-student`, `change-grade`, `clear-grade`, `save-grades`
+- `open-matrix`, `edit-matrix`, `change-matrix-view`
+- `filter`, `clear-filter`, `export`, `print`, `calculate-average`, `sync`
+
+El registry vive en `js/panels/actividades/utils/activity-actions.ts`. Los parámetros se pasan por `data-activity-id`, `data-block-id`, `data-instrument-id`, `data-student-id`, `data-grade-value`, `data-matrix-view`, `data-target` y `data-value`. No ejecuta nombres de funciones desde atributos.
+
+Migrado en esta fase:
+
+- Tabs de actividades: bloques, matriz y configuración.
+- Apertura de evaluación desde tarjetas y celdas de matriz.
+- Configuración de meta por bloque, alta de actividad, autoajuste, edición de nombre/puntos y eliminación.
+- Filtros, creación, edición y eliminación de instrumentos.
+- Modales legacy `m-act`, `m-tpl` y `m-link-inst`.
+
+Pendiente:
+
+- `saveUsr()` del fragmento combinado de actividades fue tratado en el dominio usuarios.
+- Guardado de actividad/plantilla y vinculación de instrumentos conservan adaptadores hacia globals legacy si existen en runtime.
+- Exportación, sincronización y edición profunda de matriz quedan como ramas seguras hasta que existan controles y módulos específicos.
+
+### Usuarios
+
+```html
+<button data-user-action="open-modal" data-user-modal-id="m-usr">Nuevo Usuario</button>
+<button data-user-action="save">Crear usuario</button>
+<button data-user-action="delete" data-user-id="usr_1">...</button>
+```
+
+Acciones permitidas:
+
+- `create`, `edit`, `delete`, `save`, `cancel`
+- `select-role`, `change-permission`
+- `activate`, `deactivate`, `reset-password`
+- `open-modal`
+- `filter`, `clear-filter`, `search`
+- `invite`, `update-profile`, `save-profile`, `change-status`
+
+El registry vive en `js/panels/usuarios/utils/user-actions.ts`. Los parámetros se pasan por `data-user-id`, `data-user-role`, `data-user-permission`, `data-user-status`, `data-user-target`, `data-user-value` y `data-user-modal-id`. No ejecuta nombres de funciones desde atributos.
+
+Migrado en esta fase:
+
+- Apertura del modal de usuario desde el panel vacío y desde el header del panel.
+- Guardado de usuario desde `sections/modals/m-usr.html` y desde el fragmento combinado legacy de actividades.
+- Eliminación de usuarios desde la tabla de colaboradores.
+
+Pendiente:
+
+- Edición, permisos, activación/desactivación, reseteo de contraseña, invitación y perfil no tienen controles visibles actuales en el panel.
+- `saveUsr` y `delUsr` se conservan como adaptadores legacy explícitos si existen en runtime.
 
 ### Formularios simples
 

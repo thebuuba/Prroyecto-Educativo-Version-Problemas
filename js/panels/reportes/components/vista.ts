@@ -56,7 +56,7 @@ function renderizarReportHeader() {
 function renderizarExportCards() {
   return `
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-      <button onclick="reportDownloadExcel()" class="group bg-white p-8 border border-slate-200 rounded-[2.5rem] flex flex-col items-center text-center hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-50 transition-all">
+      <button data-report-action="export-excel" data-format="excel" class="group bg-white p-8 border border-slate-200 rounded-[2.5rem] flex flex-col items-center text-center hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-50 transition-all">
         <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner">
           <img src="/assets/icons/logoexcel.png" alt="Excel" class="w-8 h-8 object-contain">
         </div>
@@ -64,7 +64,7 @@ function renderizarExportCards() {
         <p class="text-xs text-slate-400 font-medium uppercase tracking-widest leading-none">Matriz Detallada</p>
       </button>
       
-      <button onclick="reportDownloadPdf()" class="group bg-white p-8 border border-slate-200 rounded-[2.5rem] flex flex-col items-center text-center hover:border-rose-200 hover:shadow-xl hover:shadow-rose-50 transition-all">
+      <button data-report-action="export-pdf" data-format="pdf" class="group bg-white p-8 border border-slate-200 rounded-[2.5rem] flex flex-col items-center text-center hover:border-rose-200 hover:shadow-xl hover:shadow-rose-50 transition-all">
         <div class="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner">
           <img src="/assets/icons/logopdf.png" alt="PDF" class="w-8 h-8 object-contain">
         </div>
@@ -72,7 +72,7 @@ function renderizarExportCards() {
         <p class="text-xs text-slate-400 font-medium uppercase tracking-widest leading-none">Informe Oficial</p>
       </button>
       
-      <button onclick="reportDownloadWord()" class="group bg-white p-8 border border-slate-200 rounded-[2.5rem] flex flex-col items-center text-center hover:border-blue-200 hover:shadow-xl hover:shadow-blue-50 transition-all">
+      <button data-report-action="export" data-format="word" class="group bg-white p-8 border border-slate-200 rounded-[2.5rem] flex flex-col items-center text-center hover:border-blue-200 hover:shadow-xl hover:shadow-blue-50 transition-all">
         <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner">
           <img src="/assets/icons/logoword.png" alt="Word" class="w-8 h-8 object-contain">
         </div>

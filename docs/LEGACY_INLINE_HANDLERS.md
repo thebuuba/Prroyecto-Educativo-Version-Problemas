@@ -73,6 +73,7 @@ Conteo después de esta fase:
 - Horario: `10` handlers inline del dominio `js/panels/horario/`, `sections/panels/horario/` y fragments `m-schedule*` fueron migrados a `data-schedule-action`.
 - Actividades/calificaciones: `25` handlers inline de componentes y fragments directos fueron migrados a `data-activity-action`; el único restante en el alcance ampliado es `saveUsr()` del dominio usuarios.
 - Usuarios/modales compartidos: `5` handlers inline de `js/panels/usuarios/`, `sections/modals/m-usr.html` y el fragmento combinado de actividades fueron migrados a `data-user-action`.
+- Planificaciones/reportes: `25` handlers inline de `js/panels/planificaciones/` y `js/panels/reportes/` fueron migrados a `data-planning-action` y `data-report-action`.
 
 ## Conteo de fase 3
 
@@ -100,6 +101,9 @@ Conteo después de esta fase:
 | `data-activity-action` en alcance migrado | 0 | 25 | Registry explícito de actividades, bloques, matriz e instrumentos. |
 | Usuarios/modales compartidos inline | 5 | 0 | Apertura, guardado y eliminación de usuarios. |
 | `data-user-action` en alcance migrado | 0 | 5 | Registry explícito de usuarios. |
+| Planificaciones inline | 22 | 0 | Crear, continuar, secciones, campos del editor, volver y guardar. |
+| Reportes inline | 3 | 0 | Exportaciones Excel, PDF y Word. |
+| `data-planning-action` / `data-report-action` | 0 | 23 | Registries explícitos separados por dominio. |
 
 ## Pendiente
 
@@ -116,4 +120,6 @@ Conteo después de esta fase:
 - `openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument`, `saveAct` y `saveTpl` no tienen implementación modular local visible; `data-activity-action` conserva adaptadores legacy explícitos si esas funciones existen en runtime.
 - Acciones de actividades sin controles visibles actuales (`clear-grade`, `save-grades`, `export`, `sync`, edición profunda de matriz) quedan registradas como ramas seguras o placeholders.
 - Acciones de usuarios sin controles visibles actuales (`edit`, permisos, activar/desactivar, reset de contraseña, invitación y perfil) quedan registradas como ramas seguras hasta que existan flujos específicos.
+- Acciones de planificación sin controles visibles actuales (`delete`, `duplicate`, plantillas y filtros complejos) quedan registradas como ramas seguras.
+- Acciones de reportes sin controles visibles actuales (`select-*`, `open-detail`, filtros y descarga genérica por archivo) quedan registradas como ramas seguras.
 - Reducir `window` en `legacy-api.ts` solo cuando no queden referencias reales en HTML o strings renderizados.

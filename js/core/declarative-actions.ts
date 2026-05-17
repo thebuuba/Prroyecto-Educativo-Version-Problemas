@@ -13,6 +13,8 @@ import { handleDeclarativeAttendanceAction } from '../panels/asistencia/utils/at
 import { handleDeclarativeScheduleAction } from '../panels/horario/utils/schedule-actions.ts';
 import { handleDeclarativeActivityAction } from '../panels/actividades/utils/activity-actions.ts';
 import { handleDeclarativeUserAction } from '../panels/usuarios/utils/user-actions.ts';
+import { handleDeclarativePlanningAction } from '../panels/planificaciones/utils/planning-actions.ts';
+import { handleDeclarativeReportAction } from '../panels/reportes/utils/report-actions.ts';
 
 function getDatasetValue(element: Element, key: string): string {
   return String((element as HTMLElement).dataset?.[key] || '').trim();
@@ -103,6 +105,12 @@ export function bindDeclarativeActions(): void {
 
     const userTrigger = target.closest('[data-user-action]');
     if (userTrigger) handleDeclarativeUserAction(userTrigger, event);
+
+    const planningTrigger = target.closest('[data-planning-action]');
+    if (planningTrigger) handleDeclarativePlanningAction(planningTrigger, event);
+
+    const reportTrigger = target.closest('[data-report-action]');
+    if (reportTrigger) handleDeclarativeReportAction(reportTrigger, event);
   });
 
   document.addEventListener('change', (event) => {
@@ -132,6 +140,12 @@ export function bindDeclarativeActions(): void {
 
     const userTarget = target.closest('[data-user-action]');
     if (userTarget) handleDeclarativeUserAction(userTarget, event);
+
+    const planningTarget = target.closest('[data-planning-action]');
+    if (planningTarget) handleDeclarativePlanningAction(planningTarget, event);
+
+    const reportTarget = target.closest('[data-report-action]');
+    if (reportTarget) handleDeclarativeReportAction(reportTarget, event);
   });
 
   document.addEventListener('input', (event) => {
@@ -155,6 +169,12 @@ export function bindDeclarativeActions(): void {
 
     const userTarget = target.closest('[data-user-action]');
     if (userTarget && handleDeclarativeUserAction(userTarget, event)) return;
+
+    const planningTarget = target.closest('[data-planning-action]');
+    if (planningTarget && handleDeclarativePlanningAction(planningTarget, event)) return;
+
+    const reportTarget = target.closest('[data-report-action]');
+    if (reportTarget && handleDeclarativeReportAction(reportTarget, event)) return;
 
     handleDeclarativeInput(target, event);
   });

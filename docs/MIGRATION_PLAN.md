@@ -51,6 +51,7 @@ Avance aplicado:
 - Dominio horario migrado a `data-schedule-action` con registry explícito en `js/panels/horario/utils/schedule-actions.ts`.
 - Dominio actividades/calificaciones migrado a `data-activity-action` con registry explícito en `js/panels/actividades/utils/activity-actions.ts`.
 - Dominio usuarios/modales compartidos migrado a `data-user-action` con registry explícito en `js/panels/usuarios/utils/user-actions.ts`.
+- Dominios planificaciones y reportes migrados a `data-planning-action` y `data-report-action` con registries explícitos separados.
 
 Conteo de la fase estudiantes:
 
@@ -123,6 +124,19 @@ Riesgos usuarios:
 - Edición, permisos, activación/desactivación, reseteo de contraseña, invitación y perfil quedan como ramas seguras porque no hay controles visibles actuales.
 - `delUsr` y `saveUsr` se invocan solo como adaptadores legacy explícitos si existen en runtime.
 
+Conteo de la fase planificaciones/reportes:
+
+| Alcance | Inline antes | Inline después | Declarativos después |
+| --- | ---: | ---: | ---: |
+| `js/panels/planificaciones/` | 22 | 0 | 20 |
+| `js/panels/reportes/` | 3 | 0 | 3 |
+| Total | 25 | 0 | 23 |
+
+Riesgos planificaciones/reportes:
+
+- Planificaciones conserva edición de campos simples y navegación del editor; eliminación, duplicado, plantillas y exportación específica quedan como ramas seguras sin controles visibles actuales.
+- Reportes conserva exportación Excel/PDF/Word; filtros, selección de tipo y detalle quedan registrados sin lógica destructiva hasta que existan controles.
+
 Siguiente trabajo:
 
 1. Migrar handlers inline restantes por dominio con registries explícitos.
@@ -134,7 +148,7 @@ Orden recomendado:
 
 - UI básica: `openM`, `closeM`, `toast`
 - routing: `go`
-- planificaciones/reportes y modales compartidos restantes
+- planificaciones/reportes avanzados y modales compartidos restantes
 - auth/setup
 
 ## Fase 4: backend por capas

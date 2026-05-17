@@ -11,6 +11,7 @@ import {
   lessonPlanPersistDraftNow,
   lessonPlanAvailableGrades,
   lessonPlanSectionOptionsForGradeId,
+  escapeHtml,
 } from '../../../core/domain-utils.ts';
 import { LESSON_PLAN_TRANSVERSAL_AXES } from '../../../core/constants.ts';
 import { getPlanningState } from '../utils/actions.ts';
@@ -45,7 +46,7 @@ function renderizarCtaCard() {
         </div>
         <h3 class="text-2xl font-bold mb-2">Nueva Planificación</h3>
         <p class="text-blue-100 mb-8 max-w-[240px]">Inicia un nuevo diseño curricular guiado paso a paso.</p>
-        <button onclick="lessonPlanNew()" class="px-6 py-3 bg-white text-blue-600 rounded-xl font-bold shadow-lg shadow-black/5 hover:bg-slate-50 transition-colors">
+        <button data-planning-action="create" class="px-6 py-3 bg-white text-blue-600 rounded-xl font-bold shadow-lg shadow-black/5 hover:bg-slate-50 transition-colors">
           Comenzar ahora
         </button>
       </div>
@@ -69,7 +70,7 @@ function renderizarDraftList(drafts) {
   return `
     <div class="space-y-3">
       ${drafts.slice(0, 3).map(plan => `
-        <div onclick="lessonPlanContinue('${plan.id}')" class="flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl hover:border-blue-200 hover:bg-blue-50/30 transition-all cursor-pointer group">
+        <div data-planning-action="edit" data-planning-id="${escapeHtml(plan.id)}" class="flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl hover:border-blue-200 hover:bg-blue-50/30 transition-all cursor-pointer group">
           <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center shrink-0">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
           </div>
@@ -98,7 +99,7 @@ function renderizarPlanCard(plan) {
           </div>
         </div>
         <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button onclick="lessonPlanContinue('${plan.id}')" class="p-2 hover:bg-slate-100 rounded-lg text-slate-500" title="Editar">
+          <button data-planning-action="edit" data-planning-id="${escapeHtml(plan.id)}" class="p-2 hover:bg-slate-100 rounded-lg text-slate-500" title="Editar">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
           </button>
         </div>
@@ -134,7 +135,7 @@ function renderizarStepRail(activeId) {
       ${steps.map((step) => {
         const isActive = step.id === activeId;
         return `
-          <button onclick="lessonPlanSetActiveSection('${step.id}')" class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all ${isActive ? 'bg-white text-blue-600 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700'}">
+          <button data-planning-action="select-step" data-planning-section-id="${escapeHtml(step.id)}" class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all ${isActive ? 'bg-white text-blue-600 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700'}">
             <span class="w-5 h-5 flex items-center justify-center shrink-0">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${step.icon}"></path></svg>
             </span>
@@ -158,11 +159,11 @@ function renderizarEditorGeneral(draft) {
           <div class="space-y-4">
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Centro Educativo</label>
-              <input type="text" value="${draft.general.center || ''}" oninput="lessonPlanSetGeneralField('general.center', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium">
+              <input type="text" value="${draft.general.center || ''}" data-planning-action="filter" data-planning-event="input" data-target="general.center" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium">
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Nombre del Docente</label>
-              <input type="text" value="${draft.general.teacher || ''}" oninput="lessonPlanSetGeneralField('general.teacher', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium">
+              <input type="text" value="${draft.general.teacher || ''}" data-planning-action="filter" data-planning-event="input" data-target="general.teacher" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium">
             </div>
           </div>
         </div>
@@ -172,21 +173,21 @@ function renderizarEditorGeneral(draft) {
           <div class="grid grid-cols-2 gap-4">
             <div class="flex flex-col gap-1.5 col-span-2">
               <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Grado Académico</label>
-              <select onchange="lessonPlanSetGeneralField('general.gradeId', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
+              <select data-planning-action="select-grade" data-planning-event="change" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
                 <option value="">Seleccionar grado...</option>
                 ${grades.map(g => `<option value="${g.id}" ${draft.general.gradeId === g.id ? 'selected' : ''}>${g.name}</option>`).join('')}
               </select>
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Sección</label>
-              <select onchange="lessonPlanSetGeneralField('general.sectionName', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
+              <select data-planning-action="select-section" data-planning-event="change" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
                 <option value="">Seleccionar...</option>
                 ${sections.map(s => `<option value="${s.value}" ${draft.general.sectionName === s.value ? 'selected' : ''}>${s.label}</option>`).join('')}
               </select>
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Período</label>
-              <select onchange="lessonPlanSetGeneralField('general.periodId', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
+              <select data-planning-action="select-period" data-planning-event="change" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
                 <option value="P1" ${draft.general.periodId === 'P1' ? 'selected' : ''}>P1</option>
                 <option value="P2" ${draft.general.periodId === 'P2' ? 'selected' : ''}>P2</option>
                 <option value="P3" ${draft.general.periodId === 'P3' ? 'selected' : ''}>P3</option>
@@ -202,15 +203,15 @@ function renderizarEditorGeneral(draft) {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="flex flex-col gap-1.5 md:col-span-2">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Título del Tema o Unidad</label>
-            <input type="text" value="${draft.general.themeTitle || draft.general.title || ''}" oninput="lessonPlanSetGeneralField('general.themeTitle', this.value)" placeholder="Ej. Los ecosistemas marinos" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-bold text-lg">
+            <input type="text" value="${draft.general.themeTitle || draft.general.title || ''}" data-planning-action="filter" data-planning-event="input" data-target="general.themeTitle" placeholder="Ej. Los ecosistemas marinos" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-bold text-lg">
           </div>
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Fecha de Inicio</label>
-            <input type="date" value="${draft.general.startDate || ''}" onchange="lessonPlanSetGeneralField('general.startDate', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium">
+            <input type="date" value="${draft.general.startDate || ''}" data-planning-action="filter" data-planning-event="change" data-target="general.startDate" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium">
           </div>
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Eje Transversal</label>
-            <select onchange="lessonPlanSetGeneralField('general.transversalAxis', this.value)" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
+            <select data-planning-action="filter" data-planning-event="change" data-target="general.transversalAxis" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium appearance-none cursor-pointer">
               <option value="">Ninguno</option>
               ${LESSON_PLAN_TRANSVERSAL_AXES.map(axis => `<option value="${axis.value}" ${draft.general.transversalAxis === axis.value ? 'selected' : ''}>${axis.value}</option>`).join('')}
             </select>
@@ -237,22 +238,22 @@ function renderizarEditorCurriculum(draft) {
       <div class="grid grid-cols-1 gap-6">
         <div class="space-y-3">
           <label class="text-sm font-bold text-slate-500 uppercase tracking-wider ml-1">Competencias Fundamentales</label>
-          <textarea oninput="lessonPlanSetCurriculumField('fundamentalCompetencies', this.value)" rows="3" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed" placeholder="Ej. Ética y Ciudadana, Comunicativa...">${draft.curriculum.fundamentalCompetencies || ''}</textarea>
+          <textarea data-planning-action="filter" data-planning-event="input" data-planning-scope="curriculum" data-target="fundamentalCompetencies" rows="3" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed" placeholder="Ej. Ética y Ciudadana, Comunicativa...">${draft.curriculum.fundamentalCompetencies || ''}</textarea>
         </div>
 
         <div class="space-y-3">
           <label class="text-sm font-bold text-slate-500 uppercase tracking-wider ml-1">Competencias Específicas</label>
-          <textarea oninput="lessonPlanSetCurriculumField('specificCompetencies', this.value)" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed" placeholder="Describe las competencias específicas de la unidad...">${draft.curriculum.specificCompetencies || ''}</textarea>
+          <textarea data-planning-action="filter" data-planning-event="input" data-planning-scope="curriculum" data-target="specificCompetencies" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed" placeholder="Describe las competencias específicas de la unidad...">${draft.curriculum.specificCompetencies || ''}</textarea>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-3">
             <label class="text-sm font-bold text-slate-500 uppercase tracking-wider ml-1">Contenidos Conceptuales</label>
-            <textarea oninput="lessonPlanSetCurriculumField('conceptualContents', this.value)" rows="5" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${draft.curriculum.conceptualContents || ''}</textarea>
+            <textarea data-planning-action="filter" data-planning-event="input" data-planning-scope="curriculum" data-target="conceptualContents" rows="5" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${draft.curriculum.conceptualContents || ''}</textarea>
           </div>
           <div class="space-y-3">
             <label class="text-sm font-bold text-slate-500 uppercase tracking-wider ml-1">Indicadores de Logro</label>
-            <textarea oninput="lessonPlanSetCurriculumField('indicators', this.value)" rows="5" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${draft.curriculum.indicators || ''}</textarea>
+            <textarea data-planning-action="filter" data-planning-event="input" data-planning-scope="curriculum" data-target="indicators" rows="5" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${draft.curriculum.indicators || ''}</textarea>
           </div>
         </div>
       </div>
@@ -330,7 +331,7 @@ function renderizarEditorEvaluation(draft) {
         <div class="space-y-6">
           <div class="space-y-3">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Estrategias de Evaluación</label>
-            <textarea oninput="lessonPlanSetGeneralField('strategy.methodology', this.value)" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${draft.strategy?.methodology || ''}</textarea>
+            <textarea data-planning-action="filter" data-planning-event="input" data-target="strategy.methodology" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${draft.strategy?.methodology || ''}</textarea>
           </div>
           <div class="space-y-3">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Técnicas e Instrumentos</label>
@@ -341,7 +342,7 @@ function renderizarEditorEvaluation(draft) {
         <div class="space-y-6">
           <div class="space-y-3">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Recursos Didácticos</label>
-            <textarea oninput="lessonPlanSetGeneralField('resources.notes', this.value)" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${draft.resources?.notes || ''}</textarea>
+            <textarea data-planning-action="filter" data-planning-event="input" data-target="resources.notes" rows="4" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-700 font-medium leading-relaxed">${draft.resources?.notes || ''}</textarea>
           </div>
           <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100">
             <h5 class="text-sm font-bold text-slate-700 mb-3">Sugerencias de Recursos</h5>
@@ -500,12 +501,12 @@ export function renderizarPlanningPanel(container) {
   container.innerHTML = `
     <div class="max-w-[1600px] mx-auto p-6 md:p-10 animate-in slide-in-from-bottom-5 duration-500">
       <div class="flex items-center justify-between mb-8">
-        <button onclick="lessonPlanReturnHome()" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors font-medium">
+        <button data-planning-action="cancel" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors font-medium">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
           Volver
         </button>
         <div class="flex gap-3">
-          <button onclick="lessonPlanPersistDraftNow()" class="px-7 py-2.5 bg-slate-900 text-white rounded-2xl font-bold shadow-xl shadow-slate-900/20 hover:bg-slate-800 transition-all hover:-translate-y-0.5 active:translate-y-0">
+          <button data-planning-action="save" class="px-7 py-2.5 bg-slate-900 text-white rounded-2xl font-bold shadow-xl shadow-slate-900/20 hover:bg-slate-800 transition-all hover:-translate-y-0.5 active:translate-y-0">
             Guardar Borrador
           </button>
         </div>

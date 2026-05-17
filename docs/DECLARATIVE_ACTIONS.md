@@ -19,6 +19,8 @@ Módulos auxiliares:
 - `js/panels/horario/utils/schedule-actions.ts`
 - `js/panels/actividades/utils/activity-actions.ts`
 - `js/panels/usuarios/utils/user-actions.ts`
+- `js/panels/planificaciones/utils/planning-actions.ts`
+- `js/panels/reportes/utils/report-actions.ts`
 - `js/core/form-actions.ts`
 
 ## Acciones soportadas
@@ -274,6 +276,61 @@ Pendiente:
 - `saveUsr` y `delUsr` se conservan como adaptadores legacy explícitos si existen en runtime.
 
 ### Formularios simples
+
+### Planificaciones
+
+```html
+<button data-planning-action="create">Comenzar ahora</button>
+<button data-planning-action="edit" data-planning-id="plan_1">...</button>
+<input data-planning-action="filter" data-planning-event="input" data-target="general.teacher">
+```
+
+Acciones permitidas:
+
+- `create`, `edit`, `delete`, `save`, `cancel`, `duplicate`
+- `select-grade`, `select-section`, `select-subject`, `select-period`
+- `generate`, `print`, `export`
+- `open-template`, `apply-template`
+- `filter`, `clear-filter`
+
+El registry vive en `js/panels/planificaciones/utils/planning-actions.ts`. Los parámetros se pasan por `data-planning-id`, `data-grade-id`, `data-section-id`, `data-subject-id`, `data-period-id`, `data-target`, `data-value` y campos auxiliares como `data-planning-scope`.
+
+Migrado en esta fase:
+
+- Crear planificación, continuar borrador o planificación existente.
+- Cambiar paso del editor.
+- Campos simples del editor general, currículo, estrategia y recursos.
+- Selección de grado, sección y período.
+- Volver y guardar borrador.
+
+Pendiente:
+
+- Eliminar, duplicar, plantillas, exportación específica de planificación y filtros complejos no tienen controles visibles actuales.
+
+### Reportes
+
+```html
+<button data-report-action="export-excel" data-format="excel">Exportar Excel</button>
+<button data-report-action="export-pdf" data-format="pdf">Descargar PDF</button>
+<button data-report-action="export" data-format="word">Editar Word</button>
+```
+
+Acciones permitidas:
+
+- `generate`, `view`, `print`, `export`, `export-pdf`, `export-excel`
+- `filter`, `clear-filter`
+- `select-type`, `select-grade`, `select-section`, `select-subject`, `select-period`
+- `refresh`, `download`, `open-detail`
+
+El registry vive en `js/panels/reportes/utils/report-actions.ts`. Los parámetros se pasan por `data-report-id`, `data-report-type`, `data-grade-id`, `data-section-id`, `data-subject-id`, `data-period-id`, `data-target`, `data-value` y `data-format`.
+
+Migrado en esta fase:
+
+- Exportaciones Excel, PDF y Word del centro de reportes.
+
+Pendiente:
+
+- Filtros, selección de tipo, detalle y descarga genérica quedan registrados como ramas seguras porque no hay controles visibles actuales.
 
 ```html
 <input data-action="input-change" data-input-handler="setup-phone">

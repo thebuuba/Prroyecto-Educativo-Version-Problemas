@@ -1329,8 +1329,8 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   MASTER HEGEMONIC DESIGN — AUTH MODAL REDESIGN
-   Unifica marca (Azul Marino Premium) y formulario en una sola tarjeta.
+   PREMIUM BENTO AUTH DESIGN — Rediseño Total
+   Unifica marca (Navy Glassmorphism) y formulario en una sola tarjeta.
    Optimizado para armonía visual y contraste Clase-A.
    ────────────────────────────────────────────────────────────────────────── */
 
@@ -1339,7 +1339,6 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #f8fafc;
   background: radial-gradient(circle at 50% 50%, #f1f5f9 0%, #e2e8f0 100%);
   font-family: 'Manrope', 'Inter', sans-serif;
   padding: 24px;
@@ -1347,6 +1346,12 @@
   inset: 0;
   z-index: 10000;
   overflow: hidden;
+  animation: authBackdropIn 0.8s ease;
+}
+
+@keyframes authBackdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 #m-auth:not(.open) {
@@ -1365,57 +1370,63 @@
 
 #m-auth .auth-shell {
   width: 100%;
-  max-width: 1040px;
+  max-width: 1080px;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 24px;
   align-items: center;
-  animation: authFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
+  animation: authFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes authFadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(30px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 #m-auth .auth-card {
   width: 100%;
   background: #ffffff;
-  border-radius: 40px;
+  border-radius: 36px;
   display: flex;
   overflow: hidden;
   box-shadow: 
-    0 40px 80px rgba(5, 7, 32, 0.12),
-    0 0 0 1px rgba(15, 22, 64, 0.04);
-  min-height: 640px;
+    0 40px 100px rgba(5, 7, 32, 0.18),
+    0 0 0 1px rgba(15, 22, 64, 0.05);
+  min-height: 720px;
 }
 
-/* ── Panel de Marca (Lado Izquierdo - Premium Navy) ── */
+/* ── Panel de Marca (Lado Izquierdo - Deep Navy) ── */
 #m-auth .auth-brand {
-  flex: 1;
+  flex: 1.1;
   background: #050720;
   background: 
-    radial-gradient(circle at 20% 20%, rgba(24, 119, 242, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 80% 80%, rgba(24, 119, 242, 0.1) 0%, transparent 40%),
-    linear-gradient(135deg, #050720 0%, #0a1128 100%);
+    radial-gradient(circle at 0% 0%, rgba(24, 119, 242, 0.18) 0%, transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(24, 119, 242, 0.12) 0%, transparent 40%),
+    linear-gradient(165deg, #050720 0%, #0a1128 50%, #080c26 100%);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   position: relative;
-  padding: 48px;
+  padding: 56px 48px;
   overflow: hidden;
+  color: #fff;
 }
 
 #m-auth .auth-brand::before {
   content: "";
   position: absolute;
-  top: -100px;
-  right: -100px;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, rgba(24, 119, 242, 0.08) 0%, transparent 70%);
+  top: -150px;
+  right: -150px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(24, 119, 242, 0.1) 0%, transparent 70%);
   border-radius: 50%;
+  animation: authBrandPulse 10s ease-in-out infinite;
+}
+
+@keyframes authBrandPulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.1); }
 }
 
 #m-auth .auth-brand-stage {
@@ -1423,114 +1434,203 @@
   z-index: 2;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  gap: 40px;
+  text-align: left;
+  width: 100%;
+}
+
+#m-auth .auth-brand-topline {
+  display: flex;
   align-items: center;
-  gap: 24px;
-  text-align: center;
+  gap: 12px;
 }
 
-#m-auth .auth-brand-logo {
-  width: 88px;
-  height: 88px;
-  filter: drop-shadow(0 10px 20px rgba(24, 119, 242, 0.4));
-  transition: transform 0.3s ease;
+#m-auth .auth-book-mark {
+  width: 32px;
+  height: 32px;
+  background: #1877f2;
+  border-radius: 10px;
+  display: block;
+  box-shadow: 0 4px 12px rgba(24, 119, 242, 0.4);
 }
 
-#m-auth .auth-brand-logo:hover {
-  transform: scale(1.05);
+#m-auth .auth-brand-word {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+#m-auth .auth-brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
 }
 
 #m-auth .auth-brand-name {
-  color: #ffffff;
-  font-size: 42px;
+  font-size: 48px;
   font-weight: 900;
-  margin: 0;
+  line-height: 1.05;
   letter-spacing: -0.04em;
-  line-height: 1;
+  color: #ffffff;
+  margin: 0;
+}
+
+#m-auth .auth-brand-name span {
+  color: #1877f2;
 }
 
 #m-auth .auth-brand-kicker {
-  color: rgba(255, 255, 255, 0.45);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
   margin: 0;
 }
 
-/* ── Panel de Formulario (Lado Derecho - Modern White) ── */
-#m-auth .modal-auth {
-  flex: 1.15;
-  background: #ffffff;
-  padding: 64px 32px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* ── Bento Cards (Feature Items) ── */
+#m-auth .auth-feature-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  width: 100%;
+  margin-top: 12px;
 }
 
-#m-auth .auth-head {
-  margin-bottom: 32px;
-  width: min(100%, 448px);
+#m-auth .auth-feature-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  animation: authFeatureFadeIn 0.6s ease forwards;
+  opacity: 0;
+}
+
+#m-auth .auth-feature-item:nth-child(1) { animation-delay: 0.3s; }
+#m-auth .auth-feature-item:nth-child(2) { animation-delay: 0.4s; }
+#m-auth .auth-feature-item:nth-child(3) { animation-delay: 0.5s; }
+
+#m-auth .auth-feature-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateX(6px);
+}
+
+#m-auth .auth-feature-item .material-symbols-outlined {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  font-size: 22px;
+  color: #ffffff;
+}
+
+#m-auth .auth-feature-blue .material-symbols-outlined { background: rgba(24, 119, 242, 0.2); color: #60a5fa; }
+#m-auth .auth-feature-green .material-symbols-outlined { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+#m-auth .auth-feature-rose .material-symbols-outlined { background: rgba(244, 63, 94, 0.2); color: #fb7185; }
+
+#m-auth .auth-feature-item div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   text-align: left;
 }
 
-#m-auth .auth-title, #auth-title {
-  font-size: 36px !important;
-  font-weight: 900 !important;
-  color: #050720 !important;
-  margin-bottom: 10px !important;
-  letter-spacing: -0.03em !important;
+#m-auth .auth-feature-item strong {
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
 }
 
-#m-auth .auth-subtitle, #auth-subtitle {
-  font-size: 15px !important;
-  color: #64748b !important;
-  line-height: 1.6 !important;
+#m-auth .auth-feature-item p {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+  line-height: 1.4;
 }
 
-/* ── Campos de Entrada ── */
-#m-auth .auth-panel {
+/* ── Panel de Formulario (Derecha) ── */
+#m-auth .auth-form-side {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  width: min(100%, 448px);
-  align-items: stretch;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  padding: 64px 48px;
+  position: relative;
 }
 
+#m-auth .auth-form-center {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+#m-auth .auth-head {
+  text-align: left;
+}
+
+#m-auth #auth-title {
+  font-size: 34px;
+  font-weight: 900;
+  color: #050720;
+  letter-spacing: -0.04em;
+  margin-bottom: 8px;
+}
+
+#m-auth #auth-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+/* Campos de entrada refinados */
 #m-auth .fg {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin-bottom: 4px;
 }
 
 #m-auth .lbl {
-  font-size: 11px;
-  font-weight: 800;
+  font-size: 13px;
+  font-weight: 750;
   color: #475569;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
   margin-left: 2px;
 }
 
 #m-auth .auth-input-wrap {
-  position: relative;
-  height: 52px;
-  background: #f1f5f9;
-  border-radius: 22px;
-  border: 1px solid transparent;
+  height: 54px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
   transition: all 0.2s ease;
+  position: relative;
 }
 
 #m-auth .auth-input-wrap:focus-within {
   background: #ffffff;
   border-color: #1877f2;
-  box-shadow: 0 0 0 4px rgba(24, 119, 242, 0.08);
+  box-shadow: 0 0 0 4px rgba(24, 119, 242, 0.1);
 }
 
 #m-auth .auth-input-icon {
   position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
+  left: 16px;
   color: #94a3b8;
   font-size: 20px;
 }
@@ -1538,46 +1638,40 @@
 #m-auth .inp, #m-auth .password-input {
   width: 100%;
   height: 100%;
+  padding: 0 20px 0 52px;
   border: 0;
-  padding: 0 44px;
   background: transparent !important;
-  font-size: 14px;
+  font-size: 15px;
   color: #0f172a;
-  outline: 0;
+  font-weight: 500;
+  outline: none;
 }
 
 #m-auth .password-toggle {
   position: absolute;
   right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
   color: #94a3b8;
-  background: 0;
-  border: 0;
+  padding: 8px;
   cursor: pointer;
-  padding: 6px;
+  border: 0;
+  background: 0;
 }
 
-/* ── Botones Sociales ── */
+/* Botones Sociales */
 #m-auth .auth-social-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
-  margin-bottom: 24px;
 }
 
 #m-auth .auth-social-btn {
-  height: 48px;
-  border-radius: 999px;
+  height: 52px;
   border: 1px solid #e2e8f0;
   background: #ffffff;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  font-size: 14px;
-  font-weight: 700;
-  color: #334155;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -1585,44 +1679,27 @@
 #m-auth .auth-social-btn:hover {
   background: #f8fafc;
   border-color: #cbd5e1;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
-#m-auth .auth-social-divider {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  margin-bottom: 20px;
+#m-auth .auth-social-btn span:last-child {
+  display: none; /* Solo iconos en modo grid 3 columns */
 }
 
-#m-auth .auth-social-divider::before, 
-#m-auth .auth-social-divider::after {
-  content: "";
-  flex: 1;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-#m-auth .auth-social-divider span, 
-#m-auth .auth-social-divider {
-  padding: 0 12px;
-  font-size: 11px;
-  font-weight: 800;
-  color: #94a3b8;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-/* ── Botón Principal ── */
+/* Botón Principal */
 #m-auth .auth-submit-btn {
   height: 56px;
-  border-radius: 999px;
+  border-radius: 18px;
   background: #1877f2;
   color: #ffffff;
   font-size: 16px;
   font-weight: 800;
   border: 0;
-  margin-top: 10px;
-  box-shadow: 0 8px 16px rgba(24, 119, 242, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 10px 20px rgba(24, 119, 242, 0.2);
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -1630,48 +1707,46 @@
 #m-auth .auth-submit-btn:hover {
   background: #1565d8;
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(24, 119, 242, 0.3);
+  box-shadow: 0 15px 30px rgba(24, 119, 242, 0.3);
 }
 
-/* ── Footer ── */
+/* Switch Row */
 #m-auth .auth-switch-row {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  color: #64748b;
+  margin-top: 8px;
   font-size: 14px;
+  color: #64748b;
+  display: flex;
+  gap: 6px;
 }
 
-#m-auth .auth-switch-link, #m-auth .auth-inline-link {
+#m-auth .auth-switch-link {
   color: #1877f2;
   font-weight: 800;
   text-decoration: none;
-  cursor: pointer;
 }
 
-#m-auth .auth-legal-copy {
-  font-size: 10px;
-  font-weight: 700;
-  color: #94a3b8;
-  text-align: center;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-/* ── Responsividad ── */
-@media (max-width: 900px) {
+/* Responsividad */
+@media (max-width: 960px) {
   #m-auth .auth-card {
     flex-direction: column;
+    border-radius: 30px;
     min-height: auto;
   }
   #m-auth .auth-brand {
-    padding: 32px;
-    background: #050720;
+    padding: 40px 32px;
+    flex: none;
   }
-  #m-auth .auth-brand-name {
-    font-size: 32px;
-  }
-  #m-auth .modal-auth {
-    padding: 40px 24px;
+  #m-auth .auth-brand-name { font-size: 36px; }
+  #m-auth .auth-form-side {
+    padding: 48px 32px;
   }
 }
+
+@media (max-width: 480px) {
+  #m-auth { padding: 0; }
+  #m-auth .auth-card { border-radius: 0; }
+  #m-auth .auth-shell { gap: 0; }
+  #m-auth .auth-brand { padding: 32px 24px; }
+  #m-auth .auth-feature-list { display: none; }
+}
+

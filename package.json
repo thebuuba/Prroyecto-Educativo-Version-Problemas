@@ -4,10 +4,10 @@
   "description": "EduGest Modernized with Vite and ES Modules",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "NODE_DISABLE_COMPILE_CACHE=1 vite",
     "assemble": "./scripts/assemble-all.sh",
-    "build": "vite build",
-    "preview": "vite preview",
+    "build": "NODE_DISABLE_COMPILE_CACHE=1 vite build",
+    "preview": "NODE_DISABLE_COMPILE_CACHE=1 vite preview",
     "check": "npm run build && npm --prefix server run check",
     "backend:check": "npm --prefix server run check",
     "backend:smoke": "cd server && npm run smoke",

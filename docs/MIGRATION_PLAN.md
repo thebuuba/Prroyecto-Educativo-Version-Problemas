@@ -47,6 +47,7 @@ Avance aplicado:
 - Dominio estudiantes migrado a `data-student-action` con registry explícito en `js/panels/estudiantes/utils/student-actions.ts`.
 - Carga masiva migrada para apertura, modo de entrada, archivo seleccionado, opciones, análisis, confirmación y exportaciones simples sin cambiar textos visibles ni formato esperado.
 - Dominio académico migrado a `data-academic-action` con registry explícito en `js/panels/configuracion-academica/utils/academic-actions.ts`.
+- Dominio asistencia migrado a `data-attendance-action` con registry explícito en `js/panels/asistencia/utils/attendance-actions.ts`.
 
 Conteo de la fase estudiantes:
 
@@ -73,6 +74,17 @@ Riesgos académicos:
 - La edición de grado usa fallback local si no existe `window.saveEditGrade`; no agrega migraciones ni cambia schema.
 - La sincronización SQL profunda de edición de grado queda pendiente para una fase posterior si se requiere equivalencia backend.
 
+Conteo de la fase asistencia:
+
+| Alcance | Inline antes | Inline después | `data-attendance-action` después |
+| --- | ---: | ---: | ---: |
+| `js/panels/asistencia/` | 11 | 0 | 10 |
+
+Riesgos asistencia:
+
+- `exportToExcel` y `exportToPdf` siguen como adaptadores legacy si existen; no se implementó un exportador nuevo.
+- Algunas acciones del registry (`previous-day`, `next-day`, `select-student`, `clear-filter`) quedan reservadas como ramas seguras porque no hay controles visibles todavía.
+
 Siguiente trabajo:
 
 1. Migrar handlers inline restantes por dominio con registries explícitos.
@@ -84,7 +96,7 @@ Orden recomendado:
 
 - UI básica: `openM`, `closeM`, `toast`
 - routing: `go`
-- asistencia/horario
+- horario
 - calificaciones/evaluaciones
 - auth/setup
 

@@ -15,6 +15,7 @@ Módulos auxiliares:
 - `js/panels/autenticacion/utils/auth-actions.ts`
 - `js/panels/estudiantes/utils/student-actions.ts`
 - `js/panels/configuracion-academica/utils/academic-actions.ts`
+- `js/panels/asistencia/utils/attendance-actions.ts`
 - `js/core/form-actions.ts`
 
 ## Acciones soportadas
@@ -141,6 +142,37 @@ Riesgos:
 
 - El fallback de edición de grado mantiene persistencia local básica si no existe una función legacy `saveEditGrade`.
 - La creación manual de opciones personalizadas de área/asignatura/sección usa prompts acotados y agrega opciones al select actual; no cambia el schema.
+
+### Asistencia
+
+```html
+<button data-attendance-action="previous-month">...</button>
+<select data-attendance-action="select-section"></select>
+<button data-attendance-action="edit" data-attendance-student-id="st_1" data-attendance-slot-index="0">P</button>
+```
+
+Acciones permitidas:
+
+- `open`, `edit`, `save`, `cancel`
+- `mark-present`, `mark-absent`, `mark-late`, `justify`
+- `change-date`, `change-month`, `previous-day`, `next-day`, `previous-month`, `next-month`
+- `filter`, `clear-filter`, `select-course`, `select-section`, `select-student`
+- `export`, `print`
+
+El registry vive en `js/panels/asistencia/utils/attendance-actions.ts`. Usa parámetros como `data-attendance-student-id`, `data-attendance-section-id`, `data-attendance-month`, `data-attendance-slot-index`, `data-attendance-status`, `data-attendance-target` y `data-attendance-value`.
+
+Migrado en esta fase:
+
+- Cambio de mes anterior/siguiente.
+- Cambio de curso/sección activa.
+- Generar días como acción declarativa equivalente al flujo legacy.
+- Impresión y exportaciones como adaptadores seguros.
+- Edición de número de día, ciclo de excepción y ciclo de marca por estudiante.
+
+Pendiente:
+
+- Las exportaciones dependen de globals legacy `exportToExcel` / `exportToPdf` si existen en runtime.
+- `previous-day`, `next-day`, `clear-filter` y `select-student` quedan registrados como placeholders seguros hasta que existan controles específicos.
 
 ### Formularios simples
 

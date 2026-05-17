@@ -34,13 +34,13 @@ export function renderizarAttendancePanel(container, group, monthKey, deps) {
         </div>
 
         <div class="flex items-center bg-slate-50 p-1.5 rounded-2xl border border-slate-100">
-          <button class="w-10 h-10 flex items-center justify-center hover:bg-white hover:shadow-sm rounded-xl transition-all text-slate-600" onclick="shiftMonth(-1)">
+          <button class="w-10 h-10 flex items-center justify-center hover:bg-white hover:shadow-sm rounded-xl transition-all text-slate-600" data-attendance-action="previous-month">
             <span class="material-symbols-outlined">chevron_left</span>
           </button>
           <div class="px-4 text-sm font-semibold text-slate-700 min-w-[120px] text-center">
             ${monthLabel.split(' ')[0]}
           </div>
-          <button class="w-10 h-10 flex items-center justify-center hover:bg-white hover:shadow-sm rounded-xl transition-all text-slate-600" onclick="shiftMonth(1)">
+          <button class="w-10 h-10 flex items-center justify-center hover:bg-white hover:shadow-sm rounded-xl transition-all text-slate-600" data-attendance-action="next-month">
             <span class="material-symbols-outlined">chevron_right</span>
           </button>
         </div>
@@ -79,27 +79,27 @@ export function renderizarAttendancePanel(container, group, monthKey, deps) {
       <div class="col-span-12 flex flex-wrap items-center justify-between gap-4 py-2">
         <div class="flex items-center gap-3">
           <div class="relative group">
-            <select class="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-2 pr-10 text-sm font-semibold text-slate-700 hover:border-blue-300 focus:ring-4 focus:ring-blue-100 focus:outline-none transition-all cursor-pointer shadow-sm" onchange="setActiveGroup(this.value)">
+            <select class="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-2 pr-10 text-sm font-semibold text-slate-700 hover:border-blue-300 focus:ring-4 focus:ring-blue-100 focus:outline-none transition-all cursor-pointer shadow-sm" data-attendance-action="select-section">
               ${getGroups().map((g) => `<option value="${g.id}" ${g.id === group.id ? 'selected' : ''}>${escapeHtml(getAttendanceGroupLabel(g))}</option>`).join('')}
             </select>
             <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xl">unfold_more</span>
           </div>
 
-          <button class="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl font-bold text-sm transition-all shadow-sm" onclick="applyWeeklySchedule()">
+          <button class="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl font-bold text-sm transition-all shadow-sm" data-attendance-action="filter" data-attendance-target="weekly-schedule">
             <span class="material-symbols-outlined text-lg">auto_fix_high</span>
             Generar dias
           </button>
         </div>
 
         <div class="flex items-center gap-2">
-          <button class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-all shadow-sm" title="Imprimir" onclick="window.print()">
+          <button class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-all shadow-sm" title="Imprimir" data-attendance-action="print">
             <span class="material-symbols-outlined text-xl">print</span>
           </button>
           <div class="h-6 w-px bg-slate-200 mx-1"></div>
-          <button class="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all shadow-sm flex items-center gap-2" onclick="exportToExcel()">
+          <button class="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all shadow-sm flex items-center gap-2" data-attendance-action="export" data-attendance-format="excel">
             <img src="/assets/icons/logoexcel.png" class="w-4 h-4" alt=""> Excel
           </button>
-          <button class="px-4 py-2 bg-slate-800 text-white rounded-xl font-bold text-sm hover:bg-slate-900 transition-all shadow-lg shadow-slate-200 flex items-center gap-2" onclick="exportToPdf()">
+          <button class="px-4 py-2 bg-slate-800 text-white rounded-xl font-bold text-sm hover:bg-slate-900 transition-all shadow-lg shadow-slate-200 flex items-center gap-2" data-attendance-action="export" data-attendance-format="pdf">
             <img src="/assets/icons/logopdf.png" class="w-4 h-4 invert" alt=""> PDF
           </button>
         </div>
@@ -162,9 +162,16 @@ function renderizarTableHeaders(sectionId, monthKey, deps) {
                  value="${day}"
                  placeholder="--"
                  maxlength="2"
-                 onblur="commitDayDay(${i}, this.value)">
+                 data-attendance-action="change-date"
+                 data-attendance-event="change"
+                 data-attendance-section-id="${escapeHtml(sectionId)}"
+                 data-attendance-month="${escapeHtml(monthKey)}"
+                 data-attendance-slot-index="${i}">
           <button class="mt-1 w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-100 transition-all"
-                  onclick="cycleException(${i})"
+                  data-attendance-action="justify"
+                  data-attendance-section-id="${escapeHtml(sectionId)}"
+                  data-attendance-month="${escapeHtml(monthKey)}"
+                  data-attendance-slot-index="${i}"
                   title="${meta.type || 'Marcar especial'}">
             <span class="material-symbols-outlined text-[14px] ${isSpecial ? 'text-amber-500' : 'text-slate-300'}">
               ${isSpecial ? 'event_busy' : 'add_circle'}
@@ -216,7 +223,7 @@ function renderizarAttendanceCells(sectionId, monthKey, student, deps) {
       <td class="p-1 text-center">
         <button class="w-10 h-10 rounded-xl font-extrabold text-sm transition-all flex items-center justify-center mx-auto
                        ${isLocked ? 'bg-slate-50 text-slate-200 cursor-not-allowed' : getMarkClass(code)}"
-                ${isLocked ? 'disabled' : `onclick="cycleMark('${student.id}', ${i})"`}>
+                ${isLocked ? 'disabled' : `data-attendance-action="edit" data-attendance-section-id="${escapeHtml(sectionId)}" data-attendance-month="${escapeHtml(monthKey)}" data-attendance-student-id="${escapeHtml(student.id)}" data-attendance-slot-index="${i}"`}>
           ${isLocked ? '?' : (code || '')}
         </button>
       </td>

@@ -46,6 +46,7 @@ Avance aplicado:
 - Campos simples de setup inicial migrados a registry explícito en `form-actions.ts`.
 - Dominio estudiantes migrado a `data-student-action` con registry explícito en `js/panels/estudiantes/utils/student-actions.ts`.
 - Carga masiva migrada para apertura, modo de entrada, archivo seleccionado, opciones, análisis, confirmación y exportaciones simples sin cambiar textos visibles ni formato esperado.
+- Dominio académico migrado a `data-academic-action` con registry explícito en `js/panels/configuracion-academica/utils/academic-actions.ts`.
 
 Conteo de la fase estudiantes:
 
@@ -58,7 +59,19 @@ Riesgos:
 
 - El registry mantiene adaptadores temporales hacia funciones globales existentes mientras `legacy-api.ts` siga publicando APIs.
 - La carga masiva conserva el parser legacy actual; seleccionar archivo marca el archivo, pero no introduce un parser nuevo para `.xlsx/.xls`.
-- Quedan handlers inline académicos de grados/secciones dentro del fragmento combinado de estudiantes y deben tratarse en una fase de dominio académico.
+
+Conteo de la fase académica:
+
+| Alcance | Inline antes | Inline después | `data-academic-action` después |
+| --- | ---: | ---: | ---: |
+| `sections/panels/estudiantes/modals.html` grados/secciones | 18 | 0 | 18 |
+| Fragments individuales y paneles modernos académicos | 33 | 0 | 33 |
+| Total alcance académico migrado | 51 | 0 | 51 |
+
+Riesgos académicos:
+
+- La edición de grado usa fallback local si no existe `window.saveEditGrade`; no agrega migraciones ni cambia schema.
+- La sincronización SQL profunda de edición de grado queda pendiente para una fase posterior si se requiere equivalencia backend.
 
 Siguiente trabajo:
 
@@ -71,7 +84,6 @@ Orden recomendado:
 
 - UI básica: `openM`, `closeM`, `toast`
 - routing: `go`
-- secciones/grados académicos
 - asistencia/horario
 - calificaciones/evaluaciones
 - auth/setup

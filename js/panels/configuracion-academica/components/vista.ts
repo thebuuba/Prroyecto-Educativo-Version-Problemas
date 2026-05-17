@@ -8,7 +8,8 @@
 import { S } from '../../../core/state.ts';
 import { 
   toast, 
-  getActiveEducationSections
+  getActiveEducationSections,
+  escapeHtml
 } from '../../../core/domain-utils.ts';
 
 // Estado local del formulario para reactividad inmediata sin persistir aún
@@ -113,7 +114,7 @@ export function renderizarGradeSetupPanel(container) {
                 const isDisabled = allowedLevels.length > 0 && !allowedLevels.some(al => al.toLowerCase() === level.toLowerCase());
                 return `
                   <button 
-                    onclick="window.updateGradeSetupField('level', '${level}')"
+                    data-academic-action="select-grade" data-academic-domain="grade" data-academic-field="level" data-academic-value="${escapeHtml(level)}"
                     data-level="${level}"
                     ${isDisabled ? 'disabled' : ''}
                     class="grade-setup-card-btn group relative p-6 rounded-3xl border-2 transition-all text-left overflow-hidden ${isSelected ? 'border-blue-600 bg-blue-50/50' : 'border-slate-100 bg-slate-50/50 hover:border-slate-200'} ${isDisabled ? 'opacity-40 cursor-not-allowed grayscale' : ''}"
@@ -168,7 +169,7 @@ export function renderizarGradeSetupPanel(container) {
                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">Sección</h3>
                <div id="section-selector-grid" class="grid grid-cols-4 gap-2">
                  ${['A', 'B', 'C', 'D'].map(sec => `
-                   <button onclick="window.updateGradeSetupField('section', '${sec}')" 
+                   <button data-academic-action="select-section" data-academic-domain="grade" data-academic-field="section" data-academic-value="${escapeHtml(sec)}"
                            class="py-3 rounded-2xl font-bold transition-all ${FormState.section === sec ? 'bg-slate-900 text-white shadow-lg' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}">
                      ${sec}
                    </button>
@@ -176,14 +177,14 @@ export function renderizarGradeSetupPanel(container) {
                </div>
                <input type="text" id="custom-section" placeholder="Otra..." 
                       class="w-full mt-4 px-5 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-2 focus:ring-blue-100 outline-none transition-all"
-                      oninput="window.updateGradeSetupField('section', this.value)">
+                      data-academic-action="select-section" data-academic-domain="grade" data-academic-field="section">
              </section>
 
              <section class="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">Aula Física</h3>
                <input type="text" id="gs-room" placeholder="Ej. Aula 102, Lab A..." 
                       class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-medium text-slate-800 focus:ring-4 focus:ring-blue-50 outline-none transition-all"
-                      oninput="window.updateGradeSetupField('room', this.value)">
+                      data-academic-action="select-section" data-academic-domain="grade" data-academic-field="room">
              </section>
           </div>
 
@@ -231,7 +232,7 @@ export function renderizarGradeSetupPanel(container) {
                  </div>
 
                  <div class="mt-10 pt-8 border-t border-white/5">
-                    <button onclick="window.confirmSaveGrade()" id="gs-save-btn" class="w-full py-4 btn-premium-azure disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-900/20 flex items-center justify-center gap-2 group">
+                    <button data-academic-action="save-grade" data-academic-mode="modern" id="gs-save-btn" class="w-full py-4 btn-premium-azure disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-900/20 flex items-center justify-center gap-2 group">
                       Crear Grado
                       <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
                     </button>
@@ -283,7 +284,7 @@ export function actualizarGradeGrid() {
 
   grid.innerHTML = grades.map(g => `
     <button 
-      onclick="window.updateGradeSetupField('grade', '${g}')"
+      data-academic-action="select-grade" data-academic-domain="grade" data-academic-field="grade" data-academic-value="${escapeHtml(g)}"
       class="py-4 rounded-2xl font-black text-sm transition-all border-2 ${FormState.grade === g ? 'bg-blue-600 border-blue-600 text-white shadow-lg' : 'bg-slate-50 border-transparent text-slate-400 hover:bg-slate-100'}"
     >
       ${g}
@@ -301,7 +302,7 @@ export function actualizarAreaGrid() {
   const areas = areasForLevel(FormState.level);
   grid.innerHTML = areas.map(a => `
     <button 
-      onclick="window.updateGradeSetupField('area', '${a.area}')"
+      data-academic-action="select-grade" data-academic-domain="grade" data-academic-field="area" data-academic-value="${escapeHtml(a.area)}"
       class="px-4 py-2.5 rounded-2xl text-sm font-bold transition-all border-2 ${FormState.area === a.area ? 'bg-violet-600 border-violet-600 text-white shadow-lg' : 'bg-slate-50 border-transparent text-slate-500 hover:bg-slate-100'}"
     >
       ${a.area}
@@ -336,7 +337,7 @@ export function actualizarSubjectGrid() {
 
   grid.innerHTML = subjects.map(s => `
     <button 
-      onclick="window.updateGradeSetupField('subject', '${s}')"
+      data-academic-action="select-grade" data-academic-domain="grade" data-academic-field="subject" data-academic-value="${escapeHtml(s)}"
       class="px-4 py-2.5 rounded-2xl text-sm font-bold transition-all border-2 ${FormState.subject === s ? 'bg-emerald-600 border-emerald-600 text-white shadow-lg' : 'bg-slate-50 border-transparent text-slate-500 hover:bg-slate-100'}"
     >
       ${s}
@@ -351,7 +352,7 @@ export function actualizarSectionGrid() {
   const defaultSections = ['A', 'B', 'C', 'D'];
   grid.innerHTML = defaultSections.map(sec => `
     <button
-      onclick="window.updateGradeSetupField('section', '${sec}')"
+      data-academic-action="select-section" data-academic-domain="grade" data-academic-field="section" data-academic-value="${escapeHtml(sec)}"
       class="py-3 rounded-2xl font-bold transition-all ${FormState.section === sec ? 'bg-slate-900 text-white shadow-lg' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}"
     >
       ${sec}

@@ -14,6 +14,7 @@ Módulos auxiliares:
 
 - `js/panels/autenticacion/utils/auth-actions.ts`
 - `js/panels/estudiantes/utils/student-actions.ts`
+- `js/panels/configuracion-academica/utils/academic-actions.ts`
 - `js/core/form-actions.ts`
 
 ## Acciones soportadas
@@ -111,8 +112,35 @@ Migrado en esta fase:
 
 Pendiente:
 
-- Handlers de grados/secciones que aparecen dentro de `sections/panels/estudiantes/modals.html`; pertenecen al dominio académico.
 - Lectura real de archivos `.xlsx/.xls` en carga masiva; el flujo declarativo mantiene el comportamiento legacy existente.
+
+### Académico
+
+```html
+<button data-academic-action="save-grade">Crear grado</button>
+<select data-academic-action="filter" data-academic-target="section-curriculum"></select>
+<button data-academic-action="clear-filter" data-academic-target="subject">+ Asignatura</button>
+```
+
+Acciones permitidas:
+
+- `create-grade`, `edit-grade`, `delete-grade`, `save-grade`
+- `create-section`, `edit-section`, `delete-section`, `save-section`
+- `select-grade`, `select-section`
+- `filter`, `clear-filter`, `cancel`
+
+El registry vive en `js/panels/configuracion-academica/utils/academic-actions.ts`. Los atributos secundarios (`data-academic-field`, `data-academic-target`, `data-academic-prefix`, `data-academic-mode`, etc.) seleccionan ramas conocidas; no se ejecutan nombres de funciones desde HTML.
+
+Migrado en esta fase:
+
+- Los `18` handlers académicos de `sections/panels/estudiantes/modals.html`.
+- Fragments individuales `m-grade`, `m-sec`, `m-grade-edit` y `m-sec-edit`.
+- Controles simples de los paneles modernos `configuracion-academica` y `crear-seccion`.
+
+Riesgos:
+
+- El fallback de edición de grado mantiene persistencia local básica si no existe una función legacy `saveEditGrade`.
+- La creación manual de opciones personalizadas de área/asignatura/sección usa prompts acotados y agrega opciones al select actual; no cambia el schema.
 
 ### Formularios simples
 

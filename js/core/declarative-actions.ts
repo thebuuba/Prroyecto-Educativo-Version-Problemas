@@ -8,6 +8,7 @@ import {
 } from './form-actions.ts';
 import { handleDeclarativeAuthAction } from '../panels/autenticacion/utils/auth-actions.ts';
 import { handleDeclarativeStudentAction } from '../panels/estudiantes/utils/student-actions.ts';
+import { handleDeclarativeAcademicAction } from '../panels/configuracion-academica/utils/academic-actions.ts';
 
 function getDatasetValue(element: Element, key: string): string {
   return String((element as HTMLElement).dataset?.[key] || '').trim();
@@ -83,6 +84,9 @@ export function bindDeclarativeActions(): void {
 
     const studentTrigger = target.closest('[data-student-action]');
     if (studentTrigger) handleDeclarativeStudentAction(studentTrigger, event);
+
+    const academicTrigger = target.closest('[data-academic-action]');
+    if (academicTrigger) handleDeclarativeAcademicAction(academicTrigger, event);
   });
 
   document.addEventListener('change', (event) => {
@@ -97,6 +101,9 @@ export function bindDeclarativeActions(): void {
 
     const studentTarget = target.closest('[data-student-action]');
     if (studentTarget) handleDeclarativeStudentAction(studentTarget, event);
+
+    const academicTarget = target.closest('[data-academic-action]');
+    if (academicTarget) handleDeclarativeAcademicAction(academicTarget, event);
   });
 
   document.addEventListener('input', (event) => {
@@ -105,6 +112,9 @@ export function bindDeclarativeActions(): void {
 
     const studentTarget = target.closest('[data-student-action]');
     if (studentTarget && handleDeclarativeStudentAction(studentTarget, event)) return;
+
+    const academicTarget = target.closest('[data-academic-action]');
+    if (academicTarget && handleDeclarativeAcademicAction(academicTarget, event)) return;
 
     handleDeclarativeInput(target, event);
   });

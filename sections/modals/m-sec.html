@@ -4,27 +4,27 @@
     <div class="mh"><div class="mt">Nueva Sección</div><button class="mx" data-action="modal-close" data-modal-close="m-sec">&times;</button></div>
     <div class="mb">
       <div class="fr">
-        <div class="fg"><label class="lbl">Grado</label><select class="sel" id="sec-g" onchange="refreshSectionCurriculumForm('sec', true)"></select></div>
+        <div class="fg"><label class="lbl">Grado</label><select class="sel" id="sec-g" data-academic-action="filter" data-academic-target="section-curriculum" data-academic-prefix="sec" data-academic-reset="true"></select></div>
         <div class="fg"><label class="lbl">Secci&oacute;n</label><input class="inp" id="sec-s" placeholder="A, B, C..."></div>
       </div>
       <div class="fg">
         <label class="lbl">Área</label>
         <div class="field-inline-actions">
-          <select class="sel" id="sec-area" onchange="refreshSectionCurriculumForm('sec', true)"></select>
-          <button class="btn btn-outline btn-sm" type="button" onclick="createSectionCustomArea('sec')">+ Área</button>
+          <select class="sel" id="sec-area" data-academic-action="filter" data-academic-target="section-curriculum" data-academic-prefix="sec" data-academic-reset="true"></select>
+          <button class="btn btn-outline btn-sm" type="button" data-academic-action="clear-filter" data-academic-target="area" data-academic-select-id="sec-area">+ Área</button>
         </div>
       </div>
       <div class="fg">
         <label class="lbl">Asignatura / materia</label>
         <div class="field-inline-actions">
           <select class="sel" id="sec-m"></select>
-          <button class="btn btn-outline btn-sm" type="button" onclick="createSectionCustomSubject('sec')">+ Asignatura</button>
+          <button class="btn btn-outline btn-sm" type="button" data-academic-action="clear-filter" data-academic-target="subject" data-academic-select-id="sec-m">+ Asignatura</button>
         </div>
       </div>
       <div class="fg"><label class="lbl">Aula por defecto (opcional)</label><input class="inp" id="sec-room" placeholder="Ej. Aula 3A"></div>
       <div class="mf">
         <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-sec">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveSec()">Crear secci&oacute;n</button>
+        <button class="btn btn-primary" data-academic-action="save-section">Crear secci&oacute;n</button>
       </div>
     </div>
   </div>

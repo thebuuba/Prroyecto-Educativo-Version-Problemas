@@ -8,7 +8,8 @@ import { S } from '../../../core/state.ts';
 import { 
   toast, 
   getScopedGrades,
-  normalizeEducationLevelName
+  normalizeEducationLevelName,
+  escapeHtml
 } from '../../../core/domain-utils.ts';
 
 export const FormState = {
@@ -93,7 +94,7 @@ export function renderizarSectionCreatePanel(container) {
                 const isSelected = FormState.gradeId === g.id;
                 return `
                   <button 
-                    onclick="window.updateSectionCreateField('gradeId', '${g.id}')"
+                    data-academic-action="select-grade" data-academic-domain="section" data-academic-field="gradeId" data-academic-value="${escapeHtml(g.id)}"
                     class="p-4 rounded-3xl border-2 transition-all text-left flex flex-col justify-between h-24 ${isSelected ? 'border-blue-600 bg-blue-50/50' : 'border-slate-100 bg-slate-50/50 hover:border-slate-200'}"
                   >
                     <div class="font-black text-slate-900 text-lg">${g.name}</div>
@@ -111,7 +112,7 @@ export function renderizarSectionCreatePanel(container) {
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider ml-2 mb-2">Letra de Sección</label>
                 <div class="grid grid-cols-4 gap-2">
                   ${['A', 'B', 'C', 'D'].map(sec => `
-                    <button onclick="window.updateSectionCreateField('section', '${sec}')" 
+                    <button data-academic-action="select-section" data-academic-domain="section" data-academic-field="section" data-academic-value="${escapeHtml(sec)}"
                             class="py-3 rounded-2xl font-bold transition-all ${FormState.section === sec ? 'bg-slate-900 text-white shadow-lg' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}">
                       ${sec}
                     </button>
@@ -122,7 +123,7 @@ export function renderizarSectionCreatePanel(container) {
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider ml-2 mb-2">Aula (Opcional)</label>
                 <input type="text" id="sec-room-input" placeholder="Ej. Aula 102" value="${FormState.room}"
                        class="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-2xl font-medium focus:ring-2 focus:ring-blue-100 outline-none"
-                       oninput="window.updateSectionCreateField('room', this.value)">
+                       data-academic-action="select-section" data-academic-domain="section" data-academic-field="room">
               </div>
             </div>
           </section>
@@ -140,7 +141,7 @@ export function renderizarSectionCreatePanel(container) {
                 <div class="flex flex-wrap gap-2">
                   ${getAreaCatalogForCurrentGrade().map(a => `
                     <button 
-                      onclick="window.updateSectionCreateField('area', '${a.area}')"
+                      data-academic-action="select-grade" data-academic-domain="section" data-academic-field="area" data-academic-value="${escapeHtml(a.area)}"
                       class="px-4 py-2.5 rounded-2xl text-sm font-bold transition-all border-2 ${FormState.area === a.area ? 'bg-violet-600 border-violet-600 text-white shadow-lg' : 'bg-slate-50 border-transparent text-slate-500 hover:bg-slate-100'}"
                     >
                       ${a.area}
@@ -192,7 +193,7 @@ export function renderizarSectionCreatePanel(container) {
                  </div>
 
                  <div class="mt-10 pt-8 border-t border-white/5 space-y-4">
-                    <button onclick="window.confirmSaveSection()" id="sec-save-btn" class="w-full py-5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-900/20 flex items-center justify-center gap-2 group">
+                    <button data-academic-action="save-section" data-academic-mode="modern" id="sec-save-btn" class="w-full py-5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-900/20 flex items-center justify-center gap-2 group">
                       Crear Asignatura
                       <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
                     </button>
@@ -254,7 +255,7 @@ export function actualizarSubjectGrid() {
 
   grid.innerHTML = subjects.map(s => `
     <button 
-      onclick="window.updateSectionCreateField('subject', '${s}')"
+      data-academic-action="select-grade" data-academic-domain="section" data-academic-field="subject" data-academic-value="${escapeHtml(s)}"
       class="px-4 py-2.5 rounded-2xl text-sm font-bold transition-all border-2 ${FormState.subject === s ? 'bg-emerald-600 border-emerald-600 text-white shadow-lg' : 'bg-slate-50 border-transparent text-slate-500 hover:bg-slate-100'}"
     >
       ${s}

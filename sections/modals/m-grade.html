@@ -6,7 +6,7 @@
       <div class="fr">
         <div class="fg">
           <label class="lbl">Nivel</label>
-          <select class="sel" id="gr-edu-level" onchange="handleGradeEducationLevelChange(this.value)">
+          <select class="sel" id="gr-edu-level" data-academic-action="select-grade" data-academic-field="level" data-academic-target="grade-curriculum">
             <option value="Inicial">Inicial</option>
             <option value="Primaria">Primaria</option>
             <option value="Secundaria">Secundaria</option>
@@ -14,7 +14,7 @@
         </div>
         <div class="fg">
           <label class="lbl">Grado</label>
-          <select class="sel" id="gr-grade-num" onchange="refreshGradeCurriculumForm(true)">
+          <select class="sel" id="gr-grade-num" data-academic-action="filter" data-academic-target="grade-curriculum" data-academic-reset="true">
             <option value="">Selecciona un grado</option>
           </select>
         </div>
@@ -24,14 +24,14 @@
           <label class="lbl">Sección</label>
           <div class="field-inline-actions">
             <select class="sel" id="gr-section"></select>
-            <button class="btn btn-outline btn-sm" type="button" onclick="createGradeCustomSection()">+ Sección</button>
+            <button class="btn btn-outline btn-sm" type="button" data-academic-action="clear-filter" data-academic-target="section" data-academic-select-id="gr-section">+ Sección</button>
           </div>
         </div>
         <div class="fg">
           <label class="lbl">Área</label>
           <div class="field-inline-actions">
-            <select class="sel" id="gr-area" onchange="refreshGradeCurriculumForm(true)"></select>
-            <button class="btn btn-outline btn-sm" type="button" onclick="createGradeCustomArea()">+ Área</button>
+            <select class="sel" id="gr-area" data-academic-action="filter" data-academic-target="grade-curriculum" data-academic-reset="true"></select>
+            <button class="btn btn-outline btn-sm" type="button" data-academic-action="clear-filter" data-academic-target="area" data-academic-select-id="gr-area">+ Área</button>
           </div>
         </div>
       </div>
@@ -40,7 +40,7 @@
           <label class="lbl">Asignatura</label>
           <div class="field-inline-actions">
             <select class="sel" id="gr-subject"></select>
-            <button class="btn btn-outline btn-sm" type="button" onclick="createGradeCustomSubject()">+ Asignatura</button>
+            <button class="btn btn-outline btn-sm" type="button" data-academic-action="clear-filter" data-academic-target="subject" data-academic-select-id="gr-subject">+ Asignatura</button>
           </div>
         </div>
         <div class="fg">
@@ -50,7 +50,7 @@
       </div>
       <div class="mf">
         <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-grade">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveGrade()">Crear grado</button>
+        <button class="btn btn-primary" data-academic-action="save-grade">Crear grado</button>
       </div>
     </div>
   </div>

@@ -5,27 +5,27 @@
     <div class="mb">
       <input type="hidden" id="es-id">
       <div class="fr">
-        <div class="fg"><label class="lbl">Grado</label><select class="sel" id="es-gid" onchange="refreshSectionCurriculumForm('es', true)"></select></div>
+        <div class="fg"><label class="lbl">Grado</label><select class="sel" id="es-gid" data-academic-action="filter" data-academic-target="section-curriculum" data-academic-prefix="es" data-academic-reset="true"></select></div>
         <div class="fg"><label class="lbl">Secci&oacute;n</label><input class="inp" id="es-sec" placeholder="A"></div>
       </div>
       <div class="fg">
         <label class="lbl">Área</label>
         <div class="field-inline-actions">
-          <select class="sel" id="es-area" onchange="refreshSectionCurriculumForm('es', true)"></select>
-          <button class="btn btn-outline btn-sm" type="button" onclick="createSectionCustomArea('es')">+ Área</button>
+          <select class="sel" id="es-area" data-academic-action="filter" data-academic-target="section-curriculum" data-academic-prefix="es" data-academic-reset="true"></select>
+          <button class="btn btn-outline btn-sm" type="button" data-academic-action="clear-filter" data-academic-target="area" data-academic-select-id="es-area">+ Área</button>
         </div>
       </div>
       <div class="fg">
         <label class="lbl">Asignatura base</label>
         <div class="field-inline-actions">
           <select class="sel" id="es-mat"></select>
-          <button class="btn btn-outline btn-sm" type="button" onclick="createSectionCustomSubject('es')">+ Asignatura</button>
+          <button class="btn btn-outline btn-sm" type="button" data-academic-action="clear-filter" data-academic-target="subject" data-academic-select-id="es-mat">+ Asignatura</button>
         </div>
       </div>
       <div class="fg"><label class="lbl">Aula por defecto (opcional)</label><input class="inp" id="es-room" placeholder="Ej. Aula 3A"></div>
       <div class="mf">
         <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-sec-edit">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveEditSection()">Guardar cambios</button>
+        <button class="btn btn-primary" data-academic-action="save-section" data-academic-mode="edit">Guardar cambios</button>
       </div>
     </div>
   </div>

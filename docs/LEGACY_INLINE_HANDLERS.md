@@ -68,6 +68,7 @@ Conteo después de esta fase:
 - Logout de configuración: `window.logoutAuth()` fue migrado a `data-auth-action="logout"`.
 - Navegación con opciones: `window.go('actividades', { activityViewMode: 'matrix' })` fue migrado a `data-route-options='{"activityViewMode":"matrix"}'`.
 - Estudiantes y carga masiva: `53` handlers inline en las fuentes reales de `js/panels/estudiantes/`, `js/panels/crear-estudiante/`, `js/panels/editar-estudiante/` y `sections/modals/m-est*.html` / `m-student-add-mode.html` fueron migrados a `data-student-action`. El fragmento combinado `sections/panels/estudiantes/modals.html` recibió la misma migración para conservar el ensamblado legacy.
+- Académico: los `18` handlers inline restantes de grados/secciones en `sections/panels/estudiantes/modals.html` fueron migrados a `data-academic-action`. También se migraron los fragments individuales `m-grade`, `m-sec`, `m-grade-edit`, `m-sec-edit` y acciones simples de `configuracion-academica` / `crear-seccion`.
 
 ## Conteo de fase 3
 
@@ -83,13 +84,15 @@ Conteo después de esta fase:
 | estudiantes/carga masiva inline en fuentes reales | 53 | 0 | Usa `data-student-action` con registry explícito. |
 | `sections/panels/estudiantes/modals.html` inline de estudiantes | 25 | 0 | Duplicado legacy sincronizado; quedan handlers académicos de grados/secciones. |
 | `data-student-action` en fuentes reales | 0 | 56 | Alta, edición, búsqueda, selección, foto y carga masiva. |
+| `sections/panels/estudiantes/modals.html` inline académico | 18 | 0 | Grados/secciones migrados a `data-academic-action`. |
+| inline académico en fragments individuales y vistas modernas | 33 | 0 | `m-grade`, `m-sec`, edición y paneles modernos seguros. |
+| `data-academic-action` en alcance migrado | 0 | 51 | Registry explícito de dominio académico. |
 
 ## Pendiente
 
 - Mantener `closeM(...)` programático en lógica de negocio hasta separar flujos por servicio/acción.
 - Mantener `go(...)` programático en lógica interna hasta separar acciones de panel.
 - Migrar vistas de panel por dominio, sustituyendo HTML inline por `data-action` y registrando acciones en `utils/actions.ts`.
-- Migrar `onchange` de grados/secciones a acciones académicas declarativas.
 - Revisar carga masiva con archivo `.xlsx/.xls`: el handler declarativo conserva el flujo existente, pero el parser legacy sigue analizando texto y no implementa lectura real de hojas de cálculo.
-- Migrar handlers académicos que viven en `sections/panels/estudiantes/modals.html` pero pertenecen a grados/secciones, no al dominio estudiantes.
+- Revisar la edición de grado legacy contra sincronización SQL: el fallback declarativo actual conserva edición local básica si no existe `window.saveEditGrade`.
 - Reducir `window` en `legacy-api.ts` solo cuando no queden referencias reales en HTML o strings renderizados.

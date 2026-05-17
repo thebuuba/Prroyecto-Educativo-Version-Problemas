@@ -2,7 +2,7 @@
         <div id="auth-register-box" class="auth-form-box" style="display:none;">
             <div class="auth-register-login-line">
               <span>¿Ya tienes una cuenta?</span>
-              <button class="auth-inline-link auth-register-login-link" type="button" onclick="setAuthMode('login')">Inicia sesión</button>
+              <button class="auth-inline-link auth-register-login-link" type="button" data-auth-action="show-login">Inicia sesión</button>
             </div>
             <div class="fg">
               <label class="lbl">Nombre completo</label>
@@ -25,7 +25,7 @@
               <div class="auth-input-wrap">
                 <span class="auth-input-icon material-symbols-outlined" aria-hidden="true">lock</span>
                 <input class="inp password-input" id="ar-pass" type="password" placeholder="Mínimo 8 caracteres">
-                <button class="password-toggle" type="button" onclick="togglePasswordVisibility('ar-pass', this)" aria-label="Mostrar contraseña" title="Mostrar contraseña">
+                <button class="password-toggle" type="button" data-auth-action="toggle-password" data-auth-target="ar-pass" aria-label="Mostrar contraseña" title="Mostrar contraseña">
                   <span class="material-symbols-outlined" aria-hidden="true">visibility</span>
                 </button>
               </div>
@@ -45,7 +45,7 @@
               <div class="auth-input-wrap">
                 <span class="auth-input-icon material-symbols-outlined" aria-hidden="true">lock_reset</span>
                 <input class="inp password-input" id="ar-pass2" type="password" placeholder="Repite la contraseña">
-                <button class="password-toggle" type="button" onclick="togglePasswordVisibility('ar-pass2', this)" aria-label="Mostrar contraseña" title="Mostrar contraseña">
+                <button class="password-toggle" type="button" data-auth-action="toggle-password" data-auth-target="ar-pass2" aria-label="Mostrar contraseña" title="Mostrar contraseña">
                   <span class="material-symbols-outlined" aria-hidden="true">visibility</span>
                 </button>
               </div>
@@ -58,17 +58,17 @@
               </label>
             </div>
             <div class="auth-field-error" id="ar-terms-error" hidden></div>
-            <button class="btn btn-primary btn-lg auth-submit-btn" id="auth-register-submit" type="button" onclick="registerAuth()">Crear cuenta <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></button>
+            <button class="btn btn-primary btn-lg auth-submit-btn" id="auth-register-submit" type="button" data-auth-action="register">Crear cuenta <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></button>
             <div class="auth-register-social">
               <div class="auth-social-divider">o regístrate con</div>
               <div class="auth-social-actions">
-                <button class="btn btn-outline auth-social-btn" type="button" onclick="authWithProvider('google')" aria-label="Google" title="Google">
+                <button class="btn btn-outline auth-social-btn" type="button" data-auth-action="provider" data-auth-provider="google" aria-label="Google" title="Google">
                   <span class="auth-social-mark auth-social-mark-google" aria-hidden="true">
                     <img src="/assets/icons/google.png" alt="" width="18" height="18" decoding="async" loading="lazy">
                   </span>
                   <span>Google</span>
                 </button>
-                <button class="btn btn-outline auth-social-btn" type="button" onclick="authWithProvider('facebook')" aria-label="Facebook" title="Facebook">
+                <button class="btn btn-outline auth-social-btn" type="button" data-auth-action="provider" data-auth-provider="facebook" aria-label="Facebook" title="Facebook">
                   <span class="auth-social-mark auth-social-mark-facebook" aria-hidden="true">
                     <img src="/assets/icons/facebook.png" alt="" width="18" height="18" decoding="async" loading="lazy">
                   </span>

@@ -2,9 +2,9 @@ services:
   - type: web
     name: aulabase-sql-api
     runtime: node
-    buildCommand: "cd server && npm install"
+    buildCommand: "cd apps/api && npm install"
     # Ejecuta migraciones idempotentes contra Supabase PostgreSQL antes de iniciar.
-    startCommand: "cd server && npm run migrate && npm run start"
+    startCommand: "cd apps/api && npm run migrate && npm run start"
     envVars:
       - key: NODE_ENV
         value: production

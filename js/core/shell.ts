@@ -72,10 +72,7 @@ export function updateSBUser(): void {
   if (dropdownAvatarImg) dropdownAvatarImg.src = avatarUrl(displayName);
   
   // Alternar visibilidad del botón de cierre de sesión según la sesión activa
-  const logoutBtns = [
-    document.getElementById('sb-logout-compact'),
-    document.getElementById('sb-logout')
-  ];
+  const logoutBtns = document.querySelectorAll<HTMLElement>('[data-shell-action="logout"], .sb-logout-btn, #sb-logout');
   logoutBtns.forEach(btn => {
     if (btn) btn.style.display = S.sessionUserId ? '' : 'none';
   });
@@ -129,7 +126,7 @@ export function initShell(): void {
       return;
     }
 
-    const logoutButton = event.target?.closest?.('.sb-logout-btn, #sb-logout, button[onclick="logoutAuth()"]');
+    const logoutButton = event.target?.closest?.('[data-shell-action="logout"], .sb-logout-btn, #sb-logout, button[onclick="logoutAuth()"]');
     if (logoutButton) {
       event.preventDefault();
       event.stopPropagation();

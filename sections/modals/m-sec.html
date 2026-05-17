@@ -1,7 +1,7 @@
 <!-- Modal de secciones: vincula el grado con la materia, aula y configuración asociada. -->
 <div class="ov" id="m-sec">
   <div class="modal">
-    <div class="mh"><div class="mt">Nueva Sección</div><button class="mx" onclick="closeM('m-sec')">&times;</button></div>
+    <div class="mh"><div class="mt">Nueva Sección</div><button class="mx" data-action="modal-close" data-modal-close="m-sec">&times;</button></div>
     <div class="mb">
       <div class="fr">
         <div class="fg"><label class="lbl">Grado</label><select class="sel" id="sec-g" onchange="refreshSectionCurriculumForm('sec', true)"></select></div>
@@ -23,7 +23,7 @@
       </div>
       <div class="fg"><label class="lbl">Aula por defecto (opcional)</label><input class="inp" id="sec-room" placeholder="Ej. Aula 3A"></div>
       <div class="mf">
-        <button class="btn btn-outline" onclick="closeM('m-sec')">Cancelar</button>
+        <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-sec">Cancelar</button>
         <button class="btn btn-primary" onclick="saveSec()">Crear secci&oacute;n</button>
       </div>
     </div>

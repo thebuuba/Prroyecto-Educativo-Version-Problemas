@@ -3,7 +3,7 @@
   <div class="modal modal-auth modal-auth-mini">
     <div class="mh">
       <div class="mt">Recuperar contraseña</div>
-      <button class="mx" type="button" onclick="closeM('m-auth-forgot')" aria-label="Cerrar">&times;</button>
+      <button class="mx" type="button" data-action="modal-close" data-modal-close="m-auth-forgot" aria-label="Cerrar">&times;</button>
     </div>
     <div class="mb auth-forgot-panel">
       <div class="auth-forgot-copy">
@@ -20,8 +20,8 @@
         </div>
       </div>
       <div class="mf">
-        <button class="btn btn-outline btn-lg" type="button" onclick="closeM('m-auth-forgot')">Cancelar</button>
-        <button class="btn btn-primary btn-lg" type="button" onclick="submitForgotPassword()">Enviar enlace</button>
+        <button class="btn btn-outline btn-lg" type="button" data-action="modal-close" data-modal-close="m-auth-forgot">Cancelar</button>
+        <button class="btn btn-primary btn-lg" type="button" data-auth-action="submit-password-reset">Enviar enlace</button>
       </div>
     </div>
   </div>
@@ -78,13 +78,13 @@
         </section>
       </div>
       <label class="auth-terms-check terms-check" for="terms-accept-check">
-        <input id="terms-accept-check" type="checkbox" onchange="clearTermsAcceptanceError()">
+        <input id="terms-accept-check" type="checkbox" data-auth-action="clear-terms-error">
         <span>He le&iacute;do y acepto los T&eacute;rminos y la Pol&iacute;tica de Privacidad.</span>
       </label>
       <div class="auth-field-error" id="terms-accept-error" hidden></div>
       <div class="mf">
-        <button class="btn btn-outline btn-lg" type="button" onclick="cancelTermsAcceptance()">No aceptar</button>
-        <button class="btn btn-primary btn-lg" type="button" onclick="confirmTermsAcceptance()">Continuar</button>
+        <button class="btn btn-outline btn-lg" type="button" data-auth-action="back" data-auth-context="terms">No aceptar</button>
+        <button class="btn btn-primary btn-lg" type="button" data-auth-action="continue" data-auth-context="terms">Continuar</button>
       </div>
     </div>
   </div>
@@ -99,7 +99,7 @@
           <div class="mt" id="s-education-title">Selecciona tu nivel educativo</div>
           <div class="auth-subtitle setup-level-head-subtitle">Antes de continuar, elige tu nivel educativo para personalizar el sistema.</div>
         </div>
-        <button class="btn btn-ghost setup-level-exit-btn" id="s-education-close-btn" type="button" onclick="cancelEducationSectionSetup()" aria-label="Cerrar sesión">Cerrar sesión</button>
+        <button class="btn btn-ghost setup-level-exit-btn" id="s-education-close-btn" type="button" data-auth-action="cancel-education-section" aria-label="Cerrar sesión">Cerrar sesión</button>
       </div>
       <div class="mb">
         <div class="setup-level-panel" id="s-education-step-select">
@@ -109,9 +109,9 @@
               <label class="lbl">Nivel educativo</label>
               <input id="s-education-section" type="hidden" value="">
               <div class="setup-level-option-grid" role="group" aria-label="Selecciona hasta 3 niveles educativos">
-                <button class="edu-section-option" type="button" data-value="Inicial" onclick="pickSetupEducationSection('Inicial')">Inicial</button>
-                <button class="edu-section-option" type="button" data-value="Primaria" onclick="pickSetupEducationSection('Primaria')">Primaria</button>
-                <button class="edu-section-option" type="button" data-value="Secundaria" onclick="pickSetupEducationSection('Secundaria')">Secundaria</button>
+                <button class="edu-section-option" type="button" data-value="Inicial" data-auth-action="pick-education-section" data-auth-value="Inicial">Inicial</button>
+                <button class="edu-section-option" type="button" data-value="Primaria" data-auth-action="pick-education-section" data-auth-value="Primaria">Primaria</button>
+                <button class="edu-section-option" type="button" data-value="Secundaria" data-auth-action="pick-education-section" data-auth-value="Secundaria">Secundaria</button>
               </div>
             </div>
           </div>
@@ -130,7 +130,7 @@
           Confirma tu selección para continuar. Puedes actualizar esta selección más adelante desde tu perfil.
         </div>
         <div class="setup-level-actions">
-          <button class="btn btn-primary btn-sm" type="button" id="s-education-confirm-btn" onclick="confirmSetupEducationSection()">Confirmar</button>
+          <button class="btn btn-primary btn-sm" type="button" id="s-education-confirm-btn" data-auth-action="confirm-education-section">Confirmar</button>
         </div>
       </div>
     </div>

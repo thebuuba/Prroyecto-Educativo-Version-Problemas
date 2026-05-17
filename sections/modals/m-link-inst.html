@@ -1,7 +1,7 @@
 <!-- Modal para vincular instrumentos a actividades ya existentes. -->
 <div class="ov" id="m-link-inst">
   <div class="modal">
-    <div class="mh"><div class="mt" id="li-title">Vincular instrumento a actividad</div><button class="mx" onclick="closeM('m-link-inst')">&times;</button></div>
+    <div class="mh"><div class="mt" id="li-title">Vincular instrumento a actividad</div><button class="mx" data-action="modal-close" data-modal-close="m-link-inst">&times;</button></div>
     <div class="mb">
       <div id="li-act" style="font-size:13px;color:var(--mute);margin-bottom:12px;"></div>
       <div class="fg">
@@ -11,7 +11,7 @@
       <div class="mf" style="justify-content:space-between;">
         <button class="btn btn-outline" id="li-create-btn" onclick="openCreateInstrumentTypePicker(window._linkActId)">+ Crear instrumento</button>
         <div style="display:flex;gap:8px;">
-          <button class="btn btn-outline" onclick="closeM('m-link-inst')">Cancelar</button>
+          <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-link-inst">Cancelar</button>
           <button class="btn btn-primary" id="li-confirm-btn" onclick="confirmLinkInstrument()">Vincular instrumento</button>
         </div>
       </div>

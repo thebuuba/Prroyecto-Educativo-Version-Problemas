@@ -1,7 +1,7 @@
 <!-- Modal de estudiante: alta manual, foto, matrícula y selección de sección. -->
 <div class="ov" id="m-est">
   <div class="modal modal-est">
-    <div class="mh"><div class="mt">Nuevo Estudiante</div><button class="mx" onclick="closeM('m-est')">&times;</button></div>
+    <div class="mh"><div class="mt">Nuevo Estudiante</div><button class="mx" data-action="modal-close" data-modal-close="m-est">&times;</button></div>
     <div class="mb">
       <div class="student-photo-editor">
         <div class="student-photo-preview-wrap">
@@ -34,7 +34,7 @@
       <div class="mf mf-split">
         <button class="btn btn-outline" onclick="openBulkFromEstModal()">Carga masiva</button>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
-          <button class="btn btn-outline" onclick="closeM('m-est')">Cancelar</button>
+          <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-est">Cancelar</button>
           <button class="btn btn-outline" onclick="saveEst({keepOpen:true})">Registrar y nuevo estudiante</button>
           <button class="btn btn-primary" onclick="saveEst()">Registrar</button>
         </div>

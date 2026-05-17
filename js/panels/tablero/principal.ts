@@ -74,10 +74,10 @@ export function registerDashboardPanel(c) {
 
   // Acciones rápidas de la columna lateral
   const quickActions = [
-    { icon: 'person_add', title: 'Estudiantes', copy: 'Matrícula', action: "window.go('estudiantes')" },
-    { icon: 'add_task', title: 'Actividades', copy: 'Evaluar', action: "window.go('actividades')" },
-    { icon: 'grid_view', title: 'Matriz', copy: 'Calificaciones', action: "window.go('actividades', { activityViewMode: 'matrix' })" },
-    { icon: 'description', title: 'Reportes', copy: 'Exportar', action: "window.go('reportes')" },
+    { icon: 'person_add', title: 'Estudiantes', copy: 'Matrícula', route: 'estudiantes' },
+    { icon: 'add_task', title: 'Actividades', copy: 'Evaluar', route: 'actividades' },
+    { icon: 'grid_view', title: 'Matriz', copy: 'Calificaciones', route: 'actividades', routeOptions: '{"activityViewMode":"matrix"}' },
+    { icon: 'description', title: 'Reportes', copy: 'Exportar', route: 'reportes' },
   ];
 
   const filteredCourses = (courses || []).filter(sec => {
@@ -140,7 +140,7 @@ export function registerDashboardPanel(c) {
           <section class="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
             <div class="flex items-center justify-between mb-6">
               <h2 class="text-xl font-bold text-slate-800 dark:text-white">Mis cursos activos</h2>
-              <button class="text-blue-600 text-sm font-semibold hover:underline" onclick="window.go('estudiantes')">Gestionar todos</button>
+              <button class="text-blue-600 text-sm font-semibold hover:underline" data-action="navigate" data-route="estudiantes">Gestionar todos</button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               ${filteredCourses.map(sec => renderElementoCurso(sec)).join('')}
@@ -155,7 +155,7 @@ export function registerDashboardPanel(c) {
             <h2 class="text-xl font-bold mb-6">Accesos rápidos</h2>
             <div class="grid grid-cols-2 gap-3">
               ${quickActions.map(action => `
-                <button onclick="${action.action}" class="flex flex-col items-center justify-center p-4 bg-white/10 hover:bg-white/20 transition-colors rounded-2xl border border-white/10 gap-2">
+                <button data-action="navigate" data-route="${action.route}" ${action.routeOptions ? `data-route-options='${action.routeOptions}'` : ''} class="flex flex-col items-center justify-center p-4 bg-white/10 hover:bg-white/20 transition-colors rounded-2xl border border-white/10 gap-2">
                   <span class="material-symbols-outlined text-2xl">${action.icon}</span>
                   <span class="text-[10px] font-bold uppercase tracking-tighter">${action.title}</span>
                 </button>

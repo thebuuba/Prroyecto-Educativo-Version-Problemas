@@ -14,6 +14,8 @@ temp-playwright-check.js
 ai_backend/.env.save
 server/.env
 server/.npm-cache/
+apps/api/.env
+apps/api/.npm-cache/
 
 __pycache__/
 *.pyc

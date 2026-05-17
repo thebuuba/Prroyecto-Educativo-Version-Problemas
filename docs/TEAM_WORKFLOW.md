@@ -63,4 +63,4 @@ Si produccion se rompe:
 ## 7) Reglas practicas
 - Antes de editar, ejecuta el flujo de ensamblado o build que corresponda.
 - Para cambios frontend modernos, valida `npm run check`.
-- Todo backend persistente debe pasar por `server/` y Supabase SQL.
+- Todo backend persistente debe pasar por `apps/api/` y Supabase SQL. `server/` es solo un adaptador temporal de scripts.

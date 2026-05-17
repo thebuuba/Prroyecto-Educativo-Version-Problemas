@@ -1,7 +1,7 @@
 <!-- Modal de grados: crea o edita la estructura académica base del curso. -->
 <div class="ov" id="m-grade">
   <div class="modal">
-    <div class="mh"><div class="mt">Nuevo Grado</div><button class="mx" onclick="closeM('m-grade')">&times;</button></div>
+    <div class="mh"><div class="mt">Nuevo Grado</div><button class="mx" data-action="modal-close" data-modal-close="m-grade">&times;</button></div>
     <div class="mb">
       <div class="fr">
         <div class="fg">
@@ -49,7 +49,7 @@
         </div>
       </div>
       <div class="mf">
-        <button class="btn btn-outline" onclick="closeM('m-grade')">Cancelar</button>
+        <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-grade">Cancelar</button>
         <button class="btn btn-primary" onclick="saveGrade()">Crear grado</button>
       </div>
     </div>
@@ -59,7 +59,7 @@
 <!-- Modal de secciones: vincula el grado con la materia, aula y configuración asociada. -->
 <div class="ov" id="m-sec">
   <div class="modal">
-    <div class="mh"><div class="mt">Nueva Sección</div><button class="mx" onclick="closeM('m-sec')">&times;</button></div>
+    <div class="mh"><div class="mt">Nueva Sección</div><button class="mx" data-action="modal-close" data-modal-close="m-sec">&times;</button></div>
     <div class="mb">
       <div class="fr">
         <div class="fg"><label class="lbl">Grado</label><select class="sel" id="sec-g" onchange="refreshSectionCurriculumForm('sec', true)"></select></div>
@@ -81,7 +81,7 @@
       </div>
       <div class="fg"><label class="lbl">Aula por defecto (opcional)</label><input class="inp" id="sec-room" placeholder="Ej. Aula 3A"></div>
       <div class="mf">
-        <button class="btn btn-outline" onclick="closeM('m-sec')">Cancelar</button>
+        <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-sec">Cancelar</button>
         <button class="btn btn-primary" onclick="saveSec()">Crear secci&oacute;n</button>
       </div>
     </div>
@@ -91,7 +91,7 @@
 <!-- Selector de modo para agregar estudiantes: flujo manual o carga masiva. -->
 <div class="ov" id="m-student-add-mode">
   <div class="modal">
-    <div class="mh"><div class="mt">¿Cómo deseas agregar los estudiantes?</div><button class="mx" onclick="closeM('m-student-add-mode')">&times;</button></div>
+    <div class="mh"><div class="mt">¿Cómo deseas agregar los estudiantes?</div><button class="mx" data-action="modal-close" data-modal-close="m-student-add-mode">&times;</button></div>
     <div class="mb">
       <p class="es" style="margin:0 0 12px;">Puedes registrarlos manualmente o subir varios a la vez.</p>
       <div class="fr">
@@ -105,7 +105,7 @@
         </div>
       </div>
       <div class="mf">
-        <button class="btn btn-outline" type="button" onclick="closeM('m-student-add-mode')">Cancelar</button>
+        <button class="btn btn-outline" type="button" data-action="modal-close" data-modal-close="m-student-add-mode">Cancelar</button>
       </div>
     </div>
   </div>
@@ -114,7 +114,7 @@
 <!-- Modal de estudiante: alta manual, foto, matrícula y selección de sección. -->
 <div class="ov" id="m-est">
   <div class="modal modal-est">
-    <div class="mh"><div class="mt">Nuevo Estudiante</div><button class="mx" onclick="closeM('m-est')">&times;</button></div>
+    <div class="mh"><div class="mt">Nuevo Estudiante</div><button class="mx" data-action="modal-close" data-modal-close="m-est">&times;</button></div>
     <div class="mb">
       <div class="student-photo-editor">
         <div class="student-photo-preview-wrap">
@@ -147,7 +147,7 @@
       <div class="mf mf-split">
         <button class="btn btn-outline" onclick="openBulkFromEstModal()">Carga masiva</button>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
-          <button class="btn btn-outline" onclick="closeM('m-est')">Cancelar</button>
+          <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-est">Cancelar</button>
           <button class="btn btn-outline" onclick="saveEst({keepOpen:true})">Registrar y nuevo estudiante</button>
           <button class="btn btn-primary" onclick="saveEst()">Registrar</button>
         </div>
@@ -159,7 +159,7 @@
 <!-- Modal de carga masiva: importa estudiantes desde texto o archivo con validaciones. -->
 <div class="ov" id="m-est-bulk">
   <div class="modal modal-bulk-est">
-    <div class="mh"><div class="mt">Carga masiva de estudiantes</div><button class="mx" onclick="closeM('m-est-bulk')">&times;</button></div>
+    <div class="mh"><div class="mt">Carga masiva de estudiantes</div><button class="mx" data-action="modal-close" data-modal-close="m-est-bulk">&times;</button></div>
     <div class="mb">
       <div class="fg"><label class="lbl">Secci&oacute;n destino</label><select class="sel" id="be-sec"></select></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
@@ -213,7 +213,7 @@ Carlos D&iacute;az 0000034"></textarea>
       </div>
       <div class="mf">
         <button class="btn btn-outline" type="button" onclick="analyzeBulkInput()">Analizar</button>
-        <button class="btn btn-outline" onclick="closeM('m-est-bulk')">Cancelar</button>
+        <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-est-bulk">Cancelar</button>
         <button class="btn btn-primary" onclick="saveBulkEst()">Cargar estudiantes</button>
       </div>
     </div>
@@ -223,7 +223,7 @@ Carlos D&iacute;az 0000034"></textarea>
 <!-- Editar Estudiante -->
 <div class="ov" id="m-est-edit">
   <div class="modal modal-est">
-    <div class="mh"><div class="mt">Editar Estudiante</div><button class="mx" onclick="closeM('m-est-edit')">&times;</button></div>
+    <div class="mh"><div class="mt">Editar Estudiante</div><button class="mx" data-action="modal-close" data-modal-close="m-est-edit">&times;</button></div>
     <div class="mb">
       <input type="hidden" id="ee-id">
       <div class="student-photo-editor">
@@ -249,7 +249,7 @@ Carlos D&iacute;az 0000034"></textarea>
         <div class="fg"><label class="lbl">Secci&oacute;n</label><select class="sel" id="ee-sec"></select></div>
       </div>
       <div class="mf">
-        <button class="btn btn-outline" onclick="closeM('m-est-edit')">Cancelar</button>
+        <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-est-edit">Cancelar</button>
         <button class="btn btn-primary" onclick="saveEditStudent()">Guardar cambios</button>
       </div>
     </div>
@@ -259,7 +259,7 @@ Carlos D&iacute;az 0000034"></textarea>
 <!-- Ver Estudiante -->
 <div class="ov" id="m-est-view">
   <div class="modal modal-est-view">
-    <div class="mh"><div class="mt">Datos del Estudiante</div><button class="mx" onclick="closeM('m-est-view')">&times;</button></div>
+    <div class="mh"><div class="mt">Datos del Estudiante</div><button class="mx" data-action="modal-close" data-modal-close="m-est-view">&times;</button></div>
     <div class="mb">
       <input type="hidden" id="sv-id">
       <div class="student-view-layout">
@@ -292,7 +292,7 @@ Carlos D&iacute;az 0000034"></textarea>
       </div>
       <div class="mf">
         <button class="btn btn-primary" onclick="openEditStudentFromView()">Editar</button>
-        <button class="btn btn-outline" onclick="closeM('m-est-view')">Cerrar</button>
+        <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-est-view">Cerrar</button>
       </div>
     </div>
   </div>
@@ -301,7 +301,7 @@ Carlos D&iacute;az 0000034"></textarea>
 <!-- Editar Grado -->
 <div class="ov" id="m-grade-edit">
   <div class="modal">
-    <div class="mh"><div class="mt">Editar Grado</div><button class="mx" onclick="closeM('m-grade-edit')">&times;</button></div>
+    <div class="mh"><div class="mt">Editar Grado</div><button class="mx" data-action="modal-close" data-modal-close="m-grade-edit">&times;</button></div>
     <div class="mb">
       <input type="hidden" id="eg-id">
       <div class="fr">
@@ -309,7 +309,7 @@ Carlos D&iacute;az 0000034"></textarea>
         <div class="fg"><label class="lbl">Grado</label><select class="sel" id="eg-grade-num"><option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option><option value="4to">4to</option><option value="5to">5to</option><option value="6to">6to</option></select></div>
       </div>
       <div class="mf">
-        <button class="btn btn-outline" onclick="closeM('m-grade-edit')">Cancelar</button>
+        <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-grade-edit">Cancelar</button>
         <button class="btn btn-primary" onclick="saveEditGrade()">Guardar cambios</button>
       </div>
     </div>
@@ -319,7 +319,7 @@ Carlos D&iacute;az 0000034"></textarea>
 <!-- Editar Secci&oacute;n -->
 <div class="ov" id="m-sec-edit">
   <div class="modal">
-    <div class="mh"><div class="mt">Editar Sección</div><button class="mx" onclick="closeM('m-sec-edit')">&times;</button></div>
+    <div class="mh"><div class="mt">Editar Sección</div><button class="mx" data-action="modal-close" data-modal-close="m-sec-edit">&times;</button></div>
     <div class="mb">
       <input type="hidden" id="es-id">
       <div class="fr">
@@ -342,7 +342,7 @@ Carlos D&iacute;az 0000034"></textarea>
       </div>
       <div class="fg"><label class="lbl">Aula por defecto (opcional)</label><input class="inp" id="es-room" placeholder="Ej. Aula 3A"></div>
       <div class="mf">
-        <button class="btn btn-outline" onclick="closeM('m-sec-edit')">Cancelar</button>
+        <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-sec-edit">Cancelar</button>
         <button class="btn btn-primary" onclick="saveEditSection()">Guardar cambios</button>
       </div>
     </div>

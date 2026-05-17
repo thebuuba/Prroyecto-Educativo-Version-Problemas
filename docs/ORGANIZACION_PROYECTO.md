@@ -4,7 +4,7 @@
 
 El proyecto ya tiene una base buena: la lógica principal vive en `js/core/` y los paneles están separados en `js/panels/<panel>/`. El build moderno con Vite funciona.
 
-La fuente de verdad de datos cloud es Supabase SQL/PostgreSQL mediante `server/` y `js/core/api-sql/`.
+La fuente de verdad de datos cloud es Supabase SQL/PostgreSQL mediante `apps/api/`, `supabase/` y `js/core/api-sql/`.
 
 ## Ajustes aplicados
 
@@ -20,8 +20,8 @@ La fuente de verdad de datos cloud es Supabase SQL/PostgreSQL mediante `server/`
 - `js/core/api-sql.js` quedó como facade/orquestador y delega cliente HTTP, auth SQL, contexto, endpoints, bloques de estado, asistencia y actividades a `js/core/api-sql/`.
 - `js/core/hydration.js` quedó como facade; persistencia, flujo de sesión/logout y normalización académica viven en `js/core/hydration/`.
 - El calendario académico predeterminado quedó centralizado en `js/core/constants.js`; `config.js` e hidratación lo reutilizan.
-- Se eliminaron los wrappers legacy de runtime (`js/config.js`, `js/db.js`, `js/cloud.js`, `js/sql-api.js`). Sus APIs globales salen ahora desde `js/core/legacy-bridge.js`.
-- `js/core/legacy-bridge.js` organiza las funciones globales por dominio y reduce logs de render innecesarios.
+- Se eliminaron los wrappers legacy de runtime (`js/config.js`, `js/db.js`, `js/cloud.js`, `js/sql-api.js`). Sus APIs globales salen ahora desde `js/core/legacy-bridge.ts`.
+- `js/core/legacy-bridge.ts` instala la capa de compatibilidad y reduce logs de render innecesarios.
 - `js/auth-init.js` se eliminó porque `js/page-entry/root.js` ya inicializa autenticación y setup.
 - Se retiraron logs de desarrollo (`console.log`) del runtime para dejar la consola enfocada en errores, warnings y depuración explícita.
 - `scripts/assemble-all.sh` ya no llama scripts inexistentes.
@@ -37,6 +37,10 @@ La fuente de verdad de datos cloud es Supabase SQL/PostgreSQL mediante `server/`
   - `components/vista.js`: contiene el HTML dinámico y renderizado.
   - `utils/actions.js`: contiene handlers y lógica de interacción cuando aplica.
 - Los archivos duplicados/legacy de auth (`login/auth.js`, `registro/auth.js` y copias locales de `api-cloud.js`) se eliminaron. La integración oficial con Supabase vive en `js/core/api-cloud.js`.
+- El backend Express se movió de `server/` a `apps/api/`; `server/` queda como adaptador temporal.
+- El SQL ejecutable se movió a `supabase/schema.sql` y `supabase/migrations/`.
+- La configuración real de Vite vive en `apps/web/vite.config.js`.
+- `js/core/legacy-api.ts` registra APIs por dominio y `js/core/legacy-bridge.ts` instala la compatibilidad mínima en `window`.
 
 ## Convención recomendada por panel
 

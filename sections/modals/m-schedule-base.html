@@ -1,7 +1,7 @@
 <!-- Modal base del horario docente: plantilla inicial de jornada y segmentos. -->
 <div class="ov" id="m-schedule-base">
   <div class="modal">
-    <div class="mh"><div class="mt">Usar plantilla base de horario</div><button class="mx" onclick="closeM('m-schedule-base')">&times;</button></div>
+    <div class="mh"><div class="mt">Usar plantilla base de horario</div><button class="mx" data-action="modal-close" data-modal-close="m-schedule-base">&times;</button></div>
     <div class="mb">
       <div class="fr">
         <div class="fg"><label class="lbl">Hora de inicio</label><input class="inp" id="schedule-base-start" type="time" value="07:30"></div>
@@ -19,7 +19,7 @@
         <span>Si sobran minutos al final de la jornada, sumarlos al último segmento en vez de crear una franja corta aparte.</span>
       </label>
       <div class="mf">
-        <button class="btn btn-outline" onclick="closeM('m-schedule-base')">Cancelar</button>
+        <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-schedule-base">Cancelar</button>
         <button class="btn btn-primary" onclick="generateTeacherScheduleBase()">Crear plantilla</button>
       </div>
     </div>

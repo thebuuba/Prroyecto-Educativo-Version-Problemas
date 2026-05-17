@@ -39,7 +39,7 @@ export function renderizarStudentEditPanel(container) {
         </div>
         <h2 class="text-2xl font-bold text-slate-900 mb-2">Estudiante no encontrado</h2>
         <p class="text-slate-500 max-w-md mb-8">El registro que buscas no existe o ha sido eliminado.</p>
-        <button class="px-6 py-3 bg-blue-600 text-white font-bold rounded-2xl shadow-xl hover:bg-blue-700 transition-all" onclick="window.go('estudiantes')">Volver a la lista</button>
+        <button class="px-6 py-3 bg-blue-600 text-white font-bold rounded-2xl shadow-xl hover:bg-blue-700 transition-all" data-action="navigate" data-route="estudiantes">Volver a la lista</button>
       </div>
     `;
     return;
@@ -181,7 +181,7 @@ export function renderizarStudentEditPanel(container) {
                     <span class="material-symbols-outlined">save</span>
                     Guardar Cambios
                   </button>
-                  <button onclick="window.go('estudiantes')" class="w-full py-4 text-slate-500 hover:bg-slate-50 rounded-2xl font-bold transition-all text-sm flex items-center justify-center gap-2">
+                  <button data-action="navigate" data-route="estudiantes" class="w-full py-4 text-slate-500 hover:bg-slate-50 rounded-2xl font-bold transition-all text-sm flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined">close</span>
                     Descartar
                   </button>

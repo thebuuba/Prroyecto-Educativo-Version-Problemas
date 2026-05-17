@@ -135,7 +135,7 @@ export function renderizarAttendanceEmpty(container) {
       </div>
       <h2 class="text-2xl font-bold text-slate-800 mb-2">No hay secciones creadas</h2>
       <p class="text-slate-500 max-w-md mb-8">Crea una sección para poder llevar el registro de asistencia por curso.</p>
-      <button class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all shadow-lg shadow-blue-200" onclick="go('estudiantes')">
+      <button class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all shadow-lg shadow-blue-200" data-action="navigate" data-route="estudiantes">
         Ir a estudiantes
       </button>
     </div>

@@ -92,7 +92,7 @@ export function renderizarSettingsView() {
              <h4 class="text-lg font-bold">Sesión</h4>
              <p class="text-slate-400 text-sm">Gestiona tu acceso seguro a la plataforma.</p>
            </div>
-           <button onclick="window.logoutAuth()" class="px-6 py-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-2xl font-bold hover:bg-rose-500 hover:text-white transition-all">
+           <button data-auth-action="logout" class="px-6 py-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-2xl font-bold hover:bg-rose-500 hover:text-white transition-all">
              Cerrar Sesión
            </button>
         </div>

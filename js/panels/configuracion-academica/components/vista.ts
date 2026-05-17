@@ -86,7 +86,7 @@ export function renderizarGradeSetupPanel(container) {
       <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <div class="flex items-center gap-2 mb-2">
-            <button onclick="window.go('estudiantes')" class="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-400">
+            <button data-action="navigate" data-route="estudiantes" class="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-400">
                <span class="material-symbols-outlined">arrow_back</span>
             </button>
             <span class="text-[10px] font-bold text-blue-500 uppercase tracking-[0.2em]">Configuración Académica</span>
@@ -235,7 +235,7 @@ export function renderizarGradeSetupPanel(container) {
                       Crear Grado
                       <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
                     </button>
-                    <button onclick="window.go('estudiantes')" class="w-full mt-4 py-3 bg-white/5 hover:bg-white/10 text-premium-soft rounded-2xl font-bold transition-all">
+                    <button data-action="navigate" data-route="estudiantes" class="w-full mt-4 py-3 bg-white/5 hover:bg-white/10 text-premium-soft rounded-2xl font-bold transition-all">
                       Cancelar
                     </button>
                  </div>

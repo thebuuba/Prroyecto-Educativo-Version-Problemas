@@ -14,19 +14,19 @@
         <div class="mt">Configurar perfil</div>
         <div class="auth-subtitle setup-head-subtitle">Completa tu información para iniciar.</div>
       </div>
-      <button class="btn btn-ghost setup-level-exit-btn setup-close-btn" type="button" onclick="cancelSetup()" aria-label="Cerrar sesi&oacute;n">Cerrar sesi&oacute;n</button>
+      <button class="btn btn-ghost setup-level-exit-btn setup-close-btn" type="button" data-auth-action="cancel-profile-setup" aria-label="Cerrar sesi&oacute;n">Cerrar sesi&oacute;n</button>
     </div>
     <div class="mb">
       <div class="fr setup-form-stack">
         <div class="fg setup-name-field"><label class="lbl">Nombre(s)</label><input class="inp" id="s-name" placeholder="Ej. Mar&iacute;a"></div>
         <div class="fg"><label class="lbl">Apellido(s)</label><input class="inp" id="s-lastname" placeholder="Ej. Rodr&iacute;guez"></div>
       </div>
-      <div class="fg"><label class="lbl">Tel&eacute;fono</label><input class="inp" id="s-phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="14" oninput="handlePhoneInput(this)" placeholder="Ej. (809) 555-1234"></div>
+      <div class="fg"><label class="lbl">Tel&eacute;fono</label><input class="inp" id="s-phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="14" data-action="input-change" data-input-handler="setup-phone" placeholder="Ej. (809) 555-1234"></div>
       <div class="fr setup-form-stack">
         <div class="fg"><label class="lbl">Rol</label>
           <select class="sel" id="s-role"><option>Docente</option><option>Coordinador</option><option>Direcci&oacute;n</option></select>
         </div>
-        <div class="fg"><label class="lbl">Instituci&oacute;n</label><div class="inst-inline-wrap"><div class="inst-inline-ghost" id="s-inst-ghost" aria-hidden="true"><span id="s-inst-ghost-prefix"></span><span id="s-inst-ghost-suffix"></span></div><input class="inp" id="s-inst" name="setup-institution" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false" placeholder="Escribe o selecciona un colegio" oninput="handleInstitutionInput(this)" onkeydown="handleInstitutionKeydown(event)" onfocus="updateInstitutionInlineHint(this)" onblur="clearInstitutionInlineHint()"></div><datalist id="s-inst-list"></datalist></div>
+        <div class="fg"><label class="lbl">Instituci&oacute;n</label><div class="inst-inline-wrap"><div class="inst-inline-ghost" id="s-inst-ghost" aria-hidden="true"><span id="s-inst-ghost-prefix"></span><span id="s-inst-ghost-suffix"></span></div><input class="inp" id="s-inst" name="setup-institution" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false" placeholder="Escribe o selecciona un colegio" data-action="input-change" data-input-handler="setup-institution" data-keydown-handler="setup-institution" data-focus-handler="setup-institution" data-blur-handler="setup-institution"></div><datalist id="s-inst-list"></datalist></div>
       </div>
       <div class="fr setup-form-stack">
         <div class="fg"><label class="lbl">Año escolar</label>
@@ -44,9 +44,9 @@
         </div>
       </div>
       <div class="mf mf-split">
-        <button class="btn btn-danger btn-lg setup-cancel-btn" type="button" onclick="cancelSetup()">Cancelar</button>
-        <button class="btn btn-outline btn-lg setup-back-btn" type="button" onclick="returnSetupToRegister()">Cerrar sesi&oacute;n</button>
-        <button class="btn btn-primary btn-lg setup-submit-btn" onclick="saveSetup()">Comenzar -></button>
+        <button class="btn btn-danger btn-lg setup-cancel-btn" type="button" data-auth-action="cancel-profile-setup">Cancelar</button>
+        <button class="btn btn-outline btn-lg setup-back-btn" type="button" data-auth-action="back" data-auth-context="profile-setup">Cerrar sesi&oacute;n</button>
+        <button class="btn btn-primary btn-lg setup-submit-btn" data-auth-action="submit-profile-setup">Comenzar -></button>
       </div>
     </div>
     </div>

@@ -37,7 +37,7 @@ export function registrarStudentsPanel(c) {
         </div>
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Comienza configurando tus grados</h2>
         <p class="text-slate-500 dark:text-slate-400 max-w-md mb-8">Necesitas registrar al menos un grado académico antes de poder gestionar estudiantes.</p>
-        <button class="px-6 py-3 bg-blue-600 text-white font-bold rounded-2xl shadow-xl shadow-blue-100 dark:shadow-none hover:bg-blue-700 transition-all hover:scale-105" onclick="window.go('grade-setup')">+ Crear grado</button>
+        <button class="px-6 py-3 bg-blue-600 text-white font-bold rounded-2xl shadow-xl shadow-blue-100 dark:shadow-none hover:bg-blue-700 transition-all hover:scale-105" data-action="navigate" data-route="grade-setup">+ Crear grado</button>
       </div>
     `;
     return;
@@ -83,7 +83,7 @@ export function registrarStudentsPanel(c) {
           ` : ''}
         </div>
         <div class="flex flex-wrap gap-3">
-          <button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-100 dark:shadow-none" onclick="window.go('student-create')">+ Estudiante</button>
+          <button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-100 dark:shadow-none" data-action="navigate" data-route="student-create">+ Estudiante</button>
           <button class="px-5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-bold rounded-xl hover:bg-slate-50 transition-colors" onclick="window.openBulkEstM('${S.activeGroupId}')">Carga Masiva</button>
         </div>
       </header>
@@ -97,7 +97,7 @@ export function registrarStudentsPanel(c) {
           </button>
         `).join('')}
 
-        <button onclick="window.go('grade-setup')" 
+        <button data-action="navigate" data-route="grade-setup"
                 class="shrink-0 w-10 h-10 flex items-center justify-center rounded-xl text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all border-2 border-dashed border-blue-100 dark:border-blue-800 ml-1"
                 title="Agregar nuevo grado">
           <span class="material-symbols-outlined text-sm font-bold">add</span>
@@ -110,7 +110,7 @@ export function registrarStudentsPanel(c) {
         <aside class="space-y-4">
           <div class="flex items-center justify-between mb-2">
             <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Asignaturas / Secciones</h3>
-            <button class="text-blue-600 p-1 hover:bg-blue-50 rounded-lg" onclick="window.go('section-create')">
+            <button class="text-blue-600 p-1 hover:bg-blue-50 rounded-lg" data-action="navigate" data-route="section-create">
               <span class="material-symbols-outlined text-sm font-bold">add</span>
             </button>
           </div>
@@ -164,7 +164,7 @@ export function registrarStudentsPanel(c) {
             ${tableStudents.length === 0 ? `
               <div class="py-20 text-center border-2 border-dashed border-slate-200 rounded-3xl">
                 <p class="text-slate-400">No hay estudiantes registrados en esta sección.</p>
-                <button class="mt-4 text-blue-600 font-bold hover:underline" onclick="window.go('student-create')">Agregar ahora</button>
+                <button class="mt-4 text-blue-600 font-bold hover:underline" data-action="navigate" data-route="student-create">Agregar ahora</button>
               </div>
             ` : ''}
           ` : `

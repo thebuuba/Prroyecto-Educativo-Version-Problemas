@@ -1,7 +1,7 @@
 <!-- Ver Estudiante -->
 <div class="ov" id="m-est-view">
   <div class="modal modal-est-view">
-    <div class="mh"><div class="mt">Datos del Estudiante</div><button class="mx" onclick="closeM('m-est-view')">&times;</button></div>
+    <div class="mh"><div class="mt">Datos del Estudiante</div><button class="mx" data-action="modal-close" data-modal-close="m-est-view">&times;</button></div>
     <div class="mb">
       <input type="hidden" id="sv-id">
       <div class="student-view-layout">
@@ -34,7 +34,7 @@
       </div>
       <div class="mf">
         <button class="btn btn-primary" onclick="openEditStudentFromView()">Editar</button>
-        <button class="btn btn-outline" onclick="closeM('m-est-view')">Cerrar</button>
+        <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-est-view">Cerrar</button>
       </div>
     </div>
   </div>

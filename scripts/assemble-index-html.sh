@@ -29,6 +29,6 @@ for section in $SECTIONS; do
   cat "$file" >> "$OUTPUT_FILE"
   first_section=0
 done
-printf '\n' >> "$OUTPUT_FILE"
+perl -0pi -e 's/\n+\z/\n/' "$OUTPUT_FILE"
 
 echo "[assemble-index-html] index ensamblado desde fragmentos organizados por seccion/panel."

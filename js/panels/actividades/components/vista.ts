@@ -189,7 +189,7 @@ function renderizarMatrixView() {
         </div>
         <h4 class="text-xl font-bold text-slate-800 mb-2">No hay estudiantes</h4>
         <p class="text-slate-500 mb-6">Registra estudiantes para visualizar la matriz de evaluación.</p>
-        <button onclick="go('estudiantes')" class="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-bold">Ir a Estudiantes</button>
+        <button data-action="navigate" data-route="estudiantes" class="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-bold">Ir a Estudiantes</button>
       </div>
     `;
   }

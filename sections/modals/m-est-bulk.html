@@ -1,7 +1,7 @@
 <!-- Modal de carga masiva: importa estudiantes desde texto o archivo con validaciones. -->
 <div class="ov" id="m-est-bulk">
   <div class="modal modal-bulk-est">
-    <div class="mh"><div class="mt">Carga masiva de estudiantes</div><button class="mx" onclick="closeM('m-est-bulk')">&times;</button></div>
+    <div class="mh"><div class="mt">Carga masiva de estudiantes</div><button class="mx" data-action="modal-close" data-modal-close="m-est-bulk">&times;</button></div>
     <div class="mb">
       <div class="fg"><label class="lbl">Secci&oacute;n destino</label><select class="sel" id="be-sec"></select></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
@@ -55,7 +55,7 @@ Carlos D&iacute;az 0000034"></textarea>
       </div>
       <div class="mf">
         <button class="btn btn-outline" type="button" onclick="analyzeBulkInput()">Analizar</button>
-        <button class="btn btn-outline" onclick="closeM('m-est-bulk')">Cancelar</button>
+        <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-est-bulk">Cancelar</button>
         <button class="btn btn-primary" onclick="saveBulkEst()">Cargar estudiantes</button>
       </div>
     </div>

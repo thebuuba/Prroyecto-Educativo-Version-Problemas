@@ -1,7 +1,7 @@
 <!-- Modal de usuario: crea perfiles adicionales con rol y sección asociada. -->
 <div class="ov" id="m-usr">
   <div class="modal">
-    <div class="mh"><div class="mt">Nuevo Usuario</div><button class="mx" onclick="closeM('m-usr')">&times;</button></div>
+    <div class="mh"><div class="mt">Nuevo Usuario</div><button class="mx" data-action="modal-close" data-modal-close="m-usr">&times;</button></div>
     <div class="mb">
       <div class="fr">
         <div class="fg"><label class="lbl">Nombre</label><input class="inp" id="u-nom" placeholder="Nombre completo"></div>
@@ -14,7 +14,7 @@
         <div class="fg"><label class="lbl">Secci&oacute;n</label><select class="sel" id="u-sec"></select></div>
       </div>
       <div class="mf">
-        <button class="btn btn-outline" onclick="closeM('m-usr')">Cancelar</button>
+        <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-usr">Cancelar</button>
         <button class="btn btn-primary" onclick="saveUsr()">Crear usuario</button>
       </div>
     </div>

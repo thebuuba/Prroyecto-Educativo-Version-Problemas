@@ -1,0 +1,2 @@
+-- Datos semilla no sensibles para desarrollo local.
+-- Mantener vacío hasta definir fixtures reproducibles.

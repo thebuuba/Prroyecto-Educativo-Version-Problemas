@@ -65,8 +65,8 @@ function renderizarEmptyState(ests) {
         ${ests.length === 0 ? 'Comienza registrando a tus estudiantes para ver sus calificaciones consolidadas.' : 'Define actividades en los bloques para generar esta matriz.'}
       </p>
       <div class="flex items-center justify-center gap-4">
-        ${ests.length === 0 ? `<button onclick="window.go('estudiantes')" class="px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">Registrar Estudiantes</button>` : ''}
-        ${totalActs() === 0 ? `<button onclick="window.go('config')" class="px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-2xl font-bold hover:bg-slate-50 transition-all shadow-sm">Configurar Actividades</button>` : ''}
+        ${ests.length === 0 ? `<button data-action="navigate" data-route="estudiantes" class="px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">Registrar Estudiantes</button>` : ''}
+        ${totalActs() === 0 ? `<button data-action="navigate" data-route="config" class="px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-2xl font-bold hover:bg-slate-50 transition-all shadow-sm">Configurar Actividades</button>` : ''}
       </div>
     </div>
   `;

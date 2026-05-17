@@ -83,7 +83,7 @@
     </div>
 
     <div class="sb-footer">
-      <button class="sb-link sb-logout-btn" id="sb-logout-compact" type="button" onclick="logoutAuth()" aria-label="Cerrar sesión" title="Cerrar sesión">
+      <button class="sb-link sb-logout-btn" id="sb-logout-compact" type="button" data-shell-action="logout" aria-label="Cerrar sesión" title="Cerrar sesión">
         <span class="sb-ico" aria-hidden="true">
           <img class="sb-logout-icon" src="/assets/icons/logout.svg" alt="" width="20" height="20" decoding="async">
         </span>
@@ -154,10 +154,10 @@
           </div>
           <div class="stitch-pd-divider"></div>
           <div class="stitch-pd-footer">
-              <button class="stitch-pd-item stitch-pd-danger" id="sb-logout" type="button" onclick="logoutAuth()" style="display:none;">
+              <button class="stitch-pd-item stitch-pd-danger" id="sb-logout" type="button" data-shell-action="logout" style="display:none;">
                   <span class="material-symbols-outlined">logout</span> Cerrar sesión
               </button>
-              <button class="stitch-pd-item stitch-pd-danger" id="sb-logout-compact" type="button" onclick="logoutAuth()" style="display:none;" hidden>Cerrar sesión</button>
+              <button class="stitch-pd-item stitch-pd-danger" id="sb-logout-compact" type="button" data-shell-action="logout" style="display:none;" hidden>Cerrar sesión</button>
           </div>
         </div>
       </div>

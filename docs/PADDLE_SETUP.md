@@ -1,6 +1,6 @@
 # Paddle (MoR) Setup para AulaBase (RD)
 
-> Estado actual: este flujo es legacy y no forma parte del montaje activo. La base de datos oficial es Supabase PostgreSQL. Antes de reactivar Paddle, migra estos registros a tablas SQL en `server/src/db/migrations/` y expón endpoints en `server/src/routes/`.
+> Estado actual: este flujo es legacy y no forma parte del montaje activo. La base de datos oficial es Supabase PostgreSQL. Antes de reactivar Paddle, migra estos registros a tablas SQL en `supabase/migrations/` y expón endpoints en `apps/api/src/routes/`.
 
 ## 1) Crear productos y precios en Paddle
 
@@ -28,11 +28,11 @@ export PADDLE_ENV=sandbox
 
 ## 3) Despliegue
 
-No hay deploy activo para billing. El webhook debe implementarse en `server/`.
+No hay deploy activo para billing. El webhook debe implementarse en `apps/api/`.
 
 ## 4) Configurar webhook en Paddle
 
-1. Crea un endpoint HTTP en `server/` para el webhook.
+1. Crea un endpoint HTTP en `apps/api/` para el webhook.
 2. En Paddle Dashboard crea Webhook Destination con esa URL.
 3. Activa eventos de suscripcion:
    - `subscription.created`
@@ -95,4 +95,4 @@ Checklist:
 
 ## 9) Estado actual del repositorio
 
-El backend activo es `server/` con Supabase SQL.
+El backend activo es `apps/api/` con Supabase SQL. `server/` solo conserva scripts de compatibilidad.

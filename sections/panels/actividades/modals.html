@@ -1,7 +1,7 @@
 <!-- Modal de actividad: define nombre, bloque, tipo, puntos y observaciones. -->
 <div class="ov" id="m-act">
   <div class="modal">
-    <div class="mh"><div class="mt">Nueva Actividad</div><button class="mx" onclick="closeM('m-act')">&times;</button></div>
+    <div class="mh"><div class="mt">Nueva Actividad</div><button class="mx" data-action="modal-close" data-modal-close="m-act">&times;</button></div>
     <div class="mb">
       <div class="fg"><label class="lbl">Nombre</label><input class="inp" id="a-nom" placeholder="Ej. Presentación oral - Sec. 2"></div>
       <div class="fr">
@@ -26,7 +26,7 @@
       </div>
       <div class="fg"><label class="lbl">Observaciones</label><textarea class="ta" id="a-obs" placeholder="Notas opcionales..."></textarea></div>
       <div class="mf">
-        <button class="btn btn-outline" onclick="closeM('m-act')">Cancelar</button>
+        <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-act">Cancelar</button>
         <button class="btn btn-primary" onclick="saveAct()">Guardar actividad</button>
       </div>
     </div>
@@ -36,12 +36,12 @@
 <!-- Modal de plantilla: guarda una configuración de actividades reutilizable. -->
 <div class="ov" id="m-tpl">
   <div class="modal">
-    <div class="mh"><div class="mt">Guardar Plantilla</div><button class="mx" onclick="closeM('m-tpl')">&times;</button></div>
+    <div class="mh"><div class="mt">Guardar Plantilla</div><button class="mx" data-action="modal-close" data-modal-close="m-tpl">&times;</button></div>
     <div class="mb">
       <div class="fg"><label class="lbl">Nombre de la plantilla</label><input class="inp" id="tpl-name" placeholder='Ej. "P2 Secundaria (5x20)"'></div>
       <div class="fg"><label class="lbl">Descripci&oacute;n</label><input class="inp" id="tpl-desc" placeholder="Descripci&oacute;n breve..."></div>
       <div class="mf">
-        <button class="btn btn-outline" onclick="closeM('m-tpl')">Cancelar</button>
+        <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-tpl">Cancelar</button>
         <button class="btn btn-primary" onclick="saveTpl()">Guardar plantilla</button>
       </div>
     </div>
@@ -51,7 +51,7 @@
 <!-- Modal de usuario: crea perfiles adicionales con rol y sección asociada. -->
 <div class="ov" id="m-usr">
   <div class="modal">
-    <div class="mh"><div class="mt">Nuevo Usuario</div><button class="mx" onclick="closeM('m-usr')">&times;</button></div>
+    <div class="mh"><div class="mt">Nuevo Usuario</div><button class="mx" data-action="modal-close" data-modal-close="m-usr">&times;</button></div>
     <div class="mb">
       <div class="fr">
         <div class="fg"><label class="lbl">Nombre</label><input class="inp" id="u-nom" placeholder="Nombre completo"></div>
@@ -64,7 +64,7 @@
         <div class="fg"><label class="lbl">Secci&oacute;n</label><select class="sel" id="u-sec"></select></div>
       </div>
       <div class="mf">
-        <button class="btn btn-outline" onclick="closeM('m-usr')">Cancelar</button>
+        <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-usr">Cancelar</button>
         <button class="btn btn-primary" onclick="saveUsr()">Crear usuario</button>
       </div>
     </div>

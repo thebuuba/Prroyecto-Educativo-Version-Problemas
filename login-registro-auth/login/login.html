@@ -2,7 +2,7 @@
         <div id="auth-login-box" class="auth-form-box">
             <div class="auth-login-register-line">
               <span>¿No tienes una cuenta?</span>
-              <button class="auth-inline-link auth-login-register-link" type="button" onclick="setAuthMode('register')">Regístrate</button>
+              <button class="auth-inline-link auth-login-register-link" type="button" data-auth-action="show-register">Regístrate</button>
             </div>
             <div class="fg">
               <label class="lbl">Correo electrónico</label>
@@ -18,7 +18,7 @@
               <div class="auth-input-wrap">
                 <span class="auth-input-icon material-symbols-outlined" aria-hidden="true">lock</span>
                 <input class="inp password-input" id="al-pass" type="password" placeholder="••••••••">
-                <button class="password-toggle" type="button" onclick="togglePasswordVisibility('al-pass', this)" aria-label="Mostrar contraseña" title="Mostrar contraseña">
+                <button class="password-toggle" type="button" data-auth-action="toggle-password" data-auth-target="al-pass" aria-label="Mostrar contraseña" title="Mostrar contraseña">
                   <span class="material-symbols-outlined" aria-hidden="true">visibility</span>
                 </button>
               </div>
@@ -28,19 +28,19 @@
                 <input class="auth-remember-check" id="remember" type="checkbox">
                 <label class="auth-remember-label" for="remember">Recordarme</label>
               </span>
-              <button class="auth-inline-link" type="button" onclick="handleForgotPassword()">¿Olvidaste tu contraseña?</button>
+              <button class="auth-inline-link" type="button" data-auth-action="recover-password">¿Olvidaste tu contraseña?</button>
             </div>
-            <button class="btn btn-primary btn-lg auth-submit-btn" type="button" onclick="loginAuth()">Iniciar sesión</button>
+            <button class="btn btn-primary btn-lg auth-submit-btn" type="button" data-auth-action="login">Iniciar sesión</button>
             <div class="auth-social">
               <div class="auth-social-divider" id="auth-social-divider">O continúa con</div>
               <div class="auth-social-actions">
-                <button class="btn btn-outline auth-social-btn" type="button" onclick="authWithProvider('google')" aria-label="Google" title="Google">
+                <button class="btn btn-outline auth-social-btn" type="button" data-auth-action="provider" data-auth-provider="google" aria-label="Google" title="Google">
                   <span class="auth-social-mark auth-social-mark-google" aria-hidden="true">
                     <img src="/assets/icons/google.png" alt="" width="18" height="18" decoding="async" loading="lazy">
                   </span>
                   <span>Google</span>
                 </button>
-                <button class="btn btn-outline auth-social-btn" type="button" onclick="authWithProvider('facebook')" aria-label="Facebook" title="Facebook">
+                <button class="btn btn-outline auth-social-btn" type="button" data-auth-action="provider" data-auth-provider="facebook" aria-label="Facebook" title="Facebook">
                   <span class="auth-social-mark auth-social-mark-facebook" aria-hidden="true">
                     <img src="/assets/icons/facebook.png" alt="" width="18" height="18" decoding="async" loading="lazy">
                   </span>

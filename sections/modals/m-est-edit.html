@@ -12,10 +12,10 @@
           <input type="hidden" id="ee-photo-data">
           <div class="fg">
             <label class="lbl">Foto de perfil</label>
-            <input class="inp" id="ee-photo-file" type="file" accept="image/*" onchange="handleStudentPhotoInput(this, 'ee')">
+            <input class="inp" id="ee-photo-file" type="file" accept="image/*" data-student-action="import" data-student-import="photo-legacy" data-student-prefix="ee">
             <div class="form-note">Puedes actualizar la foto del estudiante en cualquier momento.</div>
           </div>
-          <button class="btn btn-outline btn-sm" type="button" onclick="clearStudentPhotoField('ee')">Quitar foto</button>
+          <button class="btn btn-outline btn-sm" type="button" data-student-action="clear-filter" data-student-clear="photo" data-student-prefix="ee">Quitar foto</button>
         </div>
       </div>
       <div class="fr">
@@ -28,7 +28,7 @@
       </div>
       <div class="mf">
         <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-est-edit">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveEditStudent()">Guardar cambios</button>
+        <button class="btn btn-primary" data-student-action="save" data-student-mode="edit">Guardar cambios</button>
       </div>
     </div>
   </div>

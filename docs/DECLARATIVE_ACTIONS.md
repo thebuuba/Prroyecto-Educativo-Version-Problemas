@@ -13,6 +13,7 @@ El listener se registra desde `apps/web/src/page-entry/root.ts` mediante:
 Módulos auxiliares:
 
 - `js/panels/autenticacion/utils/auth-actions.ts`
+- `js/panels/estudiantes/utils/student-actions.ts`
 - `js/core/form-actions.ts`
 
 ## Acciones soportadas
@@ -83,6 +84,35 @@ Acciones permitidas:
 - `confirm-education-section`
 
 El módulo de auth usa una whitelist de adaptadores hacia funciones legacy existentes. No ejecuta nombres arbitrarios.
+
+### Estudiantes
+
+```html
+<button data-student-action="bulk-upload" data-student-section-id="sec_1">Carga Masiva</button>
+<input data-student-action="search">
+<button data-student-action="delete" data-student-id="st_1">...</button>
+```
+
+Acciones permitidas:
+
+- `create`, `edit`, `delete`, `save`, `cancel`
+- `search`, `filter`, `clear-filter`, `select`
+- `bulk-upload`, `bulk-preview`, `bulk-confirm`, `bulk-cancel`
+- `export`, `import`
+
+El registry vive en `js/panels/estudiantes/utils/student-actions.ts`. Los atributos secundarios (`data-student-id`, `data-student-value`, `data-student-filter`, `data-student-select`, `data-student-mode`, etc.) solo seleccionan ramas conocidas dentro del registry; no se ejecutan nombres de funciones desde HTML.
+
+Migrado en esta fase:
+
+- Vista principal de estudiantes: búsqueda, filtros de grado/sección, modo grid/table, doble clic para ver, edición, eliminación y acceso a carga masiva.
+- Panel de crear estudiante: campos simples, selección de sección, foto y guardado.
+- Panel de editar estudiante: campos simples, selección de sección, foto, guardado y eliminación.
+- Modales legacy `m-est`, `m-est-edit`, `m-est-view`, `m-student-add-mode` y `m-est-bulk`.
+
+Pendiente:
+
+- Handlers de grados/secciones que aparecen dentro de `sections/panels/estudiantes/modals.html`; pertenecen al dominio académico.
+- Lectura real de archivos `.xlsx/.xls` en carga masiva; el flujo declarativo mantiene el comportamiento legacy existente.
 
 ### Formularios simples
 

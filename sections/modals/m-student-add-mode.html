@@ -6,11 +6,11 @@
       <p class="es" style="margin:0 0 12px;">Puedes registrarlos manualmente o subir varios a la vez.</p>
       <div class="fr">
         <div class="fg">
-          <button class="btn btn-primary" type="button" onclick="chooseStudentAddMode('manual')">Agregar uno por uno</button>
+          <button class="btn btn-primary" type="button" data-student-action="select" data-student-select="add-mode" data-student-value="manual">Agregar uno por uno</button>
           <div class="form-note">Manual: ideal si vas a registrar pocos estudiantes.</div>
         </div>
         <div class="fg">
-          <button class="btn btn-outline" type="button" onclick="chooseStudentAddMode('bulk')">Carga masiva</button>
+          <button class="btn btn-outline" type="button" data-student-action="select" data-student-select="add-mode" data-student-value="bulk">Carga masiva</button>
           <div class="form-note">Carga masiva: ideal para subir un curso completo.</div>
         </div>
       </div>

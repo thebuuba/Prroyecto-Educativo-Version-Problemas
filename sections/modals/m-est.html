@@ -11,15 +11,15 @@
           <input type="hidden" id="e-photo-data">
           <div class="fg">
             <label class="lbl">Foto de perfil</label>
-            <input class="inp" id="e-photo-file" type="file" accept="image/*" onchange="handleStudentPhotoInput(this, 'e')">
+            <input class="inp" id="e-photo-file" type="file" accept="image/*" data-student-action="import" data-student-import="photo-legacy" data-student-prefix="e">
             <div class="form-note">Sube una foto clara del estudiante. Formatos recomendados: JPG o PNG.</div>
           </div>
-          <button class="btn btn-outline btn-sm" type="button" onclick="clearStudentPhotoField('e')">Quitar foto</button>
+          <button class="btn btn-outline btn-sm" type="button" data-student-action="clear-filter" data-student-clear="photo" data-student-prefix="e">Quitar foto</button>
         </div>
       </div>
       <div class="fg">
         <label class="lbl">Estudiante guardado</label>
-        <input class="inp" id="e-remembered" list="e-remembered-list" placeholder="Busca por nombre o matricula" autocomplete="off" oninput="applyRememberedStudentSelection(this.value)">
+        <input class="inp" id="e-remembered" list="e-remembered-list" placeholder="Busca por nombre o matricula" autocomplete="off" data-student-action="search" data-student-search="remembered">
         <datalist id="e-remembered-list"></datalist>
         <div class="form-note">Si ya lo registraste antes, lo eliges aqui y sus datos se completan solos.</div>
       </div>
@@ -32,11 +32,11 @@
         <div class="fg"><label class="lbl">Secci&oacute;n</label><select class="sel" id="e-sec"></select></div>
       </div>
       <div class="mf mf-split">
-        <button class="btn btn-outline" onclick="openBulkFromEstModal()">Carga masiva</button>
+        <button class="btn btn-outline" data-student-action="bulk-upload">Carga masiva</button>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
           <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-est">Cancelar</button>
-          <button class="btn btn-outline" onclick="saveEst({keepOpen:true})">Registrar y nuevo estudiante</button>
-          <button class="btn btn-primary" onclick="saveEst()">Registrar</button>
+          <button class="btn btn-outline" data-student-action="save" data-student-keep-open="true">Registrar y nuevo estudiante</button>
+          <button class="btn btn-primary" data-student-action="save">Registrar</button>
         </div>
       </div>
     </div>

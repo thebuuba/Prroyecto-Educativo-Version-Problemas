@@ -7,6 +7,7 @@ import {
   handleDeclarativeKeydown,
 } from './form-actions.ts';
 import { handleDeclarativeAuthAction } from '../panels/autenticacion/utils/auth-actions.ts';
+import { handleDeclarativeStudentAction } from '../panels/estudiantes/utils/student-actions.ts';
 
 function getDatasetValue(element: Element, key: string): string {
   return String((element as HTMLElement).dataset?.[key] || '').trim();
@@ -79,6 +80,9 @@ export function bindDeclarativeActions(): void {
 
     const navigationTrigger = target.closest('[data-route], [data-action="navigate"][data-route]');
     if (navigationTrigger) handleNavigation(navigationTrigger, event);
+
+    const studentTrigger = target.closest('[data-student-action]');
+    if (studentTrigger) handleDeclarativeStudentAction(studentTrigger, event);
   });
 
   document.addEventListener('change', (event) => {
@@ -88,12 +92,29 @@ export function bindDeclarativeActions(): void {
     const authTarget = target.closest('[data-auth-action]');
     if (authTarget) {
       handleDeclarativeAuthAction(authTarget, event);
+      return;
     }
+
+    const studentTarget = target.closest('[data-student-action]');
+    if (studentTarget) handleDeclarativeStudentAction(studentTarget, event);
   });
 
   document.addEventListener('input', (event) => {
     const target = event.target instanceof Element ? event.target : null;
-    if (target) handleDeclarativeInput(target, event);
+    if (!target) return;
+
+    const studentTarget = target.closest('[data-student-action]');
+    if (studentTarget && handleDeclarativeStudentAction(studentTarget, event)) return;
+
+    handleDeclarativeInput(target, event);
+  });
+
+  document.addEventListener('dblclick', (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    if (!target) return;
+
+    const studentTarget = target.closest('[data-student-action]');
+    if (studentTarget) handleDeclarativeStudentAction(studentTarget, event);
   });
 
   document.addEventListener('keydown', (event) => {

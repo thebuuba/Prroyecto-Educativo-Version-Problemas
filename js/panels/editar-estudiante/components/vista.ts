@@ -11,7 +11,8 @@ import {
   sortCourses,
   getScopedSections,
   getGrade,
-  formatMatricula
+  formatMatricula,
+  escapeHtml
 } from '../../../core/domain-utils.ts';
 import { studentFinal } from '../../../core/math-utils.ts';
 
@@ -69,7 +70,7 @@ export function renderizarStudentEditPanel(container) {
               </div>
               <label for="se-photo-file" class="absolute -bottom-2 -right-2 w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center cursor-pointer hover:scale-110 transition-all shadow-lg">
                  <span class="material-symbols-outlined text-lg">edit</span>
-                 <input type="file" id="se-photo-file" class="hidden" accept="image/*" onchange="window.handleStudentEditPhoto(this)">
+                 <input type="file" id="se-photo-file" class="hidden" accept="image/*" data-student-action="import" data-student-import="photo-edit">
               </label>
            </div>
 
@@ -123,19 +124,19 @@ export function renderizarStudentEditPanel(container) {
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider ml-2">Nombres</label>
                 <input type="text" id="se-nom" value="${FormState.nombre}"
                        class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-medium text-slate-800 focus:ring-4 focus:ring-blue-50 outline-none transition-all"
-                       oninput="window.updateStudentEditField('nombre', this.value)">
+                       data-student-action="select" data-student-select="edit-field" data-student-field="nombre">
               </div>
               <div class="space-y-2">
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider ml-2">Apellidos</label>
                 <input type="text" id="se-ape" value="${FormState.apellido}"
                        class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-medium text-slate-800 focus:ring-4 focus:ring-blue-50 outline-none transition-all"
-                       oninput="window.updateStudentEditField('apellido', this.value)">
+                       data-student-action="select" data-student-select="edit-field" data-student-field="apellido">
               </div>
               <div class="space-y-2">
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider ml-2">Matrícula</label>
                 <input type="text" id="se-mat" value="${formatMatricula(FormState.matricula)}"
                        class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-medium text-slate-800 focus:ring-4 focus:ring-blue-50 outline-none transition-all"
-                       oninput="window.updateStudentEditField('matricula', this.value)">
+                       data-student-action="select" data-student-select="edit-field" data-student-field="matricula">
               </div>
             </div>
           </section>
@@ -152,7 +153,7 @@ export function renderizarStudentEditPanel(container) {
                 const isSelected = FormState.courseId === s.id;
                 return `
                   <button 
-                    onclick="window.updateStudentEditField('courseId', '${s.id}')"
+                    data-student-action="select" data-student-select="edit-field" data-student-field="courseId" data-student-value="${escapeHtml(s.id)}"
                     class="p-4 rounded-3xl border-2 transition-all text-left flex flex-col justify-between h-32 ${isSelected ? 'border-blue-600 bg-blue-50/50' : 'border-slate-100 bg-slate-50/50 hover:border-slate-200'}"
                   >
                     <div class="font-black text-slate-900 leading-tight">${s.grado} ${s.sec}</div>
@@ -177,7 +178,7 @@ export function renderizarStudentEditPanel(container) {
                <h4 class="text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-8">Acciones de Gestión</h4>
                
                <div class="space-y-4">
-                  <button onclick="window.confirmSaveEditStudent()" id="se-save-btn" class="w-full py-5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-900/20 flex items-center justify-center gap-2 group">
+                  <button data-student-action="save" data-student-mode="edit-panel" id="se-save-btn" class="w-full py-5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-900/20 flex items-center justify-center gap-2 group">
                     <span class="material-symbols-outlined">save</span>
                     Guardar Cambios
                   </button>
@@ -186,7 +187,7 @@ export function renderizarStudentEditPanel(container) {
                     Descartar
                   </button>
                   <div class="pt-6 mt-6 border-t border-slate-100">
-                    <button onclick="window.handleDeleteStudent('${CurrentStudent.id}')" class="w-full py-4 text-rose-500 hover:bg-rose-50 rounded-2xl font-bold transition-all text-sm flex items-center justify-center gap-2">
+                    <button data-student-action="delete" data-student-id="${escapeHtml(CurrentStudent.id)}" class="w-full py-4 text-rose-500 hover:bg-rose-50 rounded-2xl font-bold transition-all text-sm flex items-center justify-center gap-2">
                       <span class="material-symbols-outlined">delete</span>
                       Eliminar del Sistema
                     </button>

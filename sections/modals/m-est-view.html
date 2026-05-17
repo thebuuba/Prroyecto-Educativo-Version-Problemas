@@ -6,10 +6,10 @@
       <input type="hidden" id="sv-id">
       <div class="student-view-layout">
         <aside class="student-view-hero">
-          <div class="student-view-avatar-wrap" ondblclick="openStudentViewPhotoPicker()" title="Doble clic para agregar o cambiar la foto">
+          <div class="student-view-avatar-wrap" data-student-action="select" data-student-select="view-photo-picker" data-student-event="dblclick" title="Doble clic para agregar o cambiar la foto">
             <img class="student-view-avatar" id="sv-photo" alt="Foto del estudiante">
           </div>
-          <input type="file" id="sv-photo-file" accept="image/*" hidden onchange="handleStudentViewPhotoInput(this)">
+          <input type="file" id="sv-photo-file" accept="image/*" hidden data-student-action="import" data-student-import="photo-view">
           <div class="student-view-hero-copy">
             <div class="student-view-hero-name" id="sv-hero-name">—</div>
             <div class="student-view-hero-course" id="sv-hero-course">—</div>
@@ -33,7 +33,7 @@
         </div>
       </div>
       <div class="mf">
-        <button class="btn btn-primary" onclick="openEditStudentFromView()">Editar</button>
+        <button class="btn btn-primary" data-student-action="edit">Editar</button>
         <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-est-view">Cerrar</button>
       </div>
     </div>

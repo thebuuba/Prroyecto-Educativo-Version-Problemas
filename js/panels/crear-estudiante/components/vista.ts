@@ -9,7 +9,8 @@ import {
   toast, 
   buildStudentAvatarDataUrl,
   sortCourses,
-  getScopedSections
+  getScopedSections,
+  escapeHtml
 } from '../../../core/domain-utils.ts';
 
 export const FormState = {
@@ -71,19 +72,19 @@ export function renderizarStudentCreatePanel(container) {
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider ml-2">Nombres</label>
                 <input type="text" id="sc-nom" placeholder="Ej. Juan Gabriel" 
                        class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-medium text-slate-800 focus:ring-4 focus:ring-blue-50 outline-none transition-all"
-                       oninput="window.updateStudentCreateField('nombre', this.value)">
+                       data-student-action="select" data-student-select="create-field" data-student-field="nombre">
               </div>
               <div class="space-y-2">
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider ml-2">Apellidos</label>
                 <input type="text" id="sc-ape" placeholder="Ej. Pérez Rosario" 
                        class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-medium text-slate-800 focus:ring-4 focus:ring-blue-50 outline-none transition-all"
-                       oninput="window.updateStudentCreateField('apellido', this.value)">
+                       data-student-action="select" data-student-select="create-field" data-student-field="apellido">
               </div>
               <div class="space-y-2">
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider ml-2">Matrícula</label>
                 <input type="text" id="sc-mat" placeholder="00-0000-0" 
                        class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-medium text-slate-800 focus:ring-4 focus:ring-blue-50 outline-none transition-all"
-                       oninput="window.updateStudentCreateField('matricula', this.value)">
+                       data-student-action="select" data-student-select="create-field" data-student-field="matricula">
               </div>
             </div>
           </section>
@@ -100,7 +101,7 @@ export function renderizarStudentCreatePanel(container) {
                 const isSelected = FormState.courseId === s.id;
                 return `
                   <button 
-                    onclick="window.updateStudentCreateField('courseId', '${s.id}')"
+                    data-student-action="select" data-student-select="create-field" data-student-field="courseId" data-student-value="${escapeHtml(s.id)}"
                     class="p-4 rounded-3xl border-2 transition-all text-left flex flex-col justify-between h-32 ${isSelected ? 'border-blue-600 bg-blue-50/50' : 'border-slate-100 bg-slate-50/50 hover:border-slate-200'}"
                   >
                     <div class="font-black text-slate-900 leading-tight">${s.grado} ${s.sec}</div>
@@ -129,13 +130,13 @@ export function renderizarStudentCreatePanel(container) {
                  </div>
                  <label for="sc-photo-file" class="absolute -bottom-2 -right-2 w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center cursor-pointer hover:scale-110 transition-all shadow-lg">
                     <span class="material-symbols-outlined text-lg">add_a_photo</span>
-                    <input type="file" id="sc-photo-file" class="hidden" accept="image/*" onchange="window.handleStudentCreatePhoto(this)">
+                    <input type="file" id="sc-photo-file" class="hidden" accept="image/*" data-student-action="import" data-student-import="photo-create">
                  </label>
                </div>
                
                <div class="flex-1 space-y-4">
                   <p class="text-slate-400 text-sm leading-relaxed">Sube una foto del estudiante para identificarlo fácilmente en las listas y reportes. Si no subes una, se generará un avatar con sus iniciales.</p>
-                  <button onclick="document.getElementById('sc-photo-file').click()" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-bold text-sm transition-all flex items-center gap-2">
+                  <button data-student-action="select" data-student-select="file-picker" data-student-target="sc-photo-file" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-bold text-sm transition-all flex items-center gap-2">
                     <span class="material-symbols-outlined text-lg">upload</span>
                     Seleccionar Archivo
                   </button>
@@ -177,11 +178,11 @@ export function renderizarStudentCreatePanel(container) {
                  </div>
 
                  <div class="mt-10 space-y-3">
-                    <button onclick="window.confirmSaveStudent(true)" id="sc-save-bulk-btn" class="w-full py-4 bg-white/10 hover:bg-white/20 disabled:opacity-30 text-white rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-2">
+                    <button data-student-action="save" data-student-mode="create" data-student-keep-open="true" id="sc-save-bulk-btn" class="w-full py-4 bg-white/10 hover:bg-white/20 disabled:opacity-30 text-white rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-2">
                       <span class="material-symbols-outlined text-lg">playlist_add</span>
                       Guardar y Agregar Otro
                     </button>
-                    <button onclick="window.confirmSaveStudent(false)" id="sc-save-btn" class="w-full py-5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-900/20 flex items-center justify-center gap-2 group">
+                    <button data-student-action="save" data-student-mode="create" data-student-keep-open="false" id="sc-save-btn" class="w-full py-5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-900/20 flex items-center justify-center gap-2 group">
                       Registrar Estudiante
                       <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
                     </button>

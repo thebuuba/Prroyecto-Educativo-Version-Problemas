@@ -72,7 +72,7 @@ export function registrarStudentsPanel(c) {
                  class="w-full pl-12 pr-4 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 transition-all" 
                  placeholder="Buscar estudiante por nombre o matrícula..." 
                  value="${escapeHtml(searchQuery)}"
-                 oninput="window.setStudentsGlobalSearch(this.value)">
+                 data-student-action="search">
           
           ${searchQuery ? `
             <div class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
@@ -83,15 +83,15 @@ export function registrarStudentsPanel(c) {
           ` : ''}
         </div>
         <div class="flex flex-wrap gap-3">
-          <button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-100 dark:shadow-none" data-action="navigate" data-route="student-create">+ Estudiante</button>
-          <button class="px-5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-bold rounded-xl hover:bg-slate-50 transition-colors" onclick="window.openBulkEstM('${S.activeGroupId}')">Carga Masiva</button>
+          <button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-100 dark:shadow-none" data-student-action="create" data-student-mode="panel">+ Estudiante</button>
+          <button class="px-5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-bold rounded-xl hover:bg-slate-50 transition-colors" data-student-action="bulk-upload" data-student-section-id="${escapeHtml(S.activeGroupId || '')}">Carga Masiva</button>
         </div>
       </header>
 
       <!-- Pestañas de Grados -->
       <nav class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
         ${scopedGrades.map(gr => `
-          <button onclick="window.setStudentsGradeView('${gr.id}')" 
+          <button data-student-action="filter" data-student-filter="grade" data-student-value="${escapeHtml(gr.id)}"
                   class="shrink-0 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${gr.id === S.activeGradeId ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}">
             ${escapeHtml(gr.name)}
           </button>
@@ -129,10 +129,10 @@ export function registrarStudentsPanel(c) {
                  <p class="text-slate-500 font-medium">${escapeHtml(activeGrade.name)} ${escapeHtml(selectedSection.sec)} · ${tableStudents.length} estudiantes</p>
                </div>
                <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
-                 <button onclick="window.setStudentsViewMode('grid')" class="p-2 rounded-lg ${studentsViewMode === 'grid' ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600' : 'text-slate-400 hover:text-slate-600'}">
+                 <button data-student-action="filter" data-student-filter="view-mode" data-student-value="grid" class="p-2 rounded-lg ${studentsViewMode === 'grid' ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600' : 'text-slate-400 hover:text-slate-600'}">
                    <span class="material-symbols-outlined">grid_view</span>
                  </button>
-                 <button onclick="window.setStudentsViewMode('table')" class="p-2 rounded-lg ${studentsViewMode === 'table' ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600' : 'text-slate-400 hover:text-slate-600'}">
+                 <button data-student-action="filter" data-student-filter="view-mode" data-student-value="table" class="p-2 rounded-lg ${studentsViewMode === 'table' ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600' : 'text-slate-400 hover:text-slate-600'}">
                    <span class="material-symbols-outlined">list</span>
                  </button>
                </div>
@@ -164,7 +164,7 @@ export function registrarStudentsPanel(c) {
             ${tableStudents.length === 0 ? `
               <div class="py-20 text-center border-2 border-dashed border-slate-200 rounded-3xl">
                 <p class="text-slate-400">No hay estudiantes registrados en esta sección.</p>
-                <button class="mt-4 text-blue-600 font-bold hover:underline" data-action="navigate" data-route="student-create">Agregar ahora</button>
+                <button class="mt-4 text-blue-600 font-bold hover:underline" data-student-action="create" data-student-mode="panel">Agregar ahora</button>
               </div>
             ` : ''}
           ` : `
@@ -186,7 +186,7 @@ function renderSectionMiniCard(sec, selectedId) {
   const isActive = sec.id === selectedId;
   const count = studentsInGroup(sec.id).length;
   return `
-    <button onclick="window.setActiveSection('${sec.id}')" 
+    <button data-student-action="filter" data-student-filter="section" data-student-value="${escapeHtml(sec.id)}"
             class="w-full p-4 text-left rounded-2xl border transition-all ${isActive ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-100 dark:shadow-none translate-x-1' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-blue-300'}">
       <div class="font-bold text-sm mb-1">${escapeHtml(sec.materia || 'General')}</div>
       <div class="flex items-center justify-between opacity-80 decoration-inherit">
@@ -210,14 +210,14 @@ function renderStudentCard(st, sectionId) {
   const statusColor = final === null ? 'bg-slate-100 text-slate-500' : final >= 75 ? 'bg-emerald-50 text-emerald-600' : final >= 60 ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600';
 
   return `
-    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm hover:shadow-md transition-all group relative overflow-hidden" ondblclick="window.openViewStudent('${st.id}')">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm hover:shadow-md transition-all group relative overflow-hidden" data-student-action="select" data-student-select="view" data-student-value="${escapeHtml(st.id)}" data-student-event="dblclick">
       <div class="flex justify-between items-start mb-4">
         <div class="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">
           <span class="material-symbols-outlined">person</span>
         </div>
         <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-           <button class="p-2 text-slate-400 hover:text-blue-600" onclick="window.openEditStudent('${st.id}')"><span class="material-symbols-outlined text-sm">edit</span></button>
-           <button class="p-2 text-slate-400 hover:text-rose-500" onclick="window.delEst('${st.id}')"><span class="material-symbols-outlined text-sm">delete</span></button>
+           <button class="p-2 text-slate-400 hover:text-blue-600" data-student-action="edit" data-student-id="${escapeHtml(st.id)}"><span class="material-symbols-outlined text-sm">edit</span></button>
+           <button class="p-2 text-slate-400 hover:text-rose-500" data-student-action="delete" data-student-id="${escapeHtml(st.id)}"><span class="material-symbols-outlined text-sm">delete</span></button>
         </div>
       </div>
       <div>
@@ -247,7 +247,7 @@ function renderStudentTableRow(st, sectionId) {
   const statusColor = final === null ? 'bg-slate-100 text-slate-500' : final >= 75 ? 'bg-emerald-100 text-emerald-700' : final >= 60 ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700';
 
   return `
-    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer" ondblclick="window.openViewStudent('${st.id}')">
+    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer" data-student-action="select" data-student-select="view" data-student-value="${escapeHtml(st.id)}" data-student-event="dblclick">
       <td class="px-6 py-4 font-bold text-slate-700 dark:text-slate-300">${escapeHtml(st.nombre)} ${escapeHtml(st.apellido)}</td>
       <td class="px-6 py-4 text-xs font-medium text-slate-400">${escapeHtml(st.matricula || '-')}</td>
       <td class="px-6 py-4 text-center">
@@ -258,8 +258,8 @@ function renderStudentTableRow(st, sectionId) {
       </td>
       <td class="px-6 py-4 text-right">
         <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-           <button class="p-1 hover:text-blue-600" onclick="window.openEditStudent('${st.id}')"><span class="material-symbols-outlined text-sm">edit</span></button>
-           <button class="p-1 hover:text-rose-500" onclick="window.delEst('${st.id}')"><span class="material-symbols-outlined text-sm">delete</span></button>
+           <button class="p-1 hover:text-blue-600" data-student-action="edit" data-student-id="${escapeHtml(st.id)}"><span class="material-symbols-outlined text-sm">edit</span></button>
+           <button class="p-1 hover:text-rose-500" data-student-action="delete" data-student-id="${escapeHtml(st.id)}"><span class="material-symbols-outlined text-sm">delete</span></button>
         </div>
       </td>
     </tr>
@@ -272,7 +272,7 @@ function renderStudentTableRow(st, sectionId) {
  */
 function renderSearchResult(res) {
   return `
-    <button onclick="window.openStudentSearchResult('${res.id}')" 
+    <button data-student-action="select" data-student-select="search-result" data-student-value="${escapeHtml(res.id)}"
             class="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition-colors">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">

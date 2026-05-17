@@ -5,9 +5,9 @@
     <div class="mb">
       <div class="fg"><label class="lbl">Secci&oacute;n destino</label><select class="sel" id="be-sec"></select></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-        <button class="btn btn-outline btn-sm" type="button" onclick="downloadBulkTemplate()">Descargar plantilla</button>
-        <button class="btn btn-outline btn-sm" type="button" onclick="setBulkInputMode('text')" id="be-mode-text">Pegar lista</button>
-        <button class="btn btn-outline btn-sm" type="button" onclick="setBulkInputMode('file')" id="be-mode-file">Subir archivo</button>
+        <button class="btn btn-outline btn-sm" type="button" data-student-action="export" data-student-export="template">Descargar plantilla</button>
+        <button class="btn btn-outline btn-sm" type="button" data-student-action="import" data-student-import="bulk-mode" data-student-value="text" id="be-mode-text">Pegar lista</button>
+        <button class="btn btn-outline btn-sm" type="button" data-student-action="import" data-student-import="bulk-mode" data-student-value="file" id="be-mode-file">Subir archivo</button>
       </div>
       <div class="fg">
         <div id="be-text-wrap">
@@ -19,7 +19,7 @@ Carlos D&iacute;az 0000034"></textarea>
         </div>
         <div id="be-file-wrap" hidden>
           <label class="lbl">Archivo de carga (.csv o .xlsx)</label>
-          <input class="inp" id="be-file" type="file" accept=".csv,.xlsx,.xls" onchange="handleBulkFileChange(this)">
+          <input class="inp" id="be-file" type="file" accept=".csv,.xlsx,.xls" data-student-action="import" data-student-import="bulk-file">
           <div class="form-note">Puedes usar la plantilla y subirla sin cambiar el formato de columnas.</div>
         </div>
       </div>
@@ -29,20 +29,20 @@ Carlos D&iacute;az 0000034"></textarea>
       <div class="bulk-options">
         <div class="bulk-opt-group">
           <div class="bulk-opt-title">Regla de guardado</div>
-          <label class="bulk-opt-item"><input type="radio" name="be-policy" id="be-policy-valid" value="valid" checked onchange="reAnalyzeBulkIfNeeded()"> Cargar solo v&aacute;lidos</label>
-          <label class="bulk-opt-item"><input type="radio" name="be-policy" id="be-policy-stop" value="stop" onchange="reAnalyzeBulkIfNeeded()"> Detener si hay errores</label>
+          <label class="bulk-opt-item"><input type="radio" name="be-policy" id="be-policy-valid" value="valid" checked data-student-action="filter" data-student-filter="bulk-options"> Cargar solo v&aacute;lidos</label>
+          <label class="bulk-opt-item"><input type="radio" name="be-policy" id="be-policy-stop" value="stop" data-student-action="filter" data-student-filter="bulk-options"> Detener si hay errores</label>
         </div>
         <div class="bulk-opt-group">
           <div class="bulk-opt-title">Duplicados existentes</div>
-          <label class="bulk-opt-item"><input type="radio" name="be-dup-mode" id="be-dup-skip" value="skip" checked onchange="reAnalyzeBulkIfNeeded()"> Saltar duplicados</label>
-          <label class="bulk-opt-item"><input type="radio" name="be-dup-mode" id="be-dup-update" value="update" onchange="reAnalyzeBulkIfNeeded()"> Actualizar existentes</label>
+          <label class="bulk-opt-item"><input type="radio" name="be-dup-mode" id="be-dup-skip" value="skip" checked data-student-action="filter" data-student-filter="bulk-options"> Saltar duplicados</label>
+          <label class="bulk-opt-item"><input type="radio" name="be-dup-mode" id="be-dup-update" value="update" data-student-action="filter" data-student-filter="bulk-options"> Actualizar existentes</label>
         </div>
       </div>
       <div class="bulk-summary" id="be-summary">Sin analizar</div>
       <div class="bulk-preview-wrap" id="be-preview-wrap" hidden>
         <div class="bulk-preview-head">
           <div class="bulk-preview-title">Previsualizaci&oacute;n</div>
-          <button class="btn btn-outline btn-sm" type="button" id="be-errors-download" onclick="downloadBulkErrorReport()" hidden>Descargar reporte de errores</button>
+          <button class="btn btn-outline btn-sm" type="button" id="be-errors-download" data-student-action="export" data-student-export="errors" hidden>Descargar reporte de errores</button>
         </div>
         <div class="bulk-preview-table-wrap">
           <table class="tbl bulk-preview-table">
@@ -54,9 +54,9 @@ Carlos D&iacute;az 0000034"></textarea>
         </div>
       </div>
       <div class="mf">
-        <button class="btn btn-outline" type="button" onclick="analyzeBulkInput()">Analizar</button>
-        <button class="btn btn-outline" data-action="modal-close" data-modal-close="m-est-bulk">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveBulkEst()">Cargar estudiantes</button>
+        <button class="btn btn-outline" type="button" data-student-action="bulk-preview">Analizar</button>
+        <button class="btn btn-outline" data-student-action="bulk-cancel">Cancelar</button>
+        <button class="btn btn-primary" data-student-action="bulk-confirm">Cargar estudiantes</button>
       </div>
     </div>
   </div>

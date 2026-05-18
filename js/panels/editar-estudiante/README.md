@@ -1,12 +1,5 @@
-# Panel Student Edit (Editar Estudiante)
+# Adaptador Legacy: Editar Estudiante
 
-## 📋 Descripción
-Panel para la edición de información de estudiantes existentes.
+La fuente real vive en `apps/web/src/panels/estudiantes/edit/`.
 
-## 🎯 Funcionalidades
-- Edición de datos de estudiantes
-- Actualización de fotos de perfil
-- Gestión de matrícula
-
----
-**Última actualización**: 2026-04-26
+Esta carpeta conserva las rutas publicas legacy (`/js/panels/editar-estudiante/**`) como reexports temporales para routing hibrido y compatibilidad con `student-edit`.

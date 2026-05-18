@@ -1,12 +1,5 @@
-# Panel Student Create (Crear Estudiante)
+# Adaptador Legacy: Crear Estudiante
 
-## 📋 Descripción
-Panel para la creación de nuevos estudiantes en el sistema.
+La fuente real vive en `apps/web/src/panels/estudiantes/create/`.
 
-## 🎯 Funcionalidades
-- Formulario de alta de estudiantes
-- Carga de fotos de perfil
-- Validación de datos
-
----
-**Última actualización**: 2026-04-26
+Esta carpeta conserva las rutas publicas legacy (`/js/panels/crear-estudiante/**`) como reexports temporales para routing hibrido y compatibilidad con `student-create`.

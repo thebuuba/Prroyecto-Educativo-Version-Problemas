@@ -30,7 +30,7 @@
 | Usuarios | `saveUsr`, `delUsr` | La fuente real vive en `apps/web/src/panels/usuarios/utils/user-save.ts`; conservar globals como adaptadores por compatibilidad runtime. |
 | Instrumentos | `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator` | La fuente real vive en `apps/web/src/panels/instrumentos/utils/instrument-actions.ts`; conservar globals como adaptadores temporales. |
 | Vinculación de instrumentos | `openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument` | La fuente real vive en `apps/web/src/panels/instrumentos/utils/instrument-linking.ts`; globals quedan como adaptadores temporales. |
-| Estudiantes | `openEstM`, `saveEst`, `openViewStudent`, `openEditStudent`, `saveEditStudent`, `openBulkEstM`, `handleBulkFileChange`, `analyzeBulkInput`, `saveBulkEst`, `delEst`, acciones de crear/editar panel | `data-student-action` ya usa acciones base y carga masiva por imports directos; conservar globals por compatibilidad con fragments, rutas `student-create`/`student-edit` y `legacy-api.ts`. |
+| Estudiantes | `openEstM`, `saveEst`, `openViewStudent`, `openEditStudent`, `saveEditStudent`, `openBulkEstM`, `handleBulkFileChange`, `analyzeBulkInput`, `saveBulkEst`, `delEst`, acciones de crear/editar panel | La fuente de panel vive en `apps/web/src/panels/estudiantes/`; conservar globals por compatibilidad con fragments, rutas `student-create`/`student-edit`, FormState tardio y `legacy-api.ts`. |
 | Académico | `saveSec`, `saveEditSection`, `saveGrade`, `delSec`, `delGrade` | Reemplazar fallbacks de registries cuando los módulos estén importables sin ciclos. |
 | Auth/setup | `loginAuth`, `registerAuth`, `authWithProvider`, `saveSetup`, `populateSetupForm`, `enforceMandatorySetup` | Mantener hasta retirar HTML auth/setup legacy y selectores de compatibilidad. |
 
@@ -44,7 +44,7 @@
 
 ## Registries Todavía Híbridos
 
-- `data-student-action`: usa imports directos para acciones base y carga masiva; conserva fallbacks puntuales para callbacks de crear/editar cuando el contexto de panel todavía no está registrado.
+- `data-student-action`: usa imports directos desde `apps/web/src/panels/estudiantes/`; conserva fallbacks puntuales para callbacks de crear/editar cuando el contexto de panel todavía no está registrado.
 - `data-academic-action`: conserva fallbacks hacia funciones académicas legacy.
 - `data-attendance-action`: usa imports directos para lógica de asistencia y exportaciones encapsuladas; conserva globals solo como compatibilidad.
 - `data-schedule-action`: directo para acciones visibles; los globals de horario quedan publicados como adaptadores.
@@ -74,13 +74,13 @@
 ## Diagnóstico Estudiantes
 
 - La lógica CRUD real de estudiantes sigue viviendo en `js/core/student-logic.ts` (`openEstM`, `saveEst`, `openViewStudent`, `openEditStudent`, `saveEditStudent`, `openBulkEstM`, `handleBulkFileChange`, `analyzeBulkInput`, `saveBulkEst`) y en `js/core/deleters.ts` (`delEst`).
-- La vista principal de estudiantes publica adaptadores de búsqueda/filtro/selección desde `js/panels/estudiantes/utils/actions.ts`; ahora esas funciones también son exportables y pueden consumirse por imports directos.
-- `crear-estudiante` y `editar-estudiante` conservan `FormState` local, pero sus callbacks (`updateStudentCreateField`, `handleStudentCreatePhoto`, `confirmSaveStudent`, `updateStudentEditField`, `handleStudentEditPhoto`, `confirmSaveEditStudent`, `handleDeleteStudent`) ya son exportables y los globals quedan como adaptadores.
-- `js/panels/estudiantes/utils/student-domain-actions.ts` centraliza acciones base: creación, edición, eliminación, guardado, búsqueda, filtros, selección, fotos y selección recordada.
-- `js/panels/estudiantes/utils/student-bulk.ts` centraliza carga masiva y exportaciones CSV sin cambiar parser ni formato esperado.
+- La vista principal de estudiantes vive en `apps/web/src/panels/estudiantes/`; `js/panels/estudiantes/**` solo reexporta.
+- `crear-estudiante` y `editar-estudiante` viven bajo `apps/web/src/panels/estudiantes/create/` y `apps/web/src/panels/estudiantes/edit/`; conservan `FormState` local y callbacks exportables.
+- `apps/web/src/panels/estudiantes/utils/student-domain-actions.ts` centraliza acciones base: creación, edición, eliminación, guardado, búsqueda, filtros, selección, fotos y selección recordada.
+- `apps/web/src/panels/estudiantes/utils/student-bulk.ts` centraliza carga masiva y exportaciones CSV sin cambiar parser ni formato esperado.
 - `data-student-action` dejó de usar `window.openEstM`, `window.delEst`, `window.setStudentsGlobalSearch`, `window.setStudentsGradeView`, `window.setActiveSection`, `window.setStudentsViewMode`, `window.openBulkEstM`, `window.analyzeBulkInput`, `window.saveBulkEst` y `window.handleBulkFileChange` como ruta primaria.
 - Fallbacks conservados: `confirmSaveStudent`, `confirmSaveEditStudent`, campos/fotos de crear/editar y selección recordada, porque dependen de que el contexto de panel se haya registrado y podrían aparecer fragments cargados tarde durante la transición.
-- No se movió físicamente `estudiantes` en esta fase: moverlo junto a `crear-estudiante` y `editar-estudiante` es más seguro después de validar estos imports directos.
+- Routing conserva las URLs legacy de bundles y resuelve `estudiantes`, `student-create` y `student-edit` hacia `apps/web/src/panels/estudiantes/`.
 
 ## Cambios Recientes Aplicados
 
@@ -95,8 +95,9 @@
 - `horario` fue movido físicamente a `apps/web/src/panels/horario/`; las rutas `js/panels/horario/**` quedaron como adaptadores de reexportación.
 - `data-schedule-action` dejó de usar fallbacks internos para `setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal` y `generateTeacherScheduleBase`.
 - `asistencia` fue movido físicamente a `apps/web/src/panels/asistencia/`; las rutas `js/panels/asistencia/**` quedaron como adaptadores de reexportación.
+- `estudiantes`, `crear-estudiante` y `editar-estudiante` fueron movidos físicamente a `apps/web/src/panels/estudiantes/`, `create/` y `edit/`; las rutas legacy quedaron como adaptadores de reexportación.
 - `data-attendance-action` dejó de llamar directamente `window.exportToExcel`, `window.exportToPdf` y `window.print`; ahora usa `attendance-export.ts`.
-- `data-student-action` separó acciones base en `student-domain-actions.ts` y carga masiva/exportación en `student-bulk.ts`, reduciendo fallbacks `window.*` sin mover físicamente estudiantes.
+- `data-student-action` separó acciones base en `student-domain-actions.ts` y carga masiva/exportación en `student-bulk.ts`; ahora esas fuentes viven bajo `apps/web/src/panels/estudiantes/`.
 - `data-activity-action` dejó de depender directamente de `window.setActView`, `window.updateBlockMeta`, `window.handleActNameInput`, `window.updateActPts`, `window.addActToBlock`, `window.removeActFromBlock` y `window.autoAdjustBlock`.
 - `data-activity-action` ahora importa `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument` y `openInstrumentCreator` desde `apps/web/src/panels/instrumentos/utils/instrument-actions.ts`.
 - `instrumentos` fue movido físicamente a `apps/web/src/panels/instrumentos/`; las rutas `js/panels/instrumentos/**` quedaron como adaptadores de reexportación.

@@ -10,7 +10,7 @@ import {
   handleDeclarativeKeydown,
 } from './form-actions.ts';
 import { handleDeclarativeAuthAction } from '../panels/autenticacion/utils/auth-actions.ts';
-import { handleDeclarativeStudentAction } from '../panels/estudiantes/utils/student-actions.ts';
+import { handleDeclarativeStudentAction } from '../../apps/web/src/panels/estudiantes/utils/student-actions.ts';
 import { handleDeclarativeAcademicAction } from '../panels/configuracion-academica/utils/academic-actions.ts';
 import { handleDeclarativeAttendanceAction } from '../../apps/web/src/panels/asistencia/utils/attendance-actions.ts';
 import { handleDeclarativeScheduleAction } from '../../apps/web/src/panels/horario/utils/schedule-actions.ts';

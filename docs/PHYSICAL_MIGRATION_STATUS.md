@@ -2,7 +2,7 @@
 
 ## Estado
 
-La migración física real ya inició con módulos de bajo acoplamiento. `reportes`, `planificaciones`, `matriz`, `instrumentos`, `actividades`, `usuarios`, `horario` y `asistencia` viven ahora en `apps/web/src/panels/`, mientras las rutas legacy en `js/panels/` quedaron como adaptadores temporales de reexportación.
+La migración física real ya inició con módulos de bajo acoplamiento. `reportes`, `planificaciones`, `matriz`, `instrumentos`, `actividades`, `usuarios`, `horario`, `asistencia` y `estudiantes` viven ahora en `apps/web/src/panels/`, mientras las rutas legacy en `js/panels/` quedaron como adaptadores temporales de reexportación.
 
 Revisión de `matriz`: el panel contiene `principal.ts`, `view.ts`, `logic.ts`, `components/vista.ts` y `README.md`. Solo depende de `js/core/state.ts`, `config.ts`, `constants.ts` y `domain-utils.ts`; registra `window.RENDERS.matriz` para el renderer dinámico y no publica acciones/globales propios. El movimiento se completó conservando la clave pública `/js/panels/matriz/principal.ts`.
 
@@ -20,13 +20,13 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 | `usuarios` | `apps/web/src/panels/usuarios/` | `js/panels/usuarios/**` reexporta al nuevo origen. | Bajo-medio: conserva `window.RENDERS.usuarios`, `saveUsr` y `delUsr` como adaptadores temporales. |
 | `horario` | `apps/web/src/panels/horario/` | `js/panels/horario/**` reexporta al nuevo origen. | Medio: conserva `window.RENDERS.horario/calendario` y globals temporales de agenda. |
 | `asistencia` | `apps/web/src/panels/asistencia/` | `js/panels/asistencia/**` reexporta al nuevo origen. | Medio: conserva `window.RENDERS.asistencia`, globals temporales y exportadores legacy encapsulados. |
+| `estudiantes` | `apps/web/src/panels/estudiantes/` con `create/` y `edit/`. | `js/panels/estudiantes/**`, `js/panels/crear-estudiante/**` y `js/panels/editar-estudiante/**` reexportan al nuevo origen. | Medio: conserva FormState local por subpanel, CRUD/carga masiva en `js/core/student-logic.ts`, eliminación en `js/core/deleters.ts` y globals temporales. |
 
 ## Bloqueadas
 
 | Carpeta | Bloqueo | Riesgo |
 | --- | --- | --- |
 | `js/core/` | Contiene `state`, routing, UI, bridge, API SQL/cloud y persistencia; muchas referencias cruzadas. | Alto |
-| `js/panels/estudiantes/`, `crear-estudiante/`, `editar-estudiante/` | Ya tienen acciones base y carga masiva separadas, pero todavía comparten rutas independientes, FormState local, fragments legacy y deleters/core. | Medio |
 | `js/panels/configuracion-academica/`, `crear-seccion/` | Dependen de funciones académicas globales y sync SQL. | Medio-alto |
 | `login-registro-auth/` | Tiene bootstrap propio y compat auth. | Medio |
 
@@ -45,7 +45,7 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 - `core/ui.ts` llama hooks globales de setup/auth.
 - `core/routing.ts` depende de `window._renderPanel`.
 - `legacy-bridge.ts` usa routing y estado, mientras routing usa globals instalados por bridge.
-- Paneles de estudiantes/académico llaman funciones expuestas desde `legacy-api.ts`.
+- Académico llama funciones expuestas desde `legacy-api.ts`; estudiantes conserva compatibilidad por globals publicados desde `student-logic.ts`, `deleters.ts` y `legacy-api.ts`.
 
 ## Dependencias Runtime
 
@@ -85,10 +85,11 @@ Actividades:
 
 ## Orden Recomendado
 
-1. Continuar con reducción de dependencias SQL/window en dominios restantes.
-2. Mover estudiantes/académico cuando sus fallbacks globales hayan desaparecido.
-3. Separar `js/core/` en submódulos dentro de `apps/web/src` con adaptadores raíz.
-4. Mover `login-registro-auth/` cuando auth/setup ya no dependa de bootstrap HTML legacy.
+1. Reducir callbacks/globales restantes de estudiantes después de estabilizar la migración física.
+2. Continuar con reducción de dependencias SQL/window en dominios restantes.
+3. Mover académico cuando sus fallbacks globales hayan desaparecido.
+4. Separar `js/core/` en submódulos dentro de `apps/web/src` con adaptadores raíz.
+5. Mover `login-registro-auth/` cuando auth/setup ya no dependa de bootstrap HTML legacy.
 
 ## Usuarios
 
@@ -118,13 +119,16 @@ Actividades:
 
 ## Estudiantes
 
-- Estado: no se movió físicamente en esta fase. `js/panels/estudiantes/`, `js/panels/crear-estudiante/` y `js/panels/editar-estudiante/` siguen como fuente runtime mientras se reduce deuda global.
-- Acciones base separadas: `js/panels/estudiantes/utils/student-domain-actions.ts` encapsula creación, edición, eliminación, guardado, búsqueda, filtros, selección y fotos.
-- Carga masiva separada: `js/panels/estudiantes/utils/student-bulk.ts` encapsula apertura, modo texto/archivo, preview, confirmación, cancelación y exportaciones CSV.
-- `data-student-action` ahora usa imports directos para creación, edición, eliminación, búsqueda, filtros, carga masiva, exportación, importación y fotos.
-- Globals conservados como adaptadores: `setStudentsGradeView`, `setActiveSection`, `setStudentsViewMode`, `setStudentsGlobalSearch`, `openStudentSearchResult`, `openEditStudent`, `updateStudentCreateField`, `handleStudentCreatePhoto`, `confirmSaveStudent`, `updateStudentEditField`, `handleStudentEditPhoto`, `confirmSaveEditStudent`, `handleDeleteStudent`, además de los publicados por `legacy-api.ts`/`deleters.ts`.
-- Bloqueo para mover físicamente: `crear-estudiante` y `editar-estudiante` son rutas separadas con `FormState` local; `student-domain-actions.ts` aún importa sus acciones para conservar comportamiento. Conviene mover los tres subdominios juntos en una fase dedicada.
-- Ruta destino recomendada: `apps/web/src/panels/estudiantes/`, dejando adaptadores temporales en `js/panels/estudiantes/**`, `js/panels/crear-estudiante/**` y `js/panels/editar-estudiante/**`.
+- Estado: migrado físicamente a `apps/web/src/panels/estudiantes/`.
+- Archivos movidos: listado (`principal.ts`, `view.ts`, `logic.ts`, `components/vista.ts`, `utils/actions.ts`, `utils/student-actions.ts`, `utils/student-domain-actions.ts`, `utils/student-bulk.ts`, `README.md`), alta (`create/**`) y edición (`edit/**`).
+- Adaptadores creados: `js/panels/estudiantes/**`, `js/panels/crear-estudiante/**` y `js/panels/editar-estudiante/**` reexportan al nuevo origen; sus README documentan que son temporales.
+- Routing: las claves públicas `/js/panels/estudiantes/principal.ts`, `/js/panels/crear-estudiante/principal.ts` y `/js/panels/editar-estudiante/principal.ts` se conservan; `PANEL_MODULES` resuelve hacia `apps/web/src/panels/estudiantes/`, `create/` y `edit/`.
+- Acciones base: `apps/web/src/panels/estudiantes/utils/student-domain-actions.ts` encapsula creación, edición, eliminación, guardado, búsqueda, filtros, selección y fotos.
+- Carga masiva: `apps/web/src/panels/estudiantes/utils/student-bulk.ts` encapsula apertura, modo texto/archivo, preview, confirmación, cancelación y exportaciones CSV sin cambiar parser ni formato esperado.
+- `data-student-action` ahora se importa desde `apps/web/src/panels/estudiantes/utils/student-actions.ts`.
+- FormState: permanece local en `create/components/vista.ts` y `edit/components/vista.ts`; los callbacks tardíos se registran desde `principal.ts` con el contexto del panel.
+- Globals conservados como adaptadores: `openEstM`, `saveEst`, `openViewStudent`, `openEditStudent`, `saveEditStudent`, `openBulkEstM`, `handleBulkFileChange`, `analyzeBulkInput`, `saveBulkEst`, `delEst`, `setStudentsGradeView`, `setActiveSection`, `setStudentsViewMode`, `setStudentsGlobalSearch`, `openStudentSearchResult`, `updateStudentCreateField`, `handleStudentCreatePhoto`, `confirmSaveStudent`, `updateStudentEditField`, `handleStudentEditPhoto`, `confirmSaveEditStudent`, `handleDeleteStudent`.
+- Deuda restante: CRUD/carga masiva real sigue en `js/core/student-logic.ts`; eliminación sigue en `js/core/deleters.ts`; `legacy-api.ts` sigue publicando APIs de estudiantes por compatibilidad.
 
 ## Criterio De Listo
 

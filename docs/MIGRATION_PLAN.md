@@ -58,7 +58,7 @@ Avance aplicado:
 - Navegación con opciones seguras migrada a `data-route-options`.
 - Auth y setup inicial migrados a `data-auth-action`.
 - Campos simples de setup inicial migrados a registry explícito en `form-actions.ts`.
-- Dominio estudiantes migrado a `data-student-action` con registry explícito en `js/panels/estudiantes/utils/student-actions.ts`.
+- Dominio estudiantes migrado a `data-student-action` con registry explícito en `apps/web/src/panels/estudiantes/utils/student-actions.ts`.
 - Carga masiva migrada para apertura, modo de entrada, archivo seleccionado, opciones, análisis, confirmación y exportaciones simples sin cambiar textos visibles ni formato esperado.
 - Dominio académico migrado a `data-academic-action` con registry explícito en `js/panels/configuracion-academica/utils/academic-actions.ts`.
 - Dominio asistencia migrado a `data-attendance-action` con registry explícito en `apps/web/src/panels/asistencia/utils/attendance-actions.ts`.
@@ -80,9 +80,10 @@ Avance aplicado:
 - Guardado de actividades y plantillas modularizado en `apps/web/src/panels/actividades/utils/activity-save.ts`.
 - Sincronización SQL de acciones de actividades encapsulada en `apps/web/src/panels/actividades/utils/activity-sql.ts`, con fallback interno a `window.AulaBaseSqlApi`.
 - Acciones de creación/eliminación de usuarios separadas en `apps/web/src/panels/usuarios/utils/user-save.ts` y `user-domain-actions.ts`, consumidas por `data-user-action` con imports directos.
-- Acciones base de estudiantes separadas en `js/panels/estudiantes/utils/student-domain-actions.ts`, consumidas por `data-student-action` con imports directos.
-- Carga masiva/exportaciones de estudiantes separadas en `js/panels/estudiantes/utils/student-bulk.ts`, sin cambiar parser ni formato esperado.
+- Acciones base de estudiantes separadas en `apps/web/src/panels/estudiantes/utils/student-domain-actions.ts`, consumidas por `data-student-action` con imports directos.
+- Carga masiva/exportaciones de estudiantes separadas en `apps/web/src/panels/estudiantes/utils/student-bulk.ts`, sin cambiar parser ni formato esperado.
 - Callbacks de `crear-estudiante` y `editar-estudiante` convertidos en funciones exportables; los globals quedan como adaptadores temporales.
+- Migración física conjunta aplicada: `estudiantes`, `crear-estudiante` y `editar-estudiante` viven en `apps/web/src/panels/estudiantes/`, `create/` y `edit/`; las rutas legacy quedaron como reexports.
 
 Conteo de la fase estudiantes:
 
@@ -95,7 +96,7 @@ Riesgos:
 
 - El registry mantiene adaptadores temporales puntuales hacia funciones globales de crear/editar mientras esas rutas conserven `FormState` local.
 - La carga masiva conserva el parser legacy actual; seleccionar archivo marca el archivo, pero no introduce un parser nuevo para `.xlsx/.xls`.
-- `estudiantes`, `crear-estudiante` y `editar-estudiante` no se movieron físicamente en esta fase; deben migrarse juntos para no duplicar contexto de formulario.
+- `FormState` permanece local en los subpaneles `create` y `edit`; no se fusionó para no alterar el flujo validado.
 
 Conteo de la fase académica:
 
@@ -189,14 +190,14 @@ Riesgos de globals:
 
 Siguiente trabajo:
 
-1. Migrar físicamente `estudiantes`, `crear-estudiante` y `editar-estudiante` juntos a `apps/web/src/panels/estudiantes/` con adaptadores legacy.
+1. Reducir dependencias restantes de estudiantes en `js/core/student-logic.ts`, `js/core/deleters.ts` y `legacy-api.ts` cuando no haya referencias runtime.
 2. Reducir dependencias SQL/window restantes en académico.
 3. Mantener `legacy-api.ts` como lista explícita de deuda.
 4. Remover globals por dominio cuando no existan referencias runtime.
 
 Orden recomendado:
 
-- estudiantes, crear-estudiante y editar-estudiante como una migración física conjunta.
+- callbacks/globales restantes de estudiantes como una fase posterior a la migración física.
 - académico por grupos pequeños.
 - auth/setup y core crítico.
 

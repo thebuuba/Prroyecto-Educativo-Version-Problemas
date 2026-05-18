@@ -13,7 +13,7 @@ El listener se registra desde `apps/web/src/page-entry/root.ts` mediante:
 Módulos auxiliares:
 
 - `js/panels/autenticacion/utils/auth-actions.ts`
-- `js/panels/estudiantes/utils/student-actions.ts`
+- `apps/web/src/panels/estudiantes/utils/student-actions.ts`
 - `js/panels/configuracion-academica/utils/academic-actions.ts`
 - `apps/web/src/panels/asistencia/utils/attendance-actions.ts`
 - `apps/web/src/panels/horario/utils/schedule-actions.ts`
@@ -107,13 +107,13 @@ Acciones permitidas:
 - `bulk-upload`, `bulk-preview`, `bulk-confirm`, `bulk-cancel`
 - `export`, `import`
 
-El registry vive en `js/panels/estudiantes/utils/student-actions.ts`. Los atributos secundarios (`data-student-id`, `data-student-value`, `data-student-filter`, `data-student-select`, `data-student-mode`, etc.) solo seleccionan ramas conocidas dentro del registry; no se ejecutan nombres de funciones desde HTML.
+El registry vive en `apps/web/src/panels/estudiantes/utils/student-actions.ts`. Los atributos secundarios (`data-student-id`, `data-student-value`, `data-student-filter`, `data-student-select`, `data-student-mode`, etc.) solo seleccionan ramas conocidas dentro del registry; no se ejecutan nombres de funciones desde HTML.
 
 Módulos directos:
 
-- `js/panels/estudiantes/utils/student-domain-actions.ts`: creación, edición, eliminación, guardado, búsqueda, filtros, selección, fotos y selección recordada.
-- `js/panels/estudiantes/utils/student-bulk.ts`: apertura de carga masiva, modo texto/archivo, archivo seleccionado, preview, confirmación, cancelación y exportaciones CSV.
-- `js/panels/crear-estudiante/utils/actions.ts` y `js/panels/editar-estudiante/utils/actions.ts`: callbacks exportables para campos, fotos y confirmación, con globals temporales como adaptadores.
+- `apps/web/src/panels/estudiantes/utils/student-domain-actions.ts`: creación, edición, eliminación, guardado, búsqueda, filtros, selección, fotos y selección recordada.
+- `apps/web/src/panels/estudiantes/utils/student-bulk.ts`: apertura de carga masiva, modo texto/archivo, archivo seleccionado, preview, confirmación, cancelación y exportaciones CSV.
+- `apps/web/src/panels/estudiantes/create/utils/actions.ts` y `apps/web/src/panels/estudiantes/edit/utils/actions.ts`: callbacks exportables para campos, fotos y confirmación, con globals temporales como adaptadores.
 
 Migrado en esta fase:
 
@@ -125,7 +125,7 @@ Migrado en esta fase:
 Pendiente:
 
 - Lectura real de archivos `.xlsx/.xls` en carga masiva; el flujo declarativo mantiene el comportamiento legacy existente.
-- Migración física conjunta de `estudiantes`, `crear-estudiante` y `editar-estudiante` a `apps/web/src/panels/estudiantes/`.
+- Retiro gradual de globals de estudiantes cuando los fragments y `legacy-api.ts` dejen de requerir compatibilidad.
 
 ### Académico
 

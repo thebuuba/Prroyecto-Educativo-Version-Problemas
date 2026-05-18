@@ -20,7 +20,7 @@ type GoOptions = {
 /** Diccionario de módulos que sí participan en la carga diferida vía Vite. */
 const PANEL_MODULES: PanelModuleMap = {
   '/js/panels/usuarios/principal.ts': () => import('../../apps/web/src/panels/usuarios/principal.ts'),
-  '/js/panels/estudiantes/principal.ts': () => import('../panels/estudiantes/principal.ts'),
+  '/js/panels/estudiantes/principal.ts': () => import('../../apps/web/src/panels/estudiantes/principal.ts'),
   '/js/panels/actividades/principal.ts': () => import('../../apps/web/src/panels/actividades/principal.ts'),
   '/js/panels/matriz/principal.ts': () => import('../../apps/web/src/panels/matriz/principal.ts'),
   '/js/panels/reportes/principal.ts': () => import('../../apps/web/src/panels/reportes/principal.ts'),
@@ -30,9 +30,9 @@ const PANEL_MODULES: PanelModuleMap = {
   '/js/panels/asistencia/principal.ts': () => import('../../apps/web/src/panels/asistencia/principal.ts'),
   '/js/panels/configuracion/principal.ts': () => import('../panels/configuracion/principal.ts'),
   '/js/panels/configuracion-academica/principal.ts': () => import('../panels/configuracion-academica/principal.ts'),
-  '/js/panels/crear-estudiante/principal.ts': () => import('../panels/crear-estudiante/principal.ts'),
+  '/js/panels/crear-estudiante/principal.ts': () => import('../../apps/web/src/panels/estudiantes/create/principal.ts'),
   '/js/panels/crear-seccion/principal.ts': () => import('../panels/crear-seccion/principal.ts'),
-  '/js/panels/editar-estudiante/principal.ts': () => import('../panels/editar-estudiante/principal.ts'),
+  '/js/panels/editar-estudiante/principal.ts': () => import('../../apps/web/src/panels/estudiantes/edit/principal.ts'),
 };
 
 /**

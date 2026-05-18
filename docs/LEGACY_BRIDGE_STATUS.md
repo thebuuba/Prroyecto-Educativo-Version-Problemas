@@ -23,6 +23,7 @@
 | --- | --- | --- |
 | Planificaciones | `lessonPlanNew`, `lessonPlanContinue`, `lessonPlanReturnHome`, `lessonPlanSetActiveSection`, `lessonPlanSetGeneralField`, `lessonPlanSetCurriculumField` | El módulo ya vive en `apps/web/src/panels/planificaciones/` y el registry usa imports directos; eliminar cuando no haya referencias runtime. |
 | Reportes | `reportDownloadExcel`, `reportDownloadPdf`, `reportDownloadWord` | El módulo ya vive en `apps/web/src/panels/reportes/` y el registry usa imports directos; conservar por compatibilidad hasta retirar fallbacks. |
+| Matriz | No publica globals propios. | El módulo ya vive en `apps/web/src/panels/matriz/`; mantiene solo `window.RENDERS.matriz` por contrato del renderer dinámico. |
 | Actividades/instrumentos | `setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`, `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator` | Convertir `data-activity-action` a imports directos por grupos pequeños. |
 | Estudiantes/académico | `saveEst`, `saveEditStudent`, `saveSec`, `saveEditSection`, `saveGrade`, `delEst`, `delSec`, `delGrade` | Reemplazar fallbacks de registries cuando los módulos estén importables sin ciclos. |
 | Auth/setup | `loginAuth`, `registerAuth`, `authWithProvider`, `saveSetup`, `populateSetupForm`, `enforceMandatorySetup` | Mantener hasta retirar HTML auth/setup legacy y selectores de compatibilidad. |
@@ -45,7 +46,9 @@
 ## Cambios Recientes Aplicados
 
 - `reportes` y `planificaciones` fueron movidos físicamente a `apps/web/src/panels/`.
+- `matriz` fue movido físicamente a `apps/web/src/panels/matriz/`.
 - `js/panels/reportes/**` y `js/panels/planificaciones/**` quedaron como adaptadores temporales.
+- `js/panels/matriz/**` quedó como adaptador temporal.
 - `routing.ts` conserva las claves legacy de bundles, pero importa los paneles movidos desde `apps/web/src/panels/...`.
 - `declarative-actions.ts` importa `data-planning-action` y `data-report-action` desde los módulos movidos.
 - Las acciones internas de planificaciones dejaron de depender directamente de `window.S` y `window.go`; usan imports directos a `S` y `go`.

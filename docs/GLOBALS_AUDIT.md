@@ -82,7 +82,9 @@ Se mantienen porque hay referencias runtime reales, uso por registries como fall
 ## Migración Física Aplicada
 
 - `reportes` y `planificaciones` fueron movidos a `apps/web/src/panels/`.
+- `matriz` fue movido a `apps/web/src/panels/matriz/`.
 - Las rutas legacy `js/panels/reportes/**` y `js/panels/planificaciones/**` permanecen como adaptadores de reexportación.
+- La ruta legacy `js/panels/matriz/**` permanece como adaptador de reexportación.
 - No se eliminaron globals adicionales en esta fase; los globals de planificaciones y reportes siguen publicados como fallback temporal.
 
 ## Candidatas A Eliminar Después

@@ -24,12 +24,13 @@ Avance aplicado:
 
 - `js/panels/reportes/` movido físicamente a `apps/web/src/panels/reportes/`.
 - `js/panels/planificaciones/` movido físicamente a `apps/web/src/panels/planificaciones/`.
+- `js/panels/matriz/` movido físicamente a `apps/web/src/panels/matriz/`.
 - Las rutas legacy quedaron como adaptadores de reexportación para no romper imports existentes.
-- `routing.ts` conserva claves públicas `/js/panels/...`, pero resuelve esos dos bundles hacia `apps/web/src/panels/...`.
+- `routing.ts` conserva claves públicas `/js/panels/...`, pero resuelve esos bundles hacia `apps/web/src/panels/...`.
 
 Mover en grupos pequeños:
 
-1. Paneles de bajo acoplamiento restantes (`matriz`, luego `usuarios` si se resuelven fallbacks).
+1. Paneles de bajo acoplamiento restantes (`usuarios` si se resuelven fallbacks, luego `horario`/`asistencia` por grupos pequeños).
 2. `login-registro-auth/`.
 3. `sections/`.
 4. `js/core/`.
@@ -166,15 +167,14 @@ Riesgos de globals:
 
 Siguiente trabajo:
 
-1. Mover `matriz` si el renderer y sus imports se mantienen aislados.
+1. Estabilizar paneles ya movidos (`reportes`, `planificaciones`, `matriz`).
 2. Convertir registries híbridos restantes a imports ES cuando no rompan lazy loading.
 3. Mantener `legacy-api.ts` como lista explícita de deuda.
 4. Remover globals por dominio cuando no existan referencias runtime.
 
 Orden recomendado:
 
-- Estabilizar reportes/planificaciones ya movidos.
-- `matriz`.
+- Estabilizar reportes/planificaciones/matriz ya movidos.
 - convertir registries híbridos a imports directos por dominio.
 - usuarios, horario y asistencia.
 - estudiantes/académico.

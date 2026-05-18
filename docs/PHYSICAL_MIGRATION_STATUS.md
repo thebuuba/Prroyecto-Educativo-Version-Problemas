@@ -2,7 +2,9 @@
 
 ## Estado
 
-La migración física real ya inició con módulos de bajo acoplamiento. `reportes` y `planificaciones` viven ahora en `apps/web/src/panels/`, mientras las rutas legacy en `js/panels/` quedaron como adaptadores temporales de reexportación.
+La migración física real ya inició con módulos de bajo acoplamiento. `reportes`, `planificaciones` y `matriz` viven ahora en `apps/web/src/panels/`, mientras las rutas legacy en `js/panels/` quedaron como adaptadores temporales de reexportación.
+
+Revisión de `matriz`: el panel contiene `principal.ts`, `view.ts`, `logic.ts`, `components/vista.ts` y `README.md`. Solo depende de `js/core/state.ts`, `config.ts`, `constants.ts` y `domain-utils.ts`; registra `window.RENDERS.matriz` para el renderer dinámico y no publica acciones/globales propios. El movimiento se completó conservando la clave pública `/js/panels/matriz/principal.ts`.
 
 El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiendo claves `/js/panels/...` para no romper lazy loading, pero `PANEL_MODULES` resuelve esos bundles hacia los módulos nuevos en `apps/web/src/panels/...`.
 
@@ -12,13 +14,13 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 | --- | --- | --- | --- |
 | `reportes` | `apps/web/src/panels/reportes/` | `js/panels/reportes/**` reexporta al nuevo origen. | Bajo: conserva `window.RENDERS.reportes` y globals temporales de exportación. |
 | `planificaciones` | `apps/web/src/panels/planificaciones/` | `js/panels/planificaciones/**` reexporta al nuevo origen. | Bajo-medio: conserva `window.RENDERS.planificaciones` y globals temporales `lessonPlan*`. |
+| `matriz` | `apps/web/src/panels/matriz/` | `js/panels/matriz/**` reexporta al nuevo origen. | Bajo: conserva `window.RENDERS.matriz`; no tiene registry ni globals propios. |
 
 ## Próximas Listas Para Mover
 
 | Carpeta | Estado | Riesgo | Adaptadores necesarios |
 | --- | --- | --- | --- |
 | `js/panels/usuarios/` | Parcialmente lista | Medio | Resolver fallback `delUsr` y modal `m-usr`. |
-| `js/panels/matriz/` | Casi lista | Bajo | Verificar imports y renderer. |
 
 ## Bloqueadas
 
@@ -37,7 +39,7 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 - Imports relativos profundos hacia `../../../core/...`.
 - Los módulos movidos usan imports relativos profundos hacia `js/core/...` desde `apps/web/src/panels/...`; son explícitos y validados, pero deben reemplazarse por aliases cuando `js/core/` se mueva.
 - Paneles que importan `domain-utils.ts`, que a su vez reexporta muchas APIs.
-- `routing.ts` mantiene rutas públicas de bundles con paths legacy, aunque los imports directos de `reportes` y `planificaciones` apuntan al nuevo origen.
+- `routing.ts` mantiene rutas públicas de bundles con paths legacy, aunque los imports directos de `reportes`, `planificaciones` y `matriz` apuntan al nuevo origen.
 - `legacy-api.ts` agrupa dominios con `Object.assign(window, ...)`.
 
 ## Dependencias Circulares Potenciales
@@ -54,7 +56,7 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 - `_renderPanel` como punto de render.
 - APIs `EduGestCloud`, `AulaBaseSqlApi`, `EduGestDB`.
 - Fragments `sections/` cargados por ensamblado y modales bajo demanda.
-- `reportes` y `planificaciones` ya están físicamente en `apps/web`, pero todavía registran su renderer en `window.RENDERS`.
+- `reportes`, `planificaciones` y `matriz` ya están físicamente en `apps/web`, pero todavía registran su renderer en `window.RENDERS`.
 
 ## Dependencias Legacy
 
@@ -65,13 +67,12 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 
 ## Orden Recomendado
 
-1. Completar estabilización de `reportes` y `planificaciones` ya movidos.
-2. Mover `matriz` si sus imports y renderer se mantienen aislados.
-3. Convertir registries híbridos a imports directos por dominio.
-4. Mover `usuarios` y luego `horario`/`asistencia`.
-5. Mover estudiantes/académico cuando sus fallbacks globales hayan desaparecido.
-6. Separar `js/core/` en submódulos dentro de `apps/web/src` con adaptadores raíz.
-7. Mover `login-registro-auth/` cuando auth/setup ya no dependa de bootstrap HTML legacy.
+1. Completar estabilización de `reportes`, `planificaciones` y `matriz` ya movidos.
+2. Convertir registries híbridos a imports directos por dominio.
+3. Mover `usuarios` y luego `horario`/`asistencia`.
+4. Mover estudiantes/académico cuando sus fallbacks globales hayan desaparecido.
+5. Separar `js/core/` en submódulos dentro de `apps/web/src` con adaptadores raíz.
+6. Mover `login-registro-auth/` cuando auth/setup ya no dependa de bootstrap HTML legacy.
 
 ## Criterio De Listo
 

@@ -1,7 +1,5 @@
 # Panel Matrix (Matriz de Calificaciones)
 
-> Adaptador legacy temporal. El origen real del panel está en `apps/web/src/panels/matriz/`.
-
 ## 📋 Descripción
 Panel de visualización de matriz de calificaciones general.
 

@@ -82,6 +82,7 @@
 - `apps/web/src/panels/estudiantes/utils/student-helpers.ts` contiene helpers puros de texto, matrícula, búsqueda por ID y directorio local; `student-logic.ts` los consume sin mover modales ni SQL.
 - `apps/web/src/panels/estudiantes/utils/student-dom-fields.ts` encapsula lectura/escritura de IDs legacy de crear, vista, edición y bulk (`e-*`, `sv-*`, `ee-*`, `be-list`, `be-sec`); `student-logic.ts` sigue controlando validaciones, mensajes, modales, SQL y navegación.
 - `apps/web/src/panels/estudiantes/utils/student-bulk-parser.ts` contiene el parser textual simple de carga masiva sin cambiar el formato aceptado ni la forma de `entries`.
+- `apps/web/src/panels/estudiantes/utils/student-bulk-builders.ts` construye el objeto estudiante bulk desde `entry`, sección e ID generado por core; `student-logic.ts` mantiene loop, mutación de `S`, SQL, persistencia, toast y navegación.
 - `apps/web/src/panels/estudiantes/utils/student-bulk-state.ts` contiene `BULK_IMPORT_STATE` y setters/getters; `student-logic.ts` conserva el parser y actualiza ese estado compartido.
 - `apps/web/src/panels/estudiantes/utils/student-domain-actions.ts` centraliza acciones base: creación, edición, eliminación, guardado, búsqueda, filtros, selección, fotos y selección recordada.
 - `apps/web/src/panels/estudiantes/utils/student-bulk.ts` centraliza carga masiva, exportaciones CSV y wrappers hacia el parser legacy sin cambiar formato esperado.

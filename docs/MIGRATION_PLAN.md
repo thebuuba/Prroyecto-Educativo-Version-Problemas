@@ -90,6 +90,7 @@ Avance aplicado:
 - Helpers puros de estudiantes extraídos a `apps/web/src/panels/estudiantes/utils/student-helpers.ts`.
 - Lectura/escritura DOM simple de modales y bulk extraída a `apps/web/src/panels/estudiantes/utils/student-dom-fields.ts`; se mantienen IDs y valores legacy.
 - Parser textual simple de carga masiva extraído a `apps/web/src/panels/estudiantes/utils/student-bulk-parser.ts` sin cambiar formato aceptado ni estructura de entries.
+- Construcción del objeto estudiante bulk extraída a `apps/web/src/panels/estudiantes/utils/student-bulk-builders.ts` sin cambiar campos ni generación de IDs.
 - Estado de carga masiva extraído a `apps/web/src/panels/estudiantes/utils/student-bulk-state.ts`; el flujo de guardado, SQL, persistencia y mensajes siguen en `js/core/student-logic.ts`.
 
 Conteo de la fase estudiantes:

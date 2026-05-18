@@ -130,6 +130,7 @@ Actividades:
 - Helpers puros: `apps/web/src/panels/estudiantes/utils/student-helpers.ts` contiene normalización, búsqueda por ID, detección de matrícula duplicada y helpers de directorio local.
 - DOM de modales y bulk: `apps/web/src/panels/estudiantes/utils/student-dom-fields.ts` encapsula lectura/escritura simple de campos `e-*`, `sv-*`, `ee-*`, `be-list` y `be-sec`.
 - Parser bulk textual: `apps/web/src/panels/estudiantes/utils/student-bulk-parser.ts` conserva el formato textual aceptado y la estructura de entries.
+- Builder bulk: `apps/web/src/panels/estudiantes/utils/student-bulk-builders.ts` construye el objeto estudiante bulk sin mutar estado ni ejecutar efectos.
 - Estado de carga masiva: `apps/web/src/panels/estudiantes/utils/student-bulk-state.ts` contiene `BULK_IMPORT_STATE` y setters/getters sin cambiar su estructura.
 - Carga masiva: `apps/web/src/panels/estudiantes/utils/student-bulk.ts` encapsula apertura, modo texto/archivo, preview, confirmación, cancelación, exportaciones CSV y wrappers hacia el parser legacy sin cambiar formato esperado.
 - `data-student-action` ahora se importa desde `apps/web/src/panels/estudiantes/utils/student-actions.ts`.

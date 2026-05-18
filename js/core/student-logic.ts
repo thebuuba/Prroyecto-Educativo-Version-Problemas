@@ -39,6 +39,7 @@ import {
   writeStudentViewFields,
 } from '../../apps/web/src/panels/estudiantes/utils/student-dom-fields.ts';
 import { parseBulkStudentText } from '../../apps/web/src/panels/estudiantes/utils/student-bulk-parser.ts';
+import { buildBulkStudentRecord } from '../../apps/web/src/panels/estudiantes/utils/student-bulk-builders.ts';
 
 /**
  * Abre el modal para elegir cómo agregar estudiantes.
@@ -306,16 +307,7 @@ export async function saveBulkEst() {
   for (const e of BULK_IMPORT_STATE.entries) {
     if (matriculaExists(e.matricula)) continue;
 
-    const student = {
-      id: uid(),
-      nombre: e.nombre,
-      apellido: e.apellido,
-      matricula: e.matricula,
-      courseId: secId,
-      sectionId: secId,
-      seccionId: secId,
-      gradeId: sec?.gradeId || null
-    };
+    const student = buildBulkStudentRecord(e, sec, { id: uid(), sectionId: secId });
 
     S.estudiantes.push(student);
     try { await syncSqlStudentCreateOrUpdate(student); } catch (_) {}

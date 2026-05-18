@@ -166,6 +166,7 @@ Resultado:
 - `student-helpers.ts` extrae helpers puros: normalización de texto/matrícula, búsqueda por ID, detección de matrícula duplicada y mapeo/upsert de directorio local.
 - `student-dom-fields.ts` extrae lectura/escritura DOM simple de crear (`e-nom`, `e-ape`, `e-mat`, `e-sec`, `e-photo-data`), vista (`sv-*`), edición (`ee-*`, `ee-photo-preview`) y bulk (`be-list`, `be-sec`).
 - `student-bulk-parser.ts` extrae el parser textual simple: líneas no vacías, columnas separadas por coma/punto y coma/tab y entries `{row, matricula, nombre, apellido, status:'new'}`.
+- `student-bulk-builders.ts` extrae la construcción pura del estudiante bulk: `id`, `nombre`, `apellido`, `matricula`, `courseId`, `sectionId`, `seccionId` y `gradeId`.
 - `student-bulk-state.ts` extrae `BULK_IMPORT_STATE` con setters/getters; conserva la misma forma del estado (`mode`, `analyzed`, `entries`, `sourceName`, `lastRows`).
 - Las acciones de vista/listado viven en `apps/web/src/panels/estudiantes/utils/actions.ts`; exportan funciones modulares y siguen publicando globals temporales.
 - Las acciones de los paneles `student-create` y `student-edit` viven en `apps/web/src/panels/estudiantes/create/utils/actions.ts` y `apps/web/src/panels/estudiantes/edit/utils/actions.ts`; exportan funciones y conservan `window.*` como adaptador.

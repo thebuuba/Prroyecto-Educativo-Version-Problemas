@@ -19,6 +19,7 @@ Wrappers modulares actuales:
 - `utils/student-dom-fields.ts`: lectura/escritura DOM simple de campos legacy de crear, vista, edicion y bulk.
 - `utils/student-bulk-state.ts`: estado compartido de carga masiva con la misma forma legacy.
 - `utils/student-bulk-parser.ts`: parser textual simple de carga masiva.
+- `utils/student-bulk-builders.ts`: construccion pura de estudiantes desde entries bulk.
 - `utils/student-bulk.ts`: UI declarativa, exportaciones CSV y wrappers hacia la carga masiva legacy.
 
 ## 📋 Descripción

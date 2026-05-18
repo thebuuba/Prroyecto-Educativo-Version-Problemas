@@ -1,1 +1,1 @@
-export * from './utils/actions.ts';
+export * from '../../../apps/web/src/panels/horario/logic.ts';

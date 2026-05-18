@@ -16,7 +16,7 @@ Módulos auxiliares:
 - `js/panels/estudiantes/utils/student-actions.ts`
 - `js/panels/configuracion-academica/utils/academic-actions.ts`
 - `js/panels/asistencia/utils/attendance-actions.ts`
-- `js/panels/horario/utils/schedule-actions.ts`
+- `apps/web/src/panels/horario/utils/schedule-actions.ts`
 - `apps/web/src/panels/actividades/utils/activity-actions.ts`
 - `apps/web/src/panels/usuarios/utils/user-actions.ts`
 - `apps/web/src/panels/planificaciones/utils/planning-actions.ts`
@@ -196,7 +196,7 @@ Acciones permitidas:
 - `open-wizard`, `close-wizard`, `generate`
 - `previous-week`, `next-week`, `previous-month`, `next-month`
 
-El registry vive en `js/panels/horario/utils/schedule-actions.ts`. Los parámetros se pasan por `data-schedule-day`, `data-schedule-time`, `data-schedule-end-time`, `data-schedule-view`, `data-schedule-target` y equivalentes. No ejecuta nombres de funciones desde atributos.
+El registry vive en `apps/web/src/panels/horario/utils/schedule-actions.ts`. Los parámetros se pasan por `data-schedule-day`, `data-schedule-time`, `data-schedule-end-time`, `data-schedule-view`, `data-schedule-target` y equivalentes. No ejecuta nombres de funciones desde atributos.
 
 Migrado en esta fase:
 
@@ -209,7 +209,8 @@ Migrado en esta fase:
 
 Pendiente:
 
-- `generateTeacherScheduleBase` sigue como adaptador legacy si aparece en runtime; si no existe, se redirige al asistente.
+- `generateTeacherScheduleBase` vive como wrapper modular en `apps/web/src/panels/horario/utils/actions.ts`; conserva compatibilidad con un generador legacy externo si aparece en runtime y, si no existe, redirige al asistente.
+- El path legacy `js/panels/horario/utils/schedule-actions.ts` reexporta el módulo nuevo temporalmente para mantener compatibilidad con imports antiguos.
 - Acciones sin controles visibles actuales (`delete`, `save`, `clear`, `export`, selección de docente/asignatura/curso) quedan registradas como ramas seguras.
 
 ### Actividades y Calificaciones

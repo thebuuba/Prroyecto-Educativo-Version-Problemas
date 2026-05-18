@@ -28,12 +28,13 @@ Avance aplicado:
 - `js/panels/instrumentos/` movido físicamente a `apps/web/src/panels/instrumentos/`.
 - `js/panels/actividades/` movido físicamente a `apps/web/src/panels/actividades/`.
 - `js/panels/usuarios/` movido físicamente a `apps/web/src/panels/usuarios/`.
+- `js/panels/horario/` movido físicamente a `apps/web/src/panels/horario/`.
 - Las rutas legacy quedaron como adaptadores de reexportación para no romper imports existentes.
 - `routing.ts` conserva claves públicas `/js/panels/...`, pero resuelve esos bundles hacia `apps/web/src/panels/...`.
 
 Mover en grupos pequeños:
 
-1. Paneles de bajo acoplamiento restantes (`horario`/`asistencia` por grupos pequeños).
+1. Panel de bajo acoplamiento restante (`asistencia` por grupos pequeños).
 2. Estudiantes/académico por grupos pequeños cuando bajen sus fallbacks.
 3. `login-registro-auth/`.
 4. `sections/`.
@@ -61,7 +62,7 @@ Avance aplicado:
 - Carga masiva migrada para apertura, modo de entrada, archivo seleccionado, opciones, análisis, confirmación y exportaciones simples sin cambiar textos visibles ni formato esperado.
 - Dominio académico migrado a `data-academic-action` con registry explícito en `js/panels/configuracion-academica/utils/academic-actions.ts`.
 - Dominio asistencia migrado a `data-attendance-action` con registry explícito en `js/panels/asistencia/utils/attendance-actions.ts`.
-- Dominio horario migrado a `data-schedule-action` con registry explícito en `js/panels/horario/utils/schedule-actions.ts`.
+- Dominio horario migrado a `data-schedule-action` con registry explícito en `apps/web/src/panels/horario/utils/schedule-actions.ts`.
 - Dominio actividades/calificaciones migrado a `data-activity-action` con registry explícito en `apps/web/src/panels/actividades/utils/activity-actions.ts`.
 - Dominio usuarios/modales compartidos migrado a `data-user-action` con registry explícito en `apps/web/src/panels/usuarios/utils/user-actions.ts`.
 - Dominios planificaciones y reportes migrados a `data-planning-action` y `data-report-action` con registries explícitos separados.
@@ -71,7 +72,7 @@ Avance aplicado:
 - `data-report-action` convertido a imports directos para exportaciones Excel/PDF/Word, conservando globals solo como compatibilidad.
 - `data-planning-action` y `data-report-action` ahora se importan desde `apps/web/src/panels/...`.
 - Acciones internas de planificaciones convertidas de `window.S` / `window.go` a imports directos de `S` y `go`.
-- `data-schedule-action` convertido parcialmente a imports directos para acciones simples de horario, manteniendo fallback legacy.
+- `data-schedule-action` convertido a imports directos para acciones visibles de horario; los globals quedan como adaptadores legacy.
 - `data-activity-action` convertido a imports directos para acciones de bloques/matriz, instrumentos y guardado de actividad/plantilla.
 - Acciones básicas de instrumentos separadas en `apps/web/src/panels/instrumentos/utils/instrument-actions.ts` y consumidas por `data-activity-action` con imports directos.
 - Vinculación de instrumentos modularizada en `apps/web/src/panels/instrumentos/utils/instrument-linking.ts`.
@@ -120,11 +121,11 @@ Conteo de la fase horario:
 
 | Alcance | Inline antes | Inline después | `data-schedule-action` después |
 | --- | ---: | ---: | ---: |
-| `js/panels/horario/` y fragments `m-schedule*` | 10 | 0 | 10 |
+| `apps/web/src/panels/horario/` y fragments `m-schedule*` | 10 | 0 | 10 |
 
 Riesgos horario:
 
-- La generación de plantilla base conserva compatibilidad con `generateTeacherScheduleBase` si existe en runtime; si no, abre el asistente.
+- La generación de plantilla base vive en `apps/web/src/panels/horario/utils/actions.ts`; conserva compatibilidad con un generador legacy externo si existe y, si no, abre el asistente.
 - Tabs, cambio de mes, apertura de asistente, edición de celdas y eventos ya usan imports directos con fallback temporal.
 - Varias acciones del registry quedan como placeholders seguros hasta que se modularicen edición avanzada, exportación y eliminación de bloques.
 
@@ -193,7 +194,7 @@ Orden recomendado:
 
 - Estabilizar reportes/planificaciones/matriz ya movidos.
 - convertir registries híbridos a imports directos por dominio.
-- horario y asistencia.
+- asistencia.
 - estudiantes/académico.
 - auth/setup y core crítico.
 

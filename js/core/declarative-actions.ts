@@ -13,7 +13,7 @@ import { handleDeclarativeAuthAction } from '../panels/autenticacion/utils/auth-
 import { handleDeclarativeStudentAction } from '../panels/estudiantes/utils/student-actions.ts';
 import { handleDeclarativeAcademicAction } from '../panels/configuracion-academica/utils/academic-actions.ts';
 import { handleDeclarativeAttendanceAction } from '../panels/asistencia/utils/attendance-actions.ts';
-import { handleDeclarativeScheduleAction } from '../panels/horario/utils/schedule-actions.ts';
+import { handleDeclarativeScheduleAction } from '../../apps/web/src/panels/horario/utils/schedule-actions.ts';
 import { handleDeclarativeActivityAction } from '../../apps/web/src/panels/actividades/utils/activity-actions.ts';
 import { handleDeclarativeUserAction } from '../../apps/web/src/panels/usuarios/utils/user-actions.ts';
 import { handleDeclarativePlanningAction } from '../../apps/web/src/panels/planificaciones/utils/planning-actions.ts';

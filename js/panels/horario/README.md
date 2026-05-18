@@ -1,23 +1,5 @@
-# Panel Schedule (Horario)
+# Horario Legacy Adapter
 
-## 📋 Descripción
-Panel de gestión de horarios y calendario docente.
+Esta carpeta conserva las rutas públicas legacy de `js/panels/horario/**`.
 
-## 🎯 Funcionalidades
-- Gestión de horarios de clases
-- Vista de calendario
-- Configuración de horarios
-
-## 📁 Estructura
-```
-schedule/
-├── principal.js              # Panel principal
-├── components/
-│   └── render.js        # Componentes de renderizado
-├── utils/
-│   └── actions.js       # Acciones de negocio
-└── README.md
-```
-
----
-**Última actualización**: 2026-04-26
+La implementación real vive en `apps/web/src/panels/horario/`.

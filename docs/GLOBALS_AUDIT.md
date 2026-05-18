@@ -61,7 +61,7 @@ Se mantienen porque hay referencias runtime reales, uso por registries como fall
 | Estudiantes | `openEstM`, `saveEst`, `openViewStudent`, `openEditStudent`, `saveEditStudent`, `openBulkEstM`, `handleBulkFileChange`, `analyzeBulkInput`, `saveBulkEst`, `delEst` | Registries y módulos de crear/editar estudiante los usan como adaptadores. |
 | Académico | `openSecM`, `saveSec`, `openEditSection`, `saveEditSection`, `saveGrade`, `delSec`, `delGrade` | Fallbacks de creación/edición/eliminación y sincronización académica. |
 | Asistencia | `shiftMonth`, `setActiveGroup`, `cycleMark`, `commitDayDay`, `cycleException`, `applyWeeklySchedule` | El módulo legacy de asistencia todavía los publica. |
-| Horario | `setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal` | Ya no son la ruta primaria de `data-schedule-action`; se conservan como fallback y compatibilidad runtime. |
+| Horario | `setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal`, `generateTeacherScheduleBase` | Ya no son la ruta primaria de `data-schedule-action`; se conservan como adaptadores de compatibilidad runtime. |
 | Actividades | `setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`, `saveAct`, `saveTpl` | Ya no son la ruta primaria de `data-activity-action`; se conservan como adaptadores y compatibilidad runtime. |
 | Instrumentos | `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator` | Ya no son la ruta primaria de `data-activity-action`; se conservan como adaptadores temporales. |
 | Vinculación de instrumentos | `openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument` | Ya no son la ruta primaria; `instrument-linking.ts` es la fuente principal y los globals quedan como adaptadores temporales. |
@@ -78,7 +78,7 @@ Se mantienen porque hay referencias runtime reales, uso por registries como fall
 
 - `data-report-action` ya no invoca `window.reportDownloadExcel`, `window.reportDownloadPdf` ni `window.reportDownloadWord`; importa esas funciones desde `apps/web/src/panels/reportes/utils/actions.ts`.
 - `data-planning-action` usa imports directos hacia `apps/web/src/panels/planificaciones/utils/actions.ts`.
-- `data-schedule-action` usa imports directos para las acciones simples de horario: tabs, mes, asistente, celdas y eventos.
+- `data-schedule-action` usa imports directos para las acciones visibles de horario: tabs, mes, asistente, celdas, eventos y generación base.
 - `data-activity-action` usa imports directos para las acciones de bloques y matriz: vista, metas, nombre, puntos, alta, eliminación y autoajuste.
 - `data-activity-action` usa imports directos para guardar actividades y plantillas desde `apps/web/src/panels/actividades/utils/activity-save.ts`.
 - `data-activity-action` usa imports directos para acciones básicas de instrumentos desde `apps/web/src/panels/instrumentos/utils/instrument-actions.ts`.
@@ -136,17 +136,19 @@ Resultado:
 - `instrumentos` fue movido a `apps/web/src/panels/instrumentos/`.
 - `actividades` fue movido a `apps/web/src/panels/actividades/`.
 - `usuarios` fue movido a `apps/web/src/panels/usuarios/`.
+- `horario` fue movido a `apps/web/src/panels/horario/`.
 - Las rutas legacy `js/panels/reportes/**` y `js/panels/planificaciones/**` permanecen como adaptadores de reexportación.
 - La ruta legacy `js/panels/matriz/**` permanece como adaptador de reexportación.
 - Las rutas legacy `js/panels/instrumentos/**` y `js/panels/actividades/**` permanecen como adaptadores de reexportación.
 - La ruta legacy `js/panels/usuarios/**` permanece como adaptador de reexportación.
+- La ruta legacy `js/panels/horario/**` permanece como adaptador de reexportación.
 - No se eliminaron globals adicionales en esta fase; los globals de planificaciones y reportes siguen publicados como fallback temporal.
 
 ## Candidatas A Eliminar Después
 
 - `lessonPlanNew`, `lessonPlanContinue`, `lessonPlanReturnHome`, `lessonPlanSetActiveSection`, `lessonPlanSetGeneralField`, `lessonPlanSetCurriculumField`.
 - `reportDownloadExcel`, `reportDownloadPdf`, `reportDownloadWord`.
-- Adaptadores de horario ya cubiertos por imports directos (`setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal`) cuando no existan referencias runtime.
+- Adaptadores de horario ya cubiertos por imports directos (`setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal`, `generateTeacherScheduleBase`) cuando no existan referencias runtime.
 - Adaptadores de actividades ya cubiertos por imports directos (`setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`, `saveAct`, `saveTpl`) cuando no existan referencias runtime.
 - Espejos legacy de linking (`_linkActId`, `_linkStudentId`) cuando no existan referencias runtime fuera de `instrument-link-state.ts`.
 - Adaptadores de instrumentos (`setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator`) cuando no existan referencias runtime.

@@ -7,6 +7,16 @@ import {
   updateActPts,
   updateBlockMeta,
 } from './actions.ts';
+import {
+  confirmLinkInstrument,
+  createNewInstrument,
+  deleteInstrument,
+  editInstrument,
+  openApplyInstrumentModal,
+  openCreateInstrumentTypePicker,
+  openInstrumentCreator,
+  setInstFilter,
+} from '../../instrumentos/utils/instrument-actions.ts';
 
 type ActivityActionContext = {
   trigger: HTMLElement;
@@ -89,35 +99,37 @@ const activityActionRegistry: Record<string, ActivityActionHandler> = {
   'delete-block': () => {},
   'select-instrument': ({ trigger }) => {
     const targetActivityId = activityId(trigger) || String((window as Record<string, unknown>)._linkActId || '').trim();
-    if (targetActivityId) callAllowedWindowFunction('openApplyInstrumentModal', targetActivityId);
+    if (targetActivityId && !openApplyInstrumentModal(targetActivityId)) callAllowedWindowFunction('openApplyInstrumentModal', targetActivityId);
   },
   'create-instrument': ({ trigger }) => {
     const type = valueFromTrigger(trigger);
     const targetActivityId = activityId(trigger) || String((window as Record<string, unknown>)._linkActId || '').trim();
     if (type) {
-      callAllowedWindowFunction('createNewInstrument', type);
+      if (!createNewInstrument(type)) callAllowedWindowFunction('createNewInstrument', type);
       return;
     }
-    if (targetActivityId && callAllowedWindowFunction('openCreateInstrumentTypePicker', targetActivityId)) return;
-    callAllowedWindowFunction('openInstrumentCreator');
+    if (targetActivityId && (openCreateInstrumentTypePicker(targetActivityId) || callAllowedWindowFunction('openCreateInstrumentTypePicker', targetActivityId))) return;
+    if (!openInstrumentCreator()) callAllowedWindowFunction('openInstrumentCreator');
   },
   'edit-instrument': ({ trigger }) => {
     const id = instrumentId(trigger);
-    if (id) callAllowedWindowFunction('editInstrument', id);
+    if (id && !editInstrument(id)) callAllowedWindowFunction('editInstrument', id);
   },
   'delete-instrument': ({ trigger }) => {
     const id = instrumentId(trigger);
-    if (id) callAllowedWindowFunction('deleteInstrument', id);
+    if (id && !deleteInstrument(id)) callAllowedWindowFunction('deleteInstrument', id);
   },
   'save-instrument': () => {
-    callAllowedWindowFunction('confirmLinkInstrument');
+    if (!confirmLinkInstrument()) callAllowedWindowFunction('confirmLinkInstrument');
   },
   'evaluate-student': ({ trigger }) => {
     const targetActivityId = activityId(trigger);
     const studentId = data(trigger, 'studentId');
     if (!targetActivityId) return;
-    if (studentId) callAllowedWindowFunction('openApplyInstrumentModal', targetActivityId, studentId);
-    else callAllowedWindowFunction('openApplyInstrumentModal', targetActivityId);
+    if (!openApplyInstrumentModal(targetActivityId, studentId || undefined)) {
+      if (studentId) callAllowedWindowFunction('openApplyInstrumentModal', targetActivityId, studentId);
+      else callAllowedWindowFunction('openApplyInstrumentModal', targetActivityId);
+    }
   },
   'change-grade': ({ trigger }) => {
     const targetBlockId = blockId(trigger);
@@ -135,18 +147,20 @@ const activityActionRegistry: Record<string, ActivityActionHandler> = {
   },
   'edit-matrix': ({ trigger }) => {
     const targetActivityId = activityId(trigger);
-    if (targetActivityId) callAllowedWindowFunction('openApplyInstrumentModal', targetActivityId, data(trigger, 'studentId'));
+    if (targetActivityId && !openApplyInstrumentModal(targetActivityId, data(trigger, 'studentId'))) {
+      callAllowedWindowFunction('openApplyInstrumentModal', targetActivityId, data(trigger, 'studentId'));
+    }
   },
   'change-matrix-view': ({ trigger }) => {
     setActView(data(trigger, 'matrixView') || valueFromTrigger(trigger));
   },
   filter: ({ trigger }) => {
     const target = data(trigger, 'target') || data(trigger, 'activityTarget');
-    if (target) callAllowedWindowFunction('setInstFilter', target, valueFromTrigger(trigger));
+    if (target && !setInstFilter(target, valueFromTrigger(trigger))) callAllowedWindowFunction('setInstFilter', target, valueFromTrigger(trigger));
   },
   'clear-filter': ({ trigger }) => {
     const target = data(trigger, 'target') || data(trigger, 'activityTarget');
-    if (target) callAllowedWindowFunction('setInstFilter', target, '');
+    if (target && !setInstFilter(target, '')) callAllowedWindowFunction('setInstFilter', target, '');
   },
   export: () => {},
   print: () => window.print(),

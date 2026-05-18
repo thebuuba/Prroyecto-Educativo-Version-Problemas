@@ -243,6 +243,7 @@ Pendiente:
 
 - `saveUsr()` del fragmento combinado de actividades fue tratado en el dominio usuarios.
 - Guardado de actividad/plantilla y vinculación de instrumentos conservan adaptadores hacia globals legacy si existen en runtime.
+- Las acciones básicas de instrumentos se resuelven por imports directos desde `js/panels/instrumentos/utils/instrument-actions.ts`; los globals equivalentes se conservan como adaptadores temporales.
 - Exportación, sincronización y edición profunda de matriz quedan como ramas seguras hasta que existan controles y módulos específicos.
 
 ### Usuarios

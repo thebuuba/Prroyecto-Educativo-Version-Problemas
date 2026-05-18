@@ -22,7 +22,8 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 | --- | --- | --- | --- |
 | `js/panels/usuarios/` | Parcialmente lista | Medio | Resolver fallback `delUsr` y modal `m-usr`; `data-user-action` aún conserva compatibilidad global. |
 | `js/panels/horario/` | Parcialmente lista | Medio | Registry parcialmente directo; falta separar generación avanzada y confirmar referencias runtime. |
-| `js/panels/actividades/` | Parcialmente lista | Medio | Bloques/matriz ya directos; guardado e instrumentos siguen como fallbacks. |
+| `js/panels/actividades/` | Parcialmente lista | Medio | Bloques/matriz e instrumentos básicos ya directos; guardado y vinculación profunda siguen como fallbacks. |
+| `js/panels/instrumentos/` | Parcialmente lista | Medio | Acciones básicas separadas en `utils/instrument-actions.ts`; renderer aún está en el entrypoint legacy. |
 
 ## Bloqueadas
 
@@ -32,7 +33,6 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 | `js/panels/estudiantes/`, `crear-estudiante/`, `editar-estudiante/` | Dependen de fallbacks globales, `legacy-api.ts`, deleters y fragments. | Medio-alto |
 | `js/panels/configuracion-academica/`, `crear-seccion/` | Dependen de funciones académicas globales y sync SQL. | Medio-alto |
 | `js/panels/asistencia/` | Mezcla modelo directo con actions legacy y sync SQL. | Medio |
-| `js/panels/instrumentos/` | Expone acciones desde el entrypoint del panel; requiere separar acciones antes de mover. | Medio-alto |
 | `login-registro-auth/` | Tiene bootstrap propio y compat auth. | Medio |
 
 ## Imports Problemáticos

@@ -26,7 +26,8 @@
 | Matriz | No publica globals propios. | El módulo ya vive en `apps/web/src/panels/matriz/`; mantiene solo `window.RENDERS.matriz` por contrato del renderer dinámico. |
 | Horario | `setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal` | El registry ya usa imports directos con fallback temporal; eliminar globals cuando no haya referencias runtime. |
 | Actividades | `setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock` | El registry ya usa imports directos; conservar globals por compatibilidad hasta mover el panel. |
-| Instrumentos | `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator` | Conservar como fallback: viven en el entrypoint de instrumentos y moverlos requiere separar ese módulo. |
+| Instrumentos | `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator` | Ya tienen fuente exportable en `js/panels/instrumentos/utils/instrument-actions.ts`; conservar globals como adaptadores temporales. |
+| Vinculación de instrumentos | `openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument` | Wrappers exportables creados; siguen delegando a globals si existen porque la implementación real aún no está modularizada. |
 | Estudiantes/académico | `saveEst`, `saveEditStudent`, `saveSec`, `saveEditSection`, `saveGrade`, `delEst`, `delSec`, `delGrade` | Reemplazar fallbacks de registries cuando los módulos estén importables sin ciclos. |
 | Auth/setup | `loginAuth`, `registerAuth`, `authWithProvider`, `saveSetup`, `populateSetupForm`, `enforceMandatorySetup` | Mantener hasta retirar HTML auth/setup legacy y selectores de compatibilidad. |
 
@@ -35,7 +36,7 @@
 - `data-planning-action`: usa imports directos desde `apps/web/src/panels/planificaciones/utils/actions.ts`.
 - `data-report-action`: usa imports directos desde `apps/web/src/panels/reportes/utils/actions.ts`.
 - `data-schedule-action`: usa imports directos para tabs, navegación mensual, asistente, edición de celda y eventos; conserva fallback `window.*`.
-- `data-activity-action`: usa imports directos para vista de matriz/bloques, metas, nombre, puntos, alta, eliminación y autoajuste de actividades.
+- `data-activity-action`: usa imports directos para vista de matriz/bloques, metas, nombre, puntos, alta, eliminación, autoajuste y acciones exportables de instrumentos.
 - `data-ui-action`: vive en `js/core/declarative-actions.ts` y usa imports directos para estado, persistencia, routing y sincronización de perfil.
 
 ## Registries Todavía Híbridos
@@ -44,7 +45,7 @@
 - `data-academic-action`: conserva fallbacks hacia funciones académicas legacy.
 - `data-attendance-action`: mezcla lógica directa con adaptadores de exportación.
 - `data-schedule-action`: parcialmente directo; conserva `generateTeacherScheduleBase` y fallbacks por compatibilidad.
-- `data-activity-action`: parcialmente directo; conserva guardado de actividad/plantilla e instrumentos como fallbacks.
+- `data-activity-action`: parcialmente directo; conserva guardado de actividad/plantilla y vinculación profunda de instrumentos como fallbacks.
 - `data-user-action`: usa fallback a `delUsr` / `saveUsr` si existen.
 
 ## Cambios Recientes Aplicados
@@ -58,6 +59,8 @@
 - Las acciones internas de planificaciones dejaron de depender directamente de `window.S` y `window.go`; usan imports directos a `S` y `go`.
 - `data-schedule-action` dejó de depender directamente de `window.setScheduleTab`, `window.changeCalendarMonth`, `window.openScheduleWizard`, `window.editScheduleCell` y `window.openAddEventModal` cuando el módulo de horario está inicializado.
 - `data-activity-action` dejó de depender directamente de `window.setActView`, `window.updateBlockMeta`, `window.handleActNameInput`, `window.updateActPts`, `window.addActToBlock`, `window.removeActFromBlock` y `window.autoAdjustBlock`.
+- `data-activity-action` ahora importa `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument` y `openInstrumentCreator` desde `js/panels/instrumentos/utils/instrument-actions.ts`.
+- `openApplyInstrumentModal`, `openCreateInstrumentTypePicker` y `confirmLinkInstrument` quedaron como wrappers exportables con fallback legacy explícito.
 - Se eliminó `window.openDashboardCourse`.
 - `data-report-action` dejó de depender directamente de `window.reportDownloadExcel`, `window.reportDownloadPdf` y `window.reportDownloadWord`.
 - Los 6 handlers inline runtime restantes fueron migrados a `data-route` / `data-ui-action`.
@@ -76,7 +79,7 @@
 | `data-report-action` | Directo | Solo `window.print()`, API del navegador. |
 | `data-planning-action` | Directo | Solo `window.print()`, API del navegador. |
 | `data-schedule-action` | Parcialmente directo | Reemplazables ya importados: tabs, mes, asistente, celdas y eventos. Fallback temporal: los mismos globals si el panel no inicializó. No tocar todavía: `generateTeacherScheduleBase`. |
-| `data-activity-action` | Parcialmente directo | Reemplazables ya importados: vista, metas, edición de nombre/puntos, alta/eliminación y autoajuste. Fallback temporal: guardado, plantillas, vinculación e instrumentos. |
+| `data-activity-action` | Parcialmente directo | Reemplazables ya importados: vista, metas, edición de nombre/puntos, alta/eliminación, autoajuste e instrumentos básicos. Fallback temporal: guardado, plantillas y vinculación profunda. |
 | `data-attendance-action` | Mayormente directo | Conservar temporalmente: `exportToExcel` / `exportToPdf`, porque no hay exportador modular equivalente en este dominio. |
 | `data-user-action` | Híbrido mínimo | Conservar `saveUsr` / `delUsr` como fallback por compatibilidad con fragmentos y panel legacy. |
 | `data-student-action` | Híbrido | Conservar fallbacks de crear/editar/búsqueda/fotos hasta exportar acciones desde estudiantes, crear-estudiante y editar-estudiante sin ciclos. |

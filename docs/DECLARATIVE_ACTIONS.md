@@ -15,7 +15,7 @@ Módulos auxiliares:
 - `js/panels/autenticacion/utils/auth-actions.ts`
 - `js/panels/estudiantes/utils/student-actions.ts`
 - `js/panels/configuracion-academica/utils/academic-actions.ts`
-- `js/panels/asistencia/utils/attendance-actions.ts`
+- `apps/web/src/panels/asistencia/utils/attendance-actions.ts`
 - `apps/web/src/panels/horario/utils/schedule-actions.ts`
 - `apps/web/src/panels/actividades/utils/activity-actions.ts`
 - `apps/web/src/panels/usuarios/utils/user-actions.ts`
@@ -164,7 +164,7 @@ Acciones permitidas:
 - `filter`, `clear-filter`, `select-course`, `select-section`, `select-student`
 - `export`, `print`
 
-El registry vive en `js/panels/asistencia/utils/attendance-actions.ts`. Usa parámetros como `data-attendance-student-id`, `data-attendance-section-id`, `data-attendance-month`, `data-attendance-slot-index`, `data-attendance-status`, `data-attendance-target` y `data-attendance-value`.
+El registry vive en `apps/web/src/panels/asistencia/utils/attendance-actions.ts`. Usa parámetros como `data-attendance-student-id`, `data-attendance-section-id`, `data-attendance-month`, `data-attendance-slot-index`, `data-attendance-status`, `data-attendance-target` y `data-attendance-value`.
 
 Migrado en esta fase:
 
@@ -176,7 +176,8 @@ Migrado en esta fase:
 
 Pendiente:
 
-- Las exportaciones dependen de globals legacy `exportToExcel` / `exportToPdf` si existen en runtime.
+- Las exportaciones están encapsuladas en `apps/web/src/panels/asistencia/utils/attendance-export.ts`; `exportToExcel` / `exportToPdf` quedan como fallback legacy interno.
+- El path legacy `js/panels/asistencia/utils/attendance-actions.ts` reexporta el módulo nuevo temporalmente para mantener compatibilidad con imports antiguos.
 - `previous-day`, `next-day`, `clear-filter` y `select-student` quedan registrados como placeholders seguros hasta que existan controles específicos.
 
 ### Horario

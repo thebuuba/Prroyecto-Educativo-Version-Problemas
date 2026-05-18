@@ -25,6 +25,7 @@
 | Reportes | `reportDownloadExcel`, `reportDownloadPdf`, `reportDownloadWord` | El módulo ya vive en `apps/web/src/panels/reportes/` y el registry usa imports directos; conservar por compatibilidad hasta retirar fallbacks. |
 | Matriz | No publica globals propios. | El módulo ya vive en `apps/web/src/panels/matriz/`; mantiene solo `window.RENDERS.matriz` por contrato del renderer dinámico. |
 | Horario | `setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal`, `generateTeacherScheduleBase` | La fuente real vive en `apps/web/src/panels/horario/utils/actions.ts`; conservar globals como adaptadores por compatibilidad runtime. |
+| Asistencia | `shiftMonth`, `setActiveGroup`, `cycleMark`, `commitDayDay`, `cycleException`, `applyWeeklySchedule`, `exportToExcel`, `exportToPdf` | La fuente real vive en `apps/web/src/panels/asistencia/`; exportaciones encapsuladas en `attendance-export.ts`. |
 | Actividades | `setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`, `saveAct`, `saveTpl` | La fuente real vive en `apps/web/src/panels/actividades/`; conservar globals como adaptadores por compatibilidad runtime. |
 | Usuarios | `saveUsr`, `delUsr` | La fuente real vive en `apps/web/src/panels/usuarios/utils/user-save.ts`; conservar globals como adaptadores por compatibilidad runtime. |
 | Instrumentos | `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator` | La fuente real vive en `apps/web/src/panels/instrumentos/utils/instrument-actions.ts`; conservar globals como adaptadores temporales. |
@@ -44,7 +45,7 @@
 
 - `data-student-action`: conserva fallbacks hacia funciones legacy de estudiantes.
 - `data-academic-action`: conserva fallbacks hacia funciones académicas legacy.
-- `data-attendance-action`: mezcla lógica directa con adaptadores de exportación.
+- `data-attendance-action`: usa imports directos para lógica de asistencia y exportaciones encapsuladas; conserva globals solo como compatibilidad.
 - `data-schedule-action`: directo para acciones visibles; los globals de horario quedan publicados como adaptadores.
 - `data-user-action`: usa imports directos hacia `apps/web/src/panels/usuarios/utils/user-save.ts`; `saveUsr` y `delUsr` quedan como adaptadores globales temporales.
 
@@ -81,6 +82,8 @@
 - `data-schedule-action` dejó de depender directamente de `window.setScheduleTab`, `window.changeCalendarMonth`, `window.openScheduleWizard`, `window.editScheduleCell` y `window.openAddEventModal` cuando el módulo de horario está inicializado.
 - `horario` fue movido físicamente a `apps/web/src/panels/horario/`; las rutas `js/panels/horario/**` quedaron como adaptadores de reexportación.
 - `data-schedule-action` dejó de usar fallbacks internos para `setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal` y `generateTeacherScheduleBase`.
+- `asistencia` fue movido físicamente a `apps/web/src/panels/asistencia/`; las rutas `js/panels/asistencia/**` quedaron como adaptadores de reexportación.
+- `data-attendance-action` dejó de llamar directamente `window.exportToExcel`, `window.exportToPdf` y `window.print`; ahora usa `attendance-export.ts`.
 - `data-activity-action` dejó de depender directamente de `window.setActView`, `window.updateBlockMeta`, `window.handleActNameInput`, `window.updateActPts`, `window.addActToBlock`, `window.removeActFromBlock` y `window.autoAdjustBlock`.
 - `data-activity-action` ahora importa `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument` y `openInstrumentCreator` desde `apps/web/src/panels/instrumentos/utils/instrument-actions.ts`.
 - `instrumentos` fue movido físicamente a `apps/web/src/panels/instrumentos/`; las rutas `js/panels/instrumentos/**` quedaron como adaptadores de reexportación.
@@ -110,7 +113,7 @@
 | `data-planning-action` | Directo | Solo `window.print()`, API del navegador. |
 | `data-schedule-action` | Directo para acciones visibles | Reemplazables ya importados: tabs, mes, asistente, celdas, eventos y generación base. Globals conservados solo como adaptadores temporales. |
 | `data-activity-action` | Directo para acciones visibles | Reemplazables ya importados: vista, metas, edición de nombre/puntos, alta/eliminación, autoajuste, instrumentos básicos, vinculación de instrumentos y guardado de actividad/plantilla. `_linkActId` se consulta por estado modular con espejo legacy. |
-| `data-attendance-action` | Mayormente directo | Conservar temporalmente: `exportToExcel` / `exportToPdf`, porque no hay exportador modular equivalente en este dominio. |
+| `data-attendance-action` | Directo para acciones visibles | Exportación encapsulada en `attendance-export.ts`, con `exportToExcel` / `exportToPdf` como fallback legacy interno. |
 | `data-user-action` | Directo con adaptador legacy | Creación y eliminación usan imports directos. `saveUsr` y `delUsr` se conservan como globales temporales para compatibilidad legacy. |
 | `data-student-action` | Híbrido | Conservar fallbacks de crear/editar/búsqueda/fotos hasta exportar acciones desde estudiantes, crear-estudiante y editar-estudiante sin ciclos. |
 | `data-academic-action` | Híbrido | Conservar fallbacks de setup académico, edición/eliminación y prompts; mover por grupos después de desacoplar creación/edición. |
@@ -119,8 +122,7 @@
 ## Ruta Para Retiro Gradual
 
 1. Reducir el uso directo de APIs SQL/cloud globales en dominios restantes.
-2. Convertir `asistencia` a migración física por grupos pequeños.
-3. Convertir registries híbridos restantes a imports directos, uno por dominio.
+2. Convertir registries híbridos restantes a imports directos, uno por dominio.
 4. Reemplazar `window.RENDERS` por registro modular explícito del router.
 5. Reemplazar `_renderPanel` por una función importada desde routing/app.
 6. Encapsular `S` detrás de store/imports directos.

@@ -1,25 +1,5 @@
-# Panel Attendance (Asistencia)
+# Asistencia Legacy Adapter
 
-## 📋 Descripción
-Panel de registro y gestión de asistencia de estudiantes.
+Esta carpeta conserva las rutas públicas legacy de `js/panels/asistencia/**`.
 
-## 🎯 Funcionalidades
-- Registro de asistencia diaria
-- Gestión de estados (presente, ausente, tardanza, excusa)
-- Estadísticas de asistencia
-- Reportes de asistencia por período
-
-## 📁 Estructura
-```
-attendance/
-├── principal.js              # Panel principal
-├── components/
-│   └── render.js        # Componentes de renderizado
-├── utils/
-│   ├── actions.js       # Acciones de negocio
-│   └── model.js         # Modelo de datos
-└── README.md
-```
-
----
-**Última actualización**: 2026-04-26
+La implementación real vive en `apps/web/src/panels/asistencia/`.

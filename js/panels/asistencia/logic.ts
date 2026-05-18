@@ -1,2 +1,1 @@
-export * from './utils/actions.ts';
-export * from './utils/model.ts';
+export * from '../../../apps/web/src/panels/asistencia/logic.ts';

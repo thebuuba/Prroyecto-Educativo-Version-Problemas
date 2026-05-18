@@ -2,7 +2,7 @@
 
 ## Estado
 
-La migración física real ya inició con módulos de bajo acoplamiento. `reportes`, `planificaciones`, `matriz`, `instrumentos`, `actividades`, `usuarios` y `horario` viven ahora en `apps/web/src/panels/`, mientras las rutas legacy en `js/panels/` quedaron como adaptadores temporales de reexportación.
+La migración física real ya inició con módulos de bajo acoplamiento. `reportes`, `planificaciones`, `matriz`, `instrumentos`, `actividades`, `usuarios`, `horario` y `asistencia` viven ahora en `apps/web/src/panels/`, mientras las rutas legacy en `js/panels/` quedaron como adaptadores temporales de reexportación.
 
 Revisión de `matriz`: el panel contiene `principal.ts`, `view.ts`, `logic.ts`, `components/vista.ts` y `README.md`. Solo depende de `js/core/state.ts`, `config.ts`, `constants.ts` y `domain-utils.ts`; registra `window.RENDERS.matriz` para el renderer dinámico y no publica acciones/globales propios. El movimiento se completó conservando la clave pública `/js/panels/matriz/principal.ts`.
 
@@ -19,6 +19,7 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 | `actividades` | `apps/web/src/panels/actividades/` | `js/panels/actividades/**` reexporta al nuevo origen. | Medio: conserva `window.RENDERS.actividades`, globals temporales de acciones/guardado y dependencias SQL globales. |
 | `usuarios` | `apps/web/src/panels/usuarios/` | `js/panels/usuarios/**` reexporta al nuevo origen. | Bajo-medio: conserva `window.RENDERS.usuarios`, `saveUsr` y `delUsr` como adaptadores temporales. |
 | `horario` | `apps/web/src/panels/horario/` | `js/panels/horario/**` reexporta al nuevo origen. | Medio: conserva `window.RENDERS.horario/calendario` y globals temporales de agenda. |
+| `asistencia` | `apps/web/src/panels/asistencia/` | `js/panels/asistencia/**` reexporta al nuevo origen. | Medio: conserva `window.RENDERS.asistencia`, globals temporales y exportadores legacy encapsulados. |
 
 ## Bloqueadas
 
@@ -27,7 +28,6 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 | `js/core/` | Contiene `state`, routing, UI, bridge, API SQL/cloud y persistencia; muchas referencias cruzadas. | Alto |
 | `js/panels/estudiantes/`, `crear-estudiante/`, `editar-estudiante/` | Dependen de fallbacks globales, `legacy-api.ts`, deleters y fragments. | Medio-alto |
 | `js/panels/configuracion-academica/`, `crear-seccion/` | Dependen de funciones académicas globales y sync SQL. | Medio-alto |
-| `js/panels/asistencia/` | Mezcla modelo directo con actions legacy y sync SQL. | Medio |
 | `login-registro-auth/` | Tiene bootstrap propio y compat auth. | Medio |
 
 ## Imports Problemáticos
@@ -54,7 +54,7 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 - `_renderPanel` como punto de render.
 - APIs `EduGestCloud`, `AulaBaseSqlApi`, `EduGestDB`.
 - Fragments `sections/` cargados por ensamblado y modales bajo demanda.
-- `reportes`, `planificaciones`, `matriz`, `instrumentos`, `actividades`, `usuarios` y `horario` ya están físicamente en `apps/web`, pero todavía registran su renderer en `window.RENDERS`.
+- `reportes`, `planificaciones`, `matriz`, `instrumentos`, `actividades`, `usuarios`, `horario` y `asistencia` ya están físicamente en `apps/web`, pero todavía registran su renderer en `window.RENDERS`.
 
 ## Dependencias Legacy
 
@@ -86,10 +86,9 @@ Actividades:
 ## Orden Recomendado
 
 1. Continuar con reducción de dependencias SQL/window en dominios restantes.
-2. Continuar con `asistencia` por grupos pequeños.
-3. Mover estudiantes/académico cuando sus fallbacks globales hayan desaparecido.
-4. Separar `js/core/` en submódulos dentro de `apps/web/src` con adaptadores raíz.
-5. Mover `login-registro-auth/` cuando auth/setup ya no dependa de bootstrap HTML legacy.
+2. Mover estudiantes/académico cuando sus fallbacks globales hayan desaparecido.
+3. Separar `js/core/` en submódulos dentro de `apps/web/src` con adaptadores raíz.
+4. Mover `login-registro-auth/` cuando auth/setup ya no dependa de bootstrap HTML legacy.
 
 ## Usuarios
 
@@ -107,6 +106,15 @@ Actividades:
 - Fallbacks internos reducidos: `data-schedule-action` usa imports directos para tabs, mes, asistente, celdas, eventos y generación base.
 - Globals conservados como adaptadores: `setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal`, `generateTeacherScheduleBase`.
 - Routing: `PANEL_MODULES` conserva la clave pública `/js/panels/horario/principal.ts`, pero resuelve hacia `apps/web/src/panels/horario/principal.ts`.
+
+## Asistencia
+
+- Archivos movidos: `principal.ts`, `view.ts`, `logic.ts`, `components/vista.ts`, `utils/actions.ts`, `utils/attendance-actions.ts`, `utils/attendance-export.ts`, `utils/model.ts` y `README.md`.
+- Adaptadores creados: los mismos paths bajo `js/panels/asistencia/**` reexportan hacia `apps/web/src/panels/asistencia/**`.
+- Fuente modular real: `apps/web/src/panels/asistencia/utils/attendance-actions.ts`, `apps/web/src/panels/asistencia/utils/model.ts` y `apps/web/src/panels/asistencia/utils/actions.ts`.
+- Exportaciones separadas: `apps/web/src/panels/asistencia/utils/attendance-export.ts` encapsula `exportToExcel`, `exportToPdf` y `window.print`.
+- Globals conservados como adaptadores: `shiftMonth`, `setActiveGroup`, `cycleMark`, `commitDayDay`, `cycleException`, `applyWeeklySchedule`, `exportToExcel`, `exportToPdf`.
+- Routing: `PANEL_MODULES` conserva la clave pública `/js/panels/asistencia/principal.ts`, pero resuelve hacia `apps/web/src/panels/asistencia/principal.ts`.
 
 ## Criterio De Listo
 

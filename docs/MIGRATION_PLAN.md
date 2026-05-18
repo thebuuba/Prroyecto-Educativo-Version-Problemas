@@ -29,13 +29,13 @@ Avance aplicado:
 - `js/panels/actividades/` movido físicamente a `apps/web/src/panels/actividades/`.
 - `js/panels/usuarios/` movido físicamente a `apps/web/src/panels/usuarios/`.
 - `js/panels/horario/` movido físicamente a `apps/web/src/panels/horario/`.
+- `js/panels/asistencia/` movido físicamente a `apps/web/src/panels/asistencia/`.
 - Las rutas legacy quedaron como adaptadores de reexportación para no romper imports existentes.
 - `routing.ts` conserva claves públicas `/js/panels/...`, pero resuelve esos bundles hacia `apps/web/src/panels/...`.
 
 Mover en grupos pequeños:
 
-1. Panel de bajo acoplamiento restante (`asistencia` por grupos pequeños).
-2. Estudiantes/académico por grupos pequeños cuando bajen sus fallbacks.
+1. Estudiantes/académico por grupos pequeños cuando bajen sus fallbacks.
 3. `login-registro-auth/`.
 4. `sections/`.
 5. `js/core/`.
@@ -61,7 +61,7 @@ Avance aplicado:
 - Dominio estudiantes migrado a `data-student-action` con registry explícito en `js/panels/estudiantes/utils/student-actions.ts`.
 - Carga masiva migrada para apertura, modo de entrada, archivo seleccionado, opciones, análisis, confirmación y exportaciones simples sin cambiar textos visibles ni formato esperado.
 - Dominio académico migrado a `data-academic-action` con registry explícito en `js/panels/configuracion-academica/utils/academic-actions.ts`.
-- Dominio asistencia migrado a `data-attendance-action` con registry explícito en `js/panels/asistencia/utils/attendance-actions.ts`.
+- Dominio asistencia migrado a `data-attendance-action` con registry explícito en `apps/web/src/panels/asistencia/utils/attendance-actions.ts`.
 - Dominio horario migrado a `data-schedule-action` con registry explícito en `apps/web/src/panels/horario/utils/schedule-actions.ts`.
 - Dominio actividades/calificaciones migrado a `data-activity-action` con registry explícito en `apps/web/src/panels/actividades/utils/activity-actions.ts`.
 - Dominio usuarios/modales compartidos migrado a `data-user-action` con registry explícito en `apps/web/src/panels/usuarios/utils/user-actions.ts`.
@@ -110,11 +110,11 @@ Conteo de la fase asistencia:
 
 | Alcance | Inline antes | Inline después | `data-attendance-action` después |
 | --- | ---: | ---: | ---: |
-| `js/panels/asistencia/` | 11 | 0 | 10 |
+| `apps/web/src/panels/asistencia/` | 11 | 0 | 10 |
 
 Riesgos asistencia:
 
-- `exportToExcel` y `exportToPdf` siguen como adaptadores legacy si existen; no se implementó un exportador nuevo.
+- `exportToExcel` y `exportToPdf` quedan encapsulados en `apps/web/src/panels/asistencia/utils/attendance-export.ts`; no se implementó un exportador nuevo.
 - Algunas acciones del registry (`previous-day`, `next-day`, `select-student`, `clear-filter`) quedan reservadas como ramas seguras porque no hay controles visibles todavía.
 
 Conteo de la fase horario:
@@ -194,7 +194,7 @@ Orden recomendado:
 
 - Estabilizar reportes/planificaciones/matriz ya movidos.
 - convertir registries híbridos a imports directos por dominio.
-- asistencia.
+- estudiantes/académico.
 - estudiantes/académico.
 - auth/setup y core crítico.
 

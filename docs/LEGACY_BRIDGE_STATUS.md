@@ -80,6 +80,7 @@
 - `apps/web/src/panels/estudiantes/utils/student-crud.ts` encapsula wrappers seguros para consulta por ID, alta programatica, navegación a panel y edición, delegando modales a `student-modals.ts`.
 - `apps/web/src/panels/estudiantes/utils/student-delete.ts` encapsula eliminación de estudiantes y delega a `js/core/deleters.ts` sin duplicar confirmación ni persistencia.
 - `apps/web/src/panels/estudiantes/utils/student-helpers.ts` contiene helpers puros de texto, matrícula, búsqueda por ID y directorio local; `student-logic.ts` los consume sin mover modales ni SQL.
+- `apps/web/src/panels/estudiantes/utils/student-dom-fields.ts` encapsula lectura/escritura de IDs legacy de crear, vista y edición (`e-*`, `sv-*`, `ee-*`); `student-logic.ts` sigue controlando validaciones, mensajes, modales, SQL y navegación.
 - `apps/web/src/panels/estudiantes/utils/student-bulk-state.ts` contiene `BULK_IMPORT_STATE` y setters/getters; `student-logic.ts` conserva el parser y actualiza ese estado compartido.
 - `apps/web/src/panels/estudiantes/utils/student-domain-actions.ts` centraliza acciones base: creación, edición, eliminación, guardado, búsqueda, filtros, selección, fotos y selección recordada.
 - `apps/web/src/panels/estudiantes/utils/student-bulk.ts` centraliza carga masiva, exportaciones CSV y wrappers hacia el parser legacy sin cambiar formato esperado.
@@ -107,6 +108,7 @@
 - `data-attendance-action` dejó de llamar directamente `window.exportToExcel`, `window.exportToPdf` y `window.print`; ahora usa `attendance-export.ts`.
 - `data-student-action` separó acciones base en `student-domain-actions.ts` y carga masiva/exportación en `student-bulk.ts`; ahora esas fuentes viven bajo `apps/web/src/panels/estudiantes/`.
 - Helpers puros de estudiantes y estado de carga masiva fueron extraídos a `student-helpers.ts` y `student-bulk-state.ts`; `student-logic.ts` sigue siendo dueño de DOM, modales, SQL y parser.
+- Lectura/escritura DOM simple de modales de estudiantes fue encapsulada en `student-dom-fields.ts`; el DOM de carga masiva `be-*` sigue en `student-logic.ts` junto al parser legacy.
 - `data-activity-action` dejó de depender directamente de `window.setActView`, `window.updateBlockMeta`, `window.handleActNameInput`, `window.updateActPts`, `window.addActToBlock`, `window.removeActFromBlock` y `window.autoAdjustBlock`.
 - `data-activity-action` ahora importa `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument` y `openInstrumentCreator` desde `apps/web/src/panels/instrumentos/utils/instrument-actions.ts`.
 - `instrumentos` fue movido físicamente a `apps/web/src/panels/instrumentos/`; las rutas `js/panels/instrumentos/**` quedaron como adaptadores de reexportación.

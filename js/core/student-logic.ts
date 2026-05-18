@@ -8,8 +8,8 @@
 
 import { S } from './state.ts';
 import { 
-  v, toast, persist, uid, go, openM, closeM, forceCloseM, resetForm, fillSel,
-  formatMatricula, isValidMatricula, buildStudentAvatarDataUrl,
+  toast, persist, uid, go, openM, closeM, forceCloseM, resetForm, fillSel,
+  formatMatricula, isValidMatricula,
   sortCourses, getScopedSections, escapeHtml
 } from './domain-utils.ts';
 import { syncSqlStudentCreateOrUpdate } from './sync-logic.ts';
@@ -27,6 +27,14 @@ import {
   studentMatriculaExists,
   upsertStudentDirectoryEntryInList,
 } from '../../apps/web/src/panels/estudiantes/utils/student-helpers.ts';
+import {
+  focusStudentCreateName,
+  readStudentCreateFields,
+  readStudentEditFields,
+  writeStudentCreateMatricula,
+  writeStudentEditFields,
+  writeStudentViewFields,
+} from '../../apps/web/src/panels/estudiantes/utils/student-dom-fields.ts';
 
 /**
  * Abre el modal para elegir cómo agregar estudiantes.
@@ -77,12 +85,11 @@ export async function openEstM(secId) {
  */
 export async function saveEst(options = {}) {
   const keepOpen = options?.keepOpen === true;
-  const nom = v('e-nom'), ape = v('e-ape');
-  const matOrig = v('e-mat');
-  const mat = formatMatricula(matOrig);
-  
-  const matInput = document.getElementById('e-mat');
-  if (matInput) matInput.value = mat;
+  const createFields = readStudentCreateFields();
+  const nom = createFields.nombre;
+  const ape = createFields.apellido;
+  const mat = formatMatricula(createFields.matriculaOriginal);
+  writeStudentCreateMatricula(mat);
 
   if (!nom || !ape) { toast('Nombre y apellido requeridos', true); return; }
   if (!mat) { toast('Matrícula requerida', true); return; }
@@ -90,11 +97,11 @@ export async function saveEst(options = {}) {
   
   if (matriculaExists(mat)) { toast('La matrícula ya está registrada', true); return; }
 
-  const selectedSecId = document.getElementById('e-sec')?.value;
+  const selectedSecId = createFields.selectedSectionId;
   if (!selectedSecId) { toast('Selecciona una sección', true); return; }
 
   const sec = S.secciones.find(s => s.id === selectedSecId);
-  const photoUrl = String(document.getElementById('e-photo-data')?.value || '').trim();
+  const photoUrl = createFields.photoUrl;
 
   const student = {
     id: uid(),
@@ -122,8 +129,7 @@ export async function saveEst(options = {}) {
 
   if (keepOpen) {
     resetForm('student', { courseId: selectedSecId });
-    const nameInput = document.getElementById('e-nom');
-    if (nameInput) nameInput.focus();
+    focusStudentCreateName();
     toast('Estudiante registrado. Puedes agregar otro.');
     return;
   }
@@ -148,20 +154,12 @@ export async function openViewStudent(stId) {
   const grade = S.grades.find(g => g.id === (sec?.gradeId || st.gradeId));
   const fullName = `${st.nombre} ${st.apellido}`;
 
-  const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-  
-  setText('sv-name', fullName);
-  setText('sv-hero-name', fullName);
-  setText('sv-mat', st.matricula || '?');
-  setText('sv-grade', grade?.name || '?');
-  setText('sv-section', sec?.sec || '?');
-  setText('sv-subject', sec?.materia || 'General');
-
-  const photoEl = document.getElementById('sv-photo');
-  if (photoEl) photoEl.src = st.photoUrl || buildStudentAvatarDataUrl(fullName);
-
-  const idHidden = document.getElementById('sv-id');
-  if (idHidden) idHidden.value = st.id;
+  writeStudentViewFields(st, {
+    fullName,
+    gradeName: grade?.name || '?',
+    sectionName: sec?.sec || '?',
+    subjectName: sec?.materia || 'General',
+  });
 
   openM('m-est-view');
 }
@@ -177,15 +175,7 @@ export async function openEditStudent(stId) {
   const sections = sortCourses(getScopedSections());
   fillSel('ee-sec', sections, s => s.id, s => `${s.grado} ${s.sec} · ${s.materia}`, st.courseId || st.sectionId || st.seccionId);
 
-  const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
-  setVal('ee-id', st.id);
-  setVal('ee-nom', st.nombre);
-  setVal('ee-ape', st.apellido);
-  setVal('ee-mat', formatMatricula(st.matricula));
-  setVal('ee-photo-data', st.photoUrl || '');
-
-  const preview = document.getElementById('ee-photo-preview');
-  if (preview) preview.src = st.photoUrl || buildStudentAvatarDataUrl(`${st.nombre} ${st.apellido}`);
+  writeStudentEditFields(st);
 
   openM('m-est-edit');
 }
@@ -194,23 +184,25 @@ export async function openEditStudent(stId) {
  * Guarda los cambios realizados a un estudiante.
  */
 export async function saveEditStudent() {
-  const id = v('ee-id');
+  const editFields = readStudentEditFields();
+  const id = editFields.id;
   const st = findStudentById(S.estudiantes, id);
   if (!st) return;
 
-  const nom = v('ee-nom'), ape = v('ee-ape');
-  const mat = formatMatricula(v('ee-mat'));
+  const nom = editFields.nombre;
+  const ape = editFields.apellido;
+  const mat = formatMatricula(editFields.matriculaOriginal);
 
   if (!nom || !ape || !mat) { toast('Completa todos los campos', true); return; }
   if (matriculaExists(mat, id)) { toast('La matrícula ya está en uso', true); return; }
 
-  const secId = document.getElementById('ee-sec')?.value;
+  const secId = editFields.selectedSectionId;
   const sec = S.secciones.find(s => s.id === secId);
 
   st.nombre = nom;
   st.apellido = ape;
   st.matricula = mat;
-  st.photoUrl = v('ee-photo-data');
+  st.photoUrl = editFields.photoUrl;
   st.courseId = secId;
   st.sectionId = secId;
   st.seccionId = secId;

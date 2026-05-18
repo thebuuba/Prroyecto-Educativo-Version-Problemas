@@ -1,5 +1,7 @@
 # Panel Planning (Planificaciones)
 
+> Adaptador legacy temporal. El origen real del panel está en `apps/web/src/panels/planificaciones/`.
+
 ## 📋 Descripción
 Panel de gestión de planificaciones curriculares y competencias.
 

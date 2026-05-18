@@ -20,13 +20,21 @@ Convertir AulaBase/EduGest en una arquitectura profesional, mantenible y escalab
 
 ## Fase 2: frontend físico en apps/web
 
+Avance aplicado:
+
+- `js/panels/reportes/` movido físicamente a `apps/web/src/panels/reportes/`.
+- `js/panels/planificaciones/` movido físicamente a `apps/web/src/panels/planificaciones/`.
+- Las rutas legacy quedaron como adaptadores de reexportación para no romper imports existentes.
+- `routing.ts` conserva claves públicas `/js/panels/...`, pero resuelve esos dos bundles hacia `apps/web/src/panels/...`.
+
 Mover en grupos pequeños:
 
-1. `login-registro-auth/`.
-2. `sections/`.
-3. `js/core/`.
-4. `js/panels/`.
-5. `index.html`, `terminos.html`, `privacidad.html`.
+1. Paneles de bajo acoplamiento restantes (`matriz`, luego `usuarios` si se resuelven fallbacks).
+2. `login-registro-auth/`.
+3. `sections/`.
+4. `js/core/`.
+5. `js/panels/` remanente.
+6. `index.html`, `terminos.html`, `privacidad.html`.
 
 Cada grupo debe incluir:
 
@@ -56,6 +64,8 @@ Avance aplicado:
 - Shell/UI mínimo migrado a `data-ui-action` para tablero, institución y selectores globales de contexto.
 - `window.openDashboardCourse` eliminado tras confirmar cero referencias runtime.
 - `data-report-action` convertido a imports directos para exportaciones Excel/PDF/Word, conservando globals solo como compatibilidad.
+- `data-planning-action` y `data-report-action` ahora se importan desde `apps/web/src/panels/...`.
+- Acciones internas de planificaciones convertidas de `window.S` / `window.go` a imports directos de `S` y `go`.
 
 Conteo de la fase estudiantes:
 
@@ -156,18 +166,19 @@ Riesgos de globals:
 
 Siguiente trabajo:
 
-1. Migrar handlers inline restantes por dominio con registries explícitos.
-2. Reemplazar accesos `window.X` por imports ES cuando ya no haya HTML inline.
+1. Mover `matriz` si el renderer y sus imports se mantienen aislados.
+2. Convertir registries híbridos restantes a imports ES cuando no rompan lazy loading.
 3. Mantener `legacy-api.ts` como lista explícita de deuda.
-4. Remover globals por dominio cuando no existan referencias.
+4. Remover globals por dominio cuando no existan referencias runtime.
 
 Orden recomendado:
 
-- UI básica: `openM`, `closeM`, `toast`
-- routing: `go`
-- planificaciones/reportes avanzados y modales compartidos restantes
-- convertir registries híbridos a imports directos por dominio
-- auth/setup
+- Estabilizar reportes/planificaciones ya movidos.
+- `matriz`.
+- convertir registries híbridos a imports directos por dominio.
+- usuarios, horario y asistencia.
+- estudiantes/académico.
+- auth/setup y core crítico.
 
 ## Fase 4: backend por capas
 

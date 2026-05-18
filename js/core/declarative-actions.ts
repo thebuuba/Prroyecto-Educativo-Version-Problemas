@@ -16,8 +16,8 @@ import { handleDeclarativeAttendanceAction } from '../panels/asistencia/utils/at
 import { handleDeclarativeScheduleAction } from '../panels/horario/utils/schedule-actions.ts';
 import { handleDeclarativeActivityAction } from '../panels/actividades/utils/activity-actions.ts';
 import { handleDeclarativeUserAction } from '../panels/usuarios/utils/user-actions.ts';
-import { handleDeclarativePlanningAction } from '../panels/planificaciones/utils/planning-actions.ts';
-import { handleDeclarativeReportAction } from '../panels/reportes/utils/report-actions.ts';
+import { handleDeclarativePlanningAction } from '../../apps/web/src/panels/planificaciones/utils/planning-actions.ts';
+import { handleDeclarativeReportAction } from '../../apps/web/src/panels/reportes/utils/report-actions.ts';
 
 function getDatasetValue(element: Element, key: string): string {
   return String((element as HTMLElement).dataset?.[key] || '').trim();

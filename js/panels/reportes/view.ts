@@ -1,1 +1,1 @@
-export * from './components/vista.ts';
+export * from '../../../apps/web/src/panels/reportes/view.ts';

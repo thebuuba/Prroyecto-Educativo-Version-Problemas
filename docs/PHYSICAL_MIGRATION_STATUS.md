@@ -2,14 +2,21 @@
 
 ## Estado
 
-No se movieron carpetas en esta fase. El objetivo es dejar claro qué puede moverse físicamente después de estabilizar los últimos contratos globales.
+La migración física real ya inició con módulos de bajo acoplamiento. `reportes` y `planificaciones` viven ahora en `apps/web/src/panels/`, mientras las rutas legacy en `js/panels/` quedaron como adaptadores temporales de reexportación.
 
-## Listas Para Mover Primero
+El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiendo claves `/js/panels/...` para no romper lazy loading, pero `PANEL_MODULES` resuelve esos bundles hacia los módulos nuevos en `apps/web/src/panels/...`.
+
+## Movidas Físicamente
+
+| Módulo | Nuevo origen | Adaptador legacy | Riesgo actual |
+| --- | --- | --- | --- |
+| `reportes` | `apps/web/src/panels/reportes/` | `js/panels/reportes/**` reexporta al nuevo origen. | Bajo: conserva `window.RENDERS.reportes` y globals temporales de exportación. |
+| `planificaciones` | `apps/web/src/panels/planificaciones/` | `js/panels/planificaciones/**` reexporta al nuevo origen. | Bajo-medio: conserva `window.RENDERS.planificaciones` y globals temporales `lessonPlan*`. |
+
+## Próximas Listas Para Mover
 
 | Carpeta | Estado | Riesgo | Adaptadores necesarios |
 | --- | --- | --- | --- |
-| `js/panels/reportes/` | Casi lista | Bajo | Mantener alias/ruta de bundle en `routing.ts`; conservar exportadores legacy temporalmente. |
-| `js/panels/planificaciones/` | Casi lista | Bajo-medio | Mantener ruta dinámica del panel y compat de acciones legacy hasta retirar globals. |
 | `js/panels/usuarios/` | Parcialmente lista | Medio | Resolver fallback `delUsr` y modal `m-usr`. |
 | `js/panels/matriz/` | Casi lista | Bajo | Verificar imports y renderer. |
 
@@ -28,8 +35,9 @@ No se movieron carpetas en esta fase. El objetivo es dejar claro qué puede move
 ## Imports Problemáticos
 
 - Imports relativos profundos hacia `../../../core/...`.
+- Los módulos movidos usan imports relativos profundos hacia `js/core/...` desde `apps/web/src/panels/...`; son explícitos y validados, pero deben reemplazarse por aliases cuando `js/core/` se mueva.
 - Paneles que importan `domain-utils.ts`, que a su vez reexporta muchas APIs.
-- `routing.ts` mantiene rutas de bundles con paths físicos legacy.
+- `routing.ts` mantiene rutas públicas de bundles con paths legacy, aunque los imports directos de `reportes` y `planificaciones` apuntan al nuevo origen.
 - `legacy-api.ts` agrupa dominios con `Object.assign(window, ...)`.
 
 ## Dependencias Circulares Potenciales
@@ -46,6 +54,7 @@ No se movieron carpetas en esta fase. El objetivo es dejar claro qué puede move
 - `_renderPanel` como punto de render.
 - APIs `EduGestCloud`, `AulaBaseSqlApi`, `EduGestDB`.
 - Fragments `sections/` cargados por ensamblado y modales bajo demanda.
+- `reportes` y `planificaciones` ya están físicamente en `apps/web`, pero todavía registran su renderer en `window.RENDERS`.
 
 ## Dependencias Legacy
 
@@ -56,12 +65,13 @@ No se movieron carpetas en esta fase. El objetivo es dejar claro qué puede move
 
 ## Orden Recomendado
 
-1. Mover paneles de menor acoplamiento: `reportes`, `matriz`, `planificaciones`.
-2. Convertir registries híbridos a imports directos por dominio.
-3. Mover `usuarios` y luego `horario`/`asistencia`.
-4. Mover estudiantes/académico cuando sus fallbacks globales hayan desaparecido.
-5. Separar `js/core/` en submódulos dentro de `apps/web/src` con adaptadores raíz.
-6. Mover `login-registro-auth/` cuando auth/setup ya no dependa de bootstrap HTML legacy.
+1. Completar estabilización de `reportes` y `planificaciones` ya movidos.
+2. Mover `matriz` si sus imports y renderer se mantienen aislados.
+3. Convertir registries híbridos a imports directos por dominio.
+4. Mover `usuarios` y luego `horario`/`asistencia`.
+5. Mover estudiantes/académico cuando sus fallbacks globales hayan desaparecido.
+6. Separar `js/core/` en submódulos dentro de `apps/web/src` con adaptadores raíz.
+7. Mover `login-registro-auth/` cuando auth/setup ya no dependa de bootstrap HTML legacy.
 
 ## Criterio De Listo
 

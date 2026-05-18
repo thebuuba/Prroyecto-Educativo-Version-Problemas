@@ -1,5 +1,7 @@
 # Panel Reports (Reportes)
 
+> Adaptador legacy temporal. El origen real del panel está en `apps/web/src/panels/reportes/`.
+
 ## 📋 Descripción
 Panel de generación y exportación de reportes académicos.
 

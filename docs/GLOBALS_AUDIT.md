@@ -21,7 +21,7 @@ Quedan coincidencias textuales de `onclick=` en selectores de compatibilidad (`e
 | Handlers inline runtime reales | 0 | No quedan atributos `on*=` emitidos por fuentes runtime. |
 | Selectores/comentarios de compatibilidad | 7 | No ejecutan código inline; detectan HTML antiguo si aparece. |
 
-## Eliminado En Esta Fase
+## Eliminado En La Fase De Handlers
 
 | Archivo | Antes | Después |
 | --- | --- | --- |
@@ -74,9 +74,16 @@ Se mantienen porque hay referencias runtime reales, uso por registries como fall
 
 ## Globals Que Dejaron De Usarse Directamente Por Registries
 
-- `data-report-action` ya no invoca `window.reportDownloadExcel`, `window.reportDownloadPdf` ni `window.reportDownloadWord`; importa esas funciones desde `js/panels/reportes/utils/actions.ts`.
-- `data-planning-action` ya usaba imports directos hacia `js/panels/planificaciones/utils/actions.ts`.
+- `data-report-action` ya no invoca `window.reportDownloadExcel`, `window.reportDownloadPdf` ni `window.reportDownloadWord`; importa esas funciones desde `apps/web/src/panels/reportes/utils/actions.ts`.
+- `data-planning-action` usa imports directos hacia `apps/web/src/panels/planificaciones/utils/actions.ts`.
+- Las acciones internas de planificaciones dejaron de invocar `window.go` y de leer `window.S`; usan imports directos hacia `go` y `S`.
 - `data-ui-action` usa imports directos para contexto global e institución.
+
+## Migración Física Aplicada
+
+- `reportes` y `planificaciones` fueron movidos a `apps/web/src/panels/`.
+- Las rutas legacy `js/panels/reportes/**` y `js/panels/planificaciones/**` permanecen como adaptadores de reexportación.
+- No se eliminaron globals adicionales en esta fase; los globals de planificaciones y reportes siguen publicados como fallback temporal.
 
 ## Candidatas A Eliminar Después
 

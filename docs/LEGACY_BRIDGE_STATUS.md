@@ -21,16 +21,16 @@
 
 | Grupo | Globals | Próximo paso |
 | --- | --- | --- |
-| Planificaciones | `lessonPlanNew`, `lessonPlanContinue`, `lessonPlanReturnHome`, `lessonPlanSetActiveSection`, `lessonPlanSetGeneralField`, `lessonPlanSetCurriculumField` | El registry ya usa imports directos; eliminar cuando no haya referencias runtime. |
-| Reportes | `reportDownloadExcel`, `reportDownloadPdf`, `reportDownloadWord` | El registry ya usa imports directos; conservar por compatibilidad hasta retirar fallbacks. |
+| Planificaciones | `lessonPlanNew`, `lessonPlanContinue`, `lessonPlanReturnHome`, `lessonPlanSetActiveSection`, `lessonPlanSetGeneralField`, `lessonPlanSetCurriculumField` | El módulo ya vive en `apps/web/src/panels/planificaciones/` y el registry usa imports directos; eliminar cuando no haya referencias runtime. |
+| Reportes | `reportDownloadExcel`, `reportDownloadPdf`, `reportDownloadWord` | El módulo ya vive en `apps/web/src/panels/reportes/` y el registry usa imports directos; conservar por compatibilidad hasta retirar fallbacks. |
 | Actividades/instrumentos | `setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`, `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator` | Convertir `data-activity-action` a imports directos por grupos pequeños. |
 | Estudiantes/académico | `saveEst`, `saveEditStudent`, `saveSec`, `saveEditSection`, `saveGrade`, `delEst`, `delSec`, `delGrade` | Reemplazar fallbacks de registries cuando los módulos estén importables sin ciclos. |
 | Auth/setup | `loginAuth`, `registerAuth`, `authWithProvider`, `saveSetup`, `populateSetupForm`, `enforceMandatorySetup` | Mantener hasta retirar HTML auth/setup legacy y selectores de compatibilidad. |
 
 ## Registries Con Imports Directos
 
-- `data-planning-action`: usa imports directos desde `js/panels/planificaciones/utils/actions.ts`.
-- `data-report-action`: usa imports directos desde `js/panels/reportes/utils/actions.ts`.
+- `data-planning-action`: usa imports directos desde `apps/web/src/panels/planificaciones/utils/actions.ts`.
+- `data-report-action`: usa imports directos desde `apps/web/src/panels/reportes/utils/actions.ts`.
 - `data-ui-action`: vive en `js/core/declarative-actions.ts` y usa imports directos para estado, persistencia, routing y sincronización de perfil.
 
 ## Registries Todavía Híbridos
@@ -42,8 +42,13 @@
 - `data-activity-action`: usa adaptadores de actividades/instrumentos.
 - `data-user-action`: usa fallback a `delUsr` / `saveUsr` si existen.
 
-## Cambio Aplicado En Esta Fase
+## Cambios Recientes Aplicados
 
+- `reportes` y `planificaciones` fueron movidos físicamente a `apps/web/src/panels/`.
+- `js/panels/reportes/**` y `js/panels/planificaciones/**` quedaron como adaptadores temporales.
+- `routing.ts` conserva las claves legacy de bundles, pero importa los paneles movidos desde `apps/web/src/panels/...`.
+- `declarative-actions.ts` importa `data-planning-action` y `data-report-action` desde los módulos movidos.
+- Las acciones internas de planificaciones dejaron de depender directamente de `window.S` y `window.go`; usan imports directos a `S` y `go`.
 - Se eliminó `window.openDashboardCourse`.
 - `data-report-action` dejó de depender directamente de `window.reportDownloadExcel`, `window.reportDownloadPdf` y `window.reportDownloadWord`.
 - Los 6 handlers inline runtime restantes fueron migrados a `data-route` / `data-ui-action`.

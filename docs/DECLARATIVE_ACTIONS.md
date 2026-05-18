@@ -19,8 +19,8 @@ Módulos auxiliares:
 - `js/panels/horario/utils/schedule-actions.ts`
 - `js/panels/actividades/utils/activity-actions.ts`
 - `js/panels/usuarios/utils/user-actions.ts`
-- `js/panels/planificaciones/utils/planning-actions.ts`
-- `js/panels/reportes/utils/report-actions.ts`
+- `apps/web/src/panels/planificaciones/utils/planning-actions.ts`
+- `apps/web/src/panels/reportes/utils/report-actions.ts`
 - `js/core/form-actions.ts`
 
 ## Acciones soportadas
@@ -291,7 +291,9 @@ Acciones permitidas:
 - `open-template`, `apply-template`
 - `filter`, `clear-filter`
 
-El registry vive en `js/panels/planificaciones/utils/planning-actions.ts`. Los parámetros se pasan por `data-planning-id`, `data-grade-id`, `data-section-id`, `data-subject-id`, `data-period-id`, `data-target`, `data-value` y campos auxiliares como `data-planning-scope`.
+El registry vive en `apps/web/src/panels/planificaciones/utils/planning-actions.ts`. Los parámetros se pasan por `data-planning-id`, `data-grade-id`, `data-section-id`, `data-subject-id`, `data-period-id`, `data-target`, `data-value` y campos auxiliares como `data-planning-scope`.
+
+El path legacy `js/panels/planificaciones/utils/planning-actions.ts` reexporta el módulo nuevo temporalmente para mantener compatibilidad con imports antiguos.
 
 Migrado en esta fase:
 
@@ -320,7 +322,9 @@ Acciones permitidas:
 - `select-type`, `select-grade`, `select-section`, `select-subject`, `select-period`
 - `refresh`, `download`, `open-detail`
 
-El registry vive en `js/panels/reportes/utils/report-actions.ts`. Los parámetros se pasan por `data-report-id`, `data-report-type`, `data-grade-id`, `data-section-id`, `data-subject-id`, `data-period-id`, `data-target`, `data-value` y `data-format`.
+El registry vive en `apps/web/src/panels/reportes/utils/report-actions.ts`. Los parámetros se pasan por `data-report-id`, `data-report-type`, `data-grade-id`, `data-section-id`, `data-subject-id`, `data-period-id`, `data-target`, `data-value` y `data-format`.
+
+El path legacy `js/panels/reportes/utils/report-actions.ts` reexporta el módulo nuevo temporalmente para mantener compatibilidad con imports antiguos.
 
 Migrado en esta fase:
 

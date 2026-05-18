@@ -162,6 +162,8 @@ Resultado:
 - `student-crud.ts` envuelve `openEstM`, `saveEst`, `openViewStudent`, `openEditStudent`, `saveEditStudent`, `registerStudentSilently` y `upsertStudentDirectoryEntry` sin duplicar logica.
 - `student-delete.ts` envuelve `delEst` y conserva su confirmación, sync SQL, persistencia, navegación y toast originales.
 - `student-bulk.ts` ahora expone wrappers explícitos para `openBulkEstM`, `handleBulkFileChange`, `analyzeBulkInput` y `saveBulkEst`, manteniendo el parser legacy en core.
+- `student-helpers.ts` extrae helpers puros: normalización de texto/matrícula, búsqueda por ID, detección de matrícula duplicada y mapeo/upsert de directorio local.
+- `student-bulk-state.ts` extrae `BULK_IMPORT_STATE` con setters/getters; conserva la misma forma del estado (`mode`, `analyzed`, `entries`, `sourceName`, `lastRows`).
 - Las acciones de vista/listado viven en `apps/web/src/panels/estudiantes/utils/actions.ts`; exportan funciones modulares y siguen publicando globals temporales.
 - Las acciones de los paneles `student-create` y `student-edit` viven en `apps/web/src/panels/estudiantes/create/utils/actions.ts` y `apps/web/src/panels/estudiantes/edit/utils/actions.ts`; exportan funciones y conservan `window.*` como adaptador.
 - `student-bulk.ts` separó apertura, modo de entrada, archivo, preview, confirmación, cancelación y exportaciones. No agrega parser nuevo para `.xlsx/.xls`; conserva el comportamiento legacy de selección de archivo.

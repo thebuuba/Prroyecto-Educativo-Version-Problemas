@@ -2,6 +2,9 @@ import { S } from '../../../../../../js/core/state.ts';
 import { closeM, forceCloseM } from '../../../../../../js/core/ui.ts';
 import {
   BULK_IMPORT_STATE,
+  setBulkMode,
+} from './student-bulk-state.ts';
+import {
   analyzeBulkInput as analyzeBulkInputFromCore,
   handleBulkFileChange as handleBulkFileChangeFromCore,
   openBulkEstM as openBulkEstMFromCore,
@@ -9,9 +12,7 @@ import {
 } from '../../../../../../js/core/student-logic.ts';
 
 export function setBulkInputMode(mode: string): boolean {
-  const nextMode = mode === 'file' ? 'file' : 'text';
-  BULK_IMPORT_STATE.mode = nextMode;
-  BULK_IMPORT_STATE.analyzed = false;
+  const nextMode = setBulkMode(mode);
 
   const textWrap = document.getElementById('be-text-wrap');
   const fileWrap = document.getElementById('be-file-wrap');

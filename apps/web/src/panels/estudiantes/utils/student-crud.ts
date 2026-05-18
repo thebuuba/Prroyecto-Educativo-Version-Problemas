@@ -12,6 +12,7 @@ import {
   upsertStudentDirectoryEntry,
 } from '../../../../../../js/core/student-logic.ts';
 import { deleteStudentById } from './student-delete.ts';
+import { findStudentById } from './student-helpers.ts';
 
 type StudentRecordInput = {
   nombre?: string;
@@ -20,8 +21,7 @@ type StudentRecordInput = {
 };
 
 export function getStudentById(id = '') {
-  if (!id || !Array.isArray(S.estudiantes)) return null;
-  return S.estudiantes.find((student: any) => student.id === id) || null;
+  return findStudentById(S.estudiantes, id);
 }
 
 export async function createStudentRecord(input: StudentRecordInput = {}): Promise<unknown> {

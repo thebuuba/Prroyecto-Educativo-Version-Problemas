@@ -9,22 +9,24 @@
 import { S } from './state.ts';
 import { 
   v, toast, persist, uid, go, openM, closeM, forceCloseM, resetForm, fillSel,
-  formatMatricula, isValidMatricula, normalizeMatricula, buildStudentAvatarDataUrl,
-  sortCourses, getScopedSections, normTxt, escapeHtml
+  formatMatricula, isValidMatricula, buildStudentAvatarDataUrl,
+  sortCourses, getScopedSections, escapeHtml
 } from './domain-utils.ts';
 import { syncSqlStudentCreateOrUpdate } from './sync-logic.ts';
 import { ensurePeriodBuckets, getGroupLabel } from './academic-context-logic.ts';
 import { studentFinal } from './math-utils.ts';
 import { ensureModalLoaded } from './modal-loader.ts';
-
-// --- Estado de Carga Masiva ---
-export const BULK_IMPORT_STATE = {
-  mode: 'text',
-  analyzed: false,
-  entries: [],
-  sourceName: '',
-  lastRows: 0,
-};
+import {
+  BULK_IMPORT_STATE,
+  setBulkFile,
+  setBulkStudentsState,
+} from '../../apps/web/src/panels/estudiantes/utils/student-bulk-state.ts';
+import {
+  buildStudentDirectoryEntry,
+  findStudentById,
+  studentMatriculaExists,
+  upsertStudentDirectoryEntryInList,
+} from '../../apps/web/src/panels/estudiantes/utils/student-helpers.ts';
 
 /**
  * Abre el modal para elegir cómo agregar estudiantes.
@@ -136,7 +138,7 @@ export async function saveEst(options = {}) {
  * Abre la vista detallada de un estudiante.
  */
 export async function openViewStudent(stId) {
-  const st = S.estudiantes.find(e => e.id === stId);
+  const st = findStudentById(S.estudiantes, stId);
   if (!st) return;
 
   await ensureModalLoaded('m-est-view');
@@ -168,7 +170,7 @@ export async function openViewStudent(stId) {
  * Abre el modal para editar un estudiante.
  */
 export async function openEditStudent(stId) {
-  const st = S.estudiantes.find(e => e.id === stId);
+  const st = findStudentById(S.estudiantes, stId);
   if (!st) return;
 
   await ensureModalLoaded('m-est-edit');
@@ -193,7 +195,7 @@ export async function openEditStudent(stId) {
  */
 export async function saveEditStudent() {
   const id = v('ee-id');
-  const st = S.estudiantes.find(e => e.id === id);
+  const st = findStudentById(S.estudiantes, id);
   if (!st) return;
 
   const nom = v('ee-nom'), ape = v('ee-ape');
@@ -232,8 +234,7 @@ export async function saveEditStudent() {
  * Verifica si una matrícula ya existe en el sistema.
  */
 function matriculaExists(mat, excludeId = null) {
-  const key = normalizeMatricula(mat);
-  return S.estudiantes.some(s => s.id !== excludeId && normalizeMatricula(s.matricula) === key);
+  return studentMatriculaExists(S.estudiantes, mat, excludeId);
 }
 
 /**
@@ -242,21 +243,7 @@ function matriculaExists(mat, excludeId = null) {
 export function upsertStudentDirectoryEntry(student, sectionId = '') {
   if (!student) return;
   if (!Array.isArray(S.studentDirectory)) S.studentDirectory = [];
-  
-  const entry = {
-    nombre: String(student.nombre || '').trim(),
-    apellido: String(student.apellido || '').trim(),
-    matricula: formatMatricula(student.matricula || ''),
-    photoUrl: String(student.photoUrl || '').trim(),
-    lastSectionId: sectionId || student.sectionId || student.courseId || '',
-    updatedAt: Date.now(),
-  };
-
-  const key = `${normTxt(entry.nombre)}|${normTxt(entry.apellido)}|${normalizeMatricula(entry.matricula)}`;
-  const idx = S.studentDirectory.findIndex(e => `${normTxt(e.nombre)}|${normTxt(e.apellido)}|${normalizeMatricula(e.matricula)}` === key);
-
-  if (idx >= 0) S.studentDirectory[idx] = { ...S.studentDirectory[idx], ...entry };
-  else S.studentDirectory.push(entry);
+  upsertStudentDirectoryEntryInList(S.studentDirectory, buildStudentDirectoryEntry(student, sectionId));
 }
 
 // --- Soporte Carga Masiva ---
@@ -277,8 +264,7 @@ export async function openBulkEstM(secId) {
   const ta = document.getElementById('be-list');
   if (ta) ta.value = '';
   
-  BULK_IMPORT_STATE.analyzed = false;
-  BULK_IMPORT_STATE.entries = [];
+  setBulkStudentsState({ analyzed: false, entries: [] });
   
   openM('m-est-bulk');
 }
@@ -289,8 +275,7 @@ export async function openBulkEstM(secId) {
 export function handleBulkFileChange(input) {
   const file = input?.files?.[0];
   if (!file) return;
-  BULK_IMPORT_STATE.mode = 'file';
-  BULK_IMPORT_STATE.sourceName = file.name;
+  setBulkFile(file);
   toast(`Archivo seleccionado: ${file.name}`);
 }
 
@@ -316,9 +301,7 @@ export async function analyzeBulkInput() {
     };
   }).filter(Boolean);
 
-  BULK_IMPORT_STATE.entries = entries;
-  BULK_IMPORT_STATE.analyzed = true;
-  BULK_IMPORT_STATE.lastRows = entries.length;
+  setBulkStudentsState({ entries, analyzed: true, lastRows: entries.length });
   
   toast(`${entries.length} estudiantes detectados. Listo para cargar.`);
   return true;

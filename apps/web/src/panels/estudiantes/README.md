@@ -14,6 +14,8 @@ Wrappers modulares actuales:
 
 - `utils/student-crud.ts`: apertura, guardado, vista, edicion, consulta por ID y alta programatica; delega a `js/core/student-logic.ts`.
 - `utils/student-delete.ts`: eliminacion de estudiantes; delega a `js/core/deleters.ts`.
+- `utils/student-helpers.ts`: helpers puros de texto, matricula, busqueda por ID y directorio local.
+- `utils/student-bulk-state.ts`: estado compartido de carga masiva con la misma forma legacy.
 - `utils/student-bulk.ts`: UI declarativa, exportaciones CSV y wrappers hacia la carga masiva legacy.
 
 ## 📋 Descripción

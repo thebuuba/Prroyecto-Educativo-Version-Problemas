@@ -22,7 +22,7 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 | --- | --- | --- | --- |
 | `js/panels/usuarios/` | Parcialmente lista | Medio | Creación/eliminación ya están en módulo exportable; `delUsr` queda como adaptador global y el renderer sigue legacy. |
 | `js/panels/horario/` | Parcialmente lista | Medio | Registry parcialmente directo; falta separar generación avanzada y confirmar referencias runtime. |
-| `js/panels/actividades/` | Parcialmente lista | Medio | Bloques/matriz e instrumentos ya directos; guardado y plantillas siguen como fallbacks. |
+| `js/panels/actividades/` | Parcialmente lista | Medio | Bloques/matriz, instrumentos y guardado ya directos; renderer y globals adaptadores siguen legacy. |
 | `js/panels/instrumentos/` | Parcialmente lista | Medio | Acciones básicas y vinculación separadas en `utils/`; renderer aún está en el entrypoint legacy. |
 
 ## Bloqueadas

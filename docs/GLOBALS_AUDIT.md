@@ -62,7 +62,7 @@ Se mantienen porque hay referencias runtime reales, uso por registries como fall
 | Académico | `openSecM`, `saveSec`, `openEditSection`, `saveEditSection`, `saveGrade`, `delSec`, `delGrade` | Fallbacks de creación/edición/eliminación y sincronización académica. |
 | Asistencia | `shiftMonth`, `setActiveGroup`, `cycleMark`, `commitDayDay`, `cycleException`, `applyWeeklySchedule` | El módulo legacy de asistencia todavía los publica. |
 | Horario | `setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal` | Ya no son la ruta primaria de `data-schedule-action`; se conservan como fallback y compatibilidad runtime. |
-| Actividades | `setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock` | Ya no son la ruta primaria de `data-activity-action`; se conservan como fallback y compatibilidad runtime. |
+| Actividades | `setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`, `saveAct`, `saveTpl` | Ya no son la ruta primaria de `data-activity-action`; se conservan como adaptadores y compatibilidad runtime. |
 | Instrumentos | `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator` | Ya no son la ruta primaria de `data-activity-action`; se conservan como adaptadores temporales. |
 | Vinculación de instrumentos | `openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument` | Ya no son la ruta primaria; `instrument-linking.ts` es la fuente principal y los globals quedan como adaptadores temporales. |
 | Usuarios | `delUsr` | Adaptador legacy temporal publicado por `js/panels/usuarios/principal.ts`; `data-user-action` ya usa imports directos. |
@@ -80,6 +80,7 @@ Se mantienen porque hay referencias runtime reales, uso por registries como fall
 - `data-planning-action` usa imports directos hacia `apps/web/src/panels/planificaciones/utils/actions.ts`.
 - `data-schedule-action` usa imports directos para las acciones simples de horario: tabs, mes, asistente, celdas y eventos.
 - `data-activity-action` usa imports directos para las acciones de bloques y matriz: vista, metas, nombre, puntos, alta, eliminación y autoajuste.
+- `data-activity-action` usa imports directos para guardar actividades y plantillas desde `js/panels/actividades/utils/activity-save.ts`.
 - `data-activity-action` usa imports directos para acciones básicas de instrumentos desde `js/panels/instrumentos/utils/instrument-actions.ts`.
 - `data-activity-action` usa implementación modular para vincular instrumentos: `openApplyInstrumentModal`, `openCreateInstrumentTypePicker` y `confirmLinkInstrument`.
 - `data-user-action` usa imports directos hacia `js/panels/usuarios/utils/user-domain-actions.ts` para crear y eliminar usuarios; ya no invoca `window.saveUsr` ni `window.delUsr` como ruta primaria.
@@ -100,6 +101,20 @@ Resultado:
 - Dependencias `window`: `_linkActId` sigue como llave transicional usada por el registry declarativo; `_linkStudentId` se conserva para compatibilidad de flujo de evaluación por estudiante.
 - `activity-actions.ts` ya no llama directamente a `window.openApplyInstrumentModal`, `window.openCreateInstrumentTypePicker` ni `window.confirmLinkInstrument`; importa esas funciones desde `instrument-actions.ts`.
 
+## Diagnóstico De Guardado De Actividades
+
+Búsqueda aplicada sobre fuentes, excluyendo `dist/` y `node_modules`: `saveAct`, `saveTpl`, `actividad guardar`, `plantilla guardar`, `m-act`, `m-tpl`, `activity modal`, `template modal`, `bloques de actividades`, `ACT` y `TPL`.
+
+Resultado:
+
+- La implementación real actual se consolidó en `js/panels/actividades/utils/activity-save.ts`.
+- La implementación original fue localizada en bundles legacy históricos, no en `principal.ts`; `utils/actions.ts` solo contenía acciones de bloques/matriz.
+- Dependencias de estado/dominio: `S.activeGroupId`, `S.activePeriodId`, `S.templates`, `getGroupCfg`, `uid`, `round2`, `parseDecimalInput` y `BNAME`.
+- Dependencias de persistencia/sync: `persist()` y `syncSqlActivityCreateOrUpdate()` para nuevas actividades.
+- Dependencias UI: `closeM('m-act')`, `closeM('m-tpl')`, `go('config')` y `toast(...)`.
+- IDs DOM requeridos: `a-nom`, `a-blq`, `a-tipo`, `a-pts`, `a-fecha`, `a-obs`, `tpl-name` y `tpl-desc`.
+- `activity-actions.ts` ya no invoca `window.saveAct` ni `window.saveTpl`; `actions.ts` solo publica esos nombres globales como adaptadores temporales.
+
 ## Migración Física Aplicada
 
 - `reportes` y `planificaciones` fueron movidos a `apps/web/src/panels/`.
@@ -113,7 +128,7 @@ Resultado:
 - `lessonPlanNew`, `lessonPlanContinue`, `lessonPlanReturnHome`, `lessonPlanSetActiveSection`, `lessonPlanSetGeneralField`, `lessonPlanSetCurriculumField`.
 - `reportDownloadExcel`, `reportDownloadPdf`, `reportDownloadWord`.
 - Adaptadores de horario ya cubiertos por imports directos (`setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal`) cuando no existan referencias runtime.
-- Adaptadores de actividades ya cubiertos por imports directos (`setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`) cuando no existan referencias runtime.
+- Adaptadores de actividades ya cubiertos por imports directos (`setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`, `saveAct`, `saveTpl`) cuando no existan referencias runtime.
 - Adaptadores de instrumentos (`setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator`) cuando no existan referencias runtime.
 - Adaptadores de vinculación (`openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument`) cuando no existan referencias runtime fuera de `instrument-actions.ts`.
 - Selectores legacy en `js/panels/autenticacion/utils/event-bindings.ts` cuando se retire compatibilidad con HTML auth antiguo.

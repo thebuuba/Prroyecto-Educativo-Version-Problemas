@@ -68,9 +68,10 @@ Avance aplicado:
 - `data-planning-action` y `data-report-action` ahora se importan desde `apps/web/src/panels/...`.
 - Acciones internas de planificaciones convertidas de `window.S` / `window.go` a imports directos de `S` y `go`.
 - `data-schedule-action` convertido parcialmente a imports directos para acciones simples de horario, manteniendo fallback legacy.
-- `data-activity-action` convertido parcialmente a imports directos para acciones de bloques/matriz e instrumentos, manteniendo fallbacks para guardado.
+- `data-activity-action` convertido a imports directos para acciones de bloques/matriz, instrumentos y guardado de actividad/plantilla.
 - Acciones básicas de instrumentos separadas en `js/panels/instrumentos/utils/instrument-actions.ts` y consumidas por `data-activity-action` con imports directos.
 - Vinculación de instrumentos modularizada en `js/panels/instrumentos/utils/instrument-linking.ts`.
+- Guardado de actividades y plantillas modularizado en `js/panels/actividades/utils/activity-save.ts`.
 - Acciones de creación/eliminación de usuarios separadas en `js/panels/usuarios/utils/user-domain-actions.ts` y consumidas por `data-user-action` con imports directos.
 
 Conteo de la fase estudiantes:
@@ -131,7 +132,7 @@ Conteo de la fase actividades/calificaciones:
 Riesgos actividades/calificaciones:
 
 - `saveUsr()` fue migrado en la fase usuarios porque pertenece a ese dominio aunque viva en el fragmento combinado de actividades.
-- `saveAct` y `saveTpl` se mantienen como adaptadores legacy explícitos si existen en runtime.
+- `saveAct` y `saveTpl` usan implementación modular principal en `js/panels/actividades/utils/activity-save.ts`; los globals quedan como adaptadores temporales.
 - Vista de matriz, metas, edición de nombre/puntos, alta, eliminación y autoajuste ya usan imports directos desde `js/panels/actividades/utils/actions.ts`.
 - Instrumentos (`setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator`) ya usan imports directos desde `js/panels/instrumentos/utils/instrument-actions.ts` y conservan globals como adaptadores.
 - Vinculación de instrumentos (`openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument`) ya tiene implementación modular principal; los globals quedan como adaptadores temporales.
@@ -177,7 +178,7 @@ Riesgos de globals:
 Siguiente trabajo:
 
 1. Estabilizar paneles ya movidos (`reportes`, `planificaciones`, `matriz`).
-2. Reducir guardado de actividades/plantillas; después preparar migración física de usuarios o instrumentos/actividades cuando no rompan lazy loading.
+2. Reducir los fallbacks restantes de estudiantes/académico/asistencia; después preparar migración física de usuarios o instrumentos/actividades cuando no rompan lazy loading.
 3. Mantener `legacy-api.ts` como lista explícita de deuda.
 4. Remover globals por dominio cuando no existan referencias runtime.
 

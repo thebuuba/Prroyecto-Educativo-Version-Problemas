@@ -2,6 +2,7 @@ import { S } from '../../../core/state.ts';
 import { go } from '../../../core/routing.ts';
 import { persist } from '../../../core/hydration.ts';
 import { uid, getGroupCfg, findActivity } from '../../../core/domain-utils.ts';
+import { saveAct, saveTpl } from './activity-save.ts';
 
 async function syncActivityRecord(activity, meta = {}) {
   if (!activity || !window.AulaBaseSqlApi?.isEnabled?.() || typeof window.AulaBaseSqlApi.syncSqlActivityCreateOrUpdate !== 'function') {
@@ -152,4 +153,6 @@ export function registerActivitiesActions() {
   window.addActToBlock = addActToBlock;
   window.removeActFromBlock = removeActFromBlock;
   window.autoAdjustBlock = autoAdjustBlock;
+  window.saveAct = saveAct;
+  window.saveTpl = saveTpl;
 }

@@ -236,13 +236,14 @@ Migrado en esta fase:
 - Tabs de actividades: bloques, matriz y configuración.
 - Apertura de evaluación desde tarjetas y celdas de matriz.
 - Configuración de meta por bloque, alta de actividad, autoajuste, edición de nombre/puntos y eliminación.
+- Guardado de actividad y plantilla desde `js/panels/actividades/utils/activity-save.ts`.
 - Filtros, creación, edición y eliminación de instrumentos.
 - Modales legacy `m-act`, `m-tpl` y `m-link-inst`.
 
 Pendiente:
 
 - `saveUsr()` del fragmento combinado de actividades fue tratado en el dominio usuarios.
-- Guardado de actividad/plantilla conserva adaptadores hacia globals legacy si existen en runtime.
+- `saveAct` y `saveTpl` quedan publicados como adaptadores globales temporales, pero `data-activity-action` usa imports directos.
 - Las acciones básicas de instrumentos se resuelven por imports directos desde `js/panels/instrumentos/utils/instrument-actions.ts`; los globals equivalentes se conservan como adaptadores temporales.
 - La vinculación de instrumentos (`m-link-inst`) usa implementación modular en `js/panels/instrumentos/utils/instrument-linking.ts`; los globals equivalentes siguen publicados como adaptadores temporales.
 - Exportación, sincronización y edición profunda de matriz quedan como ramas seguras hasta que existan controles y módulos específicos.

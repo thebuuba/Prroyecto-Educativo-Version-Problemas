@@ -7,6 +7,7 @@ import {
   updateActPts,
   updateBlockMeta,
 } from './actions.ts';
+import { saveAct, saveTpl } from './activity-save.ts';
 import {
   confirmLinkInstrument,
   createNewInstrument,
@@ -36,13 +37,6 @@ function valueFromTrigger(trigger: HTMLElement): string {
   return data(trigger, 'activityValue') || data(trigger, 'gradeValue') || data(trigger, 'value');
 }
 
-function callAllowedWindowFunction(name: string, ...args: unknown[]): boolean {
-  const fn = (window as Record<string, unknown>)[name];
-  if (typeof fn !== 'function') return false;
-  fn(...args);
-  return true;
-}
-
 function blockId(trigger: HTMLElement): string {
   return data(trigger, 'blockId');
 }
@@ -62,7 +56,7 @@ const activityActionRegistry: Record<string, ActivityActionHandler> = {
       void addActToBlock(targetBlockId);
       return;
     }
-    callAllowedWindowFunction('saveAct');
+    saveAct();
   },
   edit: ({ trigger }) => {
     const targetBlockId = blockId(trigger);
@@ -81,10 +75,10 @@ const activityActionRegistry: Record<string, ActivityActionHandler> = {
   save: ({ trigger }) => {
     const target = data(trigger, 'target') || data(trigger, 'activityTarget');
     if (target === 'template') {
-      callAllowedWindowFunction('saveTpl');
+      saveTpl();
       return;
     }
-    callAllowedWindowFunction('saveAct');
+    saveAct();
   },
   cancel: () => {},
   'select-block': ({ trigger }) => {
@@ -137,7 +131,7 @@ const activityActionRegistry: Record<string, ActivityActionHandler> = {
   },
   'clear-grade': () => {},
   'save-grades': () => {
-    callAllowedWindowFunction('saveAct');
+    saveAct();
   },
   'open-matrix': () => {
     setActView('matrix');

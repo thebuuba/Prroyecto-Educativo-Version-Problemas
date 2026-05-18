@@ -52,6 +52,7 @@ Avance aplicado:
 - Dominio actividades/calificaciones migrado a `data-activity-action` con registry explícito en `js/panels/actividades/utils/activity-actions.ts`.
 - Dominio usuarios/modales compartidos migrado a `data-user-action` con registry explícito en `js/panels/usuarios/utils/user-actions.ts`.
 - Dominios planificaciones y reportes migrados a `data-planning-action` y `data-report-action` con registries explícitos separados.
+- Auditoría global documentada en `docs/GLOBALS_AUDIT.md`; quedan `6` handlers inline runtime en shell/ui y no se eliminó ningún global sin cero referencias confirmadas.
 
 Conteo de la fase estudiantes:
 
@@ -137,6 +138,19 @@ Riesgos planificaciones/reportes:
 - Planificaciones conserva edición de campos simples y navegación del editor; eliminación, duplicado, plantillas y exportación específica quedan como ramas seguras sin controles visibles actuales.
 - Reportes conserva exportación Excel/PDF/Word; filtros, selección de tipo y detalle quedan registrados sin lógica destructiva hasta que existan controles.
 
+Conteo de auditoría global:
+
+| Alcance | Cantidad |
+| --- | ---: |
+| Handlers inline runtime restantes | 6 |
+| Globals eliminados | 0 |
+| Globals conservados | Todos los auditados con referencias o fallback vigente |
+
+Riesgos de globals:
+
+- `legacy-bridge.ts` sigue siendo necesario para `window.RENDERS`, `_renderPanel`, APIs cloud/SQL, routing y compatibilidad de paneles.
+- Los globals usados por registries como fallback deben pasar a imports directos antes de eliminarse.
+
 Siguiente trabajo:
 
 1. Migrar handlers inline restantes por dominio con registries explícitos.
@@ -149,6 +163,7 @@ Orden recomendado:
 - UI básica: `openM`, `closeM`, `toast`
 - routing: `go`
 - planificaciones/reportes avanzados y modales compartidos restantes
+- shell/ui: tablero, configuración y selectores globales de contexto
 - auth/setup
 
 ## Fase 4: backend por capas

@@ -122,4 +122,5 @@ Conteo después de esta fase:
 - Acciones de usuarios sin controles visibles actuales (`edit`, permisos, activar/desactivar, reset de contraseña, invitación y perfil) quedan registradas como ramas seguras hasta que existan flujos específicos.
 - Acciones de planificación sin controles visibles actuales (`delete`, `duplicate`, plantillas y filtros complejos) quedan registradas como ramas seguras.
 - Acciones de reportes sin controles visibles actuales (`select-*`, `open-detail`, filtros y descarga genérica por archivo) quedan registradas como ramas seguras.
+- Auditoría global actual: quedan `6` handlers inline runtime, todos clasificados como `shell/ui` en `docs/GLOBALS_AUDIT.md`.
 - Reducir `window` en `legacy-api.ts` solo cuando no queden referencias reales en HTML o strings renderizados.

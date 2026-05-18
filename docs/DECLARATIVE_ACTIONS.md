@@ -358,3 +358,7 @@ El registry vive en `js/core/form-actions.ts`. Para agregar uno nuevo, se debe i
 2. Registrar la acción en un módulo con whitelist.
 3. Mantener fallback legacy si todavía hay referencias inline.
 4. Ejecutar `npm run imports:check`, `npm run check` y `npm run prepare:dist`.
+
+## Auditoría de globals
+
+La auditoría actual vive en `docs/GLOBALS_AUDIT.md`. Antes de eliminar cualquier global de `legacy-api.ts`, `legacy-bridge.ts` o asignaciones `window.*`, se debe confirmar cero referencias runtime en `sections/`, `login-registro-auth/`, `js/panels/`, `js/core/` y strings renderizados. La documentación y `index.html` generado no cuentan como fuente para editar.

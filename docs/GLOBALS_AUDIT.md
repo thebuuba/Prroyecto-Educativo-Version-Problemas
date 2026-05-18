@@ -100,6 +100,7 @@ Resultado:
 - Dependencias UI: `openM('m-link-inst')`, `openM('m-inst-type')`, `closeM('m-link-inst')` y los IDs DOM `li-act`, `li-inst`, `li-create-btn`, `inst-type-grid`.
 - Dependencias `window`: `_linkActId` sigue como llave transicional usada por el registry declarativo; `_linkStudentId` se conserva para compatibilidad de flujo de evaluación por estudiante.
 - `activity-actions.ts` ya no llama directamente a `window.openApplyInstrumentModal`, `window.openCreateInstrumentTypePicker` ni `window.confirmLinkInstrument`; importa esas funciones desde `instrument-actions.ts`.
+- `instrument-actions.ts` ya no conserva fallback interno a implementaciones legacy capturadas; los globals publicados son adaptadores directos a la fuente modular.
 
 ## Diagnóstico De Guardado De Actividades
 
@@ -114,6 +115,13 @@ Resultado:
 - Dependencias UI: `closeM('m-act')`, `closeM('m-tpl')`, `go('config')` y `toast(...)`.
 - IDs DOM requeridos: `a-nom`, `a-blq`, `a-tipo`, `a-pts`, `a-fecha`, `a-obs`, `tpl-name` y `tpl-desc`.
 - `activity-actions.ts` ya no invoca `window.saveAct` ni `window.saveTpl`; `actions.ts` solo publica esos nombres globales como adaptadores temporales.
+
+## Preparación Física Actividades/Instrumentos
+
+- `js/panels/instrumentos/**` puede moverse primero a `apps/web/src/panels/instrumentos/**` dejando adaptadores de reexportación en la ruta legacy.
+- `js/panels/actividades/**` debe moverse después de instrumentos; hoy importa acciones de instrumentos y conserva dependencias documentadas a `window.AulaBaseSqlApi` y `_linkActId`.
+- `routing.ts` debe conservar las claves públicas `/js/panels/instrumentos/principal.ts` y `/js/panels/actividades/principal.ts`, pero puede resolver `PANEL_MODULES` hacia `apps/web/src/panels/...` cuando cada panel se mueva.
+- No hay handlers inline runtime que bloqueen el movimiento; el bloqueo restante es de rutas relativas profundas y contratos globales temporales.
 
 ## Migración Física Aplicada
 

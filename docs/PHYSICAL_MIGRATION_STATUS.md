@@ -20,10 +20,10 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 
 | Carpeta | Estado | Riesgo | Adaptadores necesarios |
 | --- | --- | --- | --- |
+| `js/panels/instrumentos/` | Lista para preparar movimiento | Bajo-medio | Mover a `apps/web/src/panels/instrumentos/` con adaptadores en `js/panels/instrumentos/**`; mantener clave pública `/js/panels/instrumentos/principal.ts`. |
+| `js/panels/actividades/` | Parcialmente lista | Medio | Bloques/matriz, instrumentos y guardado ya directos; conviene mover después de instrumentos por su import a acciones de instrumentos y por dependencias SQL/window. |
 | `js/panels/usuarios/` | Parcialmente lista | Medio | Creación/eliminación ya están en módulo exportable; `delUsr` queda como adaptador global y el renderer sigue legacy. |
 | `js/panels/horario/` | Parcialmente lista | Medio | Registry parcialmente directo; falta separar generación avanzada y confirmar referencias runtime. |
-| `js/panels/actividades/` | Parcialmente lista | Medio | Bloques/matriz, instrumentos y guardado ya directos; renderer y globals adaptadores siguen legacy. |
-| `js/panels/instrumentos/` | Parcialmente lista | Medio | Acciones básicas y vinculación separadas en `utils/`; renderer aún está en el entrypoint legacy. |
 
 ## Bloqueadas
 
@@ -38,6 +38,8 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 ## Imports Problemáticos
 
 - Imports relativos profundos hacia `../../../core/...`.
+- Al mover `instrumentos` a `apps/web/src/panels/instrumentos/`, sus imports a `js/core` deben subir hasta `../../../../../js/core/...`; `activity-actions.ts` puede seguir importando desde adaptadores legacy para evitar un salto cruzado largo.
+- Al mover `actividades` a `apps/web/src/panels/actividades/`, sus imports a `js/core` y a `apps/web/src/panels/instrumentos/` deben ajustarse juntos; no conviene moverlo antes de estabilizar instrumentos.
 - Los módulos movidos usan imports relativos profundos hacia `js/core/...` desde `apps/web/src/panels/...`; son explícitos y validados, pero deben reemplazarse por aliases cuando `js/core/` se mueva.
 - Paneles que importan `domain-utils.ts`, que a su vez reexporta muchas APIs.
 - `routing.ts` mantiene rutas públicas de bundles con paths legacy, aunque los imports directos de `reportes`, `planificaciones` y `matriz` apuntan al nuevo origen.
@@ -66,11 +68,29 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 - Globals de setup obligatorio.
 - Deleters globales (`delEst`, `delSec`, `delGrade`, `delTpl`).
 
+## Preparación Actividades E Instrumentos
+
+Instrumentos:
+
+- Archivos movibles: `principal.ts`, `view.ts`, `logic.ts`, `components/vista.ts`, `utils/instrument-actions.ts`, `utils/instrument-linking.ts` y `README.md`.
+- Adaptadores requeridos: mantener los mismos paths bajo `js/panels/instrumentos/**` reexportando hacia `apps/web/src/panels/instrumentos/**`.
+- Fuente modular real: `utils/instrument-actions.ts` y `utils/instrument-linking.ts`.
+- Globals conservados como adaptadores: `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator`, `openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument`.
+- Bloqueo pendiente: ajustar imports relativos profundos y actualizar `PANEL_MODULES` para que la clave pública legacy cargue el origen nuevo.
+
+Actividades:
+
+- Archivos movibles: `principal.ts`, `view.ts`, `logic.ts`, `components/vista.ts`, `utils/actions.ts`, `utils/activity-actions.ts`, `utils/activity-save.ts` y `README.md`.
+- Adaptadores requeridos: mantener `js/panels/actividades/**` reexportando hacia `apps/web/src/panels/actividades/**`.
+- Fuente modular real: `utils/actions.ts`, `utils/activity-actions.ts` y `utils/activity-save.ts`.
+- Globals conservados como adaptadores: `setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`, `saveAct`, `saveTpl`.
+- Bloqueo pendiente: `utils/actions.ts` todavía usa `window.AulaBaseSqlApi` para sincronización SQL y `activity-actions.ts` lee `_linkActId`; mover después de instrumentos reduce el riesgo de imports cruzados.
+
 ## Orden Recomendado
 
-1. Completar estabilización de `reportes`, `planificaciones` y `matriz` ya movidos.
-2. Convertir registries híbridos a imports directos por dominio.
-3. Mover `usuarios` y luego `horario`/`asistencia`.
+1. Mover `instrumentos` a `apps/web/src/panels/instrumentos/` con adaptadores legacy.
+2. Mover `actividades` a `apps/web/src/panels/actividades/` cuando instrumentos ya esté estable.
+3. Continuar con `usuarios`, `horario` y `asistencia` por grupos pequeños.
 4. Mover estudiantes/académico cuando sus fallbacks globales hayan desaparecido.
 5. Separar `js/core/` en submódulos dentro de `apps/web/src` con adaptadores raíz.
 6. Mover `login-registro-auth/` cuando auth/setup ya no dependa de bootstrap HTML legacy.

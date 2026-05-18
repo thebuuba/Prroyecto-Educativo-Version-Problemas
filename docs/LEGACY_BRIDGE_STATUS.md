@@ -36,7 +36,7 @@
 - `data-planning-action`: usa imports directos desde `apps/web/src/panels/planificaciones/utils/actions.ts`.
 - `data-report-action`: usa imports directos desde `apps/web/src/panels/reportes/utils/actions.ts`.
 - `data-schedule-action`: usa imports directos para tabs, navegación mensual, asistente, edición de celda y eventos; conserva fallback `window.*`.
-- `data-activity-action`: usa imports directos para vista de matriz/bloques, metas, nombre, puntos, alta, eliminación, autoajuste y acciones exportables de instrumentos.
+- `data-activity-action`: usa imports directos para vista de matriz/bloques, metas, nombre, puntos, alta, eliminación, autoajuste, guardado y acciones exportables de instrumentos.
 - `data-ui-action`: vive en `js/core/declarative-actions.ts` y usa imports directos para estado, persistencia, routing y sincronización de perfil.
 
 ## Registries Todavía Híbridos
@@ -45,7 +45,6 @@
 - `data-academic-action`: conserva fallbacks hacia funciones académicas legacy.
 - `data-attendance-action`: mezcla lógica directa con adaptadores de exportación.
 - `data-schedule-action`: parcialmente directo; conserva `generateTeacherScheduleBase` y fallbacks por compatibilidad.
-- `data-activity-action`: usa imports directos para actividades, instrumentos y guardado; no conserva fallback a `saveAct` / `saveTpl`.
 - `data-user-action`: usa imports directos hacia `js/panels/usuarios/utils/user-domain-actions.ts`; `delUsr` queda como adaptador global temporal.
 
 ## Diagnóstico Vinculación De Instrumentos
@@ -54,7 +53,7 @@
 - Los fragments `sections/modals/m-link-inst.html` y `sections/modals/m-inst-type.html` contienen la estructura visual y los IDs requeridos: `m-link-inst`, `m-inst-type`, `li-act`, `li-inst`, `li-create-btn` e `inst-type-grid`.
 - La lógica depende directamente de `S`, `persist`, `go`, `openM`, `closeM`, `findActivity`, `escapeHtml`, `BASIC_INSTRUMENT_TYPES` e `INSTRUMENT_META`.
 - La dependencia a `window` queda limitada al estado transicional `_linkActId` y `_linkStudentId`, más la publicación temporal de `window.openApplyInstrumentModal`, `window.openCreateInstrumentTypePicker` y `window.confirmLinkInstrument`.
-- `instrument-actions.ts` captura una implementación legacy previa antes de publicar los nuevos globals; esto evita recursión si la implementación modular devuelve `false`.
+- `instrument-actions.ts` publica globals como adaptadores, pero ya no conserva fallback interno hacia una implementación legacy capturada.
 - No se encontraron implementaciones reales alternativas en `principal.ts`; las referencias restantes son modales/fragments, documentación y adaptadores.
 
 ## Diagnóstico Guardado De Actividades
@@ -79,7 +78,7 @@
 - `data-activity-action` dejó de depender directamente de `window.setActView`, `window.updateBlockMeta`, `window.handleActNameInput`, `window.updateActPts`, `window.addActToBlock`, `window.removeActFromBlock` y `window.autoAdjustBlock`.
 - `data-activity-action` ahora importa `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument` y `openInstrumentCreator` desde `js/panels/instrumentos/utils/instrument-actions.ts`.
 - `data-activity-action` dejó de llamar `window.saveAct` / `window.saveTpl`; el guardado vive en `js/panels/actividades/utils/activity-save.ts`.
-- `openApplyInstrumentModal`, `openCreateInstrumentTypePicker` y `confirmLinkInstrument` tienen implementación modular principal en `instrument-linking.ts`; `instrument-actions.ts` conserva fallback legacy solo si la implementación modular no puede operar.
+- `openApplyInstrumentModal`, `openCreateInstrumentTypePicker` y `confirmLinkInstrument` tienen implementación modular principal en `instrument-linking.ts`; `instrument-actions.ts` ya no conserva fallback interno legacy.
 - `data-user-action` dejó de llamar `window.saveUsr` / `window.delUsr` como ruta primaria; creación y eliminación viven en `js/panels/usuarios/utils/user-domain-actions.ts`.
 - Se eliminó `window.openDashboardCourse`.
 - `data-report-action` dejó de depender directamente de `window.reportDownloadExcel`, `window.reportDownloadPdf` y `window.reportDownloadWord`.
@@ -108,8 +107,10 @@
 
 ## Ruta Para Retiro Gradual
 
-1. Convertir registries híbridos a imports directos, uno por dominio.
-2. Reemplazar `window.RENDERS` por registro modular explícito del router.
-3. Reemplazar `_renderPanel` por una función importada desde routing/app.
-4. Encapsular `S` detrás de store/imports directos.
-5. Reducir `LEGACY_BRIDGE_REGISTRY` por grupos después de `rg` con cero referencias runtime.
+1. Mover físicamente `instrumentos` con adaptadores legacy en `js/panels/instrumentos/**`.
+2. Mover físicamente `actividades` después de estabilizar imports cruzados con instrumentos.
+3. Convertir registries híbridos restantes a imports directos, uno por dominio.
+4. Reemplazar `window.RENDERS` por registro modular explícito del router.
+5. Reemplazar `_renderPanel` por una función importada desde routing/app.
+6. Encapsular `S` detrás de store/imports directos.
+7. Reducir `LEGACY_BRIDGE_REGISTRY` por grupos después de `rg` con cero referencias runtime.

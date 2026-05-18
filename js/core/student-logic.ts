@@ -29,12 +29,16 @@ import {
 } from '../../apps/web/src/panels/estudiantes/utils/student-helpers.ts';
 import {
   focusStudentCreateName,
+  clearBulkStudentText,
+  readBulkStudentSection,
+  readBulkStudentText,
   readStudentCreateFields,
   readStudentEditFields,
   writeStudentCreateMatricula,
   writeStudentEditFields,
   writeStudentViewFields,
 } from '../../apps/web/src/panels/estudiantes/utils/student-dom-fields.ts';
+import { parseBulkStudentText } from '../../apps/web/src/panels/estudiantes/utils/student-bulk-parser.ts';
 
 /**
  * Abre el modal para elegir cómo agregar estudiantes.
@@ -253,8 +257,7 @@ export async function openBulkEstM(secId) {
   await ensureModalLoaded('m-est-bulk');
   fillSel('be-sec', sections, s => s.id, s => `${s.grado} ${s.sec} · ${s.materia}`, secId || S.activeGroupId || sections[0].id);
   
-  const ta = document.getElementById('be-list');
-  if (ta) ta.value = '';
+  clearBulkStudentText();
   
   setBulkStudentsState({ analyzed: false, entries: [] });
   
@@ -275,23 +278,9 @@ export function handleBulkFileChange(input) {
  * Analiza la entrada de carga masiva (texto o archivo).
  */
 export async function analyzeBulkInput() {
-  const list = (document.getElementById('be-list')?.value || '').trim();
+  const list = readBulkStudentText();
   if (!list) { toast('Pega la lista de estudiantes', true); return false; }
-  
-  const lines = list.split(/\r?\n/).filter(l => l.trim());
-  const entries = lines.map((line, idx) => {
-    // Ejemplo simple de parseo: "Matricula, Nombre, Apellido" o "Matricula Nombre Apellido"
-    const parts = line.split(/[,;\t]/).map(s => s.trim());
-    if (parts.length < 2) return null;
-    
-    return {
-      row: idx + 1,
-      matricula: formatMatricula(parts[0]),
-      nombre: parts[1],
-      apellido: parts[2] || '',
-      status: 'new'
-    };
-  }).filter(Boolean);
+  const entries = parseBulkStudentText(list);
 
   setBulkStudentsState({ entries, analyzed: true, lastRows: entries.length });
   
@@ -303,7 +292,7 @@ export async function analyzeBulkInput() {
  * Ejecuta el proceso de guardado masivo.
  */
 export async function saveBulkEst() {
-  const secId = document.getElementById('be-sec')?.value;
+  const secId = readBulkStudentSection();
   if (!secId) { toast('Selecciona una sección', true); return; }
 
   if (!BULK_IMPORT_STATE.analyzed) {

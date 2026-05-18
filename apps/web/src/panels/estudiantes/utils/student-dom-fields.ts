@@ -86,3 +86,23 @@ export function writeStudentViewFields(student: StudentLike, details: Record<str
   setImageSrc('sv-photo', student?.photoUrl || buildStudentAvatarDataUrl(fullName));
   setValue('sv-id', student?.id || '');
 }
+
+export function readBulkStudentText(): string {
+  return String((document.getElementById('be-list') as HTMLTextAreaElement | null)?.value || '').trim();
+}
+
+export function readBulkStudentSection(): string {
+  return String((document.getElementById('be-sec') as HTMLSelectElement | null)?.value || '');
+}
+
+export function writeBulkStudentText(value = ''): void {
+  setValue('be-list', value);
+}
+
+export function clearBulkStudentText(): void {
+  writeBulkStudentText('');
+}
+
+export function focusBulkStudentText(): void {
+  document.getElementById('be-list')?.focus();
+}

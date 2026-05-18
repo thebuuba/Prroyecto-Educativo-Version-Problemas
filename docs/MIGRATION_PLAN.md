@@ -88,8 +88,9 @@ Avance aplicado:
 - Wrappers de modales de estudiantes creados en `student-modals.ts` para apertura/guardado de crear, vista y edición, delegando a `js/core/student-logic.ts` sin cambiar DOM ni textos.
 - `legacy-api.ts` conserva los nombres públicos de estudiantes pero delega en wrappers del dominio migrado, no directamente en `js/core/student-logic.ts`.
 - Helpers puros de estudiantes extraídos a `apps/web/src/panels/estudiantes/utils/student-helpers.ts`.
-- Lectura/escritura DOM simple de modales extraída a `apps/web/src/panels/estudiantes/utils/student-dom-fields.ts`; se mantienen IDs y valores legacy.
-- Estado de carga masiva extraído a `apps/web/src/panels/estudiantes/utils/student-bulk-state.ts`; el parser y flujo DOM siguen en `js/core/student-logic.ts`.
+- Lectura/escritura DOM simple de modales y bulk extraída a `apps/web/src/panels/estudiantes/utils/student-dom-fields.ts`; se mantienen IDs y valores legacy.
+- Parser textual simple de carga masiva extraído a `apps/web/src/panels/estudiantes/utils/student-bulk-parser.ts` sin cambiar formato aceptado ni estructura de entries.
+- Estado de carga masiva extraído a `apps/web/src/panels/estudiantes/utils/student-bulk-state.ts`; el flujo de guardado, SQL, persistencia y mensajes siguen en `js/core/student-logic.ts`.
 
 Conteo de la fase estudiantes:
 

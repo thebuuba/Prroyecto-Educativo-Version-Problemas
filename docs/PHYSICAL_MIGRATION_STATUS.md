@@ -128,13 +128,14 @@ Actividades:
 - Wrappers CRUD: `apps/web/src/panels/estudiantes/utils/student-crud.ts` delega a `student-modals.ts` para modales y a `js/core/student-logic.ts` para alta programática y directorio.
 - Wrappers de eliminación: `apps/web/src/panels/estudiantes/utils/student-delete.ts` delega a `js/core/deleters.ts` sin duplicar confirmación ni persistencia.
 - Helpers puros: `apps/web/src/panels/estudiantes/utils/student-helpers.ts` contiene normalización, búsqueda por ID, detección de matrícula duplicada y helpers de directorio local.
-- DOM de modales: `apps/web/src/panels/estudiantes/utils/student-dom-fields.ts` encapsula lectura/escritura simple de campos `e-*`, `sv-*` y `ee-*`; `be-*` sigue en core por carga masiva/parser.
+- DOM de modales y bulk: `apps/web/src/panels/estudiantes/utils/student-dom-fields.ts` encapsula lectura/escritura simple de campos `e-*`, `sv-*`, `ee-*`, `be-list` y `be-sec`.
+- Parser bulk textual: `apps/web/src/panels/estudiantes/utils/student-bulk-parser.ts` conserva el formato textual aceptado y la estructura de entries.
 - Estado de carga masiva: `apps/web/src/panels/estudiantes/utils/student-bulk-state.ts` contiene `BULK_IMPORT_STATE` y setters/getters sin cambiar su estructura.
 - Carga masiva: `apps/web/src/panels/estudiantes/utils/student-bulk.ts` encapsula apertura, modo texto/archivo, preview, confirmación, cancelación, exportaciones CSV y wrappers hacia el parser legacy sin cambiar formato esperado.
 - `data-student-action` ahora se importa desde `apps/web/src/panels/estudiantes/utils/student-actions.ts`.
 - FormState: permanece local en `create/components/vista.ts` y `edit/components/vista.ts`; los callbacks tardíos se registran desde `principal.ts` con el contexto del panel.
 - Globals conservados como adaptadores: `openEstM`, `saveEst`, `openViewStudent`, `openEditStudent`, `saveEditStudent`, `openBulkEstM`, `handleBulkFileChange`, `analyzeBulkInput`, `saveBulkEst`, `delEst`, `setStudentsGradeView`, `setActiveSection`, `setStudentsViewMode`, `setStudentsGlobalSearch`, `openStudentSearchResult`, `updateStudentCreateField`, `handleStudentCreatePhoto`, `confirmSaveStudent`, `updateStudentEditField`, `handleStudentEditPhoto`, `confirmSaveEditStudent`, `handleDeleteStudent`.
-- Deuda restante: CRUD/carga masiva real sigue en `js/core/student-logic.ts`; eliminación sigue en `js/core/deleters.ts`; parser, DOM legacy de carga masiva, modales, SQL, `persist`, `go` y `toast` siguen en core por riesgo runtime; `legacy-api.ts` sigue publicando APIs de estudiantes por compatibilidad, pero ya delega a wrappers del dominio.
+- Deuda restante: CRUD/carga masiva real sigue en `js/core/student-logic.ts`; eliminación sigue en `js/core/deleters.ts`; guardado bulk, SQL, `persist`, `go`, `toast` y apertura/cierre real de modales siguen en core por riesgo runtime; `legacy-api.ts` sigue publicando APIs de estudiantes por compatibilidad, pero ya delega a wrappers del dominio.
 
 ## Criterio De Listo
 

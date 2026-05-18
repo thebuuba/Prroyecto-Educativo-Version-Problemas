@@ -76,6 +76,7 @@ Avance aplicado:
 - Vinculación de instrumentos modularizada en `apps/web/src/panels/instrumentos/utils/instrument-linking.ts`.
 - Fallback interno legacy de vinculación de instrumentos eliminado; `window.openApplyInstrumentModal`, `window.openCreateInstrumentTypePicker` y `window.confirmLinkInstrument` quedan solo como adaptadores publicados.
 - Guardado de actividades y plantillas modularizado en `apps/web/src/panels/actividades/utils/activity-save.ts`.
+- Sincronización SQL de acciones de actividades encapsulada en `apps/web/src/panels/actividades/utils/activity-sql.ts`, con fallback interno a `window.AulaBaseSqlApi`.
 - Acciones de creación/eliminación de usuarios separadas en `js/panels/usuarios/utils/user-domain-actions.ts` y consumidas por `data-user-action` con imports directos.
 
 Conteo de la fase estudiantes:
@@ -138,8 +139,9 @@ Riesgos actividades/calificaciones:
 - `saveUsr()` fue migrado en la fase usuarios porque pertenece a ese dominio aunque viva en el fragmento combinado de actividades.
 - `saveAct` y `saveTpl` usan implementación modular principal en `apps/web/src/panels/actividades/utils/activity-save.ts`; los globals quedan como adaptadores temporales.
 - Vista de matriz, metas, edición de nombre/puntos, alta, eliminación y autoajuste ya usan imports directos desde `apps/web/src/panels/actividades/utils/actions.ts`.
+- `actions.ts` de actividades ya no llama directamente a `window.AulaBaseSqlApi`; usa `activity-sql.ts`.
 - Instrumentos (`setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator`) ya usan imports directos desde `apps/web/src/panels/instrumentos/utils/instrument-actions.ts` y conservan globals como adaptadores.
-- Vinculación de instrumentos (`openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument`) ya tiene implementación modular principal sin fallback interno; los globals quedan como adaptadores temporales.
+- Vinculación de instrumentos (`openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument`) ya tiene implementación modular principal sin fallback interno; `instrument-link-state.ts` encapsula `_linkActId/_linkStudentId` y los globals quedan como adaptadores temporales.
 - Acciones sin controles visibles actuales (`export`, `sync`, `clear-grade`, edición profunda de matriz) quedan registradas como ramas seguras hasta modularizar esos flujos.
 
 Conteo de la fase usuarios:
@@ -182,7 +184,7 @@ Riesgos de globals:
 Siguiente trabajo:
 
 1. Estabilizar paneles ya movidos (`reportes`, `planificaciones`, `matriz`, `instrumentos`, `actividades`).
-2. Reducir dependencias SQL/window restantes en actividades.
+2. Reducir dependencias SQL/window restantes en dominios no migrados.
 3. Mantener `legacy-api.ts` como lista explícita de deuda.
 4. Remover globals por dominio cuando no existan referencias runtime.
 

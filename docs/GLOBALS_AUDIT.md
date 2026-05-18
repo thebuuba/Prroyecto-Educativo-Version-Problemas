@@ -83,6 +83,7 @@ Se mantienen porque hay referencias runtime reales, uso por registries como fall
 - `data-activity-action` usa imports directos para guardar actividades y plantillas desde `apps/web/src/panels/actividades/utils/activity-save.ts`.
 - `data-activity-action` usa imports directos para acciones básicas de instrumentos desde `apps/web/src/panels/instrumentos/utils/instrument-actions.ts`.
 - `data-activity-action` usa implementación modular para vincular instrumentos: `openApplyInstrumentModal`, `openCreateInstrumentTypePicker` y `confirmLinkInstrument`.
+- `data-activity-action` usa `apps/web/src/panels/instrumentos/utils/instrument-link-state.ts` para leer contexto de vinculación; ya no lee directamente `window._linkActId`.
 - `data-user-action` usa imports directos hacia `js/panels/usuarios/utils/user-domain-actions.ts` para crear y eliminar usuarios; ya no invoca `window.saveUsr` ni `window.delUsr` como ruta primaria.
 - Las acciones internas de planificaciones dejaron de invocar `window.go` y de leer `window.S`; usan imports directos hacia `go` y `S`.
 - `data-ui-action` usa imports directos para contexto global e institución.
@@ -98,7 +99,7 @@ Resultado:
 - Los fragments `sections/modals/m-link-inst.html` y `sections/modals/m-inst-type.html` siguen siendo dueños del marcado visual; no se cambiaron textos ni IDs.
 - Dependencias de estado: `S.activeGroupId`, `S.activePeriodId`, `S.instruments` y la actividad encontrada por `findActivity()`.
 - Dependencias UI: `openM('m-link-inst')`, `openM('m-inst-type')`, `closeM('m-link-inst')` y los IDs DOM `li-act`, `li-inst`, `li-create-btn`, `inst-type-grid`.
-- Dependencias `window`: `_linkActId` sigue como llave transicional usada por el registry declarativo; `_linkStudentId` se conserva para compatibilidad de flujo de evaluación por estudiante.
+- Dependencias `window`: `_linkActId` y `_linkStudentId` siguen como espejo legacy sincronizado desde `instrument-link-state.ts`; el registry declarativo ya no los lee directamente.
 - `activity-actions.ts` ya no llama directamente a `window.openApplyInstrumentModal`, `window.openCreateInstrumentTypePicker` ni `window.confirmLinkInstrument`; importa esas funciones desde `instrument-actions.ts`.
 - `instrument-actions.ts` ya no conserva fallback interno a implementaciones legacy capturadas; los globals publicados son adaptadores directos a la fuente modular.
 
@@ -112,9 +113,11 @@ Resultado:
 - La implementación original fue localizada en bundles legacy históricos, no en `principal.ts`; `utils/actions.ts` solo contenía acciones de bloques/matriz.
 - Dependencias de estado/dominio: `S.activeGroupId`, `S.activePeriodId`, `S.templates`, `getGroupCfg`, `uid`, `round2`, `parseDecimalInput` y `BNAME`.
 - Dependencias de persistencia/sync: `persist()` y `syncSqlActivityCreateOrUpdate()` para nuevas actividades.
+- Acciones de bloques: `activity-sql.ts` encapsula `isEnabled`, `ensureSqlAcademicContext`, `syncSqlActivityCreateOrUpdate`, `syncSqlActivityDelete`, `deleteActivity` y `deleteEvaluations`; `window.AulaBaseSqlApi` queda solo como fallback interno del wrapper.
 - Dependencias UI: `closeM('m-act')`, `closeM('m-tpl')`, `go('config')` y `toast(...)`.
 - IDs DOM requeridos: `a-nom`, `a-blq`, `a-tipo`, `a-pts`, `a-fecha`, `a-obs`, `tpl-name` y `tpl-desc`.
 - `activity-actions.ts` ya no invoca `window.saveAct` ni `window.saveTpl`; `actions.ts` solo publica esos nombres globales como adaptadores temporales.
+- `actions.ts` ya no invoca directamente `window.AulaBaseSqlApi`; delega en `apps/web/src/panels/actividades/utils/activity-sql.ts`.
 
 ## Migración Física Actividades/Instrumentos
 
@@ -123,7 +126,8 @@ Resultado:
 - `data-activity-action` ya apunta a la fuente real de actividades en `apps/web/src/panels/actividades/utils/activity-actions.ts` y a la fuente real de instrumentos en `apps/web/src/panels/instrumentos/utils/instrument-actions.ts`.
 - `routing.ts` conserva la clave pública `/js/panels/instrumentos/principal.ts`, pero `PANEL_MODULES` resuelve hacia `apps/web/src/panels/instrumentos/principal.ts`.
 - `routing.ts` conserva la clave pública `/js/panels/actividades/principal.ts`, pero `PANEL_MODULES` resuelve hacia `apps/web/src/panels/actividades/principal.ts`.
-- Actividades conserva dependencias documentadas a `window.AulaBaseSqlApi` y `_linkActId`.
+- Actividades conserva `window.AulaBaseSqlApi` solo como fallback dentro de `activity-sql.ts`.
+- Instrumentos conserva `_linkActId` y `_linkStudentId` solo como espejo legacy dentro de `instrument-link-state.ts`.
 
 ## Migración Física Aplicada
 
@@ -142,6 +146,7 @@ Resultado:
 - `reportDownloadExcel`, `reportDownloadPdf`, `reportDownloadWord`.
 - Adaptadores de horario ya cubiertos por imports directos (`setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal`) cuando no existan referencias runtime.
 - Adaptadores de actividades ya cubiertos por imports directos (`setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`, `saveAct`, `saveTpl`) cuando no existan referencias runtime.
+- Espejos legacy de linking (`_linkActId`, `_linkStudentId`) cuando no existan referencias runtime fuera de `instrument-link-state.ts`.
 - Adaptadores de instrumentos (`setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator`) cuando no existan referencias runtime.
 - Adaptadores de vinculación (`openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument`) cuando no existan referencias runtime fuera de `instrument-actions.ts`.
 - Selectores legacy en `js/panels/autenticacion/utils/event-bindings.ts` cuando se retire compatibilidad con HTML auth antiguo.

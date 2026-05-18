@@ -8,6 +8,7 @@ import {
   updateBlockMeta,
 } from './actions.ts';
 import { saveAct, saveTpl } from './activity-save.ts';
+import { getLinkActivityId } from '../../instrumentos/utils/instrument-link-state.ts';
 import {
   confirmLinkInstrument,
   createNewInstrument,
@@ -92,12 +93,12 @@ const activityActionRegistry: Record<string, ActivityActionHandler> = {
   'edit-block': () => {},
   'delete-block': () => {},
   'select-instrument': ({ trigger }) => {
-    const targetActivityId = activityId(trigger) || String((window as Record<string, unknown>)._linkActId || '').trim();
+    const targetActivityId = activityId(trigger) || getLinkActivityId();
     if (targetActivityId) openApplyInstrumentModal(targetActivityId);
   },
   'create-instrument': ({ trigger }) => {
     const type = valueFromTrigger(trigger);
-    const targetActivityId = activityId(trigger) || String((window as Record<string, unknown>)._linkActId || '').trim();
+    const targetActivityId = activityId(trigger) || getLinkActivityId();
     if (type) {
       createNewInstrument(type);
       return;

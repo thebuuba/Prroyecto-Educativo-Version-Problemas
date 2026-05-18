@@ -52,7 +52,8 @@
 - La implementación runtime principal vive ahora en `apps/web/src/panels/instrumentos/`; `js/panels/instrumentos/**` solo reexporta como adaptador legacy.
 - Los fragments `sections/modals/m-link-inst.html` y `sections/modals/m-inst-type.html` contienen la estructura visual y los IDs requeridos: `m-link-inst`, `m-inst-type`, `li-act`, `li-inst`, `li-create-btn` e `inst-type-grid`.
 - La lógica depende directamente de `S`, `persist`, `go`, `openM`, `closeM`, `findActivity`, `escapeHtml`, `BASIC_INSTRUMENT_TYPES` e `INSTRUMENT_META`.
-- La dependencia a `window` queda limitada al estado transicional `_linkActId` y `_linkStudentId`, más la publicación temporal de `window.openApplyInstrumentModal`, `window.openCreateInstrumentTypePicker` y `window.confirmLinkInstrument`.
+- El estado transicional de linking vive en `apps/web/src/panels/instrumentos/utils/instrument-link-state.ts`; `_linkActId` y `_linkStudentId` quedan sincronizados como espejo legacy temporal.
+- La dependencia a `window` queda limitada al espejo legacy `_linkActId` / `_linkStudentId`, `window.setTimeout` y la publicación temporal de `window.openApplyInstrumentModal`, `window.openCreateInstrumentTypePicker` y `window.confirmLinkInstrument`.
 - `instrument-actions.ts` publica globals como adaptadores, pero ya no conserva fallback interno hacia una implementación legacy capturada.
 - No se encontraron implementaciones reales alternativas en `principal.ts`; las referencias restantes son modales/fragments, documentación y adaptadores.
 
@@ -64,6 +65,8 @@
 - `saveTpl` depende de `S`, `persist`, `closeM`, `toast`, `getGroupCfg` y `uid`.
 - Los modales `sections/modals/m-act.html` y `sections/modals/m-tpl.html` conservan los IDs DOM requeridos: `a-nom`, `a-blq`, `a-tipo`, `a-pts`, `a-fecha`, `a-obs`, `tpl-name` y `tpl-desc`.
 - `apps/web/src/panels/actividades/utils/actions.ts` publica `window.saveAct` y `window.saveTpl` como adaptadores hacia el módulo nuevo; no queda una segunda implementación.
+- La sincronización SQL de acciones de bloques vive ahora en `apps/web/src/panels/actividades/utils/activity-sql.ts`; `actions.ts` ya no llama directamente a `window.AulaBaseSqlApi`.
+- `activity-sql.ts` usa imports directos de `js/core/api-sql.ts` para `isEnabled`, `ensureSqlAcademicContext`, `syncSqlActivityCreateOrUpdate`, `syncSqlActivityDelete`, `deleteActivity` y `deleteEvaluations`, conservando `window.AulaBaseSqlApi` solo como fallback interno.
 
 ## Cambios Recientes Aplicados
 
@@ -80,6 +83,8 @@
 - `instrumentos` fue movido físicamente a `apps/web/src/panels/instrumentos/`; las rutas `js/panels/instrumentos/**` quedaron como adaptadores de reexportación.
 - `actividades` fue movido físicamente a `apps/web/src/panels/actividades/`; las rutas `js/panels/actividades/**` quedaron como adaptadores de reexportación.
 - `data-activity-action` dejó de llamar `window.saveAct` / `window.saveTpl`; el guardado vive en `apps/web/src/panels/actividades/utils/activity-save.ts`.
+- `data-activity-action` dejó de leer directamente `window._linkActId`; ahora consulta `instrument-link-state.ts`.
+- `actions.ts` de actividades dejó de llamar directamente a `window.AulaBaseSqlApi`; ahora delega en `activity-sql.ts`.
 - `openApplyInstrumentModal`, `openCreateInstrumentTypePicker` y `confirmLinkInstrument` tienen implementación modular principal en `instrument-linking.ts`; `instrument-actions.ts` ya no conserva fallback interno legacy.
 - `data-user-action` dejó de llamar `window.saveUsr` / `window.delUsr` como ruta primaria; creación y eliminación viven en `js/panels/usuarios/utils/user-domain-actions.ts`.
 - Se eliminó `window.openDashboardCourse`.
@@ -100,7 +105,7 @@
 | `data-report-action` | Directo | Solo `window.print()`, API del navegador. |
 | `data-planning-action` | Directo | Solo `window.print()`, API del navegador. |
 | `data-schedule-action` | Parcialmente directo | Reemplazables ya importados: tabs, mes, asistente, celdas y eventos. Fallback temporal: los mismos globals si el panel no inicializó. No tocar todavía: `generateTeacherScheduleBase`. |
-| `data-activity-action` | Directo para acciones visibles | Reemplazables ya importados: vista, metas, edición de nombre/puntos, alta/eliminación, autoajuste, instrumentos básicos, vinculación de instrumentos y guardado de actividad/plantilla. |
+| `data-activity-action` | Directo para acciones visibles | Reemplazables ya importados: vista, metas, edición de nombre/puntos, alta/eliminación, autoajuste, instrumentos básicos, vinculación de instrumentos y guardado de actividad/plantilla. `_linkActId` se consulta por estado modular con espejo legacy. |
 | `data-attendance-action` | Mayormente directo | Conservar temporalmente: `exportToExcel` / `exportToPdf`, porque no hay exportador modular equivalente en este dominio. |
 | `data-user-action` | Directo con adaptador legacy | Creación y eliminación usan imports directos. `delUsr` se conserva como global temporal para compatibilidad legacy; `saveUsr` no tiene referencia runtime real. |
 | `data-student-action` | Híbrido | Conservar fallbacks de crear/editar/búsqueda/fotos hasta exportar acciones desde estudiantes, crear-estudiante y editar-estudiante sin ciclos. |
@@ -109,7 +114,7 @@
 
 ## Ruta Para Retiro Gradual
 
-1. Reducir dependencias SQL/window restantes en actividades.
+1. Reducir el uso directo de APIs SQL/cloud globales en dominios restantes.
 2. Convertir `usuarios`, `horario` y `asistencia` a migración física por grupos pequeños.
 3. Convertir registries híbridos restantes a imports directos, uno por dominio.
 4. Reemplazar `window.RENDERS` por registro modular explícito del router.

@@ -4,16 +4,7 @@ import { go } from '../../../../../../js/core/routing.ts';
 import { closeM, openM } from '../../../../../../js/core/ui.ts';
 import { escapeHtml, findActivity } from '../../../../../../js/core/domain-utils.ts';
 import { BASIC_INSTRUMENT_TYPES, INSTRUMENT_META } from '../view.ts';
-
-const LINK_ACTIVITY_KEY = '_linkActId';
-
-function setLinkActivityId(activityId: string): void {
-  (window as Record<string, unknown>)[LINK_ACTIVITY_KEY] = activityId;
-}
-
-function getLinkActivityId(): string {
-  return String((window as Record<string, unknown>)[LINK_ACTIVITY_KEY] || '').trim();
-}
+import { getLinkActivityId, setLinkContext } from './instrument-link-state.ts';
 
 function setText(id: string, value: string): void {
   const element = document.getElementById(id);
@@ -85,10 +76,7 @@ function retryPopulate(action: () => boolean, attempts = 8): void {
 export function openApplyInstrumentModal(activityId: string, studentId?: string): boolean {
   const nextActivityId = String(activityId || '').trim();
   if (!nextActivityId || !findActivity(nextActivityId)) return false;
-  setLinkActivityId(nextActivityId);
-  if (studentId) {
-    (window as Record<string, unknown>)._linkStudentId = studentId;
-  }
+  setLinkContext(nextActivityId, studentId);
   openM('m-link-inst');
   retryPopulate(() => populateLinkModal(nextActivityId));
   return true;
@@ -97,7 +85,7 @@ export function openApplyInstrumentModal(activityId: string, studentId?: string)
 export function openCreateInstrumentTypePicker(activityId: string): boolean {
   const nextActivityId = String(activityId || getLinkActivityId()).trim();
   if (!nextActivityId || !findActivity(nextActivityId)) return false;
-  setLinkActivityId(nextActivityId);
+  setLinkContext(nextActivityId);
   openM('m-inst-type');
   retryPopulate(() => populateTypePicker(nextActivityId));
   return true;

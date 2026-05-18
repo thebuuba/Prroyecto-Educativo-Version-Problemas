@@ -83,13 +83,14 @@ Actividades:
 - Archivos movidos: `principal.ts`, `view.ts`, `logic.ts`, `components/vista.ts`, `utils/actions.ts`, `utils/activity-actions.ts`, `utils/activity-save.ts` y `README.md`.
 - Adaptadores creados: los mismos paths bajo `js/panels/actividades/**` reexportan hacia `apps/web/src/panels/actividades/**`.
 - Fuente modular real: `apps/web/src/panels/actividades/utils/actions.ts`, `apps/web/src/panels/actividades/utils/activity-actions.ts` y `apps/web/src/panels/actividades/utils/activity-save.ts`.
+- Wrapper SQL modular: `apps/web/src/panels/actividades/utils/activity-sql.ts` encapsula llamadas de creación/actualización, eliminación de actividad y eliminación de evaluaciones.
 - Globals conservados como adaptadores: `setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`, `saveAct`, `saveTpl`.
 - Routing: `PANEL_MODULES` conserva la clave pública `/js/panels/actividades/principal.ts`, pero resuelve hacia `apps/web/src/panels/actividades/principal.ts`.
-- Riesgo pendiente: `utils/actions.ts` todavía usa `window.AulaBaseSqlApi` para sincronización SQL y `activity-actions.ts` lee `_linkActId`.
+- Riesgo pendiente: `window.AulaBaseSqlApi` queda como fallback interno del wrapper SQL; `_linkActId` y `_linkStudentId` quedan como espejo legacy dentro de `instrument-link-state.ts`.
 
 ## Orden Recomendado
 
-1. Continuar con reducción de dependencias SQL/window en actividades.
+1. Continuar con reducción de dependencias SQL/window en dominios restantes.
 2. Continuar con `usuarios`, `horario` y `asistencia` por grupos pequeños.
 3. Mover estudiantes/académico cuando sus fallbacks globales hayan desaparecido.
 4. Separar `js/core/` en submódulos dentro de `apps/web/src` con adaptadores raíz.

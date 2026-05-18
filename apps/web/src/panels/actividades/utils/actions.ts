@@ -3,43 +3,7 @@ import { go } from '../../../../../../js/core/routing.ts';
 import { persist } from '../../../../../../js/core/hydration.ts';
 import { uid, getGroupCfg, findActivity } from '../../../../../../js/core/domain-utils.ts';
 import { saveAct, saveTpl } from './activity-save.ts';
-
-async function syncActivityRecord(activity, meta = {}) {
-  if (!activity || !window.AulaBaseSqlApi?.isEnabled?.() || typeof window.AulaBaseSqlApi.syncSqlActivityCreateOrUpdate !== 'function') {
-    return null;
-  }
-  const payloadActivity = {
-    ...activity,
-    id: activity.sqlId || activity.id,
-  };
-  const sqlActivity = await window.AulaBaseSqlApi.syncSqlActivityCreateOrUpdate(payloadActivity, meta);
-  const newId = String(sqlActivity?.id || '').trim();
-  if (newId) {
-    activity.sqlId = newId;
-  }
-  return sqlActivity;
-}
-
-async function deleteActivityRecord(activityId, meta = {}) {
-  if (!window.AulaBaseSqlApi?.isEnabled?.()) return;
-  const schoolContext = typeof window.AulaBaseSqlApi.ensureSqlAcademicContext === 'function'
-    ? await window.AulaBaseSqlApi.ensureSqlAcademicContext()
-    : null;
-  if (!schoolContext?.schoolId) return;
-  if (typeof window.AulaBaseSqlApi.syncSqlActivityDelete === 'function') {
-    await window.AulaBaseSqlApi.syncSqlActivityDelete(activityId);
-  } else if (typeof window.AulaBaseSqlApi.deleteActivity === 'function') {
-    await window.AulaBaseSqlApi.deleteActivity(activityId, { schoolId: schoolContext.schoolId });
-  }
-  if (typeof window.AulaBaseSqlApi.deleteEvaluations === 'function') {
-    await window.AulaBaseSqlApi.deleteEvaluations({
-      schoolId: schoolContext.schoolId,
-      sectionId: meta.sectionId || S.activeGroupId || '',
-      periodId: meta.periodId || S.activePeriodId || 'P1',
-      activityId,
-    });
-  }
-}
+import { deleteActivityRecord, syncActivityRecord } from './activity-sql.ts';
 
 export function setActView(mode) {
   S.activityViewMode = ['blocks', 'matrix', 'config'].includes(mode) ? mode : 'blocks';

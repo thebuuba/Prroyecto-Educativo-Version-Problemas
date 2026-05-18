@@ -3,41 +3,72 @@
  * Mantiene la capa `window.*` separada del render principal.
  */
 
-export function registerScheduleActions(deps) {
+let scheduleActionsDeps = null;
+
+function getScheduleActionsDeps() {
+  return scheduleActionsDeps;
+}
+
+export function setScheduleTab(tab) {
+  const deps = getScheduleActionsDeps();
+  if (!deps) return false;
+  const { UI } = deps;
+  UI.activeTab = tab === 'calendar' ? 'calendar' : 'schedule';
+  rerenderSchedule();
+  return true;
+}
+
+export function changeCalendarMonth(offset) {
+  const deps = getScheduleActionsDeps();
+  if (!deps) return false;
   const {
     UI,
-    renderSchedulePanel,
     attendanceMonthStart,
     attendanceMonthKey,
-    toast,
   } = deps;
+  const date = attendanceMonthStart(UI.monthKey);
+  date.setMonth(date.getMonth() + offset);
+  UI.monthKey = attendanceMonthKey(date);
+  rerenderSchedule();
+  return true;
+}
 
+export function openScheduleWizard() {
+  const deps = getScheduleActionsDeps();
+  if (!deps) return false;
+  deps.toast('El asistente de horario modular está cargando...', false);
+  return true;
+}
+
+export function editScheduleCell(weekday, start, end) {
+  const deps = getScheduleActionsDeps();
+  if (!deps) return false;
+  deps.toast(`Editando bloque: ${weekday} @ ${start}`, false);
+  return true;
+}
+
+export function openAddEventModal() {
+  const deps = getScheduleActionsDeps();
+  if (!deps) return false;
+  deps.toast('Abre el creador de eventos personalizados.', false);
+  return true;
+}
+
+function rerenderSchedule() {
+  const deps = getScheduleActionsDeps();
+  if (!deps) return;
   function rerender() {
     const container = document.getElementById('p-content');
-    if (container) renderSchedulePanel(container);
+    if (container) deps.renderSchedulePanel(container);
   }
+  rerender();
+}
 
-  window.setScheduleTab = (tab) => {
-    UI.activeTab = tab === 'calendar' ? 'calendar' : 'schedule';
-    rerender();
-  };
-
-  window.changeCalendarMonth = (offset) => {
-    const date = attendanceMonthStart(UI.monthKey);
-    date.setMonth(date.getMonth() + offset);
-    UI.monthKey = attendanceMonthKey(date);
-    rerender();
-  };
-
-  window.openScheduleWizard = () => {
-    toast('El asistente de horario modular está cargando...', false);
-  };
-
-  window.editScheduleCell = (weekday, start, end) => {
-    toast(`Editando bloque: ${weekday} @ ${start}`, false);
-  };
-
-  window.openAddEventModal = () => {
-    toast('Abre el creador de eventos personalizados.', false);
-  };
+export function registerScheduleActions(deps) {
+  scheduleActionsDeps = deps;
+  window.setScheduleTab = setScheduleTab;
+  window.changeCalendarMonth = changeCalendarMonth;
+  window.openScheduleWizard = openScheduleWizard;
+  window.editScheduleCell = editScheduleCell;
+  window.openAddEventModal = openAddEventModal;
 }

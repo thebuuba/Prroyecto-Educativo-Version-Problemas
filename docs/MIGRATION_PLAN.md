@@ -67,6 +67,8 @@ Avance aplicado:
 - `data-report-action` convertido a imports directos para exportaciones Excel/PDF/Word, conservando globals solo como compatibilidad.
 - `data-planning-action` y `data-report-action` ahora se importan desde `apps/web/src/panels/...`.
 - Acciones internas de planificaciones convertidas de `window.S` / `window.go` a imports directos de `S` y `go`.
+- `data-schedule-action` convertido parcialmente a imports directos para acciones simples de horario, manteniendo fallback legacy.
+- `data-activity-action` convertido parcialmente a imports directos para acciones de bloques/matriz, manteniendo fallbacks para guardado e instrumentos.
 
 Conteo de la fase estudiantes:
 
@@ -113,6 +115,7 @@ Conteo de la fase horario:
 Riesgos horario:
 
 - La generación de plantilla base conserva compatibilidad con `generateTeacherScheduleBase` si existe en runtime; si no, abre el asistente.
+- Tabs, cambio de mes, apertura de asistente, edición de celdas y eventos ya usan imports directos con fallback temporal.
 - Varias acciones del registry quedan como placeholders seguros hasta que se modularicen edición avanzada, exportación y eliminación de bloques.
 
 Conteo de la fase actividades/calificaciones:
@@ -126,6 +129,8 @@ Riesgos actividades/calificaciones:
 
 - `saveUsr()` fue migrado en la fase usuarios porque pertenece a ese dominio aunque viva en el fragmento combinado de actividades.
 - `saveAct`, `saveTpl`, `openApplyInstrumentModal`, `openCreateInstrumentTypePicker` y `confirmLinkInstrument` se mantienen como adaptadores legacy explícitos si existen en runtime.
+- Vista de matriz, metas, edición de nombre/puntos, alta, eliminación y autoajuste ya usan imports directos desde `js/panels/actividades/utils/actions.ts`.
+- Instrumentos (`setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator`) siguen como fallbacks hasta separar el entrypoint de instrumentos.
 - Acciones sin controles visibles actuales (`export`, `sync`, `clear-grade`, edición profunda de matriz) quedan registradas como ramas seguras hasta modularizar esos flujos.
 
 Conteo de la fase usuarios:
@@ -168,7 +173,7 @@ Riesgos de globals:
 Siguiente trabajo:
 
 1. Estabilizar paneles ya movidos (`reportes`, `planificaciones`, `matriz`).
-2. Convertir registries híbridos restantes a imports ES cuando no rompan lazy loading.
+2. Separar instrumentos y usuarios para convertir sus fallbacks a imports ES cuando no rompan lazy loading.
 3. Mantener `legacy-api.ts` como lista explícita de deuda.
 4. Remover globals por dominio cuando no existan referencias runtime.
 

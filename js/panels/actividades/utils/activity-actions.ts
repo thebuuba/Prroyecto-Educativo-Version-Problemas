@@ -1,3 +1,13 @@
+import {
+  addActToBlock,
+  autoAdjustBlock,
+  handleActNameInput,
+  removeActFromBlock,
+  setActView,
+  updateActPts,
+  updateBlockMeta,
+} from './actions.ts';
+
 type ActivityActionContext = {
   trigger: HTMLElement;
   event: Event;
@@ -39,7 +49,7 @@ const activityActionRegistry: Record<string, ActivityActionHandler> = {
   create: ({ trigger }) => {
     const targetBlockId = blockId(trigger);
     if (targetBlockId) {
-      callAllowedWindowFunction('addActToBlock', targetBlockId);
+      void addActToBlock(targetBlockId);
       return;
     }
     callAllowedWindowFunction('saveAct');
@@ -48,14 +58,14 @@ const activityActionRegistry: Record<string, ActivityActionHandler> = {
     const targetBlockId = blockId(trigger);
     const targetActivityId = activityId(trigger);
     if (targetBlockId && targetActivityId) {
-      callAllowedWindowFunction('handleActNameInput', targetBlockId, targetActivityId, trigger);
+      void handleActNameInput(targetBlockId, targetActivityId, trigger);
     }
   },
   delete: ({ trigger }) => {
     const targetBlockId = blockId(trigger);
     const targetActivityId = activityId(trigger);
     if (targetBlockId && targetActivityId) {
-      callAllowedWindowFunction('removeActFromBlock', targetBlockId, targetActivityId);
+      void removeActFromBlock(targetBlockId, targetActivityId);
     }
   },
   save: ({ trigger }) => {
@@ -69,11 +79,11 @@ const activityActionRegistry: Record<string, ActivityActionHandler> = {
   cancel: () => {},
   'select-block': ({ trigger }) => {
     const targetBlockId = blockId(trigger);
-    if (targetBlockId) callAllowedWindowFunction('updateBlockMeta', targetBlockId, valueFromTrigger(trigger));
+    if (targetBlockId) updateBlockMeta(targetBlockId, valueFromTrigger(trigger));
   },
   'create-block': ({ trigger }) => {
     const targetBlockId = blockId(trigger);
-    if (targetBlockId) callAllowedWindowFunction('addActToBlock', targetBlockId);
+    if (targetBlockId) void addActToBlock(targetBlockId);
   },
   'edit-block': () => {},
   'delete-block': () => {},
@@ -113,7 +123,7 @@ const activityActionRegistry: Record<string, ActivityActionHandler> = {
     const targetBlockId = blockId(trigger);
     const targetActivityId = activityId(trigger);
     if (targetBlockId && targetActivityId) {
-      callAllowedWindowFunction('updateActPts', targetBlockId, targetActivityId, valueFromTrigger(trigger));
+      void updateActPts(targetBlockId, targetActivityId, valueFromTrigger(trigger));
     }
   },
   'clear-grade': () => {},
@@ -121,14 +131,14 @@ const activityActionRegistry: Record<string, ActivityActionHandler> = {
     callAllowedWindowFunction('saveAct');
   },
   'open-matrix': () => {
-    callAllowedWindowFunction('setActView', 'matrix');
+    setActView('matrix');
   },
   'edit-matrix': ({ trigger }) => {
     const targetActivityId = activityId(trigger);
     if (targetActivityId) callAllowedWindowFunction('openApplyInstrumentModal', targetActivityId, data(trigger, 'studentId'));
   },
   'change-matrix-view': ({ trigger }) => {
-    callAllowedWindowFunction('setActView', data(trigger, 'matrixView') || valueFromTrigger(trigger));
+    setActView(data(trigger, 'matrixView') || valueFromTrigger(trigger));
   },
   filter: ({ trigger }) => {
     const target = data(trigger, 'target') || data(trigger, 'activityTarget');
@@ -142,7 +152,7 @@ const activityActionRegistry: Record<string, ActivityActionHandler> = {
   print: () => window.print(),
   'calculate-average': ({ trigger }) => {
     const targetBlockId = blockId(trigger);
-    if (targetBlockId) callAllowedWindowFunction('autoAdjustBlock', targetBlockId);
+    if (targetBlockId) autoAdjustBlock(targetBlockId);
   },
   sync: () => {},
 };

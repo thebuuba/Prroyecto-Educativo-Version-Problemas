@@ -1,3 +1,11 @@
+import {
+  changeCalendarMonth,
+  editScheduleCell,
+  openAddEventModal,
+  openScheduleWizard,
+  setScheduleTab,
+} from './actions.ts';
+
 type ScheduleActionContext = {
   trigger: HTMLElement;
   event: Event;
@@ -25,38 +33,59 @@ function callAllowedWindowFunction(name: string, ...args: unknown[]): boolean {
 
 const scheduleActionRegistry: Record<string, ScheduleActionHandler> = {
   create: () => {
-    callAllowedWindowFunction('openScheduleWizard');
+    if (!openScheduleWizard()) callAllowedWindowFunction('openScheduleWizard');
   },
   edit: ({ trigger }) => {
-    callAllowedWindowFunction(
-      'editScheduleCell',
+    const handled = editScheduleCell(
       Number.parseInt(data(trigger, 'scheduleDay'), 10),
       data(trigger, 'scheduleTime'),
       data(trigger, 'scheduleEndTime'),
     );
+    if (!handled) {
+      callAllowedWindowFunction(
+        'editScheduleCell',
+        Number.parseInt(data(trigger, 'scheduleDay'), 10),
+        data(trigger, 'scheduleTime'),
+        data(trigger, 'scheduleEndTime'),
+      );
+    }
   },
   delete: () => {},
   save: () => {},
   cancel: () => {},
   'add-block': ({ trigger }) => {
     if (data(trigger, 'scheduleTarget') === 'event') {
-      callAllowedWindowFunction('openAddEventModal');
+      if (!openAddEventModal()) callAllowedWindowFunction('openAddEventModal');
       return;
     }
-    callAllowedWindowFunction(
-      'editScheduleCell',
+    const handled = editScheduleCell(
       Number.parseInt(data(trigger, 'scheduleDay'), 10),
       data(trigger, 'scheduleTime'),
       data(trigger, 'scheduleEndTime'),
     );
+    if (!handled) {
+      callAllowedWindowFunction(
+        'editScheduleCell',
+        Number.parseInt(data(trigger, 'scheduleDay'), 10),
+        data(trigger, 'scheduleTime'),
+        data(trigger, 'scheduleEndTime'),
+      );
+    }
   },
   'edit-block': ({ trigger }) => {
-    callAllowedWindowFunction(
-      'editScheduleCell',
+    const handled = editScheduleCell(
       Number.parseInt(data(trigger, 'scheduleDay'), 10),
       data(trigger, 'scheduleTime'),
       data(trigger, 'scheduleEndTime'),
     );
+    if (!handled) {
+      callAllowedWindowFunction(
+        'editScheduleCell',
+        Number.parseInt(data(trigger, 'scheduleDay'), 10),
+        data(trigger, 'scheduleTime'),
+        data(trigger, 'scheduleEndTime'),
+      );
+    }
   },
   'delete-block': () => {},
   'select-day': () => {},
@@ -67,30 +96,30 @@ const scheduleActionRegistry: Record<string, ScheduleActionHandler> = {
   'select-section': () => {},
   'change-view': ({ trigger }) => {
     const view = data(trigger, 'scheduleView') || valueFromTrigger(trigger);
-    callAllowedWindowFunction('setScheduleTab', view);
+    if (!setScheduleTab(view)) callAllowedWindowFunction('setScheduleTab', view);
   },
   clear: () => {},
   print: () => window.print(),
   export: () => {},
   'open-wizard': () => {
-    callAllowedWindowFunction('openScheduleWizard');
+    if (!openScheduleWizard()) callAllowedWindowFunction('openScheduleWizard');
   },
   'close-wizard': () => {},
   generate: () => {
     if (!callAllowedWindowFunction('generateTeacherScheduleBase')) {
-      callAllowedWindowFunction('openScheduleWizard');
+      if (!openScheduleWizard()) callAllowedWindowFunction('openScheduleWizard');
     }
   },
   'previous-week': () => {},
   'next-week': () => {},
   'previous-month': () => {
-    callAllowedWindowFunction('changeCalendarMonth', -1);
+    if (!changeCalendarMonth(-1)) callAllowedWindowFunction('changeCalendarMonth', -1);
   },
   'next-month': () => {
-    callAllowedWindowFunction('changeCalendarMonth', 1);
+    if (!changeCalendarMonth(1)) callAllowedWindowFunction('changeCalendarMonth', 1);
   },
   'add-event': () => {
-    callAllowedWindowFunction('openAddEventModal');
+    if (!openAddEventModal()) callAllowedWindowFunction('openAddEventModal');
   },
 };
 

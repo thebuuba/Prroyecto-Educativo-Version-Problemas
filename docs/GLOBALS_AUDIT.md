@@ -61,8 +61,9 @@ Se mantienen porque hay referencias runtime reales, uso por registries como fall
 | Estudiantes | `openEstM`, `saveEst`, `openViewStudent`, `openEditStudent`, `saveEditStudent`, `openBulkEstM`, `handleBulkFileChange`, `analyzeBulkInput`, `saveBulkEst`, `delEst` | Registries y módulos de crear/editar estudiante los usan como adaptadores. |
 | Académico | `openSecM`, `saveSec`, `openEditSection`, `saveEditSection`, `saveGrade`, `delSec`, `delGrade` | Fallbacks de creación/edición/eliminación y sincronización académica. |
 | Asistencia | `shiftMonth`, `setActiveGroup`, `cycleMark`, `commitDayDay`, `cycleException`, `applyWeeklySchedule` | El módulo legacy de asistencia todavía los publica. |
-| Horario | `setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal` | Usados por `data-schedule-action` como adaptadores. |
-| Actividades/instrumentos | `setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`, `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator` | Usados por `data-activity-action` y paneles relacionados. |
+| Horario | `setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal` | Ya no son la ruta primaria de `data-schedule-action`; se conservan como fallback y compatibilidad runtime. |
+| Actividades | `setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock` | Ya no son la ruta primaria de `data-activity-action`; se conservan como fallback y compatibilidad runtime. |
+| Instrumentos | `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator` | Siguen usados por `data-activity-action` como fallback porque viven en el entrypoint de instrumentos. |
 | Usuarios | `delUsr` | Usado por `data-user-action` como fallback si existe. |
 | Planificaciones | `lessonPlanNew`, `lessonPlanContinue`, `lessonPlanReturnHome`, `lessonPlanSetActiveSection`, `lessonPlanSetGeneralField`, `lessonPlanSetCurriculumField` | El registry ya usa imports directos; globals se conservan temporalmente por compatibilidad. |
 | Reportes | `reportDownloadExcel`, `reportDownloadPdf`, `reportDownloadWord` | El registry ya usa imports directos; globals se conservan temporalmente por compatibilidad. |
@@ -76,6 +77,8 @@ Se mantienen porque hay referencias runtime reales, uso por registries como fall
 
 - `data-report-action` ya no invoca `window.reportDownloadExcel`, `window.reportDownloadPdf` ni `window.reportDownloadWord`; importa esas funciones desde `apps/web/src/panels/reportes/utils/actions.ts`.
 - `data-planning-action` usa imports directos hacia `apps/web/src/panels/planificaciones/utils/actions.ts`.
+- `data-schedule-action` usa imports directos para las acciones simples de horario: tabs, mes, asistente, celdas y eventos.
+- `data-activity-action` usa imports directos para las acciones de bloques y matriz: vista, metas, nombre, puntos, alta, eliminación y autoajuste.
 - Las acciones internas de planificaciones dejaron de invocar `window.go` y de leer `window.S`; usan imports directos hacia `go` y `S`.
 - `data-ui-action` usa imports directos para contexto global e institución.
 
@@ -91,7 +94,9 @@ Se mantienen porque hay referencias runtime reales, uso por registries como fall
 
 - `lessonPlanNew`, `lessonPlanContinue`, `lessonPlanReturnHome`, `lessonPlanSetActiveSection`, `lessonPlanSetGeneralField`, `lessonPlanSetCurriculumField`.
 - `reportDownloadExcel`, `reportDownloadPdf`, `reportDownloadWord`.
-- Adaptadores de panel ya cubiertos por registries (`setActView`, `updateBlockMeta`, `setInstFilter`, etc.) cuando los registries dejen de invocar `window`.
+- Adaptadores de horario ya cubiertos por imports directos (`setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal`) cuando no existan referencias runtime.
+- Adaptadores de actividades ya cubiertos por imports directos (`setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`) cuando no existan referencias runtime.
+- Adaptadores de instrumentos (`setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator`) después de separar el entrypoint de instrumentos.
 - Selectores legacy en `js/panels/autenticacion/utils/event-bindings.ts` cuando se retire compatibilidad con HTML auth antiguo.
 
 ## Deben Mantenerse Temporalmente

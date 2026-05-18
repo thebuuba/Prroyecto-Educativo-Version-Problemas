@@ -2,10 +2,10 @@ import { S } from '../../../../../../js/core/state.ts';
 import { closeM, forceCloseM } from '../../../../../../js/core/ui.ts';
 import {
   BULK_IMPORT_STATE,
-  analyzeBulkInput,
-  handleBulkFileChange,
-  openBulkEstM,
-  saveBulkEst,
+  analyzeBulkInput as analyzeBulkInputFromCore,
+  handleBulkFileChange as handleBulkFileChangeFromCore,
+  openBulkEstM as openBulkEstMFromCore,
+  saveBulkEst as saveBulkEstFromCore,
 } from '../../../../../../js/core/student-logic.ts';
 
 export function setBulkInputMode(mode: string): boolean {
@@ -48,19 +48,37 @@ export function exportBulkErrorReport(): boolean {
   return downloadTextFile('errores-carga-estudiantes.csv', `fila,matricula,nombre,estado\n${rows}\n`);
 }
 
+export async function openBulkStudentModal(sectionId = ''): Promise<boolean> {
+  await openBulkEstMFromCore(sectionId || S.activeGroupId || '');
+  return true;
+}
+
+export function handleBulkStudentFileChange(input?: HTMLInputElement): boolean {
+  if (!input) return false;
+  handleBulkFileChangeFromCore(input);
+  return true;
+}
+
+export async function analyzeBulkStudents(): Promise<boolean> {
+  return (await analyzeBulkInputFromCore()) === true;
+}
+
+export async function saveBulkStudents(): Promise<boolean> {
+  await saveBulkEstFromCore();
+  return true;
+}
+
 export async function openBulkUpload(sectionId = ''): Promise<boolean> {
   forceCloseM('m-est');
-  await openBulkEstM(sectionId || S.activeGroupId || '');
-  return true;
+  return openBulkStudentModal(sectionId);
 }
 
 export async function previewBulkStudents(): Promise<boolean> {
-  return (await analyzeBulkInput()) === true;
+  return analyzeBulkStudents();
 }
 
 export async function confirmBulkStudents(): Promise<boolean> {
-  await saveBulkEst();
-  return true;
+  return saveBulkStudents();
 }
 
 export function cancelBulkUpload(): boolean {
@@ -69,9 +87,7 @@ export function cancelBulkUpload(): boolean {
 }
 
 export function importStudents(input?: HTMLInputElement): boolean {
-  if (!input) return false;
-  handleBulkFileChange(input);
-  return true;
+  return handleBulkStudentFileChange(input);
 }
 
 export function isBulkAnalyzed(): boolean {

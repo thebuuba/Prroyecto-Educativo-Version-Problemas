@@ -20,7 +20,7 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 | `usuarios` | `apps/web/src/panels/usuarios/` | `js/panels/usuarios/**` reexporta al nuevo origen. | Bajo-medio: conserva `window.RENDERS.usuarios`, `saveUsr` y `delUsr` como adaptadores temporales. |
 | `horario` | `apps/web/src/panels/horario/` | `js/panels/horario/**` reexporta al nuevo origen. | Medio: conserva `window.RENDERS.horario/calendario` y globals temporales de agenda. |
 | `asistencia` | `apps/web/src/panels/asistencia/` | `js/panels/asistencia/**` reexporta al nuevo origen. | Medio: conserva `window.RENDERS.asistencia`, globals temporales y exportadores legacy encapsulados. |
-| `estudiantes` | `apps/web/src/panels/estudiantes/` con `create/` y `edit/`. | `js/panels/estudiantes/**`, `js/panels/crear-estudiante/**` y `js/panels/editar-estudiante/**` reexportan al nuevo origen. | Medio: conserva FormState local por subpanel, CRUD/carga masiva en `js/core/student-logic.ts`, eliminación en `js/core/deleters.ts` y globals temporales. |
+| `estudiantes` | `apps/web/src/panels/estudiantes/` con `create/` y `edit/`. | `js/panels/estudiantes/**`, `js/panels/crear-estudiante/**` y `js/panels/editar-estudiante/**` reexportan al nuevo origen. | Medio: conserva FormState local por subpanel; CRUD/carga masiva/eliminación siguen implementados en core pero ya pasan por wrappers modulares. |
 
 ## Bloqueadas
 
@@ -45,7 +45,7 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 - `core/ui.ts` llama hooks globales de setup/auth.
 - `core/routing.ts` depende de `window._renderPanel`.
 - `legacy-bridge.ts` usa routing y estado, mientras routing usa globals instalados por bridge.
-- Académico llama funciones expuestas desde `legacy-api.ts`; estudiantes conserva compatibilidad por globals publicados desde `student-logic.ts`, `deleters.ts` y `legacy-api.ts`.
+- Académico llama funciones expuestas desde `legacy-api.ts`; estudiantes conserva compatibilidad por globals publicados desde wrappers modulares y `initDeleters()`.
 
 ## Dependencias Runtime
 
@@ -124,11 +124,13 @@ Actividades:
 - Adaptadores creados: `js/panels/estudiantes/**`, `js/panels/crear-estudiante/**` y `js/panels/editar-estudiante/**` reexportan al nuevo origen; sus README documentan que son temporales.
 - Routing: las claves públicas `/js/panels/estudiantes/principal.ts`, `/js/panels/crear-estudiante/principal.ts` y `/js/panels/editar-estudiante/principal.ts` se conservan; `PANEL_MODULES` resuelve hacia `apps/web/src/panels/estudiantes/`, `create/` y `edit/`.
 - Acciones base: `apps/web/src/panels/estudiantes/utils/student-domain-actions.ts` encapsula creación, edición, eliminación, guardado, búsqueda, filtros, selección y fotos.
-- Carga masiva: `apps/web/src/panels/estudiantes/utils/student-bulk.ts` encapsula apertura, modo texto/archivo, preview, confirmación, cancelación y exportaciones CSV sin cambiar parser ni formato esperado.
+- Wrappers CRUD: `apps/web/src/panels/estudiantes/utils/student-crud.ts` delega a `js/core/student-logic.ts` para apertura, guardado, vista, edición, alta programática y directorio.
+- Wrappers de eliminación: `apps/web/src/panels/estudiantes/utils/student-delete.ts` delega a `js/core/deleters.ts` sin duplicar confirmación ni persistencia.
+- Carga masiva: `apps/web/src/panels/estudiantes/utils/student-bulk.ts` encapsula apertura, modo texto/archivo, preview, confirmación, cancelación, exportaciones CSV y wrappers hacia el parser legacy sin cambiar formato esperado.
 - `data-student-action` ahora se importa desde `apps/web/src/panels/estudiantes/utils/student-actions.ts`.
 - FormState: permanece local en `create/components/vista.ts` y `edit/components/vista.ts`; los callbacks tardíos se registran desde `principal.ts` con el contexto del panel.
 - Globals conservados como adaptadores: `openEstM`, `saveEst`, `openViewStudent`, `openEditStudent`, `saveEditStudent`, `openBulkEstM`, `handleBulkFileChange`, `analyzeBulkInput`, `saveBulkEst`, `delEst`, `setStudentsGradeView`, `setActiveSection`, `setStudentsViewMode`, `setStudentsGlobalSearch`, `openStudentSearchResult`, `updateStudentCreateField`, `handleStudentCreatePhoto`, `confirmSaveStudent`, `updateStudentEditField`, `handleStudentEditPhoto`, `confirmSaveEditStudent`, `handleDeleteStudent`.
-- Deuda restante: CRUD/carga masiva real sigue en `js/core/student-logic.ts`; eliminación sigue en `js/core/deleters.ts`; `legacy-api.ts` sigue publicando APIs de estudiantes por compatibilidad.
+- Deuda restante: CRUD/carga masiva real sigue en `js/core/student-logic.ts`; eliminación sigue en `js/core/deleters.ts`; `legacy-api.ts` sigue publicando APIs de estudiantes por compatibilidad, pero ya delega a wrappers del dominio.
 
 ## Criterio De Listo
 

@@ -16,8 +16,9 @@ import { updateSBUser } from './shell.ts';
 import * as Cloud from './api-cloud.ts';
 import * as DB from './api-db.ts';
 import * as SQL from './api-sql.ts';
-import * as StudentLogic from './student-logic.ts';
 import * as SectionLogic from './section-logic.ts';
+import * as StudentCrud from '../../apps/web/src/panels/estudiantes/utils/student-crud.ts';
+import * as StudentBulk from '../../apps/web/src/panels/estudiantes/utils/student-bulk.ts';
 
 export const LEGACY_BRIDGE_REGISTRY = {
   core: {
@@ -94,17 +95,17 @@ export const LEGACY_BRIDGE_REGISTRY = {
     logoutAuth: DomainUtils.logoutAuth,
   },
   students: {
-    openEstM: StudentLogic.openEstM,
-    saveEst: StudentLogic.saveEst,
-    openViewStudent: StudentLogic.openViewStudent,
-    openEditStudent: StudentLogic.openEditStudent,
-    saveEditStudent: StudentLogic.saveEditStudent,
-    openBulkEstM: StudentLogic.openBulkEstM,
-    chooseStudentAddMode: StudentLogic.chooseStudentAddMode,
-    openStudentAddModeModal: StudentLogic.openStudentAddModeModal,
-    handleBulkFileChange: StudentLogic.handleBulkFileChange,
-    analyzeBulkInput: StudentLogic.analyzeBulkInput,
-    saveBulkEst: StudentLogic.saveBulkEst,
+    openEstM: StudentCrud.openStudentCreateModal,
+    saveEst: StudentCrud.saveStudentFromModal,
+    openViewStudent: StudentCrud.openStudentForView,
+    openEditStudent: StudentCrud.openStudentForEdit,
+    saveEditStudent: StudentCrud.saveEditedStudentFromModal,
+    openBulkEstM: StudentBulk.openBulkStudentModal,
+    chooseStudentAddMode: StudentCrud.chooseStudentCreationMode,
+    openStudentAddModeModal: StudentCrud.openStudentAddMode,
+    handleBulkFileChange: StudentBulk.handleBulkStudentFileChange,
+    analyzeBulkInput: StudentBulk.analyzeBulkStudents,
+    saveBulkEst: StudentBulk.saveBulkStudents,
   },
   sections: {
     openSecM: SectionLogic.openSecM,

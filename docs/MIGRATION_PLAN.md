@@ -84,6 +84,8 @@ Avance aplicado:
 - Carga masiva/exportaciones de estudiantes separadas en `apps/web/src/panels/estudiantes/utils/student-bulk.ts`, sin cambiar parser ni formato esperado.
 - Callbacks de `crear-estudiante` y `editar-estudiante` convertidos en funciones exportables; los globals quedan como adaptadores temporales.
 - Migración física conjunta aplicada: `estudiantes`, `crear-estudiante` y `editar-estudiante` viven en `apps/web/src/panels/estudiantes/`, `create/` y `edit/`; las rutas legacy quedaron como reexports.
+- Wrappers modulares de estudiantes creados: `student-crud.ts` para apertura/guardado/consulta/alta programatica, `student-delete.ts` para eliminación y wrappers explícitos de carga masiva en `student-bulk.ts`.
+- `legacy-api.ts` conserva los nombres públicos de estudiantes pero delega en wrappers del dominio migrado, no directamente en `js/core/student-logic.ts`.
 
 Conteo de la fase estudiantes:
 
@@ -190,14 +192,14 @@ Riesgos de globals:
 
 Siguiente trabajo:
 
-1. Reducir dependencias restantes de estudiantes en `js/core/student-logic.ts`, `js/core/deleters.ts` y `legacy-api.ts` cuando no haya referencias runtime.
+1. Extraer, si sigue siendo seguro, piezas internas de `js/core/student-logic.ts` hacia módulos de dominio sin cambiar parser, modales ni mensajes.
 2. Reducir dependencias SQL/window restantes en académico.
 3. Mantener `legacy-api.ts` como lista explícita de deuda.
 4. Remover globals por dominio cuando no existan referencias runtime.
 
 Orden recomendado:
 
-- callbacks/globales restantes de estudiantes como una fase posterior a la migración física.
+- callbacks/globales restantes de estudiantes como una fase posterior a wrappers modulares y estabilización runtime.
 - académico por grupos pequeños.
 - auth/setup y core crítico.
 

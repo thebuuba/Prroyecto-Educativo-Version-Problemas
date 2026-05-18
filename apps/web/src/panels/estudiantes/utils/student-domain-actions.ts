@@ -1,16 +1,16 @@
 import { S } from '../../../../../../js/core/state.ts';
-import { go } from '../../../../../../js/core/routing.ts';
 import { persist } from '../../../../../../js/core/hydration.ts';
 import { buildStudentAvatarDataUrl, toast } from '../../../../../../js/core/domain-utils.ts';
-import { delEst } from '../../../../../../js/core/deleters.ts';
 import {
-  chooseStudentAddMode,
-  openEstM,
-  openEditStudent,
-  openViewStudent,
-  saveEditStudent,
-  saveEst,
-} from '../../../../../../js/core/student-logic.ts';
+  chooseStudentCreationMode,
+  openStudentCreateModal,
+  openStudentCreatePanel,
+  openStudentForEdit,
+  openStudentForView,
+  saveEditedStudentFromModal,
+  saveStudentFromModal,
+} from './student-crud.ts';
+import { deleteStudentById } from './student-delete.ts';
 import {
   openStudentSearchResult,
   setActiveSection,
@@ -31,22 +31,21 @@ import {
 
 export function createStudent(sectionId = '', mode = ''): boolean {
   if (mode === 'panel') {
-    go('student-create');
-    return true;
+    return openStudentCreatePanel(sectionId);
   }
-  void openEstM(sectionId || S.activeGroupId || '');
+  void openStudentCreateModal(sectionId || S.activeGroupId || '');
   return true;
 }
 
 export function editStudent(id = ''): boolean {
   if (!id) return false;
-  void openEditStudent(id);
+  void openStudentForEdit(id);
   return true;
 }
 
 export function deleteStudent(id = ''): boolean {
   if (!id) return false;
-  void delEst(id);
+  void deleteStudentById(id);
   return true;
 }
 
@@ -54,17 +53,17 @@ export async function saveStudent(mode = '', keepOpen = false): Promise<boolean>
   if (mode === 'create') return (await confirmSaveStudent(keepOpen)) !== false;
   if (mode === 'edit-panel') return (await confirmSaveEditStudent()) !== false;
   if (mode === 'edit') {
-    await saveEditStudent();
+    await saveEditedStudentFromModal();
     return true;
   }
-  await saveEst({ keepOpen });
+  await saveStudentFromModal({ keepOpen });
   return true;
 }
 
 export function selectStudent(value = '', mode = ''): boolean {
   if (!value) return false;
   if (mode === 'view') {
-    void openViewStudent(value);
+    void openStudentForView(value);
     return true;
   }
   if (mode === 'search-result') {
@@ -101,8 +100,7 @@ export function clearStudentFilters(): boolean {
 }
 
 export function chooseStudentMode(mode = ''): boolean {
-  chooseStudentAddMode(mode);
-  return true;
+  return chooseStudentCreationMode(mode);
 }
 
 export function updateCreateStudentField(field = '', value = ''): boolean {

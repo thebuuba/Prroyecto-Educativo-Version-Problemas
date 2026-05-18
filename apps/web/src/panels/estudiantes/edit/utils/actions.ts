@@ -1,6 +1,6 @@
 import { toast } from '../../../../../../../js/core/domain-utils.ts';
-import { delEst } from '../../../../../../../js/core/deleters.ts';
-import { saveEditStudent } from '../../../../../../../js/core/student-logic.ts';
+import { saveEditedStudentFromModal } from '../../utils/student-crud.ts';
+import { deleteStudentById } from '../../utils/student-delete.ts';
 
 let editActionsContext = null;
 
@@ -50,7 +50,7 @@ export async function confirmSaveEditStudent() {
   if (!getEditActionsContext()) return false;
 
   try {
-    await saveEditStudent();
+    await saveEditedStudentFromModal();
     return true;
   } catch (err) {
     console.error('[EduGest][student-edit] Error:', err);
@@ -61,7 +61,7 @@ export async function confirmSaveEditStudent() {
 
 export function handleDeleteStudent(id) {
   if (!id) return false;
-  void delEst(id);
+  void deleteStudentById(id);
   return true;
 }
 

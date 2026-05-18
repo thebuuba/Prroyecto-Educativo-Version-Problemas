@@ -1,6 +1,6 @@
 import { toast } from '../../../../../../../js/core/domain-utils.ts';
 import { go } from '../../../../../../../js/core/routing.ts';
-import { saveEst } from '../../../../../../../js/core/student-logic.ts';
+import { saveStudentFromModal } from '../../utils/student-crud.ts';
 
 let createActionsContext = null;
 
@@ -68,7 +68,7 @@ export async function confirmSaveStudent(isBulk = false) {
     setVal('e-sec', FormState.courseId);
     setVal('e-photo-data', FormState.photoUrl);
 
-    await saveEst({ keepOpen: isBulk });
+    await saveStudentFromModal({ keepOpen: isBulk });
 
     if (isBulk) {
       FormState.nombre = '';

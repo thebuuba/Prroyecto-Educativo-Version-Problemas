@@ -112,7 +112,9 @@ El registry vive en `apps/web/src/panels/estudiantes/utils/student-actions.ts`. 
 Módulos directos:
 
 - `apps/web/src/panels/estudiantes/utils/student-domain-actions.ts`: creación, edición, eliminación, guardado, búsqueda, filtros, selección, fotos y selección recordada.
-- `apps/web/src/panels/estudiantes/utils/student-bulk.ts`: apertura de carga masiva, modo texto/archivo, archivo seleccionado, preview, confirmación, cancelación y exportaciones CSV.
+- `apps/web/src/panels/estudiantes/utils/student-crud.ts`: wrappers de apertura, guardado, vista, edición, consulta por ID y alta programática hacia `js/core/student-logic.ts`.
+- `apps/web/src/panels/estudiantes/utils/student-delete.ts`: wrappers de eliminación hacia `js/core/deleters.ts`.
+- `apps/web/src/panels/estudiantes/utils/student-bulk.ts`: apertura de carga masiva, modo texto/archivo, archivo seleccionado, preview, confirmación, cancelación, exportaciones CSV y wrappers hacia el parser legacy.
 - `apps/web/src/panels/estudiantes/create/utils/actions.ts` y `apps/web/src/panels/estudiantes/edit/utils/actions.ts`: callbacks exportables para campos, fotos y confirmación, con globals temporales como adaptadores.
 
 Migrado en esta fase:

@@ -1,6 +1,6 @@
 import { S } from '../../../../../../js/core/state.ts';
 import { go } from '../../../../../../js/core/routing.ts';
-import { openViewStudent } from '../../../../../../js/core/student-logic.ts';
+import { openStudentForView } from './student-crud.ts';
 
 let studentsViewMode = 'grid';
 
@@ -42,7 +42,7 @@ export function openStudentSearchResult(id) {
     S.activeCourseId = secId;
   }
   window.STUDENTS_GLOBAL_QUERY = '';
-  openViewStudent(id);
+  void openStudentForView(id);
 }
 
 export function openStudentEditPanel(id) {

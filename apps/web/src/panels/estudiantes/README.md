@@ -10,6 +10,12 @@ Subdominios incluidos:
 
 Los paths legacy `js/panels/estudiantes/**`, `js/panels/crear-estudiante/**` y `js/panels/editar-estudiante/**` son adaptadores de reexportacion. La logica CRUD/carga masiva central aun depende de `js/core/student-logic.ts`, y eliminacion depende de `js/core/deleters.ts`.
 
+Wrappers modulares actuales:
+
+- `utils/student-crud.ts`: apertura, guardado, vista, edicion, consulta por ID y alta programatica; delega a `js/core/student-logic.ts`.
+- `utils/student-delete.ts`: eliminacion de estudiantes; delega a `js/core/deleters.ts`.
+- `utils/student-bulk.ts`: UI declarativa, exportaciones CSV y wrappers hacia la carga masiva legacy.
+
 ## 📋 Descripción
 Panel de gestión de estudiantes. Permite ver, buscar y gestionar la información de los estudiantes matriculados en diferentes cursos.
 

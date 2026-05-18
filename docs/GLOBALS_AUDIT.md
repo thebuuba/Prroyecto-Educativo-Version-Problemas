@@ -58,7 +58,7 @@ Se mantienen porque hay referencias runtime reales, uso por registries como fall
 | Estado/base | `window.S`, `window.persist`, `window.hydrate`, `window.EduGestDB`, `window.EduGestCloud`, `window.AulaBaseSqlApi` | Persistencia, auth cloud y sincronización SQL todavía consultan estas APIs desde varios módulos. |
 | Routing/UI | `window.go`, `window.currentPage`, `window.openM`, `window.closeM`, `window.forceCloseM`, `window.toast` | Usadas por flujos de sesión, modales, shell y fallbacks. |
 | Auth/setup | `loginAuth`, `registerAuth`, `authWithProvider`, `handleForgotPassword`, `togglePasswordVisibility`, `saveSetup`, `populateSetupForm`, `enforceMandatorySetup`, `logoutAuth` | Compatibilidad con auth, setup obligatorio y selectores legacy de `event-bindings.ts`. |
-| Estudiantes | `openEstM`, `saveEst`, `openViewStudent`, `openEditStudent`, `saveEditStudent`, `openBulkEstM`, `handleBulkFileChange`, `analyzeBulkInput`, `saveBulkEst`, `delEst`, callbacks de crear/editar estudiante | La fuente de panel vive en `apps/web/src/panels/estudiantes/`; globals conservados como adaptadores por FormState tardio, fragments, rutas `student-create`/`student-edit` y `legacy-api.ts`. |
+| Estudiantes | `openEstM`, `saveEst`, `openViewStudent`, `openEditStudent`, `saveEditStudent`, `openBulkEstM`, `handleBulkFileChange`, `analyzeBulkInput`, `saveBulkEst`, `delEst`, callbacks de crear/editar estudiante | La fuente de panel vive en `apps/web/src/panels/estudiantes/`; `legacy-api.ts` publica wrappers modulares y los globals se conservan por FormState tardio, fragments y rutas `student-create`/`student-edit`. |
 | Académico | `openSecM`, `saveSec`, `openEditSection`, `saveEditSection`, `saveGrade`, `delSec`, `delGrade` | Fallbacks de creación/edición/eliminación y sincronización académica. |
 | Asistencia | `shiftMonth`, `setActiveGroup`, `cycleMark`, `commitDayDay`, `cycleException`, `applyWeeklySchedule`, `exportToExcel`, `exportToPdf` | El módulo de asistencia ya vive en `apps/web/src/panels/asistencia/`; globals conservados como adaptadores temporales. |
 | Horario | `setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal`, `generateTeacherScheduleBase` | Ya no son la ruta primaria de `data-schedule-action`; se conservan como adaptadores de compatibilidad runtime. |
@@ -88,6 +88,7 @@ Se mantienen porque hay referencias runtime reales, uso por registries como fall
 - `data-user-action` usa imports directos hacia `apps/web/src/panels/usuarios/utils/user-save.ts` para crear y eliminar usuarios; ya no invoca `window.saveUsr` ni `window.delUsr` como ruta primaria.
 - `data-student-action` usa imports directos hacia `apps/web/src/panels/estudiantes/utils/student-domain-actions.ts` para creación, edición, eliminación, guardado, búsqueda, filtros, selección y fotos.
 - `data-student-action` usa imports directos hacia `apps/web/src/panels/estudiantes/utils/student-bulk.ts` para carga masiva, preview, confirmación, cancelación y exportaciones CSV.
+- `legacy-api.ts` publica las APIs de estudiantes desde `apps/web/src/panels/estudiantes/utils/student-crud.ts` y `student-bulk.ts`, conservando los nombres legacy.
 - Las acciones internas de planificaciones dejaron de invocar `window.go` y de leer `window.S`; usan imports directos hacia `go` y `S`.
 - `data-ui-action` usa imports directos para contexto global e institución.
 
@@ -158,6 +159,9 @@ Resultado:
 - La fuente real de paneles vive en `apps/web/src/panels/estudiantes/`, con `create/` y `edit/` como subdominios.
 - La implementación real de guardado, edición modal, vista modal, apertura manual y carga masiva vive en `js/core/student-logic.ts`.
 - La eliminación real vive en `js/core/deleters.ts` como `delEst`.
+- `student-crud.ts` envuelve `openEstM`, `saveEst`, `openViewStudent`, `openEditStudent`, `saveEditStudent`, `registerStudentSilently` y `upsertStudentDirectoryEntry` sin duplicar logica.
+- `student-delete.ts` envuelve `delEst` y conserva su confirmación, sync SQL, persistencia, navegación y toast originales.
+- `student-bulk.ts` ahora expone wrappers explícitos para `openBulkEstM`, `handleBulkFileChange`, `analyzeBulkInput` y `saveBulkEst`, manteniendo el parser legacy en core.
 - Las acciones de vista/listado viven en `apps/web/src/panels/estudiantes/utils/actions.ts`; exportan funciones modulares y siguen publicando globals temporales.
 - Las acciones de los paneles `student-create` y `student-edit` viven en `apps/web/src/panels/estudiantes/create/utils/actions.ts` y `apps/web/src/panels/estudiantes/edit/utils/actions.ts`; exportan funciones y conservan `window.*` como adaptador.
 - `student-bulk.ts` separó apertura, modo de entrada, archivo, preview, confirmación, cancelación y exportaciones. No agrega parser nuevo para `.xlsx/.xls`; conserva el comportamiento legacy de selección de archivo.
@@ -176,7 +180,7 @@ Resultado:
 - Adaptadores de instrumentos (`setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator`) cuando no existan referencias runtime.
 - Adaptadores de vinculación (`openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument`) cuando no existan referencias runtime fuera de `instrument-actions.ts`.
 - Adaptadores de usuarios (`saveUsr`, `delUsr`) cuando no existan referencias runtime fuera de `user-save.ts` y su publicación temporal.
-- Adaptadores de estudiantes ya cubiertos por imports directos (`setStudentsGradeView`, `setActiveSection`, `setStudentsViewMode`, `setStudentsGlobalSearch`, `openStudentSearchResult`, callbacks de crear/editar, `openBulkEstM`, `handleBulkFileChange`, `analyzeBulkInput`, `saveBulkEst`) cuando no existan referencias runtime fuera de `apps/web/src/panels/estudiantes/`, fragments y `legacy-api.ts`.
+- Adaptadores de estudiantes ya cubiertos por imports directos (`setStudentsGradeView`, `setActiveSection`, `setStudentsViewMode`, `setStudentsGlobalSearch`, `openStudentSearchResult`, callbacks de crear/editar, `openBulkEstM`, `handleBulkFileChange`, `analyzeBulkInput`, `saveBulkEst`) cuando no existan referencias runtime fuera de `apps/web/src/panels/estudiantes/`, fragments y wrappers publicados por `legacy-api.ts`.
 - Selectores legacy en `js/panels/autenticacion/utils/event-bindings.ts` cuando se retire compatibilidad con HTML auth antiguo.
 
 ## Deben Mantenerse Temporalmente

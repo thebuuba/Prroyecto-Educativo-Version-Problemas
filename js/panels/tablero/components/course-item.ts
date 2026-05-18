@@ -23,8 +23,8 @@ export function renderCourseItem(sec) {
   const prog = activities.length ? Math.round((linked / activities.length) * 100) : 0;
 
   return `
-    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group" 
-         onclick="window.openDashboardCourse('${sec.id}')">
+    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group"
+         data-ui-action="open-dashboard-course" data-section-id="${escapeHtml(sec.id)}">
       <div class="flex items-center justify-between mb-3">
         <div class="flex items-center gap-3">
           <div class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center">

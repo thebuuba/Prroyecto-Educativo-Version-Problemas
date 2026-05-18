@@ -7,8 +7,6 @@
  */
 
 import { S } from '../../core/state.ts';
-import { go } from '../../core/routing.ts';
-import { persist } from '../../core/hydration.ts';
 import { 
   getScopedSections, 
   getScopedStudents, 
@@ -123,7 +121,7 @@ export function registerDashboardPanel(c) {
               <span class="px-2 py-1 bg-rose-50 text-rose-600 text-[10px] font-bold rounded tracking-wider uppercase">Prioritario</span>
             </div>
             
-            <div class="flex gap-6 items-start cursor-pointer group" onclick="${mainFocus.clickAction}">
+            <div class="flex gap-6 items-start cursor-pointer group" data-route="${escapeHtml(mainFocus.route || 'tablero')}">
               <div class="shrink-0 w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-2xl font-black text-slate-300 dark:text-slate-700">
                 ${stepNum}
               </div>
@@ -190,15 +188,6 @@ export function init() {
   window.RENDERS.dashboard = registerDashboardPanel;
   window.RENDERS.tablero = registerDashboardPanel; // Compatibilidad: nombre español
   
-  /** Abre un curso específico desde el tablero y navega a actividades. */
-  window.openDashboardCourse = (id) => {
-    S.activeGroupId = id;
-    S.activeCourseId = id;
-    const sec = (S.secciones || []).find(s => s.id === id);
-    if (sec?.gradeId) S.activeGradeId = sec.gradeId;
-    persist();
-    go('actividades');
-  };
 }
 
 // Export de compatibilidad para nombres en español

@@ -1,5 +1,8 @@
 import { go } from './routing.ts';
 import { closeM } from './ui.ts';
+import { S } from './state.ts';
+import { persist } from './hydration.ts';
+import { flushSqlProfileSync } from './api-sql.ts';
 import {
   handleDeclarativeBlur,
   handleDeclarativeFocus,
@@ -48,6 +51,81 @@ function handleNavigation(trigger: Element, event: Event): boolean {
   return true;
 }
 
+function valueFromTrigger(trigger: Element): string {
+  if (trigger instanceof HTMLInputElement || trigger instanceof HTMLSelectElement || trigger instanceof HTMLTextAreaElement) {
+    return trigger.value;
+  }
+  return getDatasetValue(trigger, 'value');
+}
+
+function rerenderCurrentPage(): void {
+  persist({ immediate: true });
+  go(S.currentPage || 'tablero');
+}
+
+function handleUiAction(trigger: Element, event: Event): boolean {
+  const action = getDatasetValue(trigger, 'uiAction');
+  if (!action) return false;
+
+  const expectedEvent = getDatasetValue(trigger, 'uiEvent');
+  if (expectedEvent && expectedEvent !== event.type) return false;
+
+  if (event.type === 'click') {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  if (action === 'open-dashboard-course') {
+    const sectionId = getDatasetValue(trigger, 'sectionId');
+    if (!sectionId) return false;
+    S.activeGroupId = sectionId;
+    S.activeCourseId = sectionId;
+    const section = (S.secciones || []).find((item) => item.id === sectionId);
+    if (section?.gradeId) S.activeGradeId = section.gradeId;
+    persist({ immediate: true });
+    go('actividades');
+    return true;
+  }
+
+  if (action === 'set-active-group') {
+    const sectionId = valueFromTrigger(trigger);
+    if (!sectionId) return false;
+    S.activeGroupId = sectionId;
+    S.activeCourseId = sectionId;
+    const section = (S.secciones || []).find((item) => item.id === sectionId);
+    if (section?.gradeId) S.activeGradeId = section.gradeId;
+    rerenderCurrentPage();
+    return true;
+  }
+
+  if (action === 'set-active-period') {
+    const periodId = valueFromTrigger(trigger);
+    if (!periodId) return false;
+    S.activePeriodId = periodId;
+    rerenderCurrentPage();
+    return true;
+  }
+
+  if (action === 'update-institution') {
+    if (!S.profile) S.profile = {};
+    S.profile.inst = valueFromTrigger(trigger);
+    delete S.profile.schoolId;
+    delete S.profile.school;
+    if (event.type === 'change') {
+      persist({ immediate: true });
+      void flushSqlProfileSync().catch((error) => {
+        console.warn('[EduGest][declarative-actions] No se pudo sincronizar el perfil.', error);
+      });
+    } else {
+      persist();
+    }
+    return true;
+  }
+
+  console.warn('[EduGest][declarative-actions] data-ui-action no permitida.', { action });
+  return false;
+}
+
 function readRouteOptions(trigger: Element): Record<string, unknown> {
   const rawOptions = getDatasetValue(trigger, 'routeOptions');
   if (!rawOptions) return {};
@@ -84,6 +162,9 @@ export function bindDeclarativeActions(): void {
       handleDeclarativeAuthAction(authTrigger, event);
       return;
     }
+
+    const uiTrigger = target.closest('[data-ui-action]');
+    if (uiTrigger && handleUiAction(uiTrigger, event)) return;
 
     const navigationTrigger = target.closest('[data-route], [data-action="navigate"][data-route]');
     if (navigationTrigger) handleNavigation(navigationTrigger, event);
@@ -123,6 +204,9 @@ export function bindDeclarativeActions(): void {
       return;
     }
 
+    const uiTarget = target.closest('[data-ui-action]');
+    if (uiTarget && handleUiAction(uiTarget, event)) return;
+
     const studentTarget = target.closest('[data-student-action]');
     if (studentTarget) handleDeclarativeStudentAction(studentTarget, event);
 
@@ -151,6 +235,9 @@ export function bindDeclarativeActions(): void {
   document.addEventListener('input', (event) => {
     const target = event.target instanceof Element ? event.target : null;
     if (!target) return;
+
+    const uiTarget = target.closest('[data-ui-action]');
+    if (uiTarget && handleUiAction(uiTarget, event)) return;
 
     const studentTarget = target.closest('[data-student-action]');
     if (studentTarget && handleDeclarativeStudentAction(studentTarget, event)) return;

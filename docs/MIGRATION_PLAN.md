@@ -52,7 +52,10 @@ Avance aplicado:
 - Dominio actividades/calificaciones migrado a `data-activity-action` con registry explícito en `js/panels/actividades/utils/activity-actions.ts`.
 - Dominio usuarios/modales compartidos migrado a `data-user-action` con registry explícito en `js/panels/usuarios/utils/user-actions.ts`.
 - Dominios planificaciones y reportes migrados a `data-planning-action` y `data-report-action` con registries explícitos separados.
-- Auditoría global documentada en `docs/GLOBALS_AUDIT.md`; quedan `6` handlers inline runtime en shell/ui y no se eliminó ningún global sin cero referencias confirmadas.
+- Auditoría global documentada en `docs/GLOBALS_AUDIT.md`; quedan `0` handlers inline runtime reales.
+- Shell/UI mínimo migrado a `data-ui-action` para tablero, institución y selectores globales de contexto.
+- `window.openDashboardCourse` eliminado tras confirmar cero referencias runtime.
+- `data-report-action` convertido a imports directos para exportaciones Excel/PDF/Word, conservando globals solo como compatibilidad.
 
 Conteo de la fase estudiantes:
 
@@ -142,9 +145,9 @@ Conteo de auditoría global:
 
 | Alcance | Cantidad |
 | --- | ---: |
-| Handlers inline runtime restantes | 6 |
-| Globals eliminados | 0 |
-| Globals conservados | Todos los auditados con referencias o fallback vigente |
+| Handlers inline runtime restantes | 0 |
+| Globals eliminados | 1 |
+| Globals conservados | Críticos, runtime dinámicos y fallbacks vigentes |
 
 Riesgos de globals:
 
@@ -163,7 +166,7 @@ Orden recomendado:
 - UI básica: `openM`, `closeM`, `toast`
 - routing: `go`
 - planificaciones/reportes avanzados y modales compartidos restantes
-- shell/ui: tablero, configuración y selectores globales de contexto
+- convertir registries híbridos a imports directos por dominio
 - auth/setup
 
 ## Fase 4: backend por capas

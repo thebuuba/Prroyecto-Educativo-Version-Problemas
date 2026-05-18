@@ -275,8 +275,6 @@ Pendiente:
 - Edición, permisos, activación/desactivación, reseteo de contraseña, invitación y perfil no tienen controles visibles actuales en el panel.
 - `saveUsr` y `delUsr` se conservan como adaptadores legacy explícitos si existen en runtime.
 
-### Formularios simples
-
 ### Planificaciones
 
 ```html
@@ -332,6 +330,25 @@ Pendiente:
 
 - Filtros, selección de tipo, detalle y descarga genérica quedan registrados como ramas seguras porque no hay controles visibles actuales.
 
+### Shell/UI
+
+```html
+<div data-ui-action="open-dashboard-course" data-section-id="sec_1"></div>
+<select data-ui-action="set-active-group"></select>
+<input data-ui-action="update-institution">
+```
+
+Acciones permitidas actualmente:
+
+- `open-dashboard-course`
+- `set-active-group`
+- `set-active-period`
+- `update-institution`
+
+Estas acciones viven en `js/core/declarative-actions.ts` porque son shell/UI compartidas, no un dominio de negocio. Usan imports directos hacia estado, persistencia, routing y sincronización de perfil.
+
+### Formularios simples
+
 ```html
 <input data-action="input-change" data-input-handler="setup-phone">
 <input data-input-handler="setup-institution" data-keydown-handler="setup-institution">
@@ -362,3 +379,8 @@ El registry vive en `js/core/form-actions.ts`. Para agregar uno nuevo, se debe i
 ## Auditoría de globals
 
 La auditoría actual vive en `docs/GLOBALS_AUDIT.md`. Antes de eliminar cualquier global de `legacy-api.ts`, `legacy-bridge.ts` o asignaciones `window.*`, se debe confirmar cero referencias runtime en `sections/`, `login-registro-auth/`, `js/panels/`, `js/core/` y strings renderizados. La documentación y `index.html` generado no cuentan como fuente para editar.
+
+Estado de estabilización:
+
+- `data-planning-action`, `data-report-action` y `data-ui-action` ya usan imports directos para sus rutas principales.
+- `data-report-action` conserva globals de exportación solo como compatibilidad, no como dependencia interna.

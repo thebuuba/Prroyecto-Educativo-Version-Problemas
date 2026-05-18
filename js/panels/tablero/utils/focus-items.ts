@@ -25,7 +25,7 @@ export function buildFocusItems({ courses, totalStudents, totalActivities, pendi
       eyebrow: 'Paso 1', 
       title: 'Crea tu primer curso', 
       text: 'Define los grados y secciones que impartirás este año escolar.', 
-      clickAction: "window.go('configuracion-academica')", 
+      route: 'configuracion-academica',
       action: '<button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-700 transition-colors">Crear grado</button>' 
     });
   } else if (totalStudents === 0) {
@@ -35,7 +35,7 @@ export function buildFocusItems({ courses, totalStudents, totalActivities, pendi
       eyebrow: 'Paso 2', 
       title: 'Carga tu matrícula', 
       text: 'Agrega los estudiantes a tus secciones para habilitar el registro de asistencia y notas.', 
-      clickAction: "window.go('estudiantes')", 
+      route: 'estudiantes',
       action: '<button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-700 transition-colors">Ir a estudiantes</button>' 
     });
   } else if (!hasPlanning) {
@@ -45,7 +45,7 @@ export function buildFocusItems({ courses, totalStudents, totalActivities, pendi
       eyebrow: 'Paso 3', 
       title: 'Prepara tu planificación', 
       text: 'Organiza las competencias y bloques para el período activo.', 
-      clickAction: "window.go('planificaciones')", 
+      route: 'planificaciones',
       action: '<button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-700 transition-colors">Planificar ahora</button>' 
     });
   } else if (totalActivities === 0) {
@@ -55,7 +55,7 @@ export function buildFocusItems({ courses, totalStudents, totalActivities, pendi
       eyebrow: 'Paso 4', 
       title: 'Define tus actividades', 
       text: 'Crea las actividades evaluativas para comenzar a calificar a tus estudiantes.', 
-      clickAction: "window.go('actividades')", 
+      route: 'actividades',
       action: '<button class="px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-700 transition-colors">Crear actividades</button>' 
     });
   } else if (pendingInstruments > 0) {
@@ -65,7 +65,7 @@ export function buildFocusItems({ courses, totalStudents, totalActivities, pendi
       eyebrow: 'Pendiente', 
       title: 'Vincula instrumentos', 
       text: `Tienes ${pendingInstruments} actividad(es) sin instrumento de evaluación asignado.`, 
-      clickAction: "window.go('instrumentos')", 
+      route: 'instrumentos',
       action: '<button class="px-5 py-2.5 bg-rose-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-rose-200 dark:shadow-none hover:bg-rose-700 transition-colors">Vincular instrumentos</button>' 
     });
   } else {
@@ -75,7 +75,7 @@ export function buildFocusItems({ courses, totalStudents, totalActivities, pendi
       eyebrow: 'Todo listo', 
       title: 'Tu panel está al día', 
       text: 'Ya puedes monitorear el progreso de tus secciones y generar reportes periódicos.', 
-      clickAction: "window.go('reportes')", 
+      route: 'reportes',
       action: '<button class="px-5 py-2.5 bg-emerald-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-emerald-200 dark:shadow-none hover:bg-emerald-700 transition-colors">Ver reportes</button>' 
     });
   }

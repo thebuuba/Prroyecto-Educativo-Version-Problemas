@@ -1,4 +1,5 @@
 import { go } from '../../../core/routing.ts';
+import { reportDownloadExcel, reportDownloadPdf, reportDownloadWord } from './actions.ts';
 
 type ReportActionContext = {
   trigger: HTMLElement;
@@ -18,24 +19,17 @@ function valueFromTrigger(trigger: HTMLElement): string {
   return data(trigger, 'reportValue') || data(trigger, 'value');
 }
 
-function callAllowedWindowFunction(name: string, ...args: unknown[]): boolean {
-  const fn = (window as Record<string, unknown>)[name];
-  if (typeof fn !== 'function') return false;
-  fn(...args);
-  return true;
-}
-
 function exportReport(format: string): void {
   if (format === 'pdf') {
-    callAllowedWindowFunction('reportDownloadPdf');
+    void reportDownloadPdf();
     return;
   }
   if (format === 'excel' || format === 'xls') {
-    callAllowedWindowFunction('reportDownloadExcel');
+    reportDownloadExcel();
     return;
   }
   if (format === 'word' || format === 'doc') {
-    callAllowedWindowFunction('reportDownloadWord');
+    reportDownloadWord();
   }
 }
 

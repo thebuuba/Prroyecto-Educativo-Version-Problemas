@@ -12,24 +12,31 @@ Comandos base:
 
 ## Handlers Inline Restantes
 
-Conteo runtime actual: `6`.
+Conteo runtime actual: `0`.
 
-No se cuentan selectores de compatibilidad dentro de código, comentarios ni documentación.
+Quedan coincidencias textuales de `onclick=` en selectores de compatibilidad (`event-bindings.ts`, `shell.ts`) y un comentario de routing, pero no son atributos HTML renderizados ni handlers runtime.
 
-| Archivo | Handler | Dominio | Estado |
-| --- | --- | --- | --- |
-| `js/panels/tablero/principal.ts` | `onclick="${mainFocus.clickAction}"` | shell/ui | Pendiente. Usa acciones calculadas desde `focus-items.ts`. |
-| `js/panels/tablero/components/course-item.ts` | `onclick="window.openDashboardCourse(...)"` | shell/ui | Pendiente. Cambia curso activo y navega a actividades. |
-| `js/panels/configuracion/components/vista.ts` | `oninput="...window.S.profile..."` | shell/ui | Pendiente. Mutación compleja de perfil e institución. |
-| `js/panels/configuracion/components/vista.ts` | `onchange="window.persist(...); window.flushSqlProfileSync?.()"` | shell/ui | Pendiente. Sincronización inmediata de perfil. |
-| `js/core/ui.ts` | `onchange="setActiveGroup(this.value)"` | shell/ui | Pendiente. Selector global de contexto académico. |
-| `js/core/ui.ts` | `onchange="setActivePeriod(this.value)"` | shell/ui | Pendiente. Selector global de período. |
+| Estado | Cantidad | Nota |
+| --- | ---: | --- |
+| Handlers inline runtime reales | 0 | No quedan atributos `on*=` emitidos por fuentes runtime. |
+| Selectores/comentarios de compatibilidad | 7 | No ejecutan código inline; detectan HTML antiguo si aparece. |
+
+## Eliminado En Esta Fase
+
+| Archivo | Antes | Después |
+| --- | --- | --- |
+| `js/panels/tablero/principal.ts` | `onclick="${mainFocus.clickAction}"` | `data-route` con ruta calculada segura. |
+| `js/panels/tablero/components/course-item.ts` | `onclick="window.openDashboardCourse(...)"` | `data-ui-action="open-dashboard-course"`. |
+| `js/panels/configuracion/components/vista.ts` | `oninput` con mutación de `window.S.profile` | `data-ui-action="update-institution"`. |
+| `js/panels/configuracion/components/vista.ts` | `onchange` con `persist` y `flushSqlProfileSync` | `data-ui-action="update-institution"`. |
+| `js/core/ui.ts` | `onchange="setActiveGroup(this.value)"` | `data-ui-action="set-active-group"`. |
+| `js/core/ui.ts` | `onchange="setActivePeriod(this.value)"` | `data-ui-action="set-active-period"`. |
 
 ## Clasificación Por Dominio
 
 | Dominio | Restantes | Notas |
 | --- | ---: | --- |
-| auth | 0 | Quedan selectores legacy en `event-bindings.ts`, pero no handlers runtime. |
+| auth | 0 | Quedan selectores legacy en `event-bindings.ts`, no handlers runtime. |
 | estudiantes | 0 | Migrado a `data-student-action`. |
 | académico | 0 | Migrado a `data-academic-action`. |
 | asistencia | 0 | Migrado a `data-attendance-action`. |
@@ -38,7 +45,7 @@ No se cuentan selectores de compatibilidad dentro de código, comentarios ni doc
 | usuarios | 0 | Migrado a `data-user-action`. |
 | planificaciones | 0 | Migrado a `data-planning-action`. |
 | reportes | 0 | Migrado a `data-report-action`. |
-| shell/ui | 6 | Tablero, configuración y selectores globales de contexto. |
+| shell/ui | 0 | Últimos 6 handlers migrados a `data-route` / `data-ui-action`. |
 | otros | 0 | No se detectaron handlers runtime fuera de los anteriores. |
 
 ## Funciones Globales Todavía Usadas
@@ -49,23 +56,29 @@ Se mantienen porque hay referencias runtime reales, uso por registries como fall
 | --- | --- | --- |
 | Renderer | `window.RENDERS`, `window._renderPanel` | El router carga bundles y renderiza paneles por nombre. |
 | Estado/base | `window.S`, `window.persist`, `window.hydrate`, `window.EduGestDB`, `window.EduGestCloud`, `window.AulaBaseSqlApi` | Persistencia, auth cloud y sincronización SQL todavía consultan estas APIs desde varios módulos. |
-| Routing/UI | `window.go`, `window.currentPage`, `window.openM`, `window.closeM`, `window.forceCloseM`, `window.toast` | Usadas por flujos de sesión, modales, shell, registries y fallbacks. |
+| Routing/UI | `window.go`, `window.currentPage`, `window.openM`, `window.closeM`, `window.forceCloseM`, `window.toast` | Usadas por flujos de sesión, modales, shell y fallbacks. |
 | Auth/setup | `loginAuth`, `registerAuth`, `authWithProvider`, `handleForgotPassword`, `togglePasswordVisibility`, `saveSetup`, `populateSetupForm`, `enforceMandatorySetup`, `logoutAuth` | Compatibilidad con auth, setup obligatorio y selectores legacy de `event-bindings.ts`. |
 | Estudiantes | `openEstM`, `saveEst`, `openViewStudent`, `openEditStudent`, `saveEditStudent`, `openBulkEstM`, `handleBulkFileChange`, `analyzeBulkInput`, `saveBulkEst`, `delEst` | Registries y módulos de crear/editar estudiante los usan como adaptadores. |
 | Académico | `openSecM`, `saveSec`, `openEditSection`, `saveEditSection`, `saveGrade`, `delSec`, `delGrade` | Fallbacks de creación/edición/eliminación y sincronización académica. |
-| Asistencia | `shiftMonth`, `setActiveGroup`, `cycleMark`, `commitDayDay`, `cycleException`, `applyWeeklySchedule` | El módulo legacy de asistencia todavía los publica; algunos selectores globales dependen de `setActiveGroup`. |
+| Asistencia | `shiftMonth`, `setActiveGroup`, `cycleMark`, `commitDayDay`, `cycleException`, `applyWeeklySchedule` | El módulo legacy de asistencia todavía los publica. |
 | Horario | `setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal` | Usados por `data-schedule-action` como adaptadores. |
 | Actividades/instrumentos | `setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`, `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator` | Usados por `data-activity-action` y paneles relacionados. |
 | Usuarios | `delUsr` | Usado por `data-user-action` como fallback si existe. |
-| Planificaciones | `lessonPlanNew`, `lessonPlanContinue`, `lessonPlanReturnHome`, `lessonPlanSetActiveSection`, `lessonPlanSetGeneralField`, `lessonPlanSetCurriculumField` | Aunque el registry importa funciones directas, se conservan temporalmente por compatibilidad. |
-| Reportes | `reportDownloadExcel`, `reportDownloadPdf`, `reportDownloadWord` | Usados por `data-report-action` como exportadores permitidos. |
+| Planificaciones | `lessonPlanNew`, `lessonPlanContinue`, `lessonPlanReturnHome`, `lessonPlanSetActiveSection`, `lessonPlanSetGeneralField`, `lessonPlanSetCurriculumField` | El registry ya usa imports directos; globals se conservan temporalmente por compatibilidad. |
+| Reportes | `reportDownloadExcel`, `reportDownloadPdf`, `reportDownloadWord` | El registry ya usa imports directos; globals se conservan temporalmente por compatibilidad. |
 | Shell | `updateSBUser`, `closeProfileMenu`, `syncSidebarNavState`, `refreshTop` | Shell, routing y sesión los invocan aún vía `window`. |
 
-## Candidatas A Eliminar
+## Globals Eliminados
 
-No se eliminó ningún global en esta fase.
+- `window.openDashboardCourse`: eliminado porque el único uso runtime era el handler inline del curso en tablero. La acción ahora vive en `data-ui-action="open-dashboard-course"` con imports directos a `S`, `persist` y `go`.
 
-Candidatas para una fase posterior, después de reemplazar sus usos por imports directos o confirmar cero referencias runtime:
+## Globals Que Dejaron De Usarse Directamente Por Registries
+
+- `data-report-action` ya no invoca `window.reportDownloadExcel`, `window.reportDownloadPdf` ni `window.reportDownloadWord`; importa esas funciones desde `js/panels/reportes/utils/actions.ts`.
+- `data-planning-action` ya usaba imports directos hacia `js/panels/planificaciones/utils/actions.ts`.
+- `data-ui-action` usa imports directos para contexto global e institución.
+
+## Candidatas A Eliminar Después
 
 - `lessonPlanNew`, `lessonPlanContinue`, `lessonPlanReturnHome`, `lessonPlanSetActiveSection`, `lessonPlanSetGeneralField`, `lessonPlanSetCurriculumField`.
 - `reportDownloadExcel`, `reportDownloadPdf`, `reportDownloadWord`.
@@ -89,7 +102,6 @@ Candidatas para una fase posterior, después de reemplazar sus usos por imports 
 
 ## Estrategia Para Reducir `legacy-bridge.ts`
 
-1. Migrar los 6 handlers inline restantes de shell/ui con un registry específico solo si se consolida una API clara de contexto y configuración.
-2. Cambiar registries de dominio para importar funciones directas en vez de llamar adaptadores `window.*`.
-3. Quitar globals dominio por dominio solo después de `rg` en `sections/`, `login-registro-auth/`, `js/panels/`, `js/core/` y strings renderizados.
-4. Mantener `legacy-bridge.ts` hasta que `window.RENDERS`, `_renderPanel`, `S`, routing y APIs de persistencia tengan reemplazo modular completo.
+1. Convertir registries restantes para importar funciones directas en vez de llamar adaptadores `window.*`.
+2. Quitar globals dominio por dominio solo después de `rg` en `sections/`, `login-registro-auth/`, `js/panels/`, `js/core/` y strings renderizados.
+3. Mantener `legacy-bridge.ts` hasta que `window.RENDERS`, `_renderPanel`, `S`, routing y APIs de persistencia tengan reemplazo modular completo.

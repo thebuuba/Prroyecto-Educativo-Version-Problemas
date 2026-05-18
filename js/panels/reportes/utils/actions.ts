@@ -47,67 +47,71 @@ function reportBuildExportHtml(title, calMatrix, annualMatrix) {
   </body></html>`;
 }
 
-export function registerReportsActions() {
-  window.reportDownloadExcel = () => {
-    const calTable = document.querySelector('.reportes-stack table');
-    const annualTable = document.querySelector('.annual-report-table');
-    const calMatrix = reportExtractTableMatrix(calTable);
-    const annualMatrix = reportExtractTableMatrix(annualTable);
-    if (!calMatrix.length && !annualMatrix.length) {
-      if (typeof window.toast === 'function') window.toast('No hay datos para exportar', true);
+export function reportDownloadExcel() {
+  const calTable = document.querySelector('.reportes-stack table');
+  const annualTable = document.querySelector('.annual-report-table');
+  const calMatrix = reportExtractTableMatrix(calTable);
+  const annualMatrix = reportExtractTableMatrix(annualTable);
+  if (!calMatrix.length && !annualMatrix.length) {
+    if (typeof window.toast === 'function') window.toast('No hay datos para exportar', true);
+    return;
+  }
+  const html = reportBuildExportHtml('Reporte AulaBase', calMatrix, annualMatrix);
+  const blob = new Blob(['\ufeff', html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${reportExportBaseName()}.xls`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1200);
+}
+
+export async function reportDownloadPdf() {
+  const calTable = document.querySelector('.reportes-stack table');
+  const annualTable = document.querySelector('.annual-report-table');
+  const calMatrix = reportExtractTableMatrix(calTable);
+  const annualMatrix = reportExtractTableMatrix(annualTable);
+  if (!calMatrix.length && !annualMatrix.length) return;
+
+  try {
+    const htmlBase = reportBuildExportHtml('Reporte AulaBase', calMatrix, annualMatrix);
+    const html = htmlBase.replace('</body>', `<script>window.addEventListener('load', function () { setTimeout(function () { try { window.focus(); window.print(); } catch (_) {} }, 180); });</script></body>`);
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const win = window.open(url, '_blank');
+    if (!win) {
+      URL.revokeObjectURL(url);
+      if (typeof window.toast === 'function') window.toast('Habilita pop-ups para imprimir.', true);
       return;
     }
-    const html = reportBuildExportHtml('Reporte AulaBase', calMatrix, annualMatrix);
-    const blob = new Blob(['\ufeff', html], { type: 'application/vnd.ms-excel;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${reportExportBaseName()}.xls`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1200);
-  };
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  } catch (err) {
+    console.error('Error PDF:', err);
+  }
+}
 
-  window.reportDownloadPdf = async () => {
-    const calTable = document.querySelector('.reportes-stack table');
-    const annualTable = document.querySelector('.annual-report-table');
-    const calMatrix = reportExtractTableMatrix(calTable);
-    const annualMatrix = reportExtractTableMatrix(annualTable);
-    if (!calMatrix.length && !annualMatrix.length) return;
+export function reportDownloadWord() {
+  const calTable = document.querySelector('.reportes-stack table');
+  const annualTable = document.querySelector('.annual-report-table');
+  const calMatrix = reportExtractTableMatrix(calTable);
+  const annualMatrix = reportExtractTableMatrix(annualTable);
+  if (!calMatrix.length && !annualMatrix.length) return;
+  const html = reportBuildExportHtml('Reporte AulaBase', calMatrix, annualMatrix);
+  const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${reportExportBaseName()}.doc`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1200);
+}
 
-    try {
-      const htmlBase = reportBuildExportHtml('Reporte AulaBase', calMatrix, annualMatrix);
-      const html = htmlBase.replace('</body>', `<script>window.addEventListener('load', function () { setTimeout(function () { try { window.focus(); window.print(); } catch (_) {} }, 180); });</script></body>`);
-      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const win = window.open(url, '_blank');
-      if (!win) {
-        URL.revokeObjectURL(url);
-        if (typeof window.toast === 'function') window.toast('Habilita pop-ups para imprimir.', true);
-        return;
-      }
-      setTimeout(() => URL.revokeObjectURL(url), 60000);
-    } catch (err) {
-      console.error('Error PDF:', err);
-    }
-  };
-
-  window.reportDownloadWord = () => {
-    const calTable = document.querySelector('.reportes-stack table');
-    const annualTable = document.querySelector('.annual-report-table');
-    const calMatrix = reportExtractTableMatrix(calTable);
-    const annualMatrix = reportExtractTableMatrix(annualTable);
-    if (!calMatrix.length && !annualMatrix.length) return;
-    const html = reportBuildExportHtml('Reporte AulaBase', calMatrix, annualMatrix);
-    const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${reportExportBaseName()}.doc`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1200);
-  };
+export function registerReportsActions() {
+  window.reportDownloadExcel = reportDownloadExcel;
+  window.reportDownloadPdf = reportDownloadPdf;
+  window.reportDownloadWord = reportDownloadWord;
 }

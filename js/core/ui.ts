@@ -247,8 +247,8 @@ export function renderTopbarContextControls() {
   return `
     <div class="tb-context-controls panel-context-controls">
       <div class="tb-context-mini">
-        <select class="tb-context-select" onchange="setActiveGroup(this.value)" aria-label="Seleccionar curso">${groupOptions || '<option value="">Sin cursos</option>'}</select>
-        <select class="tb-context-select" onchange="setActivePeriod(this.value)" aria-label="Seleccionar período">${periodOptions}</select>
+        <select class="tb-context-select" data-ui-action="set-active-group" aria-label="Seleccionar curso">${groupOptions || '<option value="">Sin cursos</option>'}</select>
+        <select class="tb-context-select" data-ui-action="set-active-period" aria-label="Seleccionar período">${periodOptions}</select>
       </div>
     </div>
   `;

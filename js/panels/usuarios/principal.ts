@@ -4,9 +4,8 @@
  */
 
 import { S } from '../../core/state.ts';
-import { persist } from '../../core/hydration.ts';
-import { go, toast } from '../../core/domain-utils.ts';
 import { renderizarUsersView } from './view.ts';
+import { deleteUserById } from './utils/user-domain-actions.ts';
 
 /**
  * --- Main Rendering ---
@@ -24,10 +23,6 @@ export function renderizarUsersPanel(container) {
 export function inicializar() {
   window.RENDERS.usuarios = (c) => renderizarUsersPanel(c);
   window.delUsr = async (id) => {
-    if (!confirm('¿Eliminar este usuario de acceso adicional?')) return;
-    S.usuarios = (S.usuarios || []).filter(u => u.id !== id);
-    persist({ immediate: true });
-    go('usuarios');
-    toast('Usuario eliminado');
+    deleteUserById(id);
   };
 }

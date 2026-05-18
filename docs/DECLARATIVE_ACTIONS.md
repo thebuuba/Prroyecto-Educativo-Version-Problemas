@@ -242,8 +242,9 @@ Migrado en esta fase:
 Pendiente:
 
 - `saveUsr()` del fragmento combinado de actividades fue tratado en el dominio usuarios.
-- Guardado de actividad/plantilla y vinculación de instrumentos conservan adaptadores hacia globals legacy si existen en runtime.
+- Guardado de actividad/plantilla conserva adaptadores hacia globals legacy si existen en runtime.
 - Las acciones básicas de instrumentos se resuelven por imports directos desde `js/panels/instrumentos/utils/instrument-actions.ts`; los globals equivalentes se conservan como adaptadores temporales.
+- La vinculación de instrumentos (`m-link-inst`) usa implementación modular en `js/panels/instrumentos/utils/instrument-linking.ts`; los globals equivalentes siguen publicados como adaptadores temporales.
 - Exportación, sincronización y edición profunda de matriz quedan como ramas seguras hasta que existan controles y módulos específicos.
 
 ### Usuarios
@@ -263,7 +264,7 @@ Acciones permitidas:
 - `filter`, `clear-filter`, `search`
 - `invite`, `update-profile`, `save-profile`, `change-status`
 
-El registry vive en `js/panels/usuarios/utils/user-actions.ts`. Los parámetros se pasan por `data-user-id`, `data-user-role`, `data-user-permission`, `data-user-status`, `data-user-target`, `data-user-value` y `data-user-modal-id`. No ejecuta nombres de funciones desde atributos.
+El registry vive en `js/panels/usuarios/utils/user-actions.ts`. Los parámetros se pasan por `data-user-id`, `data-user-role`, `data-user-permission`, `data-user-status`, `data-user-target`, `data-user-value` y `data-user-modal-id`. No ejecuta nombres de funciones desde atributos. La creación y eliminación delegan por import directo a `js/panels/usuarios/utils/user-domain-actions.ts`.
 
 Migrado en esta fase:
 
@@ -274,7 +275,7 @@ Migrado en esta fase:
 Pendiente:
 
 - Edición, permisos, activación/desactivación, reseteo de contraseña, invitación y perfil no tienen controles visibles actuales en el panel.
-- `saveUsr` y `delUsr` se conservan como adaptadores legacy explícitos si existen en runtime.
+- `delUsr` se conserva como adaptador legacy temporal; `data-user-action` no depende de `window.delUsr` ni de `window.saveUsr` como ruta primaria.
 
 ### Planificaciones
 

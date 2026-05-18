@@ -64,8 +64,8 @@ Se mantienen porque hay referencias runtime reales, uso por registries como fall
 | Horario | `setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal` | Ya no son la ruta primaria de `data-schedule-action`; se conservan como fallback y compatibilidad runtime. |
 | Actividades | `setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock` | Ya no son la ruta primaria de `data-activity-action`; se conservan como fallback y compatibilidad runtime. |
 | Instrumentos | `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator` | Ya no son la ruta primaria de `data-activity-action`; se conservan como adaptadores temporales. |
-| Vinculación de instrumentos | `openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument` | Wrappers exportables delegan a estos globals porque la implementación real aún no está modularizada. |
-| Usuarios | `delUsr` | Usado por `data-user-action` como fallback si existe. |
+| Vinculación de instrumentos | `openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument` | Ya no son la ruta primaria; `instrument-linking.ts` es la fuente principal y los globals quedan como adaptadores temporales. |
+| Usuarios | `delUsr` | Adaptador legacy temporal publicado por `js/panels/usuarios/principal.ts`; `data-user-action` ya usa imports directos. |
 | Planificaciones | `lessonPlanNew`, `lessonPlanContinue`, `lessonPlanReturnHome`, `lessonPlanSetActiveSection`, `lessonPlanSetGeneralField`, `lessonPlanSetCurriculumField` | El registry ya usa imports directos; globals se conservan temporalmente por compatibilidad. |
 | Reportes | `reportDownloadExcel`, `reportDownloadPdf`, `reportDownloadWord` | El registry ya usa imports directos; globals se conservan temporalmente por compatibilidad. |
 | Shell | `updateSBUser`, `closeProfileMenu`, `syncSidebarNavState`, `refreshTop` | Shell, routing y sesión los invocan aún vía `window`. |
@@ -81,8 +81,24 @@ Se mantienen porque hay referencias runtime reales, uso por registries como fall
 - `data-schedule-action` usa imports directos para las acciones simples de horario: tabs, mes, asistente, celdas y eventos.
 - `data-activity-action` usa imports directos para las acciones de bloques y matriz: vista, metas, nombre, puntos, alta, eliminación y autoajuste.
 - `data-activity-action` usa imports directos para acciones básicas de instrumentos desde `js/panels/instrumentos/utils/instrument-actions.ts`.
+- `data-activity-action` usa implementación modular para vincular instrumentos: `openApplyInstrumentModal`, `openCreateInstrumentTypePicker` y `confirmLinkInstrument`.
+- `data-user-action` usa imports directos hacia `js/panels/usuarios/utils/user-domain-actions.ts` para crear y eliminar usuarios; ya no invoca `window.saveUsr` ni `window.delUsr` como ruta primaria.
 - Las acciones internas de planificaciones dejaron de invocar `window.go` y de leer `window.S`; usan imports directos hacia `go` y `S`.
 - `data-ui-action` usa imports directos para contexto global e institución.
+
+## Diagnóstico De Vinculación De Instrumentos
+
+Búsqueda aplicada sobre fuentes, excluyendo `dist/` y `node_modules`: `openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument`, `_linkActId`, `m-link-inst`, `applyInstrument`, `linkInstrument`, `instrument modal`, `instrumento vinculado` y `actividad vinculada`.
+
+Resultado:
+
+- La lógica real quedó localizada y modularizada en `js/panels/instrumentos/utils/instrument-linking.ts`.
+- `js/panels/instrumentos/principal.ts` no contiene lógica de vinculación; solo registra `window.RENDERS.instrumentos` y llama `registerInstrumentActions()`.
+- Los fragments `sections/modals/m-link-inst.html` y `sections/modals/m-inst-type.html` siguen siendo dueños del marcado visual; no se cambiaron textos ni IDs.
+- Dependencias de estado: `S.activeGroupId`, `S.activePeriodId`, `S.instruments` y la actividad encontrada por `findActivity()`.
+- Dependencias UI: `openM('m-link-inst')`, `openM('m-inst-type')`, `closeM('m-link-inst')` y los IDs DOM `li-act`, `li-inst`, `li-create-btn`, `inst-type-grid`.
+- Dependencias `window`: `_linkActId` sigue como llave transicional usada por el registry declarativo; `_linkStudentId` se conserva para compatibilidad de flujo de evaluación por estudiante.
+- `activity-actions.ts` ya no llama directamente a `window.openApplyInstrumentModal`, `window.openCreateInstrumentTypePicker` ni `window.confirmLinkInstrument`; importa esas funciones desde `instrument-actions.ts`.
 
 ## Migración Física Aplicada
 
@@ -99,7 +115,7 @@ Se mantienen porque hay referencias runtime reales, uso por registries como fall
 - Adaptadores de horario ya cubiertos por imports directos (`setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal`) cuando no existan referencias runtime.
 - Adaptadores de actividades ya cubiertos por imports directos (`setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`) cuando no existan referencias runtime.
 - Adaptadores de instrumentos (`setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator`) cuando no existan referencias runtime.
-- Wrappers de vinculación (`openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument`) cuando se module la implementación real.
+- Adaptadores de vinculación (`openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument`) cuando no existan referencias runtime fuera de `instrument-actions.ts`.
 - Selectores legacy en `js/panels/autenticacion/utils/event-bindings.ts` cuando se retire compatibilidad con HTML auth antiguo.
 
 ## Deben Mantenerse Temporalmente

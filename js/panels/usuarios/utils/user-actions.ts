@@ -1,8 +1,8 @@
 import { S } from '../../../core/state.ts';
 import { persist } from '../../../core/hydration.ts';
 import { go } from '../../../core/routing.ts';
-import { openM, closeM, toast } from '../../../core/ui.ts';
-import { uid } from '../../../core/utils.ts';
+import { openM, closeM } from '../../../core/ui.ts';
+import { createUserFromModal, deleteUserById } from './user-domain-actions.ts';
 
 type UserActionContext = {
   trigger: HTMLElement;
@@ -22,66 +22,22 @@ function valueFromTrigger(trigger: HTMLElement): string {
   return data(trigger, 'userValue') || data(trigger, 'value');
 }
 
-function inputValue(id: string): string {
-  const field = document.getElementById(id);
-  if (field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement) {
-    return field.value.trim();
-  }
-  return '';
-}
-
-function callAllowedWindowFunction(name: string, ...args: unknown[]): boolean {
-  const fn = (window as Record<string, unknown>)[name];
-  if (typeof fn !== 'function') return false;
-  fn(...args);
-  return true;
-}
-
 function openUserModal(trigger: HTMLElement): void {
   const modalId = data(trigger, 'userModalId') || 'm-usr';
   openM(modalId);
 }
 
-function saveUser(): void {
-  if (callAllowedWindowFunction('saveUsr')) return;
-
-  const nombre = inputValue('u-nom');
-  const email = inputValue('u-email');
-  const rol = inputValue('u-rol') || 'Docente';
-  const sectionId = inputValue('u-sec');
-
-  const user = {
-    id: uid(),
-    nombre,
-    email,
-    rol,
-    sectionId,
-  };
-
-  if (!S.usuarios) S.usuarios = [];
-  S.usuarios.push(user);
-  persist({ immediate: true });
-  closeM('m-usr');
-  go('usuarios');
-  toast('Usuario creado');
-}
-
 function deleteUser(trigger: HTMLElement): void {
   const userId = data(trigger, 'userId');
   if (!userId) return;
-  if (callAllowedWindowFunction('delUsr', userId)) return;
-  if (!confirm('¿Eliminar este usuario de acceso adicional?')) return;
-  S.usuarios = (S.usuarios || []).filter((user) => user.id !== userId);
-  persist({ immediate: true });
-  go('usuarios');
-  toast('Usuario eliminado');
+  deleteUserById(userId);
 }
 
 const userActionRegistry: Record<string, UserActionHandler> = {
   create: ({ trigger }) => openUserModal(trigger),
   edit: () => {},
   delete: ({ trigger }) => deleteUser(trigger),
-  save: () => saveUser(),
+  save: () => createUserFromModal(),
   cancel: ({ trigger }) => closeM(data(trigger, 'userModalId') || 'm-usr'),
   'select-role': () => {},
   'change-permission': () => {},

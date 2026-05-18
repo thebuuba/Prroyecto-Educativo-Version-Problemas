@@ -6,13 +6,32 @@ import {
   UI,
   renderizarInstrumentsPanel,
 } from '../view.ts';
+import {
+  confirmLinkInstrument as confirmLinkInstrumentImpl,
+  openApplyInstrumentModal as openApplyInstrumentModalImpl,
+  openCreateInstrumentTypePicker as openCreateInstrumentTypePickerImpl,
+} from './instrument-linking.ts';
+
+type LegacyInstrumentActionName =
+  | 'openApplyInstrumentModal'
+  | 'openCreateInstrumentTypePicker'
+  | 'confirmLinkInstrument';
+
+const legacyInstrumentActions: Partial<Record<LegacyInstrumentActionName, (...args: unknown[]) => unknown>> = {};
 
 function panelContainer(): HTMLElement | null {
   return document.getElementById('p-content');
 }
 
-function callLegacyInstrumentAction(name: string, ...args: unknown[]): boolean {
+function rememberLegacyInstrumentAction(name: LegacyInstrumentActionName, replacement: unknown): void {
   const fn = (window as Record<string, unknown>)[name];
+  if (typeof fn === 'function' && fn !== replacement) {
+    legacyInstrumentActions[name] = fn as (...args: unknown[]) => unknown;
+  }
+}
+
+function callLegacyInstrumentAction(name: LegacyInstrumentActionName, ...args: unknown[]): boolean {
+  const fn = legacyInstrumentActions[name];
   if (typeof fn !== 'function') return false;
   fn(...args);
   return true;
@@ -54,21 +73,31 @@ export function openInstrumentCreator(): boolean {
 }
 
 export function openApplyInstrumentModal(activityId: string, studentId?: string): boolean {
-  return callLegacyInstrumentAction('openApplyInstrumentModal', activityId, studentId);
+  return openApplyInstrumentModalImpl(activityId, studentId)
+    || callLegacyInstrumentAction('openApplyInstrumentModal', activityId, studentId);
 }
 
 export function openCreateInstrumentTypePicker(activityId: string): boolean {
-  return callLegacyInstrumentAction('openCreateInstrumentTypePicker', activityId);
+  return openCreateInstrumentTypePickerImpl(activityId)
+    || callLegacyInstrumentAction('openCreateInstrumentTypePicker', activityId);
 }
 
 export function confirmLinkInstrument(): boolean {
-  return callLegacyInstrumentAction('confirmLinkInstrument');
+  return confirmLinkInstrumentImpl()
+    || callLegacyInstrumentAction('confirmLinkInstrument');
 }
 
 export function registerInstrumentActions(): void {
+  rememberLegacyInstrumentAction('openApplyInstrumentModal', openApplyInstrumentModal);
+  rememberLegacyInstrumentAction('openCreateInstrumentTypePicker', openCreateInstrumentTypePicker);
+  rememberLegacyInstrumentAction('confirmLinkInstrument', confirmLinkInstrument);
+
   window.setInstFilter = setInstFilter;
   window.createNewInstrument = createNewInstrument;
   window.editInstrument = editInstrument;
   window.deleteInstrument = deleteInstrument;
   window.openInstrumentCreator = openInstrumentCreator;
+  window.openApplyInstrumentModal = openApplyInstrumentModal;
+  window.openCreateInstrumentTypePicker = openCreateInstrumentTypePicker;
+  window.confirmLinkInstrument = confirmLinkInstrument;
 }

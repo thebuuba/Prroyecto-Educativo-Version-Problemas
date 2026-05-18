@@ -99,37 +99,34 @@ const activityActionRegistry: Record<string, ActivityActionHandler> = {
   'delete-block': () => {},
   'select-instrument': ({ trigger }) => {
     const targetActivityId = activityId(trigger) || String((window as Record<string, unknown>)._linkActId || '').trim();
-    if (targetActivityId && !openApplyInstrumentModal(targetActivityId)) callAllowedWindowFunction('openApplyInstrumentModal', targetActivityId);
+    if (targetActivityId) openApplyInstrumentModal(targetActivityId);
   },
   'create-instrument': ({ trigger }) => {
     const type = valueFromTrigger(trigger);
     const targetActivityId = activityId(trigger) || String((window as Record<string, unknown>)._linkActId || '').trim();
     if (type) {
-      if (!createNewInstrument(type)) callAllowedWindowFunction('createNewInstrument', type);
+      createNewInstrument(type);
       return;
     }
-    if (targetActivityId && (openCreateInstrumentTypePicker(targetActivityId) || callAllowedWindowFunction('openCreateInstrumentTypePicker', targetActivityId))) return;
-    if (!openInstrumentCreator()) callAllowedWindowFunction('openInstrumentCreator');
+    if (targetActivityId && openCreateInstrumentTypePicker(targetActivityId)) return;
+    openInstrumentCreator();
   },
   'edit-instrument': ({ trigger }) => {
     const id = instrumentId(trigger);
-    if (id && !editInstrument(id)) callAllowedWindowFunction('editInstrument', id);
+    if (id) editInstrument(id);
   },
   'delete-instrument': ({ trigger }) => {
     const id = instrumentId(trigger);
-    if (id && !deleteInstrument(id)) callAllowedWindowFunction('deleteInstrument', id);
+    if (id) deleteInstrument(id);
   },
   'save-instrument': () => {
-    if (!confirmLinkInstrument()) callAllowedWindowFunction('confirmLinkInstrument');
+    confirmLinkInstrument();
   },
   'evaluate-student': ({ trigger }) => {
     const targetActivityId = activityId(trigger);
     const studentId = data(trigger, 'studentId');
     if (!targetActivityId) return;
-    if (!openApplyInstrumentModal(targetActivityId, studentId || undefined)) {
-      if (studentId) callAllowedWindowFunction('openApplyInstrumentModal', targetActivityId, studentId);
-      else callAllowedWindowFunction('openApplyInstrumentModal', targetActivityId);
-    }
+    openApplyInstrumentModal(targetActivityId, studentId || undefined);
   },
   'change-grade': ({ trigger }) => {
     const targetBlockId = blockId(trigger);
@@ -147,20 +144,18 @@ const activityActionRegistry: Record<string, ActivityActionHandler> = {
   },
   'edit-matrix': ({ trigger }) => {
     const targetActivityId = activityId(trigger);
-    if (targetActivityId && !openApplyInstrumentModal(targetActivityId, data(trigger, 'studentId'))) {
-      callAllowedWindowFunction('openApplyInstrumentModal', targetActivityId, data(trigger, 'studentId'));
-    }
+    if (targetActivityId) openApplyInstrumentModal(targetActivityId, data(trigger, 'studentId'));
   },
   'change-matrix-view': ({ trigger }) => {
     setActView(data(trigger, 'matrixView') || valueFromTrigger(trigger));
   },
   filter: ({ trigger }) => {
     const target = data(trigger, 'target') || data(trigger, 'activityTarget');
-    if (target && !setInstFilter(target, valueFromTrigger(trigger))) callAllowedWindowFunction('setInstFilter', target, valueFromTrigger(trigger));
+    if (target) setInstFilter(target, valueFromTrigger(trigger));
   },
   'clear-filter': ({ trigger }) => {
     const target = data(trigger, 'target') || data(trigger, 'activityTarget');
-    if (target && !setInstFilter(target, '')) callAllowedWindowFunction('setInstFilter', target, '');
+    if (target) setInstFilter(target, '');
   },
   export: () => {},
   print: () => window.print(),

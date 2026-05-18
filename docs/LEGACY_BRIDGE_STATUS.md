@@ -76,7 +76,8 @@
 - La lógica CRUD real de estudiantes sigue viviendo en `js/core/student-logic.ts` (`openEstM`, `saveEst`, `openViewStudent`, `openEditStudent`, `saveEditStudent`, `openBulkEstM`, `handleBulkFileChange`, `analyzeBulkInput`, `saveBulkEst`, `registerStudentSilently`, `upsertStudentDirectoryEntry`) y en `js/core/deleters.ts` (`delEst`).
 - La vista principal de estudiantes vive en `apps/web/src/panels/estudiantes/`; `js/panels/estudiantes/**` solo reexporta.
 - `crear-estudiante` y `editar-estudiante` viven bajo `apps/web/src/panels/estudiantes/create/` y `apps/web/src/panels/estudiantes/edit/`; conservan `FormState` local y callbacks exportables.
-- `apps/web/src/panels/estudiantes/utils/student-crud.ts` encapsula wrappers seguros para apertura, guardado, consulta por ID, alta programatica y edición, delegando a `js/core/student-logic.ts`.
+- `apps/web/src/panels/estudiantes/utils/student-modals.ts` encapsula wrappers para `openEstM`, `saveEst`, `openViewStudent`, `openEditStudent` y `saveEditStudent`, delegando a `js/core/student-logic.ts` sin duplicar DOM, validaciones, SQL ni mensajes.
+- `apps/web/src/panels/estudiantes/utils/student-crud.ts` encapsula wrappers seguros para consulta por ID, alta programatica, navegación a panel y edición, delegando modales a `student-modals.ts`.
 - `apps/web/src/panels/estudiantes/utils/student-delete.ts` encapsula eliminación de estudiantes y delega a `js/core/deleters.ts` sin duplicar confirmación ni persistencia.
 - `apps/web/src/panels/estudiantes/utils/student-helpers.ts` contiene helpers puros de texto, matrícula, búsqueda por ID y directorio local; `student-logic.ts` los consume sin mover modales ni SQL.
 - `apps/web/src/panels/estudiantes/utils/student-bulk-state.ts` contiene `BULK_IMPORT_STATE` y setters/getters; `student-logic.ts` conserva el parser y actualiza ese estado compartido.
@@ -85,7 +86,7 @@
 - `data-student-action` dejó de usar `window.openEstM`, `window.delEst`, `window.setStudentsGlobalSearch`, `window.setStudentsGradeView`, `window.setActiveSection`, `window.setStudentsViewMode`, `window.openBulkEstM`, `window.analyzeBulkInput`, `window.saveBulkEst` y `window.handleBulkFileChange` como ruta primaria.
 - Fallbacks conservados: `confirmSaveStudent`, `confirmSaveEditStudent`, campos/fotos de crear/editar y selección recordada, porque dependen de que el contexto de panel se haya registrado y podrían aparecer fragments cargados tarde durante la transición.
 - Routing conserva las URLs legacy de bundles y resuelve `estudiantes`, `student-create` y `student-edit` hacia `apps/web/src/panels/estudiantes/`.
-- `legacy-api.ts` conserva las claves públicas de estudiantes, pero las publica desde `student-crud.ts` y `student-bulk.ts`; `legacy-bridge.ts` no cambió y sigue instalando el registro plano en `window`.
+- `legacy-api.ts` conserva las claves públicas de estudiantes, pero publica los modales desde `student-modals.ts` y la carga masiva desde `student-bulk.ts`; `legacy-bridge.ts` no cambió y sigue instalando el registro plano en `window`.
 
 ## Cambios Recientes Aplicados
 
@@ -102,6 +103,7 @@
 - `asistencia` fue movido físicamente a `apps/web/src/panels/asistencia/`; las rutas `js/panels/asistencia/**` quedaron como adaptadores de reexportación.
 - `estudiantes`, `crear-estudiante` y `editar-estudiante` fueron movidos físicamente a `apps/web/src/panels/estudiantes/`, `create/` y `edit/`; las rutas legacy quedaron como adaptadores de reexportación.
 - `legacy-api.ts` comenzó a funcionar como adaptador para estudiantes: sus funciones públicas delegan a wrappers en `apps/web/src/panels/estudiantes/utils/`.
+- Las APIs legacy `openEstM`, `saveEst`, `openViewStudent`, `openEditStudent` y `saveEditStudent` delegan específicamente en `student-modals.ts`.
 - `data-attendance-action` dejó de llamar directamente `window.exportToExcel`, `window.exportToPdf` y `window.print`; ahora usa `attendance-export.ts`.
 - `data-student-action` separó acciones base en `student-domain-actions.ts` y carga masiva/exportación en `student-bulk.ts`; ahora esas fuentes viven bajo `apps/web/src/panels/estudiantes/`.
 - Helpers puros de estudiantes y estado de carga masiva fueron extraídos a `student-helpers.ts` y `student-bulk-state.ts`; `student-logic.ts` sigue siendo dueño de DOM, modales, SQL y parser.

@@ -2,17 +2,19 @@ import { S } from '../../../../../../js/core/state.ts';
 import { go } from '../../../../../../js/core/routing.ts';
 import {
   chooseStudentAddMode,
-  openEstM,
   openStudentAddModeModal,
-  openEditStudent,
-  openViewStudent,
   registerStudentSilently,
-  saveEditStudent,
-  saveEst,
   upsertStudentDirectoryEntry,
 } from '../../../../../../js/core/student-logic.ts';
 import { deleteStudentById } from './student-delete.ts';
 import { findStudentById } from './student-helpers.ts';
+import {
+  openStudentCreateModal,
+  openStudentEditModal,
+  openStudentViewModal,
+  saveStudentCreateModal,
+  saveStudentEditModal,
+} from './student-modals.ts';
 
 type StudentRecordInput = {
   nombre?: string;
@@ -29,8 +31,7 @@ export async function createStudentRecord(input: StudentRecordInput = {}): Promi
 }
 
 export async function updateStudentRecord(): Promise<boolean> {
-  await saveEditStudent();
-  return true;
+  return saveStudentEditModal();
 }
 
 export async function deleteStudentRecord(id = ''): Promise<boolean> {
@@ -38,30 +39,19 @@ export async function deleteStudentRecord(id = ''): Promise<boolean> {
 }
 
 export async function saveStudentFromModal(options: Record<string, unknown> = {}): Promise<boolean> {
-  await saveEst(options);
-  return true;
+  return saveStudentCreateModal(options);
 }
 
 export async function saveEditedStudentFromModal(): Promise<boolean> {
-  await saveEditStudent();
-  return true;
+  return saveStudentEditModal();
 }
 
 export async function openStudentForEdit(id = ''): Promise<boolean> {
-  if (!id) return false;
-  await openEditStudent(id);
-  return true;
+  return openStudentEditModal(id);
 }
 
 export async function openStudentForView(id = ''): Promise<boolean> {
-  if (!id) return false;
-  await openViewStudent(id);
-  return true;
-}
-
-export async function openStudentCreateModal(sectionId = ''): Promise<boolean> {
-  await openEstM(sectionId || S.activeGroupId || '');
-  return true;
+  return openStudentViewModal(id);
 }
 
 export function openStudentCreatePanel(id = ''): boolean {
@@ -81,3 +71,10 @@ export function openStudentAddMode(): boolean {
 }
 
 export { upsertStudentDirectoryEntry };
+export {
+  openStudentCreateModal,
+  openStudentEditModal,
+  openStudentViewModal,
+  saveStudentCreateModal,
+  saveStudentEditModal,
+} from './student-modals.ts';

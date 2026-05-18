@@ -19,6 +19,7 @@ import * as SQL from './api-sql.ts';
 import * as SectionLogic from './section-logic.ts';
 import * as StudentCrud from '../../apps/web/src/panels/estudiantes/utils/student-crud.ts';
 import * as StudentBulk from '../../apps/web/src/panels/estudiantes/utils/student-bulk.ts';
+import * as StudentModals from '../../apps/web/src/panels/estudiantes/utils/student-modals.ts';
 
 export const LEGACY_BRIDGE_REGISTRY = {
   core: {
@@ -95,11 +96,11 @@ export const LEGACY_BRIDGE_REGISTRY = {
     logoutAuth: DomainUtils.logoutAuth,
   },
   students: {
-    openEstM: StudentCrud.openStudentCreateModal,
-    saveEst: StudentCrud.saveStudentFromModal,
-    openViewStudent: StudentCrud.openStudentForView,
-    openEditStudent: StudentCrud.openStudentForEdit,
-    saveEditStudent: StudentCrud.saveEditedStudentFromModal,
+    openEstM: StudentModals.openStudentCreateModal,
+    saveEst: StudentModals.saveStudentCreateModal,
+    openViewStudent: StudentModals.openStudentViewModal,
+    openEditStudent: StudentModals.openStudentEditModal,
+    saveEditStudent: StudentModals.saveStudentEditModal,
     openBulkEstM: StudentBulk.openBulkStudentModal,
     chooseStudentAddMode: StudentCrud.chooseStudentCreationMode,
     openStudentAddModeModal: StudentCrud.openStudentAddMode,

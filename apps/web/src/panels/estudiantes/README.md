@@ -12,7 +12,8 @@ Los paths legacy `js/panels/estudiantes/**`, `js/panels/crear-estudiante/**` y `
 
 Wrappers modulares actuales:
 
-- `utils/student-crud.ts`: apertura, guardado, vista, edicion, consulta por ID y alta programatica; delega a `js/core/student-logic.ts`.
+- `utils/student-crud.ts`: consulta por ID, navegacion a panel, alta programatica y operaciones CRUD de dominio.
+- `utils/student-modals.ts`: wrappers de apertura/guardado de crear, vista y edicion; delega a `js/core/student-logic.ts`.
 - `utils/student-delete.ts`: eliminacion de estudiantes; delega a `js/core/deleters.ts`.
 - `utils/student-helpers.ts`: helpers puros de texto, matricula, busqueda por ID y directorio local.
 - `utils/student-bulk-state.ts`: estado compartido de carga masiva con la misma forma legacy.

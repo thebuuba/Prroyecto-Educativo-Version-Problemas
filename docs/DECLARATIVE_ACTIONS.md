@@ -112,7 +112,8 @@ El registry vive en `apps/web/src/panels/estudiantes/utils/student-actions.ts`. 
 Módulos directos:
 
 - `apps/web/src/panels/estudiantes/utils/student-domain-actions.ts`: creación, edición, eliminación, guardado, búsqueda, filtros, selección, fotos y selección recordada.
-- `apps/web/src/panels/estudiantes/utils/student-crud.ts`: wrappers de apertura, guardado, vista, edición, consulta por ID y alta programática hacia `js/core/student-logic.ts`.
+- `apps/web/src/panels/estudiantes/utils/student-modals.ts`: wrappers de apertura/guardado de crear, vista y edición hacia `js/core/student-logic.ts`.
+- `apps/web/src/panels/estudiantes/utils/student-crud.ts`: wrappers de consulta por ID, navegación a panel, alta programática y operaciones CRUD de dominio.
 - `apps/web/src/panels/estudiantes/utils/student-delete.ts`: wrappers de eliminación hacia `js/core/deleters.ts`.
 - `apps/web/src/panels/estudiantes/utils/student-helpers.ts`: helpers puros de normalización, búsqueda por ID, matrícula duplicada y directorio local.
 - `apps/web/src/panels/estudiantes/utils/student-bulk-state.ts`: estado compartido de carga masiva con setters/getters.

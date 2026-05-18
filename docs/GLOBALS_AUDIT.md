@@ -159,7 +159,8 @@ Resultado:
 - La fuente real de paneles vive en `apps/web/src/panels/estudiantes/`, con `create/` y `edit/` como subdominios.
 - La implementación real de guardado, edición modal, vista modal, apertura manual y carga masiva vive en `js/core/student-logic.ts`.
 - La eliminación real vive en `js/core/deleters.ts` como `delEst`.
-- `student-crud.ts` envuelve `openEstM`, `saveEst`, `openViewStudent`, `openEditStudent`, `saveEditStudent`, `registerStudentSilently` y `upsertStudentDirectoryEntry` sin duplicar logica.
+- `student-modals.ts` envuelve `openEstM`, `saveEst`, `openViewStudent`, `openEditStudent` y `saveEditStudent` sin duplicar logica DOM, SQL, validaciones ni mensajes.
+- `student-crud.ts` envuelve consulta por ID, navegación a panel, alta programática y `upsertStudentDirectoryEntry`; las operaciones de modal pasan por `student-modals.ts`.
 - `student-delete.ts` envuelve `delEst` y conserva su confirmación, sync SQL, persistencia, navegación y toast originales.
 - `student-bulk.ts` ahora expone wrappers explícitos para `openBulkEstM`, `handleBulkFileChange`, `analyzeBulkInput` y `saveBulkEst`, manteniendo el parser legacy en core.
 - `student-helpers.ts` extrae helpers puros: normalización de texto/matrícula, búsqueda por ID, detección de matrícula duplicada y mapeo/upsert de directorio local.

@@ -85,6 +85,7 @@ Avance aplicado:
 - Callbacks de `crear-estudiante` y `editar-estudiante` convertidos en funciones exportables; los globals quedan como adaptadores temporales.
 - Migración física conjunta aplicada: `estudiantes`, `crear-estudiante` y `editar-estudiante` viven en `apps/web/src/panels/estudiantes/`, `create/` y `edit/`; las rutas legacy quedaron como reexports.
 - Wrappers modulares de estudiantes creados: `student-crud.ts` para apertura/guardado/consulta/alta programatica, `student-delete.ts` para eliminación y wrappers explícitos de carga masiva en `student-bulk.ts`.
+- Wrappers de modales de estudiantes creados en `student-modals.ts` para apertura/guardado de crear, vista y edición, delegando a `js/core/student-logic.ts` sin cambiar DOM ni textos.
 - `legacy-api.ts` conserva los nombres públicos de estudiantes pero delega en wrappers del dominio migrado, no directamente en `js/core/student-logic.ts`.
 - Helpers puros de estudiantes extraídos a `apps/web/src/panels/estudiantes/utils/student-helpers.ts`.
 - Estado de carga masiva extraído a `apps/web/src/panels/estudiantes/utils/student-bulk-state.ts`; el parser y flujo DOM siguen en `js/core/student-logic.ts`.

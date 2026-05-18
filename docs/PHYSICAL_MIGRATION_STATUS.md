@@ -124,7 +124,8 @@ Actividades:
 - Adaptadores creados: `js/panels/estudiantes/**`, `js/panels/crear-estudiante/**` y `js/panels/editar-estudiante/**` reexportan al nuevo origen; sus README documentan que son temporales.
 - Routing: las claves públicas `/js/panels/estudiantes/principal.ts`, `/js/panels/crear-estudiante/principal.ts` y `/js/panels/editar-estudiante/principal.ts` se conservan; `PANEL_MODULES` resuelve hacia `apps/web/src/panels/estudiantes/`, `create/` y `edit/`.
 - Acciones base: `apps/web/src/panels/estudiantes/utils/student-domain-actions.ts` encapsula creación, edición, eliminación, guardado, búsqueda, filtros, selección y fotos.
-- Wrappers CRUD: `apps/web/src/panels/estudiantes/utils/student-crud.ts` delega a `js/core/student-logic.ts` para apertura, guardado, vista, edición, alta programática y directorio.
+- Wrappers de modales: `apps/web/src/panels/estudiantes/utils/student-modals.ts` delega a `js/core/student-logic.ts` para apertura/guardado de crear, vista y edición.
+- Wrappers CRUD: `apps/web/src/panels/estudiantes/utils/student-crud.ts` delega a `student-modals.ts` para modales y a `js/core/student-logic.ts` para alta programática y directorio.
 - Wrappers de eliminación: `apps/web/src/panels/estudiantes/utils/student-delete.ts` delega a `js/core/deleters.ts` sin duplicar confirmación ni persistencia.
 - Helpers puros: `apps/web/src/panels/estudiantes/utils/student-helpers.ts` contiene normalización, búsqueda por ID, detección de matrícula duplicada y helpers de directorio local.
 - Estado de carga masiva: `apps/web/src/panels/estudiantes/utils/student-bulk-state.ts` contiene `BULK_IMPORT_STATE` y setters/getters sin cambiar su estructura.

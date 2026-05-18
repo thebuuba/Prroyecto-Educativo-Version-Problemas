@@ -80,8 +80,8 @@ Se mantienen porque hay referencias runtime reales, uso por registries como fall
 - `data-planning-action` usa imports directos hacia `apps/web/src/panels/planificaciones/utils/actions.ts`.
 - `data-schedule-action` usa imports directos para las acciones simples de horario: tabs, mes, asistente, celdas y eventos.
 - `data-activity-action` usa imports directos para las acciones de bloques y matriz: vista, metas, nombre, puntos, alta, eliminación y autoajuste.
-- `data-activity-action` usa imports directos para guardar actividades y plantillas desde `js/panels/actividades/utils/activity-save.ts`.
-- `data-activity-action` usa imports directos para acciones básicas de instrumentos desde `js/panels/instrumentos/utils/instrument-actions.ts`.
+- `data-activity-action` usa imports directos para guardar actividades y plantillas desde `apps/web/src/panels/actividades/utils/activity-save.ts`.
+- `data-activity-action` usa imports directos para acciones básicas de instrumentos desde `apps/web/src/panels/instrumentos/utils/instrument-actions.ts`.
 - `data-activity-action` usa implementación modular para vincular instrumentos: `openApplyInstrumentModal`, `openCreateInstrumentTypePicker` y `confirmLinkInstrument`.
 - `data-user-action` usa imports directos hacia `js/panels/usuarios/utils/user-domain-actions.ts` para crear y eliminar usuarios; ya no invoca `window.saveUsr` ni `window.delUsr` como ruta primaria.
 - Las acciones internas de planificaciones dejaron de invocar `window.go` y de leer `window.S`; usan imports directos hacia `go` y `S`.
@@ -93,8 +93,8 @@ Búsqueda aplicada sobre fuentes, excluyendo `dist/` y `node_modules`: `openAppl
 
 Resultado:
 
-- La lógica real quedó localizada y modularizada en `js/panels/instrumentos/utils/instrument-linking.ts`.
-- `js/panels/instrumentos/principal.ts` no contiene lógica de vinculación; solo registra `window.RENDERS.instrumentos` y llama `registerInstrumentActions()`.
+- La lógica real quedó localizada y modularizada en `apps/web/src/panels/instrumentos/utils/instrument-linking.ts`.
+- `apps/web/src/panels/instrumentos/principal.ts` registra `window.RENDERS.instrumentos` y llama `registerInstrumentActions()`; `js/panels/instrumentos/principal.ts` solo reexporta.
 - Los fragments `sections/modals/m-link-inst.html` y `sections/modals/m-inst-type.html` siguen siendo dueños del marcado visual; no se cambiaron textos ni IDs.
 - Dependencias de estado: `S.activeGroupId`, `S.activePeriodId`, `S.instruments` y la actividad encontrada por `findActivity()`.
 - Dependencias UI: `openM('m-link-inst')`, `openM('m-inst-type')`, `closeM('m-link-inst')` y los IDs DOM `li-act`, `li-inst`, `li-create-btn`, `inst-type-grid`.
@@ -108,7 +108,7 @@ Búsqueda aplicada sobre fuentes, excluyendo `dist/` y `node_modules`: `saveAct`
 
 Resultado:
 
-- La implementación real actual se consolidó en `js/panels/actividades/utils/activity-save.ts`.
+- La implementación real actual se consolidó en `apps/web/src/panels/actividades/utils/activity-save.ts`.
 - La implementación original fue localizada en bundles legacy históricos, no en `principal.ts`; `utils/actions.ts` solo contenía acciones de bloques/matriz.
 - Dependencias de estado/dominio: `S.activeGroupId`, `S.activePeriodId`, `S.templates`, `getGroupCfg`, `uid`, `round2`, `parseDecimalInput` y `BNAME`.
 - Dependencias de persistencia/sync: `persist()` y `syncSqlActivityCreateOrUpdate()` para nuevas actividades.
@@ -116,19 +116,24 @@ Resultado:
 - IDs DOM requeridos: `a-nom`, `a-blq`, `a-tipo`, `a-pts`, `a-fecha`, `a-obs`, `tpl-name` y `tpl-desc`.
 - `activity-actions.ts` ya no invoca `window.saveAct` ni `window.saveTpl`; `actions.ts` solo publica esos nombres globales como adaptadores temporales.
 
-## Preparación Física Actividades/Instrumentos
+## Migración Física Actividades/Instrumentos
 
-- `js/panels/instrumentos/**` puede moverse primero a `apps/web/src/panels/instrumentos/**` dejando adaptadores de reexportación en la ruta legacy.
-- `js/panels/actividades/**` debe moverse después de instrumentos; hoy importa acciones de instrumentos y conserva dependencias documentadas a `window.AulaBaseSqlApi` y `_linkActId`.
-- `routing.ts` debe conservar las claves públicas `/js/panels/instrumentos/principal.ts` y `/js/panels/actividades/principal.ts`, pero puede resolver `PANEL_MODULES` hacia `apps/web/src/panels/...` cuando cada panel se mueva.
-- No hay handlers inline runtime que bloqueen el movimiento; el bloqueo restante es de rutas relativas profundas y contratos globales temporales.
+- `js/panels/instrumentos/**` fue movido a `apps/web/src/panels/instrumentos/**`; la ruta legacy quedó como adaptador de reexportación.
+- `js/panels/actividades/**` fue movido a `apps/web/src/panels/actividades/**`; la ruta legacy quedó como adaptador de reexportación.
+- `data-activity-action` ya apunta a la fuente real de actividades en `apps/web/src/panels/actividades/utils/activity-actions.ts` y a la fuente real de instrumentos en `apps/web/src/panels/instrumentos/utils/instrument-actions.ts`.
+- `routing.ts` conserva la clave pública `/js/panels/instrumentos/principal.ts`, pero `PANEL_MODULES` resuelve hacia `apps/web/src/panels/instrumentos/principal.ts`.
+- `routing.ts` conserva la clave pública `/js/panels/actividades/principal.ts`, pero `PANEL_MODULES` resuelve hacia `apps/web/src/panels/actividades/principal.ts`.
+- Actividades conserva dependencias documentadas a `window.AulaBaseSqlApi` y `_linkActId`.
 
 ## Migración Física Aplicada
 
 - `reportes` y `planificaciones` fueron movidos a `apps/web/src/panels/`.
 - `matriz` fue movido a `apps/web/src/panels/matriz/`.
+- `instrumentos` fue movido a `apps/web/src/panels/instrumentos/`.
+- `actividades` fue movido a `apps/web/src/panels/actividades/`.
 - Las rutas legacy `js/panels/reportes/**` y `js/panels/planificaciones/**` permanecen como adaptadores de reexportación.
 - La ruta legacy `js/panels/matriz/**` permanece como adaptador de reexportación.
+- Las rutas legacy `js/panels/instrumentos/**` y `js/panels/actividades/**` permanecen como adaptadores de reexportación.
 - No se eliminaron globals adicionales en esta fase; los globals de planificaciones y reportes siguen publicados como fallback temporal.
 
 ## Candidatas A Eliminar Después

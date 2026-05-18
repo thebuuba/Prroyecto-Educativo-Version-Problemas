@@ -25,9 +25,9 @@
 | Reportes | `reportDownloadExcel`, `reportDownloadPdf`, `reportDownloadWord` | El módulo ya vive en `apps/web/src/panels/reportes/` y el registry usa imports directos; conservar por compatibilidad hasta retirar fallbacks. |
 | Matriz | No publica globals propios. | El módulo ya vive en `apps/web/src/panels/matriz/`; mantiene solo `window.RENDERS.matriz` por contrato del renderer dinámico. |
 | Horario | `setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal` | El registry ya usa imports directos con fallback temporal; eliminar globals cuando no haya referencias runtime. |
-| Actividades | `setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`, `saveAct`, `saveTpl` | El registry ya usa imports directos; conservar globals como adaptadores por compatibilidad hasta mover el panel. |
-| Instrumentos | `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator` | Ya tienen fuente exportable en `js/panels/instrumentos/utils/instrument-actions.ts`; conservar globals como adaptadores temporales. |
-| Vinculación de instrumentos | `openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument` | Implementación principal extraída a `js/panels/instrumentos/utils/instrument-linking.ts`; globals quedan como adaptadores temporales. |
+| Actividades | `setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`, `saveAct`, `saveTpl` | La fuente real vive en `apps/web/src/panels/actividades/`; conservar globals como adaptadores por compatibilidad runtime. |
+| Instrumentos | `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator` | La fuente real vive en `apps/web/src/panels/instrumentos/utils/instrument-actions.ts`; conservar globals como adaptadores temporales. |
+| Vinculación de instrumentos | `openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument` | La fuente real vive en `apps/web/src/panels/instrumentos/utils/instrument-linking.ts`; globals quedan como adaptadores temporales. |
 | Estudiantes/académico | `saveEst`, `saveEditStudent`, `saveSec`, `saveEditSection`, `saveGrade`, `delEst`, `delSec`, `delGrade` | Reemplazar fallbacks de registries cuando los módulos estén importables sin ciclos. |
 | Auth/setup | `loginAuth`, `registerAuth`, `authWithProvider`, `saveSetup`, `populateSetupForm`, `enforceMandatorySetup` | Mantener hasta retirar HTML auth/setup legacy y selectores de compatibilidad. |
 
@@ -49,7 +49,7 @@
 
 ## Diagnóstico Vinculación De Instrumentos
 
-- La implementación runtime principal vive ahora en `js/panels/instrumentos/utils/instrument-linking.ts`; `js/panels/instrumentos/principal.ts` solo registra renderer y adaptadores.
+- La implementación runtime principal vive ahora en `apps/web/src/panels/instrumentos/`; `js/panels/instrumentos/**` solo reexporta como adaptador legacy.
 - Los fragments `sections/modals/m-link-inst.html` y `sections/modals/m-inst-type.html` contienen la estructura visual y los IDs requeridos: `m-link-inst`, `m-inst-type`, `li-act`, `li-inst`, `li-create-btn` e `inst-type-grid`.
 - La lógica depende directamente de `S`, `persist`, `go`, `openM`, `closeM`, `findActivity`, `escapeHtml`, `BASIC_INSTRUMENT_TYPES` e `INSTRUMENT_META`.
 - La dependencia a `window` queda limitada al estado transicional `_linkActId` y `_linkStudentId`, más la publicación temporal de `window.openApplyInstrumentModal`, `window.openCreateInstrumentTypePicker` y `window.confirmLinkInstrument`.
@@ -59,11 +59,11 @@
 ## Diagnóstico Guardado De Actividades
 
 - La implementación original de `saveAct` y `saveTpl` fue localizada en bundles legacy históricos (`js/bundles/app-core.js`), no en `js/panels/actividades/principal.ts` ni en `utils/actions.ts` actuales.
-- La implementación principal vive ahora en `js/panels/actividades/utils/activity-save.ts`.
+- La implementación principal vive ahora en `apps/web/src/panels/actividades/utils/activity-save.ts`.
 - `saveAct` depende de `S`, `persist`, `go`, `closeM`, `toast`, `syncSqlActivityCreateOrUpdate`, `getGroupCfg`, `parseDecimalInput`, `round2`, `uid` y `BNAME`.
 - `saveTpl` depende de `S`, `persist`, `closeM`, `toast`, `getGroupCfg` y `uid`.
 - Los modales `sections/modals/m-act.html` y `sections/modals/m-tpl.html` conservan los IDs DOM requeridos: `a-nom`, `a-blq`, `a-tipo`, `a-pts`, `a-fecha`, `a-obs`, `tpl-name` y `tpl-desc`.
-- `js/panels/actividades/utils/actions.ts` publica `window.saveAct` y `window.saveTpl` como adaptadores hacia el módulo nuevo; no queda una segunda implementación.
+- `apps/web/src/panels/actividades/utils/actions.ts` publica `window.saveAct` y `window.saveTpl` como adaptadores hacia el módulo nuevo; no queda una segunda implementación.
 
 ## Cambios Recientes Aplicados
 
@@ -76,8 +76,10 @@
 - Las acciones internas de planificaciones dejaron de depender directamente de `window.S` y `window.go`; usan imports directos a `S` y `go`.
 - `data-schedule-action` dejó de depender directamente de `window.setScheduleTab`, `window.changeCalendarMonth`, `window.openScheduleWizard`, `window.editScheduleCell` y `window.openAddEventModal` cuando el módulo de horario está inicializado.
 - `data-activity-action` dejó de depender directamente de `window.setActView`, `window.updateBlockMeta`, `window.handleActNameInput`, `window.updateActPts`, `window.addActToBlock`, `window.removeActFromBlock` y `window.autoAdjustBlock`.
-- `data-activity-action` ahora importa `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument` y `openInstrumentCreator` desde `js/panels/instrumentos/utils/instrument-actions.ts`.
-- `data-activity-action` dejó de llamar `window.saveAct` / `window.saveTpl`; el guardado vive en `js/panels/actividades/utils/activity-save.ts`.
+- `data-activity-action` ahora importa `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument` y `openInstrumentCreator` desde `apps/web/src/panels/instrumentos/utils/instrument-actions.ts`.
+- `instrumentos` fue movido físicamente a `apps/web/src/panels/instrumentos/`; las rutas `js/panels/instrumentos/**` quedaron como adaptadores de reexportación.
+- `actividades` fue movido físicamente a `apps/web/src/panels/actividades/`; las rutas `js/panels/actividades/**` quedaron como adaptadores de reexportación.
+- `data-activity-action` dejó de llamar `window.saveAct` / `window.saveTpl`; el guardado vive en `apps/web/src/panels/actividades/utils/activity-save.ts`.
 - `openApplyInstrumentModal`, `openCreateInstrumentTypePicker` y `confirmLinkInstrument` tienen implementación modular principal en `instrument-linking.ts`; `instrument-actions.ts` ya no conserva fallback interno legacy.
 - `data-user-action` dejó de llamar `window.saveUsr` / `window.delUsr` como ruta primaria; creación y eliminación viven en `js/panels/usuarios/utils/user-domain-actions.ts`.
 - Se eliminó `window.openDashboardCourse`.
@@ -107,8 +109,8 @@
 
 ## Ruta Para Retiro Gradual
 
-1. Mover físicamente `instrumentos` con adaptadores legacy en `js/panels/instrumentos/**`.
-2. Mover físicamente `actividades` después de estabilizar imports cruzados con instrumentos.
+1. Reducir dependencias SQL/window restantes en actividades.
+2. Convertir `usuarios`, `horario` y `asistencia` a migración física por grupos pequeños.
 3. Convertir registries híbridos restantes a imports directos, uno por dominio.
 4. Reemplazar `window.RENDERS` por registro modular explícito del router.
 5. Reemplazar `_renderPanel` por una función importada desde routing/app.

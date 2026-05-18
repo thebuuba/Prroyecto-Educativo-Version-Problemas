@@ -17,7 +17,7 @@ Módulos auxiliares:
 - `js/panels/configuracion-academica/utils/academic-actions.ts`
 - `js/panels/asistencia/utils/attendance-actions.ts`
 - `js/panels/horario/utils/schedule-actions.ts`
-- `js/panels/actividades/utils/activity-actions.ts`
+- `apps/web/src/panels/actividades/utils/activity-actions.ts`
 - `js/panels/usuarios/utils/user-actions.ts`
 - `apps/web/src/panels/planificaciones/utils/planning-actions.ts`
 - `apps/web/src/panels/reportes/utils/report-actions.ts`
@@ -229,14 +229,14 @@ Acciones permitidas:
 - `open-matrix`, `edit-matrix`, `change-matrix-view`
 - `filter`, `clear-filter`, `export`, `print`, `calculate-average`, `sync`
 
-El registry vive en `js/panels/actividades/utils/activity-actions.ts`. Los parámetros se pasan por `data-activity-id`, `data-block-id`, `data-instrument-id`, `data-student-id`, `data-grade-value`, `data-matrix-view`, `data-target` y `data-value`. No ejecuta nombres de funciones desde atributos.
+El registry vive en `apps/web/src/panels/actividades/utils/activity-actions.ts`. Los parámetros se pasan por `data-activity-id`, `data-block-id`, `data-instrument-id`, `data-student-id`, `data-grade-value`, `data-matrix-view`, `data-target` y `data-value`. No ejecuta nombres de funciones desde atributos.
 
 Migrado en esta fase:
 
 - Tabs de actividades: bloques, matriz y configuración.
 - Apertura de evaluación desde tarjetas y celdas de matriz.
 - Configuración de meta por bloque, alta de actividad, autoajuste, edición de nombre/puntos y eliminación.
-- Guardado de actividad y plantilla desde `js/panels/actividades/utils/activity-save.ts`.
+- Guardado de actividad y plantilla desde `apps/web/src/panels/actividades/utils/activity-save.ts`.
 - Filtros, creación, edición y eliminación de instrumentos.
 - Modales legacy `m-act`, `m-tpl` y `m-link-inst`.
 
@@ -244,9 +244,10 @@ Pendiente:
 
 - `saveUsr()` del fragmento combinado de actividades fue tratado en el dominio usuarios.
 - `saveAct` y `saveTpl` quedan publicados como adaptadores globales temporales, pero `data-activity-action` usa imports directos.
-- Las acciones básicas de instrumentos se resuelven por imports directos desde `js/panels/instrumentos/utils/instrument-actions.ts`; los globals equivalentes se conservan como adaptadores temporales.
-- La vinculación de instrumentos (`m-link-inst`) usa implementación modular en `js/panels/instrumentos/utils/instrument-linking.ts`; los globals equivalentes siguen publicados como adaptadores temporales.
+- Las acciones básicas de instrumentos se resuelven por imports directos desde `apps/web/src/panels/instrumentos/utils/instrument-actions.ts`; los globals equivalentes se conservan como adaptadores temporales.
+- La vinculación de instrumentos (`m-link-inst`) usa implementación modular en `apps/web/src/panels/instrumentos/utils/instrument-linking.ts`; los globals equivalentes siguen publicados como adaptadores temporales.
 - Exportación, sincronización y edición profunda de matriz quedan como ramas seguras hasta que existan controles y módulos específicos.
+- El path legacy `js/panels/actividades/utils/activity-actions.ts` reexporta el módulo nuevo temporalmente para mantener compatibilidad con imports antiguos.
 
 ### Usuarios
 

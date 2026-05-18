@@ -14,7 +14,7 @@ import { handleDeclarativeStudentAction } from '../panels/estudiantes/utils/stud
 import { handleDeclarativeAcademicAction } from '../panels/configuracion-academica/utils/academic-actions.ts';
 import { handleDeclarativeAttendanceAction } from '../panels/asistencia/utils/attendance-actions.ts';
 import { handleDeclarativeScheduleAction } from '../panels/horario/utils/schedule-actions.ts';
-import { handleDeclarativeActivityAction } from '../panels/actividades/utils/activity-actions.ts';
+import { handleDeclarativeActivityAction } from '../../apps/web/src/panels/actividades/utils/activity-actions.ts';
 import { handleDeclarativeUserAction } from '../panels/usuarios/utils/user-actions.ts';
 import { handleDeclarativePlanningAction } from '../../apps/web/src/panels/planificaciones/utils/planning-actions.ts';
 import { handleDeclarativeReportAction } from '../../apps/web/src/panels/reportes/utils/report-actions.ts';

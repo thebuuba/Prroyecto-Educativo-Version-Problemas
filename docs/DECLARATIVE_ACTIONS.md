@@ -109,6 +109,12 @@ Acciones permitidas:
 
 El registry vive en `js/panels/estudiantes/utils/student-actions.ts`. Los atributos secundarios (`data-student-id`, `data-student-value`, `data-student-filter`, `data-student-select`, `data-student-mode`, etc.) solo seleccionan ramas conocidas dentro del registry; no se ejecutan nombres de funciones desde HTML.
 
+Módulos directos:
+
+- `js/panels/estudiantes/utils/student-domain-actions.ts`: creación, edición, eliminación, guardado, búsqueda, filtros, selección, fotos y selección recordada.
+- `js/panels/estudiantes/utils/student-bulk.ts`: apertura de carga masiva, modo texto/archivo, archivo seleccionado, preview, confirmación, cancelación y exportaciones CSV.
+- `js/panels/crear-estudiante/utils/actions.ts` y `js/panels/editar-estudiante/utils/actions.ts`: callbacks exportables para campos, fotos y confirmación, con globals temporales como adaptadores.
+
 Migrado en esta fase:
 
 - Vista principal de estudiantes: búsqueda, filtros de grado/sección, modo grid/table, doble clic para ver, edición, eliminación y acceso a carga masiva.
@@ -119,6 +125,7 @@ Migrado en esta fase:
 Pendiente:
 
 - Lectura real de archivos `.xlsx/.xls` en carga masiva; el flujo declarativo mantiene el comportamiento legacy existente.
+- Migración física conjunta de `estudiantes`, `crear-estudiante` y `editar-estudiante` a `apps/web/src/panels/estudiantes/`.
 
 ### Académico
 

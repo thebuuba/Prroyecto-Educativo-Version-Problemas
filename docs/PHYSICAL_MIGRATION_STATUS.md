@@ -26,7 +26,7 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 | Carpeta | Bloqueo | Riesgo |
 | --- | --- | --- |
 | `js/core/` | Contiene `state`, routing, UI, bridge, API SQL/cloud y persistencia; muchas referencias cruzadas. | Alto |
-| `js/panels/estudiantes/`, `crear-estudiante/`, `editar-estudiante/` | Dependen de fallbacks globales, `legacy-api.ts`, deleters y fragments. | Medio-alto |
+| `js/panels/estudiantes/`, `crear-estudiante/`, `editar-estudiante/` | Ya tienen acciones base y carga masiva separadas, pero todavía comparten rutas independientes, FormState local, fragments legacy y deleters/core. | Medio |
 | `js/panels/configuracion-academica/`, `crear-seccion/` | Dependen de funciones académicas globales y sync SQL. | Medio-alto |
 | `login-registro-auth/` | Tiene bootstrap propio y compat auth. | Medio |
 
@@ -115,6 +115,16 @@ Actividades:
 - Exportaciones separadas: `apps/web/src/panels/asistencia/utils/attendance-export.ts` encapsula `exportToExcel`, `exportToPdf` y `window.print`.
 - Globals conservados como adaptadores: `shiftMonth`, `setActiveGroup`, `cycleMark`, `commitDayDay`, `cycleException`, `applyWeeklySchedule`, `exportToExcel`, `exportToPdf`.
 - Routing: `PANEL_MODULES` conserva la clave pública `/js/panels/asistencia/principal.ts`, pero resuelve hacia `apps/web/src/panels/asistencia/principal.ts`.
+
+## Estudiantes
+
+- Estado: no se movió físicamente en esta fase. `js/panels/estudiantes/`, `js/panels/crear-estudiante/` y `js/panels/editar-estudiante/` siguen como fuente runtime mientras se reduce deuda global.
+- Acciones base separadas: `js/panels/estudiantes/utils/student-domain-actions.ts` encapsula creación, edición, eliminación, guardado, búsqueda, filtros, selección y fotos.
+- Carga masiva separada: `js/panels/estudiantes/utils/student-bulk.ts` encapsula apertura, modo texto/archivo, preview, confirmación, cancelación y exportaciones CSV.
+- `data-student-action` ahora usa imports directos para creación, edición, eliminación, búsqueda, filtros, carga masiva, exportación, importación y fotos.
+- Globals conservados como adaptadores: `setStudentsGradeView`, `setActiveSection`, `setStudentsViewMode`, `setStudentsGlobalSearch`, `openStudentSearchResult`, `openEditStudent`, `updateStudentCreateField`, `handleStudentCreatePhoto`, `confirmSaveStudent`, `updateStudentEditField`, `handleStudentEditPhoto`, `confirmSaveEditStudent`, `handleDeleteStudent`, además de los publicados por `legacy-api.ts`/`deleters.ts`.
+- Bloqueo para mover físicamente: `crear-estudiante` y `editar-estudiante` son rutas separadas con `FormState` local; `student-domain-actions.ts` aún importa sus acciones para conservar comportamiento. Conviene mover los tres subdominios juntos en una fase dedicada.
+- Ruta destino recomendada: `apps/web/src/panels/estudiantes/`, dejando adaptadores temporales en `js/panels/estudiantes/**`, `js/panels/crear-estudiante/**` y `js/panels/editar-estudiante/**`.
 
 ## Criterio De Listo
 

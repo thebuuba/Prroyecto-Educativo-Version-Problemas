@@ -1,12 +1,5 @@
-# Panel Instruments (Instrumentos)
+# Instrumentos Legacy Adapter
 
-## 📋 Descripción
-Panel de gestión de instrumentos de evaluación.
+Esta carpeta conserva las rutas públicas legacy de `js/panels/instrumentos/**`.
 
-## 🎯 Funcionalidades
-- Creación de instrumentos de evaluación
-- Gestión de rúbricas y criterios
-- Vinculación con actividades
-
----
-**Última actualización**: 2026-04-26
+La implementación real vive en `apps/web/src/panels/instrumentos/`.

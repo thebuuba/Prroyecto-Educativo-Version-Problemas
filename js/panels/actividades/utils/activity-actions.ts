@@ -17,7 +17,7 @@ import {
   openCreateInstrumentTypePicker,
   openInstrumentCreator,
   setInstFilter,
-} from '../../instrumentos/utils/instrument-actions.ts';
+} from '../../../../apps/web/src/panels/instrumentos/utils/instrument-actions.ts';
 
 type ActivityActionContext = {
   trigger: HTMLElement;

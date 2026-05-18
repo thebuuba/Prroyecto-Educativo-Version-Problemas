@@ -1,12 +1,5 @@
-# Panel Users (Usuarios)
+# Usuarios Legacy Adapter
 
-## 📋 Descripción
-Panel de gestión de usuarios del sistema.
+Esta carpeta conserva las rutas públicas legacy de `js/panels/usuarios/**`.
 
-## 🎯 Funcionalidades
-- Gestión de usuarios
-- Control de permisos
-- Administración de cuentas
-
----
-**Última actualización**: 2026-04-26
+La implementación real vive en `apps/web/src/panels/usuarios/`.

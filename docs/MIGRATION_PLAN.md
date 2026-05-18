@@ -27,12 +27,13 @@ Avance aplicado:
 - `js/panels/matriz/` movido físicamente a `apps/web/src/panels/matriz/`.
 - `js/panels/instrumentos/` movido físicamente a `apps/web/src/panels/instrumentos/`.
 - `js/panels/actividades/` movido físicamente a `apps/web/src/panels/actividades/`.
+- `js/panels/usuarios/` movido físicamente a `apps/web/src/panels/usuarios/`.
 - Las rutas legacy quedaron como adaptadores de reexportación para no romper imports existentes.
 - `routing.ts` conserva claves públicas `/js/panels/...`, pero resuelve esos bundles hacia `apps/web/src/panels/...`.
 
 Mover en grupos pequeños:
 
-1. Paneles de bajo acoplamiento restantes (`usuarios`, luego `horario`/`asistencia` por grupos pequeños).
+1. Paneles de bajo acoplamiento restantes (`horario`/`asistencia` por grupos pequeños).
 2. Estudiantes/académico por grupos pequeños cuando bajen sus fallbacks.
 3. `login-registro-auth/`.
 4. `sections/`.
@@ -62,7 +63,7 @@ Avance aplicado:
 - Dominio asistencia migrado a `data-attendance-action` con registry explícito en `js/panels/asistencia/utils/attendance-actions.ts`.
 - Dominio horario migrado a `data-schedule-action` con registry explícito en `js/panels/horario/utils/schedule-actions.ts`.
 - Dominio actividades/calificaciones migrado a `data-activity-action` con registry explícito en `apps/web/src/panels/actividades/utils/activity-actions.ts`.
-- Dominio usuarios/modales compartidos migrado a `data-user-action` con registry explícito en `js/panels/usuarios/utils/user-actions.ts`.
+- Dominio usuarios/modales compartidos migrado a `data-user-action` con registry explícito en `apps/web/src/panels/usuarios/utils/user-actions.ts`.
 - Dominios planificaciones y reportes migrados a `data-planning-action` y `data-report-action` con registries explícitos separados.
 - Auditoría global documentada en `docs/GLOBALS_AUDIT.md`; quedan `0` handlers inline runtime reales.
 - Shell/UI mínimo migrado a `data-ui-action` para tablero, institución y selectores globales de contexto.
@@ -77,7 +78,7 @@ Avance aplicado:
 - Fallback interno legacy de vinculación de instrumentos eliminado; `window.openApplyInstrumentModal`, `window.openCreateInstrumentTypePicker` y `window.confirmLinkInstrument` quedan solo como adaptadores publicados.
 - Guardado de actividades y plantillas modularizado en `apps/web/src/panels/actividades/utils/activity-save.ts`.
 - Sincronización SQL de acciones de actividades encapsulada en `apps/web/src/panels/actividades/utils/activity-sql.ts`, con fallback interno a `window.AulaBaseSqlApi`.
-- Acciones de creación/eliminación de usuarios separadas en `js/panels/usuarios/utils/user-domain-actions.ts` y consumidas por `data-user-action` con imports directos.
+- Acciones de creación/eliminación de usuarios separadas en `apps/web/src/panels/usuarios/utils/user-save.ts` y `user-domain-actions.ts`, consumidas por `data-user-action` con imports directos.
 
 Conteo de la fase estudiantes:
 
@@ -153,7 +154,7 @@ Conteo de la fase usuarios:
 Riesgos usuarios:
 
 - Edición, permisos, activación/desactivación, reseteo de contraseña, invitación y perfil quedan como ramas seguras porque no hay controles visibles actuales.
-- `data-user-action` usa imports directos hacia `js/panels/usuarios/utils/user-domain-actions.ts`; `delUsr` queda como adaptador global temporal y `saveUsr` no tiene referencia runtime real.
+- `data-user-action` usa imports directos hacia `apps/web/src/panels/usuarios/utils/user-save.ts`; `saveUsr` y `delUsr` quedan como adaptadores globales temporales.
 
 Conteo de la fase planificaciones/reportes:
 
@@ -192,7 +193,7 @@ Orden recomendado:
 
 - Estabilizar reportes/planificaciones/matriz ya movidos.
 - convertir registries híbridos a imports directos por dominio.
-- usuarios, horario y asistencia.
+- horario y asistencia.
 - estudiantes/académico.
 - auth/setup y core crítico.
 

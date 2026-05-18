@@ -2,7 +2,7 @@
 
 ## Estado
 
-La migración física real ya inició con módulos de bajo acoplamiento. `reportes`, `planificaciones`, `matriz`, `instrumentos` y `actividades` viven ahora en `apps/web/src/panels/`, mientras las rutas legacy en `js/panels/` quedaron como adaptadores temporales de reexportación.
+La migración física real ya inició con módulos de bajo acoplamiento. `reportes`, `planificaciones`, `matriz`, `instrumentos`, `actividades` y `usuarios` viven ahora en `apps/web/src/panels/`, mientras las rutas legacy en `js/panels/` quedaron como adaptadores temporales de reexportación.
 
 Revisión de `matriz`: el panel contiene `principal.ts`, `view.ts`, `logic.ts`, `components/vista.ts` y `README.md`. Solo depende de `js/core/state.ts`, `config.ts`, `constants.ts` y `domain-utils.ts`; registra `window.RENDERS.matriz` para el renderer dinámico y no publica acciones/globales propios. El movimiento se completó conservando la clave pública `/js/panels/matriz/principal.ts`.
 
@@ -17,12 +17,12 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 | `matriz` | `apps/web/src/panels/matriz/` | `js/panels/matriz/**` reexporta al nuevo origen. | Bajo: conserva `window.RENDERS.matriz`; no tiene registry ni globals propios. |
 | `instrumentos` | `apps/web/src/panels/instrumentos/` | `js/panels/instrumentos/**` reexporta al nuevo origen. | Bajo-medio: conserva `window.RENDERS.instrumentos` y globals temporales de acciones/vinculación. |
 | `actividades` | `apps/web/src/panels/actividades/` | `js/panels/actividades/**` reexporta al nuevo origen. | Medio: conserva `window.RENDERS.actividades`, globals temporales de acciones/guardado y dependencias SQL globales. |
+| `usuarios` | `apps/web/src/panels/usuarios/` | `js/panels/usuarios/**` reexporta al nuevo origen. | Bajo-medio: conserva `window.RENDERS.usuarios`, `saveUsr` y `delUsr` como adaptadores temporales. |
 
 ## Próximas Listas Para Mover
 
 | Carpeta | Estado | Riesgo | Adaptadores necesarios |
 | --- | --- | --- | --- |
-| `js/panels/usuarios/` | Parcialmente lista | Medio | Creación/eliminación ya están en módulo exportable; `delUsr` queda como adaptador global y el renderer sigue legacy. |
 | `js/panels/horario/` | Parcialmente lista | Medio | Registry parcialmente directo; falta separar generación avanzada y confirmar referencias runtime. |
 
 ## Bloqueadas
@@ -59,7 +59,7 @@ El contrato público del loader se conserva: `PANEL_BUNDLE_URLS` sigue exponiend
 - `_renderPanel` como punto de render.
 - APIs `EduGestCloud`, `AulaBaseSqlApi`, `EduGestDB`.
 - Fragments `sections/` cargados por ensamblado y modales bajo demanda.
-- `reportes`, `planificaciones`, `matriz`, `instrumentos` y `actividades` ya están físicamente en `apps/web`, pero todavía registran su renderer en `window.RENDERS`.
+- `reportes`, `planificaciones`, `matriz`, `instrumentos`, `actividades` y `usuarios` ya están físicamente en `apps/web`, pero todavía registran su renderer en `window.RENDERS`.
 
 ## Dependencias Legacy
 
@@ -91,10 +91,18 @@ Actividades:
 ## Orden Recomendado
 
 1. Continuar con reducción de dependencias SQL/window en dominios restantes.
-2. Continuar con `usuarios`, `horario` y `asistencia` por grupos pequeños.
+2. Continuar con `horario` y `asistencia` por grupos pequeños.
 3. Mover estudiantes/académico cuando sus fallbacks globales hayan desaparecido.
 4. Separar `js/core/` en submódulos dentro de `apps/web/src` con adaptadores raíz.
 5. Mover `login-registro-auth/` cuando auth/setup ya no dependa de bootstrap HTML legacy.
+
+## Usuarios
+
+- Archivos movidos: `principal.ts`, `view.ts`, `logic.ts`, `components/vista.ts`, `utils/user-actions.ts`, `utils/user-domain-actions.ts`, `utils/user-save.ts` y `README.md`.
+- Adaptadores creados: los mismos paths bajo `js/panels/usuarios/**` reexportan hacia `apps/web/src/panels/usuarios/**`.
+- Fuente modular real: `apps/web/src/panels/usuarios/utils/user-actions.ts`, `apps/web/src/panels/usuarios/utils/user-domain-actions.ts` y `apps/web/src/panels/usuarios/utils/user-save.ts`.
+- Globals conservados como adaptadores: `saveUsr` y `delUsr`.
+- Routing: `PANEL_MODULES` conserva la clave pública `/js/panels/usuarios/principal.ts`, pero resuelve hacia `apps/web/src/panels/usuarios/principal.ts`.
 
 ## Criterio De Listo
 

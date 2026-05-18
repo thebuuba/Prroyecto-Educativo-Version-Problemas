@@ -19,7 +19,7 @@ type GoOptions = {
 
 /** Diccionario de módulos que sí participan en la carga diferida vía Vite. */
 const PANEL_MODULES: PanelModuleMap = {
-  '/js/panels/usuarios/principal.ts': () => import('../panels/usuarios/principal.ts'),
+  '/js/panels/usuarios/principal.ts': () => import('../../apps/web/src/panels/usuarios/principal.ts'),
   '/js/panels/estudiantes/principal.ts': () => import('../panels/estudiantes/principal.ts'),
   '/js/panels/actividades/principal.ts': () => import('../../apps/web/src/panels/actividades/principal.ts'),
   '/js/panels/matriz/principal.ts': () => import('../../apps/web/src/panels/matriz/principal.ts'),

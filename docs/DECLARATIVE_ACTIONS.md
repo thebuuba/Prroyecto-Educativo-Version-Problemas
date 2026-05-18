@@ -18,7 +18,7 @@ Módulos auxiliares:
 - `js/panels/asistencia/utils/attendance-actions.ts`
 - `js/panels/horario/utils/schedule-actions.ts`
 - `apps/web/src/panels/actividades/utils/activity-actions.ts`
-- `js/panels/usuarios/utils/user-actions.ts`
+- `apps/web/src/panels/usuarios/utils/user-actions.ts`
 - `apps/web/src/panels/planificaciones/utils/planning-actions.ts`
 - `apps/web/src/panels/reportes/utils/report-actions.ts`
 - `js/core/form-actions.ts`
@@ -266,7 +266,7 @@ Acciones permitidas:
 - `filter`, `clear-filter`, `search`
 - `invite`, `update-profile`, `save-profile`, `change-status`
 
-El registry vive en `js/panels/usuarios/utils/user-actions.ts`. Los parámetros se pasan por `data-user-id`, `data-user-role`, `data-user-permission`, `data-user-status`, `data-user-target`, `data-user-value` y `data-user-modal-id`. No ejecuta nombres de funciones desde atributos. La creación y eliminación delegan por import directo a `js/panels/usuarios/utils/user-domain-actions.ts`.
+El registry vive en `apps/web/src/panels/usuarios/utils/user-actions.ts`. Los parámetros se pasan por `data-user-id`, `data-user-role`, `data-user-permission`, `data-user-status`, `data-user-target`, `data-user-value` y `data-user-modal-id`. No ejecuta nombres de funciones desde atributos. La creación y eliminación delegan por import directo a `apps/web/src/panels/usuarios/utils/user-save.ts`.
 
 Migrado en esta fase:
 
@@ -277,7 +277,8 @@ Migrado en esta fase:
 Pendiente:
 
 - Edición, permisos, activación/desactivación, reseteo de contraseña, invitación y perfil no tienen controles visibles actuales en el panel.
-- `delUsr` se conserva como adaptador legacy temporal; `data-user-action` no depende de `window.delUsr` ni de `window.saveUsr` como ruta primaria.
+- `saveUsr` y `delUsr` se conservan como adaptadores legacy temporales; `data-user-action` no depende de `window.delUsr` ni de `window.saveUsr` como ruta primaria.
+- El path legacy `js/panels/usuarios/utils/user-actions.ts` reexporta el módulo nuevo temporalmente para mantener compatibilidad con imports antiguos.
 
 ### Planificaciones
 

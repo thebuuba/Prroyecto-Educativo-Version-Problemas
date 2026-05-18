@@ -26,6 +26,7 @@
 | Matriz | No publica globals propios. | El módulo ya vive en `apps/web/src/panels/matriz/`; mantiene solo `window.RENDERS.matriz` por contrato del renderer dinámico. |
 | Horario | `setScheduleTab`, `changeCalendarMonth`, `openScheduleWizard`, `editScheduleCell`, `openAddEventModal` | El registry ya usa imports directos con fallback temporal; eliminar globals cuando no haya referencias runtime. |
 | Actividades | `setActView`, `updateBlockMeta`, `handleActNameInput`, `updateActPts`, `addActToBlock`, `removeActFromBlock`, `autoAdjustBlock`, `saveAct`, `saveTpl` | La fuente real vive en `apps/web/src/panels/actividades/`; conservar globals como adaptadores por compatibilidad runtime. |
+| Usuarios | `saveUsr`, `delUsr` | La fuente real vive en `apps/web/src/panels/usuarios/utils/user-save.ts`; conservar globals como adaptadores por compatibilidad runtime. |
 | Instrumentos | `setInstFilter`, `createNewInstrument`, `editInstrument`, `deleteInstrument`, `openInstrumentCreator` | La fuente real vive en `apps/web/src/panels/instrumentos/utils/instrument-actions.ts`; conservar globals como adaptadores temporales. |
 | Vinculación de instrumentos | `openApplyInstrumentModal`, `openCreateInstrumentTypePicker`, `confirmLinkInstrument` | La fuente real vive en `apps/web/src/panels/instrumentos/utils/instrument-linking.ts`; globals quedan como adaptadores temporales. |
 | Estudiantes/académico | `saveEst`, `saveEditStudent`, `saveSec`, `saveEditSection`, `saveGrade`, `delEst`, `delSec`, `delGrade` | Reemplazar fallbacks de registries cuando los módulos estén importables sin ciclos. |
@@ -45,7 +46,7 @@
 - `data-academic-action`: conserva fallbacks hacia funciones académicas legacy.
 - `data-attendance-action`: mezcla lógica directa con adaptadores de exportación.
 - `data-schedule-action`: parcialmente directo; conserva `generateTeacherScheduleBase` y fallbacks por compatibilidad.
-- `data-user-action`: usa imports directos hacia `js/panels/usuarios/utils/user-domain-actions.ts`; `delUsr` queda como adaptador global temporal.
+- `data-user-action`: usa imports directos hacia `apps/web/src/panels/usuarios/utils/user-save.ts`; `saveUsr` y `delUsr` quedan como adaptadores globales temporales.
 
 ## Diagnóstico Vinculación De Instrumentos
 
@@ -86,7 +87,8 @@
 - `data-activity-action` dejó de leer directamente `window._linkActId`; ahora consulta `instrument-link-state.ts`.
 - `actions.ts` de actividades dejó de llamar directamente a `window.AulaBaseSqlApi`; ahora delega en `activity-sql.ts`.
 - `openApplyInstrumentModal`, `openCreateInstrumentTypePicker` y `confirmLinkInstrument` tienen implementación modular principal en `instrument-linking.ts`; `instrument-actions.ts` ya no conserva fallback interno legacy.
-- `data-user-action` dejó de llamar `window.saveUsr` / `window.delUsr` como ruta primaria; creación y eliminación viven en `js/panels/usuarios/utils/user-domain-actions.ts`.
+- `usuarios` fue movido físicamente a `apps/web/src/panels/usuarios/`; las rutas `js/panels/usuarios/**` quedaron como adaptadores de reexportación.
+- `data-user-action` dejó de llamar `window.saveUsr` / `window.delUsr` como ruta primaria; creación y eliminación viven en `apps/web/src/panels/usuarios/utils/user-save.ts`, respaldado por `user-domain-actions.ts`.
 - Se eliminó `window.openDashboardCourse`.
 - `data-report-action` dejó de depender directamente de `window.reportDownloadExcel`, `window.reportDownloadPdf` y `window.reportDownloadWord`.
 - Los 6 handlers inline runtime restantes fueron migrados a `data-route` / `data-ui-action`.
@@ -107,7 +109,7 @@
 | `data-schedule-action` | Parcialmente directo | Reemplazables ya importados: tabs, mes, asistente, celdas y eventos. Fallback temporal: los mismos globals si el panel no inicializó. No tocar todavía: `generateTeacherScheduleBase`. |
 | `data-activity-action` | Directo para acciones visibles | Reemplazables ya importados: vista, metas, edición de nombre/puntos, alta/eliminación, autoajuste, instrumentos básicos, vinculación de instrumentos y guardado de actividad/plantilla. `_linkActId` se consulta por estado modular con espejo legacy. |
 | `data-attendance-action` | Mayormente directo | Conservar temporalmente: `exportToExcel` / `exportToPdf`, porque no hay exportador modular equivalente en este dominio. |
-| `data-user-action` | Directo con adaptador legacy | Creación y eliminación usan imports directos. `delUsr` se conserva como global temporal para compatibilidad legacy; `saveUsr` no tiene referencia runtime real. |
+| `data-user-action` | Directo con adaptador legacy | Creación y eliminación usan imports directos. `saveUsr` y `delUsr` se conservan como globales temporales para compatibilidad legacy. |
 | `data-student-action` | Híbrido | Conservar fallbacks de crear/editar/búsqueda/fotos hasta exportar acciones desde estudiantes, crear-estudiante y editar-estudiante sin ciclos. |
 | `data-academic-action` | Híbrido | Conservar fallbacks de setup académico, edición/eliminación y prompts; mover por grupos después de desacoplar creación/edición. |
 | `data-auth-action` | Legacy explícito | Conservar: auth/setup sigue acoplado a bootstrap y compatibilidad de `login-registro-auth/`. |
@@ -115,7 +117,7 @@
 ## Ruta Para Retiro Gradual
 
 1. Reducir el uso directo de APIs SQL/cloud globales en dominios restantes.
-2. Convertir `usuarios`, `horario` y `asistencia` a migración física por grupos pequeños.
+2. Convertir `horario` y `asistencia` a migración física por grupos pequeños.
 3. Convertir registries híbridos restantes a imports directos, uno por dominio.
 4. Reemplazar `window.RENDERS` por registro modular explícito del router.
 5. Reemplazar `_renderPanel` por una función importada desde routing/app.
